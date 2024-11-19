@@ -17,7 +17,7 @@
     justify-content: center;
     align-items: center;
 
-    p{
+    p {
         user-select: none;
     }
 }
@@ -26,8 +26,34 @@
     position: relative;
     width: 54%;
     background-color: #ffffff;
-    padding: 0;
     @include flex-center(column, center, center);
+
+    @include screen(920px) {
+        width: 100%;
+    }
+
+
+    @include screenHeight(700px) {
+        scale: 0.7;
+    }
+
+
+    @include screen(768px) {
+        scale: 0.9;
+        height: max-content;
+        padding: 10px 0px;
+    }
+
+    @include screen(355px) {
+        width: 100%;
+        scale: 0.8;
+    }
+
+    
+    @include screen(164px) {
+        width: 100%;
+        scale: 0.4;
+    }
 }
 
 .banner-bar {
@@ -36,10 +62,22 @@
     gap: 18px;
     @include flex-center(column, center, center);
 
+    @include screen(1280px) {
+        padding: 0;
+    }
+
+    @include screen(920px) {
+        display: none;
+    }
+
     .banner-bar-container {
         @include flex-center(column, center, center);
         width: 80%;
         user-select: none;
+
+        @include screen(1200px) {
+            gap: 40px;
+        }
 
         h1 {
             text-align: center;
@@ -48,13 +86,26 @@
             font-size: 35px;
             color: var(--text-white);
 
-            @include screen(1200px) {
-                font-size: 20px;
+            @include screenHeight(700px) {
+                font-size: 30px;
             }
+
+            ;
+
         }
 
         img {
             width: 90%;
+
+            @include screen(1280px) {
+                width: 70%;
+            }
+
+            @include screenHeight(600px) {
+                width: 70%;
+            }
+
+            ;
         }
 
         p {
@@ -64,7 +115,7 @@
             font-weight: 600;
         }
 
-        @include screen(1200px) {
+        @include screen(920px) {
             scale: 0.8;
         }
     }
@@ -108,9 +159,7 @@ form {
                 @include flex-center(row, center, center);
                 gap: 10px;
                 width: 100%;
-
-            };
-
+            }
 
             .icon {
                 cursor: pointer;
@@ -128,10 +177,19 @@ form {
 .sign-up-general-container,
 .reset-password-general-container {
     @include flex-center(column, center, flex-start);
-    padding: 0px 130px;
     gap: 22px;
     z-index: 2;
     padding: 20px 40px;
+
+    @include screen(768px) {
+        @include flex-center(column, center, center);
+    }
+
+    @include screen(450px) {
+        padding: 0px 20px;
+    }
+
+
 
     img {
         width: 200px;
@@ -143,6 +201,10 @@ form {
             font-size: 32px;
             font-weight: 700;
             margin-bottom: 10px;
+
+            @include screen(768px) {
+                text-align: center;
+            }
 
         }
 
@@ -258,10 +320,8 @@ form {
 .sign-up-general-container {
     .membership-agreement-box {
         margin-top: 22px;
-
-        .checkbox-wrapper-46 {
-            margin-top: -4px;
-        }
+        display: flex;
+        gap: 3px;
 
         @include flex-center(row, center, center);
 
@@ -269,6 +329,11 @@ form {
             font-size: 13px;
             font-weight: 500;
             color: var(--text-dark-gray);
+            padding-top: 4px;
+
+            @include screen(500px) {
+                padding-top: 0;
+            }
 
             strong {
                 color: var(--blue);

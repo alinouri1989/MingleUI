@@ -20,11 +20,18 @@ $breakpoints: (
     }
 }
 
-//!   @include screen('md') {
+//!   @include screen(500px) {
 //!     font-size: 14px;
 //!   }
 
-//!   @include screen(500px) {
+@mixin screenHeight($breakpoint) {
+    $value: if(meta.type-of($breakpoint) == 'string', map-get($breakpoints, $breakpoint), $breakpoint); // type-of yerine meta.type-of kullanıldı
+
+    @media (max-height: $value) {
+        @content;
+    }
+}
+//!   @include screenHeight(500px) {
 //!     font-size: 14px;
 //!   }
 

@@ -12,7 +12,6 @@ function Sign() {
         <div className='sign-general-box'>
             <div className='sign-bar'>
                 <SignUp />
-
             </div>
             <div className='banner-bar'>
                 <div className='banner-bar-container'>
