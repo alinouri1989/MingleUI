@@ -4,6 +4,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { IoEye } from "react-icons/io5";
 import { IoEyeOff } from "react-icons/io5";
+import { Link } from 'react-router-dom';
 
 function SignIn() {
 
@@ -65,14 +66,13 @@ function SignIn() {
               </label>
             </div>
           </div>
-
-          <a href="">Şifremi Unuttum</a>
+          <Link to="/sifre-yenile">Şifremi Unuttum</Link>
         </div>
 
         <button className='sign-buttons'>Giriş</button>
         <p className='change-sign-method-text'>
           Bir hesabın yok mu?
-          <a href="">Hesap Oluştur</a>
+          <Link to="/uye-ol">Hesap Oluştur</Link>
         </p>
       </form >
     </div >

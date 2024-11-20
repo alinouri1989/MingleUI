@@ -4,10 +4,22 @@ import Logo from "../../../assets/logos/MingleLogoWithText.svg";
 import { IoEye } from "react-icons/io5";
 import { IoEyeOff } from "react-icons/io5";
 
+import MembershipModal from "./MembershipModal";
+import { useDispatch } from "react-redux";
+import { useModal } from "../../../contexts/ModalContext";
+import { Link } from "react-router-dom";
+
+
 function SignUp() {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showAgainPassword, setShowAgainPassword] = useState(false);
+
+  const { showModal } = useModal();
+
+  const handleMembershipAgreementModal = () => {
+    showModal(<MembershipModal />);
+  };
 
   return (
     <div className='sign-up-general-container'>
@@ -38,7 +50,7 @@ function SignUp() {
           <div className='input-box password'>
             <div>
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 30 30" fill="none">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M8.95832 8.94023C8.95832 5.60281 11.6626 2.89856 15 2.89856C18.3374 2.89856 21.0417 5.60281 21.0417 8.94023V12.5652H21.525C22.5883 12.5652 23.4583 13.4352 23.4583 14.4986V22.9569C23.4583 24.5519 22.1533 25.8569 20.5583 25.8569H9.44166C7.84666 25.8569 6.54166 24.5519 6.54166 22.9569V14.4986C6.54166 13.4352 7.41166 12.5652 8.47499 12.5652H8.95832V8.94023ZM18.625 8.94023V12.5652H11.375V8.94023C11.375 6.93681 12.9966 5.31523 15 5.31523C17.0034 5.31523 18.625 6.93681 18.625 8.94023ZM15 15.284C14.5195 15.2835 14.0531 15.4466 13.6778 15.7466C13.3024 16.0466 13.0403 16.4654 12.9348 16.9342C12.8293 17.403 12.8866 17.8937 13.0972 18.3256C13.3079 18.7575 13.6594 19.1047 14.0937 19.3101V22.2319C14.0937 22.4722 14.1892 22.7028 14.3592 22.8727C14.5291 23.0427 14.7596 23.1381 15 23.1381C15.2403 23.1381 15.4708 23.0427 15.6408 22.8727C15.8108 22.7028 15.9062 22.4722 15.9062 22.2319V19.3101C16.3406 19.1047 16.6921 18.7575 16.9027 18.3256C17.1134 17.8937 17.1707 17.403 17.0652 16.9342C16.9596 16.4654 16.6976 16.0466 16.3222 15.7466C15.9468 15.4466 15.4805 15.2835 15 15.284Z" fill="#828A96" />
+                <path fillRule="evenodd" clipRule="evenodd" d="M8.95832 8.94023C8.95832 5.60281 11.6626 2.89856 15 2.89856C18.3374 2.89856 21.0417 5.60281 21.0417 8.94023V12.5652H21.525C22.5883 12.5652 23.4583 13.4352 23.4583 14.4986V22.9569C23.4583 24.5519 22.1533 25.8569 20.5583 25.8569H9.44166C7.84666 25.8569 6.54166 24.5519 6.54166 22.9569V14.4986C6.54166 13.4352 7.41166 12.5652 8.47499 12.5652H8.95832V8.94023ZM18.625 8.94023V12.5652H11.375V8.94023C11.375 6.93681 12.9966 5.31523 15 5.31523C17.0034 5.31523 18.625 6.93681 18.625 8.94023ZM15 15.284C14.5195 15.2835 14.0531 15.4466 13.6778 15.7466C13.3024 16.0466 13.0403 16.4654 12.9348 16.9342C12.8293 17.403 12.8866 17.8937 13.0972 18.3256C13.3079 18.7575 13.6594 19.1047 14.0937 19.3101V22.2319C14.0937 22.4722 14.1892 22.7028 14.3592 22.8727C14.5291 23.0427 14.7596 23.1381 15 23.1381C15.2403 23.1381 15.4708 23.0427 15.6408 22.8727C15.8108 22.7028 15.9062 22.4722 15.9062 22.2319V19.3101C16.3406 19.1047 16.6921 18.7575 16.9027 18.3256C17.1134 17.8937 17.1707 17.403 17.0652 16.9342C16.9596 16.4654 16.6976 16.0466 16.3222 15.7466C15.9468 15.4466 15.4805 15.2835 15 15.284Z" fill="#828A96" />
               </svg>
               <input type={showPassword ? "text" : "password"} placeholder='Şifre' />
             </div>
@@ -64,7 +76,7 @@ function SignUp() {
 
           <div className='input-box'>
             <svg xmlns="http://www.w3.org/2000/svg" width="29" height="30" viewBox="0 0 29 30" fill="none">
-              <g clip-path="url(#clip0_389_407)">
+              <g clipPath="url(#clip0_389_407)">
                 <path d="M25.9792 5.79721H23.3612V7.40832H25.7778V25.1305H3.22228V7.40832H5.63895V5.79721H3.02089C2.83258 5.80036 2.64674 5.84057 2.47397 5.91555C2.30121 5.99054 2.14491 6.09882 2.014 6.23422C1.88309 6.36962 1.78013 6.52948 1.71101 6.70467C1.6419 6.87986 1.60797 7.06696 1.61117 7.25527V25.2836C1.60797 25.4719 1.6419 25.659 1.71101 25.8342C1.78013 26.0094 1.88309 26.1693 2.014 26.3046C2.14491 26.44 2.30121 26.5483 2.47397 26.6233C2.64674 26.6983 2.83258 26.7385 3.02089 26.7417H25.9792C26.1675 26.7385 26.3534 26.6983 26.5261 26.6233C26.6989 26.5483 26.8552 26.44 26.9861 26.3046C27.117 26.1693 27.22 26.0094 27.2891 25.8342C27.3582 25.659 27.3921 25.4719 27.3889 25.2836V7.25527C27.3921 7.06696 27.3582 6.87986 27.2891 6.70467C27.22 6.52948 27.117 6.36962 26.9861 6.23422C26.8552 6.09882 26.6989 5.99054 26.5261 5.91555C26.3534 5.84057 26.1675 5.80036 25.9792 5.79721Z" fill="#828A96" />
                 <path d="M6.44446 12.2416H8.05557V13.8527H6.44446V12.2416Z" fill="#828A96" />
                 <path d="M11.2778 12.2416H12.8889V13.8527H11.2778V12.2416Z" fill="#828A96" />
@@ -93,22 +105,23 @@ function SignUp() {
         </div>
 
         <div className="membership-agreement-box">
-          <div class="checkbox-wrapper-46">
-            <input class="inp-cbx" id="cbx-46" type="checkbox" />
-            <label class="cbx" for="cbx-46"><span>
-              <svg width="12px" height="10px" viewbox="0 0 12 10">
+          <div className="checkbox-wrapper-46">
+            <input className="inp-cbx" id="cbx-46" type="checkbox" />
+            <label className="cbx" htmlFor="cbx-46"><span>
+              <svg width="12px" height="10px" viewBox="0 0 12 10">
                 <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
               </svg></span><span></span>
             </label>
           </div>
-          <p><strong>Üyelik sözleşmesi</strong> şartlarını okudum ve kabul ediyorum.</p>
+          <p><strong onClick={handleMembershipAgreementModal}>Üyelik sözleşmesi</strong> şartlarını okudum ve kabul ediyorum.
+          </p>
         </div>
 
         <button className='sign-buttons'>Oluştur</button>
 
         <p className='change-sign-method-text'>
           Zaten bir hesabın var mı?
-          <a href="">Giris yap</a>
+          <Link to="/giris-yap">Giris yap</Link>
         </p>
       </form >
     </div>

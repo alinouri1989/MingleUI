@@ -112,3 +112,24 @@ $breakpoints: (
 //       $border-radius: 5px
 //     );
 //   }
+
+
+@mixin CustomScroll {
+    overflow-x: hidden;
+  
+    &::-webkit-scrollbar {
+      width: 6px;
+      cursor: pointer;
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg,  #585CE1, #585CE1);
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 6px;
+    }
+  }

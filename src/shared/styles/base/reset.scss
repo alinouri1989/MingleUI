@@ -115,15 +115,17 @@ textarea {
 }
 
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  cursor: pointer;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #888;
-  border-radius: 4px;
+  background: linear-gradient(180deg,  #585CE1, #585CE1);
+  border-radius: 6px;
+  cursor: pointer;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background-color: #555;
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 6px;
 }

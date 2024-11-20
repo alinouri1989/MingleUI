@@ -1,6 +1,14 @@
+import { Navigate, useNavigate } from "react-router-dom";
 import Logo from "../../../assets/logos/MingleLogoWithText.svg";
 
 function ResetPassword() {
+
+  const navigate = useNavigate();
+
+  const handleCancel = () => {
+      navigate('/giris-yap', { replace: true });
+  };
+
   return (
     <div className='reset-password-general-container'>
       <img src={Logo} alt="" />
@@ -20,7 +28,7 @@ function ResetPassword() {
           </div>
         </div>
         <button className='sign-buttons'>Gönder</button>
-        <button className='cancel-btn'>Vazgeç</button>
+        <button className='cancel-btn' onClick={handleCancel}>Vazgeç</button>
       </form >
     </div>
   )
