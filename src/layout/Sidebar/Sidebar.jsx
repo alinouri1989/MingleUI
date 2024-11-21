@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { HiMenu } from "react-icons/hi";
 import { IoChatbubbleEllipses } from "react-icons/io5";
 import { PiPhoneFill } from "react-icons/pi";
@@ -11,28 +12,45 @@ import "./style.scss";
 
 function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
 
   const navItems = [
-    { icon: <IoChatbubbleEllipses className="icon" />, label: 'Sohbetler' },
-    { icon: <PiPhoneFill className="icon" />, label: 'Aramalar' },
-    { icon: <HiArchiveBox className="icon" />, label: 'Arşivler' },
-    { icon: <HiUserGroup className="icon" />, label: 'Gruplar' },
-    { icon: <AiFillHome className="icon" />, label: 'Anasayfa' },
+    { icon: <IoChatbubbleEllipses className="icon" />, label: "Sohbetler", path: "/sohbetler" },
+    { icon: <PiPhoneFill className="icon" />, label: "Aramalar", path: "/aramalar" },
+    { icon: <HiArchiveBox className="icon" />, label: "Arşivler", path: "/arsivler" },
+    { icon: <HiUserGroup className="icon" />, label: "Gruplar", path: "/gruplar" },
+    { icon: <AiFillHome className="icon" />, label: "Anasayfa", path: "/anasayfa" },
   ];
+
+  const handleNavigation = (path) => {
+    navigate(path);
+    if (isOpen) {
+      setIsOpen(false);
+    }
+  };
+
   return (
     <div className={`sidebar-container ${isOpen ? "open" : ""}`}>
       <div className="top-box">
-        <button className={`nav-buttons  ${isOpen ? "open" : ""}`} id="menu-btn" onClick={toggleSidebar}>
+        <button
+          className={`nav-buttons ${isOpen ? "open" : ""}`}
+          id="menu-btn"
+          onClick={toggleSidebar}
+        >
           <HiMenu className="icon" />
         </button>
 
         <div className="navigation-buttons">
           {navItems.map((item, index) => (
-            <button key={index} className={`nav-buttons ${isOpen ? 'open' : ''}`}>
+            <button
+              key={index}
+              className={`nav-buttons ${isOpen ? "open" : ""}`}
+              onClick={() => handleNavigation(item.path)}
+            >
               {item.icon}
               {isOpen && <span>{item.label}</span>}
             </button>
@@ -41,7 +59,10 @@ function Sidebar() {
       </div>
 
       <div className="bottom-box" style={{ width: isOpen ? "100%" : "" }}>
-        <button className={`nav-buttons  ${isOpen ? "open" : ""}`}>
+        <button
+          className={`nav-buttons ${isOpen ? "open" : ""}`}
+          onClick={() => handleNavigation("/ayarlar")}
+        >
           <IoMdSettings className="icon" />
           {isOpen && <span>Ayarlar</span>}
         </button>

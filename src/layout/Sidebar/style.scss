@@ -4,6 +4,7 @@
   @include flex-center(column, space-between, flex-start);
   width: 65px;
   height: 100%;
+  position: absolute;
   padding: 8px 10px;
   background-color: var(--smooth-blue);
   transition: width 0.3s ease; // width ve padding için animasyon ekleniyor
@@ -11,6 +12,7 @@
   &.open {
     width: 170px;
     padding-right: 15px;
+
   }
 
   .nav-buttons {
@@ -26,7 +28,7 @@
     @include transition();
     width: max-content;
     min-width: 100%;
-    
+
     &:hover {
       background: var(--text-white);
     }
@@ -34,7 +36,7 @@
     &.open {
       justify-content: flex-start;
     }
-  
+
 
 
     span {
@@ -51,6 +53,7 @@
     0% {
       opacity: 0;
     }
+
     100% {
       opacity: 1;
     }

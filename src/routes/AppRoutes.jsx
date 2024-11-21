@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Routes, Navigate } from 'react-router-dom';;
+import { Route, Routes, Navigate } from 'react-router-dom';
 import Sign from "../pages/Sign/Sign.jsx";
 import Layout from '../Layout/Layout.jsx';
 import Chats from '../components/Chats/Chats.jsx';
