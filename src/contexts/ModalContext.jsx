@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react';
-import { MdClose } from 'react-icons/md';  // React icon çarpı simgesi
+import { MdClose } from 'react-icons/md';
 
 const ModalContext = createContext();
 

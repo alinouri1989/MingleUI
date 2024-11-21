@@ -1,0 +1,59 @@
+@use "../../shared/styles/main.scss" as *;
+
+.sidebar-container {
+  @include flex-center(column, space-between, flex-start);
+  width: 65px;
+  height: 100%;
+  padding: 8px 10px;
+  background-color: var(--smooth-blue);
+
+  &.open {
+    width: 170px;
+    padding-right: 15px;
+
+  }
+
+  .nav-buttons {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    cursor: pointer;
+    font-size: 30px;
+    padding: 6px;
+    border-radius: 12px;
+    background-color: transparent;
+    color: var(--blue);
+    @include transition();
+    width: 100%;
+
+
+    &:hover {
+
+      background: var(--White, #FFF);
+    }
+
+    span {
+      margin-left: 10px;
+      font-size: 16px;
+      font-weight: 500;
+      margin-right: 10px;
+      color: var(--blue);
+    }
+  }
+
+  #menu-btn {
+    &:hover {
+      background-color: transparent
+    }
+  }
+
+  .top-box {
+    @include flex-center(column, center, flex-start);
+    gap: 25px;
+
+    .navigation-buttons {
+      @include flex-center(column, center, flex-start);
+      gap: 18px;
+    }
+  }
+}
