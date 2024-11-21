@@ -1,11 +1,14 @@
 @use './../shared/styles/main.scss' as *;
 
 .layout-container {
-    background-color: var(--smooth-blue);
-    background-color: white;
+    // background-color: var(--smooth-blue);
+    height: 100vh;
+    @include flex-center(column, center);
 
     .main-content {
         @include flex-center(row, flex-start);
-        border: 2px solid red;
+        flex: 1;
+        width: 100%;
+        overflow: hidden;
     }
 }

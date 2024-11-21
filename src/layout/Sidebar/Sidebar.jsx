@@ -16,39 +16,33 @@ function Sidebar() {
     setIsOpen(!isOpen);
   };
 
+  const navItems = [
+    { icon: <IoChatbubbleEllipses className="icon" />, label: 'Sohbetler' },
+    { icon: <PiPhoneFill className="icon" />, label: 'Aramalar' },
+    { icon: <HiArchiveBox className="icon" />, label: 'Arşivler' },
+    { icon: <HiUserGroup className="icon" />, label: 'Gruplar' },
+    { icon: <AiFillHome className="icon" />, label: 'Anasayfa' },
+  ];
   return (
     <div className={`sidebar-container ${isOpen ? "open" : ""}`}>
       <div className="top-box">
-        <button className="nav-buttons" id="menu-btn" onClick={toggleSidebar}>
-          <HiMenu />
+        <button className={`nav-buttons  ${isOpen ? "open" : ""}`} id="menu-btn" onClick={toggleSidebar}>
+          <HiMenu className="icon" />
         </button>
 
         <div className="navigation-buttons">
-          <button className="nav-buttons">
-            <IoChatbubbleEllipses />
-            {isOpen && <span>Sohbetler</span>}
-          </button>
-          <button className="nav-buttons">
-            <PiPhoneFill />
-            {isOpen && <span>Aramalar</span>}
-          </button>
-          <button className="nav-buttons">
-            <HiArchiveBox />
-            {isOpen && <span>Arşivler</span>}
-          </button>
-          <button className="nav-buttons">
-            <HiUserGroup />
-            {isOpen && <span>Gruplar</span>}
-          </button>
-          <button className="nav-buttons">
-            <AiFillHome />
-            {isOpen && <span>Anasayfa</span>}
-          </button>
+          {navItems.map((item, index) => (
+            <button key={index} className={`nav-buttons ${isOpen ? 'open' : ''}`}>
+              {item.icon}
+              {isOpen && <span>{item.label}</span>}
+            </button>
+          ))}
         </div>
       </div>
-      <div className="bottom-box">
-        <button className="nav-buttons">
-          <IoMdSettings />
+
+      <div className="bottom-box" style={{ width: isOpen ? "100%" : "" }}>
+        <button className={`nav-buttons  ${isOpen ? "open" : ""}`}>
+          <IoMdSettings className="icon" />
           {isOpen && <span>Ayarlar</span>}
         </button>
       </div>

@@ -3,12 +3,12 @@
 Header {
     @include flex-center(row, flex-start,center);
     width: 100%;
-    height: 60px;
+    height: 55px;
     padding: 8px 10px;
     background-color: var(--smooth-blue);
     gap: 10px;
 
     img{
-        width: 125px;
+        width: 120px;
     }
 }

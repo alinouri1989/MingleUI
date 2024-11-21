@@ -6,11 +6,11 @@
   height: 100%;
   padding: 8px 10px;
   background-color: var(--smooth-blue);
+  transition: width 0.3s ease; // width ve padding için animasyon ekleniyor
 
   &.open {
     width: 170px;
     padding-right: 15px;
-
   }
 
   .nav-buttons {
@@ -24,13 +24,18 @@
     background-color: transparent;
     color: var(--blue);
     @include transition();
-    width: 100%;
-
-
+    width: max-content;
+    min-width: 100%;
+    
     &:hover {
-
-      background: var(--White, #FFF);
+      background: var(--text-white);
     }
+
+    &.open {
+      justify-content: flex-start;
+    }
+  
+
 
     span {
       margin-left: 10px;
@@ -38,6 +43,16 @@
       font-weight: 500;
       margin-right: 10px;
       color: var(--blue);
+      animation: fadeIn 0.5s ease-in-out;
+    }
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
     }
   }
 
