@@ -1,0 +1,39 @@
+@use "../../shared/styles/main.scss" as *;
+
+.dashboard-container {
+    @include flex-center(column, flex-start, center);
+    width: 320px;
+    height: 100%;
+    padding: 16px 14px 0px 14px;
+    border-right: 2px solid var(--smooth-border-color);
+
+
+    .user-info-box {
+        @include flex-center(row, flex-start, center);
+        gap: 12px;
+        width: 100%;
+        padding: 0px;
+
+
+        img {
+            width: 62px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        p {
+            color: var(--text-black);
+            font-size: 16px;
+            font-weight: 700;
+        }
+    }
+
+    .dynamic-list-box {
+        width: 100%;
+        height: 75vb;
+        background-color: var(--smooth-white-color);
+        margin-top: 15px;
+        border-radius: 28px 28px 0px 0px;
+        padding: 16px 12px;
+    }
+}

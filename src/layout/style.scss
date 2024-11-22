@@ -1,7 +1,7 @@
 @use './../shared/styles/main.scss' as *;
 
 .layout-container {
-    // background-color: var(--smooth-blue);
+    background-color: var(--smooth-blue);
     height: 100vh;
     @include flex-center(column, center);
 
@@ -11,9 +11,14 @@
         width: 100%;
         overflow: hidden;
         position: relative;
-             
+      
         .outlet-content{
             margin-left: 65px;
+            @include flex-center(row,flex-start,flex-start);
+            height: 100%;
+            width: 100%;
+            border-radius: 30px 0px 0px 0px;
+            background-color: var(--text-white);
         }
        
     }

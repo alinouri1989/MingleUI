@@ -1,0 +1,162 @@
+@use "../../../shared/styles/main.scss" as *;
+
+
+//! ----- Dynamic Styles -----
+
+.search-input-box {
+    @include flex-center(row, flex-start, center);
+    gap: 6px;
+    width: 100%;
+    height: 45px;
+    padding: 0px 14px 0px 14px;
+    background-color: var(--user-message-box-color);
+    border-radius: 10px;
+
+    .icon-box {
+        width: 32px;
+        font-size: 32px;
+        color: #787878;
+    }
+
+    .search-input {
+        width: 100%;
+        color: var(--user-message-text-color);
+        font-size: 13px;
+        font-weight: 700;
+        height: 100%;
+    }
+}
+
+.create-buttons {
+    width: 100%;
+    padding: 8px;
+    border-radius: 10px;
+    background-color: var(--blue);
+    color: var(--text-white);
+    font-size: 13px;
+    font-weight: 700;
+    margin: 16px 0px;
+    @include transition();
+
+    &:hover {
+        background-color: var(--hoverBlue);
+
+    }
+}
+
+.user-message-card-box {
+    margin-top: 15px;
+    @include flex-center(row, center, center);
+    width: 100%;
+    height: 75px;
+    gap: 5px;
+    cursor: pointer;
+    @include transition();
+
+    &:first-child {
+        margin-top: 0px;
+    }
+
+    &:hover {
+        border-radius: 17px;
+
+        background-color: var(--user-message-box-color);
+    }
+
+    .image-box {
+        width: max-content;
+        position: relative;
+
+        img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .status {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background-color: #26D97A;
+            border: 2px solid var(--smooth-white-color);
+            position: absolute;
+            right: 2px;
+            bottom: 2px;
+
+
+        }
+    }
+
+    .user-name-and-message {
+        @include flex-center(column, center);
+        padding: 0px 10px;
+        width: 145px;
+        gap: 2px;
+
+        p {
+            font-weight: 700;
+            font-size: 14px;
+            white-space: nowrap;
+            /* Metni tek satırda tutar */
+            overflow: hidden;
+            /* Taşan metni gizler */
+            text-overflow: ellipsis;
+            /* Taşan metnin yerine "..." koyar */
+            width: 100%;
+            /* Div'in genişliği kadar uzatır */
+            display: block;
+        }
+
+        span {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--user-message-text-color);
+            white-space: nowrap;
+            /* Metni tek satırda tutar */
+            overflow: hidden;
+            /* Taşan metni gizler */
+            text-overflow: ellipsis;
+            /* Taşan metnin yerine "..." koyar */
+            width: 100%;
+            /* Div'in genişliği kadar uzatır */
+            display: block;
+        }
+    }
+
+    .message-informations-box {
+        @include flex-center(column, center, center);
+        gap: 2px;
+
+        span {
+            color: #A7A7A7;
+            font-family: Montserrat;
+            font-size: 12px;
+        }
+
+        p {
+            @include flex-center(row, center, center);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--blue);
+            color: var(--text-white);
+            font-size: 11px;
+        }
+    }
+}
+
+
+// Dashboard Lists Styles
+
+.chat-list-box {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.user-list {
+    height: 100%;
+    overflow: scroll;
+    scrollbar-width: none;
+}

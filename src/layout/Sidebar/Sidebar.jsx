@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { HiMenu } from "react-icons/hi";
 import { IoChatbubbleEllipses } from "react-icons/io5";
@@ -9,9 +9,12 @@ import { AiFillHome } from "react-icons/ai";
 import { IoMdSettings } from "react-icons/io";
 
 import "./style.scss";
+import { useOutsideClick } from "../../hooks/useOutsideClick";
 
 function Sidebar() {
+
   const [isOpen, setIsOpen] = useState(false);
+  const sidebarRef = useRef(null);
   const navigate = useNavigate();
 
   const toggleSidebar = () => {
@@ -27,14 +30,22 @@ function Sidebar() {
   ];
 
   const handleNavigation = (path) => {
-    navigate(path);
+
+    if (path != "/ayarlar") {
+      navigate(path);
+    }
+
     if (isOpen) {
       setIsOpen(false);
     }
   };
 
+  useOutsideClick(sidebarRef, () => {
+    if (isOpen) setIsOpen(false);
+  });
+
   return (
-    <div className={`sidebar-container ${isOpen ? "open" : ""}`}>
+    <div ref={sidebarRef} className={`sidebar-container ${isOpen ? "open" : ""}`}>
       <div className="top-box">
         <button
           className={`nav-buttons ${isOpen ? "open" : ""}`}

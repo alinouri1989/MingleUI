@@ -7,7 +7,8 @@
   position: absolute;
   padding: 8px 10px;
   background-color: var(--smooth-blue);
-  transition: width 0.3s ease; // width ve padding için animasyon ekleniyor
+  transition: width 0.3s ease; 
+  z-index: 10;
 
   &.open {
     width: 170px;

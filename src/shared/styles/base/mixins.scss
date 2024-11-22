@@ -44,6 +44,7 @@ $breakpoints: (
     align-items: $align;
 }
 
+
 //!  @include flex-center(column, space-between, flex-start);
 
 // ------------------ Transition Mixin ------------------
@@ -115,6 +116,7 @@ $breakpoints: (
 
 
 @mixin CustomScroll {
+    overflow: scroll;
     overflow-x: hidden;
   
     &::-webkit-scrollbar {
