@@ -1,5 +1,6 @@
 @use "../../shared/styles/main.scss" as *;
 
+
 .chat-general-box {
     flex: 1;
     height: 100%;
@@ -11,6 +12,13 @@
         width: 100%;
         border-bottom: 2px solid var(--smooth-border-color);
         padding: 0px 15px;
+        transition: transform 0.6s ease, opacity 0.6s ease, visibility 0.6s ease;
+        
+        &.close {
+            transform: translateY(-100%);
+            opacity: 0;
+            visibility: hidden;
+        }
 
         .user-info {
             @include flex-center(row, flex-start, center);
@@ -89,17 +97,40 @@
                     }
                 }
             }
-
-            .show-sidebar-button {
-                @include flex-center(column, center, center);
-                font-size: 24px;
-                width: 32px;
-                height: 32px;
-                cursor: pointer;
-                border-radius: 50%;
-                color: var(--blue);
-            }
         }
     }
 
+    .user-message-bar {
+        width: 100%;
+        flex: 1;
+    }
+
+}
+
+.user-details-sidebar {
+
+    height: 100%;
+    width: 0px;
+    background-color: var(--smooth-white-color);
+    overflow: hidden;
+    opacity: 0;
+    transition: width 0.4s ease, opacity 0.4s ease 0.4s;
+    border-left: 2px solid var(--smooth-border-color);
+
+    &.open {
+        padding: 18px 15px 0px 15px;
+        width: 340px;
+        opacity: 1;
+    }
+}
+
+//Sidebar
+.sidebar-toggle-buttons {
+    @include flex-center(column, center, center);
+    font-size: 24px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    border-radius: 50%;
+    color: var(--blue);
 }
