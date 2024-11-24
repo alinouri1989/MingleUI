@@ -1,0 +1,101 @@
+@use "../../shared/styles/main.scss" as *;
+
+.calls-general-box {
+    flex: 1;
+    height: 100%;
+
+    .call-info-bar-box {
+        padding: 25px;
+
+        h2 {
+            color: var(--text-black);
+            font-size: 20px;
+            font-weight: 700;
+            line-height: normal;
+            padding: 10px;
+        }
+
+        .details-box {
+            margin-top: 15px;
+            background-color: var(--smooth-white-color);
+            border-radius: 30px;
+
+            .user-and-call-box {
+                @include flex-center(row, space-between, center);
+                width: 100%;
+                padding: 15px 27px;
+                border-bottom: 2px solid var(--smooth-border-color);
+
+                .user-info {
+                    @include flex-center(row, center, center);
+                    gap: 10px;
+
+
+                    img {
+                        width: 60px;
+                        border-radius: 50%;
+                        object-fit: cover;
+                    }
+
+                    p {
+                        font-size: 14px;
+                        font-weight: 700;
+                    }
+                }
+
+                .call-options {
+                    @include flex-center(row, center, center);
+                    gap: 10px;
+
+                    button {
+                        background-color: transparent;
+                        @include flex-center(row, center, center);
+                        width: 50px;
+                        height: 50px;
+                        color: var(--blue);
+                        font-size: 28px;
+                        @include transition();
+                        border-radius: 15px;
+
+                        &:hover {
+                            background-color: var(--smooth-blue);
+                        }
+                    }
+                }
+
+            }
+
+            .call-details {
+                padding: 15px 27px;
+
+                span {
+                    width: 100%;
+                    font-size: 14px;
+                    font-weight: 700;
+                    margin-bottom: 10px;
+                    color: var(--text-dark-gray);
+                }
+
+                .status-box {
+                    @include flex-center(row, space-between, center);
+                    margin-top: 12px;
+                    color: var(--text-input-gray);
+
+                    p {
+                        font-size: 13px;
+                        font-weight: 700;
+                    }
+
+                    .call-status-box {
+                        @include flex-center(row, center, center);
+                        gap: 7px;
+
+                        .icon {
+                            font-size: 20px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

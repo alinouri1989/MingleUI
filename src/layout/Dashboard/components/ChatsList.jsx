@@ -1,6 +1,6 @@
 import SearchInput from "./SearchInput";
+import UserChatCard from "./UserChatCard";
 import "./style.scss";
-import UserMessageCard from "./UserMessageCard";
 
 
 const users = [
@@ -12,33 +12,37 @@ const users = [
         lastMessage: "Sınav başarılı geç...",
         lastDate: "16:20",
         unReadMessage: 3,
+        isArchive:false,
     },
     {
         id: 2,
         image: "https://randomuser.me/api/portraits/women/2.jpg",
-        status: "offline",
+        status: "online",
         name: "Ayşe Yılmaz",
         lastMessage: "Toplantı saat kaçta?",
-        lastDate: "15:00",
+        lastDate: "22.10.2004",
         unReadMessage: 1,
+        isArchive:false,
     },
     {
         id: 3,
         image: "https://randomuser.me/api/portraits/men/3.jpg",
-        status: "online",
+        status: "offline",
         name: "Mehmet Kaya",
         lastMessage: "Yarın görüşelim mi?",
         lastDate: "14:45",
         unReadMessage: 2,
+        isArchive:false,
     },
     {
         id: 4,
         image: "https://randomuser.me/api/portraits/women/4.jpg",
-        status: "away",
+        status: "offline",
         name: "Elif Çelik",
         lastMessage: "Dosyayı gönderdim.",
         lastDate: "13:30",
         unReadMessage: 0,
+        isArchive:false,
     }
 ];
 
@@ -53,7 +57,7 @@ function ChatsList() {
             </div>
             <div className="user-list">
                 {users.map((user) => (
-                    <UserMessageCard
+                    <UserChatCard
                         key={user.id}
                         image={user.image}
                         status={user.status}
@@ -61,6 +65,7 @@ function ChatsList() {
                         lastMessage={user.lastMessage}
                         lastDate={user.lastDate}
                         unReadMessage={user.unReadMessage}
+                        isArchive={user.isArchive}
                     />
                 ))}
             </div>

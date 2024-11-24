@@ -23,3 +23,14 @@
        
     }
 }
+
+// 
+.e2e-info-box {
+    margin-bottom: 50px;
+    @include flex-center(row, center, center);
+    gap: 5px;
+    color: #818181;
+    position: absolute;
+    bottom: 0;
+    font-size: 14px;
+}

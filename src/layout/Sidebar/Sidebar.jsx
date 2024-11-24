@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { HiMenu } from "react-icons/hi";
 import { IoChatbubbleEllipses } from "react-icons/io5";
 import { PiPhoneFill } from "react-icons/pi";
@@ -12,10 +12,10 @@ import "./style.scss";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
 
 function Sidebar() {
-
   const [isOpen, setIsOpen] = useState(false);
   const sidebarRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation(); // Mevcut URL'yi almak için kullanılır
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -30,8 +30,7 @@ function Sidebar() {
   ];
 
   const handleNavigation = (path) => {
-
-    if (path != "/ayarlar") {
+    if (path !== "/ayarlar") {
       navigate(path);
     }
 
@@ -59,7 +58,9 @@ function Sidebar() {
           {navItems.map((item, index) => (
             <button
               key={index}
-              className={`nav-buttons ${isOpen ? "open" : ""}`}
+              className={`nav-buttons ${isOpen ? "open" : ""} ${
+                location.pathname === item.path ? "active" : ""
+              }`}
               onClick={() => handleNavigation(item.path)}
             >
               {item.icon}
@@ -71,7 +72,9 @@ function Sidebar() {
 
       <div className="bottom-box" style={{ width: isOpen ? "100%" : "" }}>
         <button
-          className={`nav-buttons ${isOpen ? "open" : ""}`}
+          className={`nav-buttons ${isOpen ? "open" : ""} ${
+            location.pathname === "/ayarlar" ? "active" : ""
+          }`}
           onClick={() => handleNavigation("/ayarlar")}
         >
           <IoMdSettings className="icon" />

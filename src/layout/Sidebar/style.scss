@@ -38,6 +38,10 @@
       justify-content: flex-start;
     }
 
+    &.active{
+      background: var(--text-white);
+    }
+
 
 
     span {

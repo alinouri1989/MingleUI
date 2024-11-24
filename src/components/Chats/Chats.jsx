@@ -1,8 +1,11 @@
-import React from 'react'
+import WelcomeScreen from "../WelcomeScreen/WelcomeScreen";
+import "./style.scss";
 
 function Chats() {
   return (
-    <div>Chats</div>
+    <div className='chat-general-box'>
+      <WelcomeScreen text={"Kişisel sohbetleriniz uçtan uca şifrelidir"}/>
+    </div>
   )
 }
 

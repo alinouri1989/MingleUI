@@ -2,7 +2,7 @@
 
 .dashboard-container {
     @include flex-center(column, flex-start, center);
-    width: 320px;
+    width: 390px;
     height: 100%;
     padding: 16px 14px 0px 14px;
     border-right: 2px solid var(--smooth-border-color);
@@ -12,7 +12,8 @@
         @include flex-center(row, flex-start, center);
         gap: 12px;
         width: 100%;
-        padding: 0px;
+        padding-left: 15px;
+        padding-top: 5px;
 
 
         img {
