@@ -1,0 +1,57 @@
+@use "../../../shared/styles/main.scss" as *;
+
+.message-bubble-box {
+    margin: 15px 0px;
+
+    .message-box {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        width: 100%;
+        gap: 10px;
+
+        &.sender {
+            justify-content: flex-end;
+
+            .message-text {
+                order: 2;
+                background: var(--blue);
+                color: var(--text-white);
+            }
+
+            .message-hour {
+                order: 1;
+            }
+
+        }
+
+        .message-text {
+            display: flex;
+            min-width: 50px;
+            max-width: 340px;
+            padding: 9px 18px;
+            justify-content: center;
+            align-items: center;
+            border-radius: 14px;
+            background: #F0F0F0;
+            color: var(--user-message-text-color);
+            font-size: 14px;
+
+        }
+
+        .message-hour {
+            color: #989898;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+    }
+
+    .status-box {
+        display: flex;
+        justify-content: flex-end;
+        padding: 3px 5px;
+        font-size: 17px;
+        color: var(--text-input-gray);
+    }
+}

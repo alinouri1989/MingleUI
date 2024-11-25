@@ -1,13 +1,11 @@
-import MessageInputBar from "../../shared/components/MessageInputBar/MessageInputBar";
-import WelcomeScreen from "../WelcomeScreen/WelcomeScreen";
-import { PiPhoneFill } from "react-icons/pi";
-import { HiMiniVideoCamera } from "react-icons/hi2";
-import { IoIosArrowBack } from "react-icons/io";
-import { IoIosArrowDropleftCircle } from "react-icons/io";
-import { IoIosArrowDroprightCircle } from "react-icons/io";
-
-import "./style.scss";
 import { useState } from "react";
+import WelcomeScreen from "../WelcomeScreen/WelcomeScreen";
+
+import UserTopBar from "./Components/UserTopBar";
+import UserMessageBar from "./Components/UserMessageBar";
+import MessageInputBar from "../../shared/components/MessageInputBar/MessageInputBar";
+import "./style.scss";
+import UserDetailsBar from "./Components/UserDetailsBar";
 
 // Props ile kullanıcıyı alıcak. ya da url ile id üzerinden kullanıcı bilgisni alıcak hub durumu felan şimdilik statik
 
@@ -20,61 +18,45 @@ function Chats() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const userName = "Okan Doğan"
-  const status = "online"
+  // Mock mesajlar
+  const mockMessages = [
+    { id: 1, text: 'Merhaba!', timestamp: '09:20', date: '22.09.2024', sender: 'user1', receiver: 'user2', status: "read" },
+    { id: 2, text: 'Nasılsın?', timestamp: '09:22', date: '22.09.2024', sender: 'user2', receiver: 'user1', status: "read" },
+    { id: 3, text: 'İyiyim, teşekkürler!', timestamp: '09:25', date: '22.09.2024', sender: 'user1', receiver: 'user2', status: "read" },
+    { id: 4, text: 'Öyle işte kendimce çalışmalar yapıyorum seni de iyi gördüm', timestamp: '09:25', date: '22.09.2024', sender: 'user1', receiver: 'user2', status: "read" },
+    { id: 5, text: ':)', timestamp: '09:25', date: '22.09.2024', sender: 'user1', receiver: 'user2', status: "read" },
+    { id: 6, text: 'Dün bir şeyler yazmıştın?', timestamp: '14:10', date: 'Dün', sender: 'user2', receiver: 'user1', status: "delivered" },
+    { id: 7, text: 'Evet, yeni bir projeye başladım.', timestamp: '14:15', date: 'Dün', sender: 'user1', receiver: 'user2', status: "delivered" },
+    { id: 8, text: 'Hangi proje?', timestamp: '14:20', date: 'Dün', sender: 'user2', receiver: 'user1', status: "delivered" },
+    { id: 9, text: 'Chat uygulaması geliştiriyorum.', timestamp: '10:00', date: 'Bugün', sender: 'user1', receiver: 'user2', status: "sent" },
+    { id: 10, text: 'Wow! Harika bir fikir!', timestamp: '10:05', date: 'Bugün', sender: 'user2', receiver: 'user1', status: "sent" },
+    { id: 11, text: 'Teşekkürler! WebSocket entegrasyonu yapacağım. Ancak nasıl yapacağım konusunda tam bir fikrim yok isterseniz bunu daha sonra detaylı bir şekilde konuşalım.', timestamp: '10:10', date: 'Bugün', sender: 'user1', receiver: 'user2', status: "sent" },
+    { id: 12, text: 'Kolay gelsin, merakla bekliyorum!', timestamp: '10:15', date: 'Bugün', sender: 'user2', receiver: 'user1', status: "sent" },
+  ];
+
+  // Gruplama fonksiyonu
+  const groupMessagesByDate = (messages) => {
+    return messages.reduce((grouped, message) => {
+      const { date } = message;
+      if (!grouped[date]) grouped[date] = [];
+      grouped[date].push(message);
+      return grouped;
+    }, {});
+  };
+
+
+  const groupedMessages = groupMessagesByDate(mockMessages);
 
   return (
     <>
       <div className='chat-general-box'>
         {/* <WelcomeScreen text={"Kişisel sohbetleriniz uçtan uca şifrelidir"}/> */}
 
-        <div className={`user-top-bar ${isSidebarOpen ? 'close' : ''}`}>
-          <div className="user-info">
-            <div className="image-box">
-              <img src="https://randomuser.me/api/portraits/men/1.jpg" alt={`${userName} profile`} />
-              <p className={`status ${status}`}></p>
-            </div>
-            <div className="name-and-status-box">
-              <p className="user-name">{userName}</p>
-              <span>{status == "online" ? "Çevrimiçi" : "Çevrimdışı"}</span>
-            </div>
-          </div>
-
-          <div className="top-bar-buttons">
-            <div className='call-options'>
-              <button><PiPhoneFill /></button>
-              <button><HiMiniVideoCamera /></button>
-            </div>
-            <IoIosArrowDropleftCircle
-              className="sidebar-toggle-buttons"
-              onClick={toggleSidebar}
-            />
-          </div>
-        </div>
-
-        <div className="user-message-bar">
-
-        </div>
+        <UserTopBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        <UserMessageBar groupedMessages={groupedMessages} />
         <MessageInputBar />
       </div>
-
-
-      <div className={`user-details-sidebar ${isSidebarOpen ? "open" : ""}`}>
-        {isSidebarOpen &&
-          <>
-
-            <IoIosArrowDroprightCircle
-              className="sidebar-toggle-buttons"
-              onClick={toggleSidebar}
-            />
-
-            <h2>Kullanıcı Detayları</h2>
-            <p>Bu alanı istediğiniz gibi doldurabilirsiniz.</p>
-          </>
-        }
-      </div>
-
-
+      <UserDetailsBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
     </>
 
   )

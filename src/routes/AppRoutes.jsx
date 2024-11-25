@@ -9,7 +9,7 @@ import Calls from '../components/Calls/Calls.jsx';
 import Home from '../components/Home/Home.jsx';
 
 function AppRoutes() {
-    const user = true; // Kullanıcı oturum kontrolü
+    const user = true; 
 
     return (
         <Routes>

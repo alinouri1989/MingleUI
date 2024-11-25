@@ -1,8 +1,8 @@
 import React from 'react'
-import "./style.scss";
 import { HiPlus } from "react-icons/hi";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
 
+import "./style.scss";
 function MessageInputBar() {
     return (
         <div className='message-input-bar'>
