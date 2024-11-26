@@ -1,12 +1,14 @@
-@use "../../shared/styles/main.scss" as *;
+@use "../shared/styles/main.scss" as *;
 
 
-.chat-general-box {
+.chat-general-box,
+.group-general-box {
     @include flex-center(column, space-between, center);
     flex: 1;
     height: 100%;
 
-    .user-top-bar {
+    .user-top-bar,
+    .group-top-bar {
         @include flex-center(row, space-between, center);
         height: 90px;
         width: 100%;
@@ -21,7 +23,8 @@
             height: 0px;
         }
 
-        .user-info {
+        .user-info,
+        .group-info {
             @include flex-center(row, flex-start, center);
             gap: 8px;
 
@@ -61,7 +64,8 @@
                 gap: 1px;
                 height: 100%;
 
-                .user-name {
+                .user-name,
+                .grup-name {
                     columns: var(--text-black);
                     font-weight: 800;
                     font-size: 15px;
@@ -101,7 +105,8 @@
         }
     }
 
-    .user-message-bar {
+    .user-message-bar,
+    .group-message-bar {
         width: 100%;
         height: 100%;
         overflow: scroll;
@@ -143,13 +148,20 @@
         border-radius: 6px;
     }
 
+    .group-message-bar::-webkit-scrollbar-track {
+        background: transparent;
+        border-radius: 6px;
+    }
+
 }
 
-.user-details-sidebar {
+.user-details-sidebar,
+.group-details-sidebar {
     height: 100%;
     width: 0px;
     background-color: var(--smooth-white-color);
-    overflow: hidden;
+    overflow: scroll;
+    overflow-x: hidden;
     opacity: 0;
     transition: width 0.4s ease, opacity 0.4s ease 0.4s;
     border-left: 2px solid var(--smooth-border-color);
@@ -166,11 +178,14 @@
         height: auto;
 
         .user-info-box,
-        .biography {
+        .group-info-box,
+        .biography,
+        .description {
             @include flex-center(column, center, center);
         }
 
-        .user-info-box {
+        .user-info-box,
+        .group-info-box {
             img {
                 width: 120px;
                 height: 120px;
@@ -200,7 +215,7 @@
             margin-top: 15px;
             @include flex-center(row, center, center);
             gap: 6px;
-           
+
 
             .circle {
                 width: 13px;
@@ -216,20 +231,24 @@
             }
         }
 
-        .status-2{
+        .status-2 {
             margin-top: 15px;
             @include flex-center(column, center, center);
-            p{
+
+            p {
                 font-weight: 700;
                 font-size: 15px;
             }
-            span{
+
+            span {
                 color: var(--text-input-gray);
                 font-size: 14px;
             }
         }
-        .biography {
-            margin:20px 0px;
+
+        .biography,
+        .description {
+            margin: 20px 0px;
 
             strong {
                 font-size: 15px;
@@ -246,7 +265,7 @@
             }
 
             p {
-                font-size: 14px;
+                font-size: 13px;
                 text-align: center;
                 color: var(--text-dark-gray);
             }
@@ -262,7 +281,7 @@
             .button-box {
                 @include flex-center(column, center, center);
                 gap: 6px;
-           
+
 
                 button {
                     @include flex-center(row, center, center);
@@ -281,10 +300,111 @@
                 }
             }
         }
+
+        .group-members-box {
+            @include flex-center(column, center, center);
+            width: 100%;
+            gap: 5px;
+
+
+            h2 {
+                font-size: 15px;
+                color: var(--text-black);
+                font-weight: bold;
+
+            }
+
+            .members-list {
+                @include flex-center(column, center, center);
+                gap: 14px;
+                margin: 14px 0px;
+
+                .member-box {
+                    @include flex-center(row, center, center);
+                    width: 100%;
+                    gap: 10px;
+
+                    .image-box {
+                        position: relative;
+
+
+                        img {
+                            width: 45px;
+                            height: 45px;
+                            object-fit: cover;
+                            border-radius: 50%;
+                        }
+
+                        .user-status {
+                            width: 13px;
+                            height: 13px;
+                            border-radius: 50%;
+                            border: 2px solid var(--smooth-white-color);
+                            position: absolute;
+                            right: 2px;
+                            bottom: 2px;
+
+                            &.online {
+                                background-color: #26D97A;
+                            }
+
+                            &.offline {
+                                background-color: #B2B2B2;
+                            }
+                        }
+                    }
+
+                    .user-info {
+                        p {
+                            font-size: 15px;
+                            width: 140px;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
+                            margin-bottom: -5px;
+                        }
+
+
+                        span {
+                            font-size: 13px;
+                            color: var(--text-input-gray);
+
+                            &.admin {
+                                color: var(--blue);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .group-settings-btn {
+            margin: 20px 0px;
+            padding: 7px 20px;
+            background-color: var(--smooth-blue);
+            color: var(--blue);
+            border-radius: 9px;
+            font-size: 14px;
+        }
     }
 }
 
 //Sidebar
+
+.option-buttons {
+    @include flex-center(row, space-between, center);
+
+    .group-setting-btn {
+        @include flex-center(row, center, center);
+        background-color: var(--smooth-blue);
+        color: var(--blue);
+        font-size: 24px;
+        width: 36px;
+        border-radius: 50%;
+        height: 36px;
+    }
+}
+
 .sidebar-toggle-buttons {
     @include flex-center(column, center, center);
     font-size: 24px;

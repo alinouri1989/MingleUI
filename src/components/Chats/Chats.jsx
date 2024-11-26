@@ -4,7 +4,7 @@ import WelcomeScreen from "../WelcomeScreen/WelcomeScreen";
 import UserTopBar from "./Components/UserTopBar";
 import UserMessageBar from "./Components/UserMessageBar";
 import MessageInputBar from "../../shared/components/MessageInputBar/MessageInputBar";
-import "./style.scss";
+import "../ChatsAndGroups.scss";
 import UserDetailsBar from "./Components/UserDetailsBar";
 
 // Props ile kullanıcıyı alıcak. ya da url ile id üzerinden kullanıcı bilgisni alıcak hub durumu felan şimdilik statik

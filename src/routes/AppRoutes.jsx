@@ -9,7 +9,7 @@ import Calls from '../components/Calls/Calls.jsx';
 import Home from '../components/Home/Home.jsx';
 
 function AppRoutes() {
-    const user = true; 
+    const user = true;
 
     return (
         <Routes>
@@ -29,7 +29,7 @@ function AppRoutes() {
                 <>
                     {/* Giriş yapılmış kullanıcılar için yönlendirme */}
                     <Route path="/" element={<Navigate to="/anasayfa" replace />} />
-                    
+
                     {/* Layout ile korunan rotalar */}
                     <Route path="/" element={<Layout />}>
                         <Route path="anasayfa" element={<Home />} />

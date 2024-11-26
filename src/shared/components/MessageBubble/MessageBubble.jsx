@@ -12,7 +12,7 @@ import { LuCheckCheck } from "react-icons/lu";
 
 import './style.scss';
 
-function MessageBubble({ text, timestamp, isSender, status }) {
+function MessageBubble({ text, timestamp, isSender, status, profileImage, userName, isGroupMessageBubble }) {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -40,21 +40,38 @@ function MessageBubble({ text, timestamp, isSender, status }) {
 
     if (status === "sent") {
         statusIcon = <LuCheck />;
-        statusColor = "#828A96";  // "Sent" için gri renk
+        statusColor = "#828A96";
     } else if (status === "delivered" || status === "read") {
         statusIcon = <LuCheckCheck />;
-        statusColor = status === "read" ? "#585CE1" : "#828A96";  // "Read" için mavi, "Delivered" için gri
+        statusColor = status === "read" ? "#585CE1" : "#828A96";
     }
 
     return (
         <div className={"message-bubble-box"}>
+
             <div className={`message-box ${isSender ? 'sender' : 'receiver'}`}>
+                {isGroupMessageBubble &&
+                    !isSender &&
+
+                    <div className='image-box'>
+                        <img src={profileImage} alt="" />
+                    </div>
+
+                }
+
                 <div className='message-text'>
+                    {!isSender &&
+                        <div className='user-info'>
+                            <p>{userName}</p>
+                        </div>
+                    }
                     <p>{text}</p>
                 </div>
+
                 <div className='message-hour'>
                     {timestamp}
                 </div>
+
                 {isSender && (
                     <div className='option'>
                         <IconButton
