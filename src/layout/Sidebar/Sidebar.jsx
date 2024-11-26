@@ -8,14 +8,16 @@ import { HiUserGroup } from "react-icons/hi2";
 import { AiFillHome } from "react-icons/ai";
 import { IoMdSettings } from "react-icons/io";
 
-import "./style.scss";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
+import "./style.scss";
 
 function Sidebar() {
+  
   const [isOpen, setIsOpen] = useState(false);
-  const sidebarRef = useRef(null);
+  const location = useLocation();
   const navigate = useNavigate();
-  const location = useLocation(); // Mevcut URL'yi almak için kullanılır
+
+  const sidebarRef = useRef(null);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -29,19 +31,20 @@ function Sidebar() {
     { icon: <AiFillHome className="icon" />, label: "Anasayfa", path: "/anasayfa" },
   ];
 
-  const handleNavigation = (path) => {
-    if (path !== "/ayarlar") {
-      navigate(path);
-    }
-
-    if (isOpen) {
-      setIsOpen(false);
-    }
-  };
 
   useOutsideClick(sidebarRef, () => {
     if (isOpen) setIsOpen(false);
   });
+
+  // -------------- Handlers --------------
+  const handleNavigation = (path) => {
+    navigate(path);
+    setIsOpen(false);
+  };
+
+  const handleSettings = () => {
+  //! Setting Modal içeriği oluşturulup showModal(<SettingsModal> isteği yapılacak );
+  }
 
   return (
     <div ref={sidebarRef} className={`sidebar-container ${isOpen ? "open" : ""}`}>
@@ -58,9 +61,8 @@ function Sidebar() {
           {navItems.map((item, index) => (
             <button
               key={index}
-              className={`nav-buttons ${isOpen ? "open" : ""} ${
-                location.pathname === item.path ? "active" : ""
-              }`}
+              className={`nav-buttons ${isOpen ? "open" : ""} ${location.pathname === item.path ? "active" : ""
+                }`}
               onClick={() => handleNavigation(item.path)}
             >
               {item.icon}
@@ -72,10 +74,9 @@ function Sidebar() {
 
       <div className="bottom-box" style={{ width: isOpen ? "100%" : "" }}>
         <button
-          className={`nav-buttons ${isOpen ? "open" : ""} ${
-            location.pathname === "/ayarlar" ? "active" : ""
-          }`}
-          onClick={() => handleNavigation("/ayarlar")}
+          className={`nav-buttons ${isOpen ? "open" : ""} ${location.pathname === "/ayarlar" ? "active" : ""
+            }`}
+          onClick={() => handleSettings()}
         >
           <IoMdSettings className="icon" />
           {isOpen && <span>Ayarlar</span>}

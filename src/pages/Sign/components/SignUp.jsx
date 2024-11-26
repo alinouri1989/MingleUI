@@ -5,7 +5,6 @@ import { IoEye } from "react-icons/io5";
 import { IoEyeOff } from "react-icons/io5";
 
 import MembershipModal from "./MembershipModal";
-import { useDispatch } from "react-redux";
 import { useModal } from "../../../contexts/ModalContext";
 import { Link } from "react-router-dom";
 

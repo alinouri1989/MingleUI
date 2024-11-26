@@ -20,9 +20,6 @@ export const ModalProvider = ({ children }) => {
       {modalContent && (
         <div className="modal-overlay">
           <div className="modal-card">
-            <button className="modal-close" onClick={closeModal}>
-              <MdClose />
-            </button>
             {modalContent}
           </div>
         </div>

@@ -1,8 +1,16 @@
 import React from 'react'
+import CloseModalButton from '../../../contexts/components/CloseModalButton';
+import { useModal } from '../../../contexts/ModalContext';
+
+
 
 function MembershipModal() {
+
+    const { closeModal } = useModal();
+
     return (
         <div className='membership-agreement-box'>
+            <CloseModalButton closeModal={closeModal} />
             <h1>Üyelik Sözleşmesi</h1>
             <div className='membership-terms-box'>
                 <h4>1. Sözleşmenin Amacı</h4>
