@@ -3,14 +3,18 @@ import WelcomeScreen from '../WelcomeScreen/WelcomeScreen'
 import { IoChatbubbleEllipses } from "react-icons/io5";
 import { PiPhoneFill } from "react-icons/pi";
 import { HiMiniVideoCamera } from "react-icons/hi2";
+import { useModal } from "../../contexts/ModalContext.jsx";
 
 import "./style.scss";
+import CallModal from './Components/CallModal';
 
 function Calls() {
 
-  const callStatus = "unAnsweredIncomingCall"; 
+  const { showModal, closeModal } = useModal();
+
+  const callStatus = "unAnsweredIncomingCall";
   let callStatusText = "";
-  let callStatusColor = "#828A96"; 
+  let callStatusColor = "#828A96";
   let icon = <PiPhoneFill className='icon' />;
 
   switch (callStatus) {
@@ -19,18 +23,24 @@ function Calls() {
       break;
     case "unAnsweredIncomingCall":
       callStatusText = "Cevapsız sesli arama";
-      callStatusColor = "#EB6262"; 
+      callStatusColor = "#EB6262";
       break;
     case "outgoingCall":
       callStatusText = "Giden sesli arama";
       break;
     case "unAnsweredOutgoingCall":
       callStatusText = "Cevapsız sesli arama";
-      callStatusColor = "#EB6262"; 
+      callStatusColor = "#EB6262";
       break;
     default:
       callStatusText = "Bilinmiyor";
       break;
+  }
+
+  // Handlers
+
+  const handleVoiceCall = () => {
+    showModal(<CallModal closeModal={closeModal} />);
   }
 
   return (
@@ -47,7 +57,7 @@ function Calls() {
             </div>
             <div className='call-options'>
               <button><IoChatbubbleEllipses /></button>
-              <button><PiPhoneFill /></button>
+              <button onClick={handleVoiceCall}><PiPhoneFill /></button>
               <button><HiMiniVideoCamera /></button>
             </div>
           </div>

@@ -1,0 +1,77 @@
+@use "../../../shared/styles/main.scss" as *;
+
+.call-modal {
+    @include flex-center(column, space-between, center);
+    width: 500px;
+    height: 390px;
+
+
+
+    .logo-and-e2e-box {
+        width: 100%;
+        @include flex-center(row, space-between, center);
+
+
+        img {
+            width: 100px;
+        }
+
+        .e2e-box {
+            @include flex-center(row, center, center);
+            gap: 4px;
+            color: #A4A4A4;
+            font-size: 12px;
+        }
+    }
+
+    .user-and-call-time-box {
+        width: 100%;
+        @include flex-center(column, center, center);
+        gap: 6px;
+
+        img {
+            width: 125px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        p {
+            color: var(--text-black);
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        span {
+            color: var(--text-input-gray);
+            font-size: 15px;
+        }
+    }
+
+    .call-option-buttons {
+        @include flex-center(row, space-between, center);
+        padding: 10px 15px;
+        background: var(--smooth-light-blue);
+        border-radius: 40px;
+        width: 370px;
+
+        button {
+            @include flex-center(row, center, center);
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            background: var(--text-white);
+            font-size: 22px;
+            color: var(--blue);
+
+            &:last-child {
+                background: var(--smooth-red);
+                color: var(--text-white);
+            }
+
+            &:first-child{
+                color: #C8C9F7;
+            }
+
+        }
+    }
+}
