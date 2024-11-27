@@ -23,13 +23,13 @@ function CallModal({ closeModal, user }) {
     useEffect(() => {
 
         const audio = new Audio(CallSound);
-        audio.loop = true; 
+        audio.loop = true;
         audio.play();
         audioRef.current = audio;
 
         const timer = setTimeout(() => {
             audio.pause();
-            audio.currentTime = 0; 
+            audio.currentTime = 0;
         }, 20000);
 
         return () => {
@@ -44,8 +44,15 @@ function CallModal({ closeModal, user }) {
     };
 
     const handleSpeakerMode = () => {
-        setSpeakerMode(!isSpeakerOn);
+        setSpeakerMode((prevMode) => {
+            const newMode = !prevMode;
+            if (audioRef.current) {
+                audioRef.current.volume = newMode ? 1 : 0; 
+            }
+            return newMode;
+        });
     };
+
 
     const handleCameraCall = () => {
         // Kamera çağrısı için işlev
