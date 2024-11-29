@@ -2,8 +2,17 @@ import React from 'react'
 import { IoIosArrowDroprightCircle } from "react-icons/io";
 import { PiPhoneFill } from "react-icons/pi";
 import { HiMiniVideoCamera } from "react-icons/hi2";
+import { useModal } from '../../../contexts/ModalContext';
+import CallModal from '../../Calls/Components/CallModal';
 
 function UserDetailsBar({ isSidebarOpen, toggleSidebar, user }) {
+
+    const { showModal, closeModal } = useModal();
+
+    const handleVoiceCall = () => {
+        showModal(<CallModal closeModal={closeModal} />);
+    }
+
     return (
         <div className={`user-details-sidebar ${isSidebarOpen ? "open" : ""}`}>
             {isSidebarOpen &&
@@ -36,7 +45,7 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, user }) {
                         </div>
                         <div className='call-buttons'>
                             <div className='button-box'>
-                                <button><PiPhoneFill /> </button>
+                                <button onClick={handleVoiceCall}><PiPhoneFill /> </button>
                                 <p>Sesli Ara</p>
                             </div>
                             <div className='button-box'>

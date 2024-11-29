@@ -1,3 +1,5 @@
+import NewChatModal from "../../../components/Chats/Components/NewChat/NewChatModal";
+import { useModal } from "../../../contexts/ModalContext";
 import SearchInput from "./SearchInput";
 import UserChatCard from "./UserChatCard";
 import "./style.scss";
@@ -12,7 +14,7 @@ const users = [
         lastMessage: "Sınav başarılı geç...",
         lastDate: "16:20",
         unReadMessage: 3,
-        isArchive:false,
+        isArchive: false,
     },
     {
         id: 2,
@@ -22,7 +24,7 @@ const users = [
         lastMessage: "Toplantı saat kaçta?",
         lastDate: "22.10.2004",
         unReadMessage: 1,
-        isArchive:false,
+        isArchive: false,
     },
     {
         id: 3,
@@ -32,7 +34,7 @@ const users = [
         lastMessage: "Yarın görüşelim mi?",
         lastDate: "14:45",
         unReadMessage: 2,
-        isArchive:false,
+        isArchive: false,
     },
     {
         id: 4,
@@ -42,18 +44,24 @@ const users = [
         lastMessage: "Dosyayı gönderdim.",
         lastDate: "13:30",
         unReadMessage: 0,
-        isArchive:false,
+        isArchive: false,
     }
 ];
 
 
-
 function ChatsList() {
+
+    const { showModal, closeModal } = useModal();
+
+    const handleNewChat = () => {
+        showModal(<NewChatModal closeModal={closeModal} />);
+    }
+
     return (
         <div className="chat-list-box">
             <SearchInput placeholder={"Sohbetlerinizde aratın..."} />
             <div>
-                <button className="create-buttons">Yeni Sohbet</button>
+                <button onClick={handleNewChat} className="create-buttons">Yeni Sohbet</button>
             </div>
             <div className="user-list">
                 {users.map((user) => (

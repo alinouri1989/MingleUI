@@ -2,11 +2,20 @@ import React from 'react'
 import { PiPhoneFill } from "react-icons/pi";
 import { HiMiniVideoCamera } from "react-icons/hi2";
 import { IoIosArrowDropleftCircle } from "react-icons/io";
+import CallModal from '../../Calls/Components/CallModal';
+import { useModal } from '../../../contexts/ModalContext';
 
 function UserTopBar({ isSidebarOpen, toggleSidebar }) {
     // Props olarak alır.
     const userName = "Okan Doğan"
     const status = "online"
+
+    const { showModal, closeModal } = useModal();
+
+    const handleVoiceCall = () => {
+        showModal(<CallModal closeModal={closeModal} />);
+    }
+
     return (
         <div className={`user-top-bar ${isSidebarOpen ? 'close' : ''}`}>
             <div className="user-info">
@@ -22,7 +31,7 @@ function UserTopBar({ isSidebarOpen, toggleSidebar }) {
 
             <div className="top-bar-buttons">
                 <div className='call-options'>
-                    <button><PiPhoneFill /></button>
+                    <button onClick={handleVoiceCall}><PiPhoneFill /></button>
                     <button><HiMiniVideoCamera /></button>
                 </div>
                 <IoIosArrowDropleftCircle

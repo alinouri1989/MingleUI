@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import MingleLogo from "../../../assets/logos/MingleLogoWithText.svg";
-import UserImage from "../../../assets/users/hamza.png";
 
 import { MdScreenShare } from "react-icons/md";
 import { HiMiniVideoCamera } from "react-icons/hi2";
@@ -14,11 +13,12 @@ import CallSound from "../../../assets/Sounds/MingleCallSound.mp3";
 import "./CallModal.scss";
 
 function CallModal({ closeModal, user }) {
-    const userName = "Hamza Doğan";
+    const userName = "Okan Doğan";
     const callStatus = "Aranıyor...";
     const [isMicrophoneOn, setMicrophoneMode] = useState(true);
     const [isSpeakerOn, setSpeakerMode] = useState(true);
     const audioRef = useRef(null);
+    const userImage = "https://randomuser.me/api/portraits/men/1.jpg"
 
     useEffect(() => {
 
@@ -76,7 +76,7 @@ function CallModal({ closeModal, user }) {
                 </div>
             </div>
             <div className='user-and-call-time-box'>
-                <img src={UserImage} alt="User Image" />
+                <img src={userImage} alt="User Image" />
                 <p>{userName}</p>
                 <span>{callStatus}</span>
             </div>
