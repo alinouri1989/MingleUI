@@ -12,9 +12,7 @@
     justify-content: center;
     z-index: 1000;
     opacity: 0;
-    /* Başlangıçta modal şeffaf */
     animation: fadeIn 0.4s forwards;
-    /* Animasyon ekleniyor */
 
     @media (max-width:768px) {
         display: flex;

@@ -1,0 +1,454 @@
+@use "../../../../shared/styles/main.scss" as *;
+
+.new-group-modal {
+    width: 500px;
+
+    .title-box {
+        @include flex-center(row, flex-start, center);
+        gap: 9px;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--smooth-light-blue);
+        margin-bottom: 10px;
+
+        p {
+            font-size: 16px;
+            color: var(--blue);
+            font-weight: 700;
+
+        }
+    }
+
+    .contents {
+        overflow: auto;
+        height: 400px;
+        padding: 0px 12px;
+
+        .choose-group-image {
+            width: 100%;
+            @include flex-center(column, center, center);
+            gap: 12px;
+
+            p {
+                color: var(--text-black);
+                font-size: 15px;
+                font-weight: 700;
+            }
+
+            .group-image-box,
+            img {
+                width: 120px;
+                height: 120px;
+                background: var(--smooth-light-blue, #E8EBFD);
+                border-radius: 50%;
+            }
+
+            .group-image-box {
+                @include flex-center(row, center, center);
+                position: relative;
+                color: var(--blue);
+                font-size: 18px;
+                font-weight: 700;
+
+
+                .edit-image-btn {
+                    @include flex-center(row, center, center);
+                    position: absolute;
+                    top: 10px;
+                    right: 3px;
+                    font-size: 25px;
+                    border-radius: 50%;
+                    background-color: var(--text-white);
+                    color: var(--blue);
+                    width: 35px;
+                    height: 35px;
+                    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+                }
+            }
+        }
+
+        .input-boxs {
+            margin-top: 20px;
+            @include flex-center(column, center, flex-start);
+            width: 100%;
+            gap: 20px;
+
+            .input-box {
+                width: 100%;
+
+                p {
+                    color: var(--text-black);
+                    font-weight: 700;
+                    font-size: 15px;
+                    margin-bottom: 12px;
+                }
+
+                input {
+                    width: 100%;
+                    padding: 7px 10px;
+                    background-color: var(--smooth-light-blue);
+                    color: var(--blue);
+                    font-size: 15px;
+                    border-radius: 7px;
+
+                }
+
+                input::placeholder {
+                    color: #7E93F2;
+                }
+            }
+        }
+
+        .group-members-box {
+            @include flex-center(column, center, flex-start);
+            gap: 15px;
+            width: 100%;
+
+            margin-top: 20px;
+
+            h2 {
+                font-size: 15px;
+                color: var(--text-black);
+                font-weight: 700;
+            }
+
+            .group-admin img,
+            .other-users img {
+                width: 60px;
+                border-radius: 50%;
+                object-fit: cover
+            }
+
+            .group-admin,
+            .other-users .user-box .user-info {
+                @include flex-center(row, flex-start, center);
+                gap: 10px;
+            }
+
+            .group-admin .admin-info,
+            .other-users .user-box .user-info .username-and-role-box {
+                p {
+                    font-weight: 700;
+                    font-size: 15px;
+                    line-height: 20px;
+                }
+
+                span {
+                    color: var(--blue);
+                    font-size: 14px;
+                }
+
+                select {
+                    color: var(--text-dark-gray);
+                    font-size: 14px;
+                    border-bottom: 2px solid var(--smooth-light-blue);
+                    padding-bottom: 3px;
+                }
+
+            }
+
+            .other-users {
+                width: 100%;
+            }
+
+            .other-users .user-box {
+                @include flex-center(row, space-between, center);
+                width: 100%;
+            }
+
+            .remove-user-box {
+                @include flex-center(row, center, center);
+                gap: 7px;
+                color: var(--smooth-red);
+                background-color: transparent;
+
+                .icon {
+                    font-size: 22px;
+                }
+
+                span {
+                    font-size: 13px;
+                }
+            }
+        }
+
+        .option-buttons {
+            margin-top: 20px;
+            @include flex-center(row, center, center);
+            width: 100%;
+            gap: 24px;
+
+
+            button {
+                @include flex-center(row, center, center);
+                gap: 5px;
+                padding: 7px 12px;
+                border-radius: 7px;
+                background-color: var(--smooth-light-blue);
+                color: var(--blue);
+                font-size: 14px;
+                font-weight: 700;
+
+                &:first-child {
+                    .icon {
+                        font-size: 20px;
+                    }
+
+                }
+
+                &:last-child {
+                    background-color: var(--blue);
+                    color: var(--text-white);
+
+                }
+            }
+
+
+
+        }
+    }
+
+
+}
+
+.add-user-modal {
+    width: 500px;
+
+    .fullsize-overlay {
+        @include flex-center(row, center, center);
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        animation: fadeIn 0.4s forwards;
+        background-color: rgba(39, 39, 39, 0.173);
+        backdrop-filter: blur(2px);
+
+        .card {
+            width: 600px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            border-radius: 17px;
+            border: 4px solid var(--Light-Soft-Mingle-Blue, #E8EBFD);
+            background: var(--White, #FFF);
+            max-height: 600px;
+            z-index: 55500;
+
+            @media (max-width:768px) {
+                height: 100%;
+                max-height: 100%;
+                overflow: scroll;
+                border-radius: 0px;
+                border: 0px;
+            }
+
+
+            .title-and-input-bar {
+                .title-box {
+                    @include flex-center(row, flex-start, center);
+                    border-bottom: 2px solid var(--smooth-light-blue);
+                    gap: 10px;
+                    padding-bottom: 15px;
+
+                    p {
+                        color: var(--blue);
+                        font-weight: 700;
+                        font-size: 16px;
+                    }
+                }
+
+                .search-user-input-box {
+                    margin: 15px 0px;
+                    @include flex-center(row, flex-start, center);
+                    gap: 10px;
+                    color: var(--text-dark-gray);
+
+                    .icon {
+                        font-size: 25px;
+
+                    }
+
+                    input {
+                        width: 100%;
+                        font-size: 15px;
+                    }
+                }
+            }
+
+            .user-list-box {
+                margin-top: 25px;
+                display: none;
+
+
+                &.active {
+                    display: block;
+                }
+
+                .result-number-box {
+                    @include flex-center(row, flex-start, center);
+                    padding-left: 3px;
+                    gap: 10px;
+                    color: var(--blue);
+
+                    .icon {
+                        font-size: 20px;
+                    }
+
+                    p {
+                        font-size: 13px;
+                        font-weight: 700;
+                    }
+                }
+
+                .users-box {
+                    @include flex-center(column, flex-start, center);
+                    gap: 5px;
+                    margin-top: 15px;
+                    height: 250px;
+                    padding-right: 15px;
+                    overflow: auto;
+                    transition: height 0.3s ease;
+
+
+                    .user-box {
+                        @include flex-center(row, flex-start, center);
+                        position: relative;
+                        width: 100%;
+                        gap: 10px;
+                        padding: 8px 10px;
+                        border-radius: 100px;
+                        @include transition();
+                        cursor: pointer;
+
+
+                        .add-user-box,.added-user {
+                            @include flex-center(row, center, center);
+                            position: absolute;
+                            display: none;
+                            gap: 5px;
+                            right: 35px;
+                            font-size: 15px;
+                            color: var(--blue);
+                            opacity: 0;
+                          
+                            
+
+                            .icon {
+                                font-size: 22px;
+                            }
+                        }
+
+                        &:hover {
+                            background-color: var(--smooth-light-blue);
+
+                            .add-user-box,.added-user {
+                                display: flex;
+                                animation: fadeIn 0.7s forwards;
+                            }
+                        }
+
+                        img {
+                            width: 52px;
+                            height: 52px;
+                            object-fit: cover;
+                            border-radius: 50%;
+                        }
+
+                        // Or
+
+                        .default-profile-image {
+                            width: 52px;
+                            height: 52px;
+                            border-radius: 50%;
+                            @include flex-center(row, center, center);
+                            font-size: 15px;
+                            background-color: var(--smooth-blue)
+                        }
+
+                        .user-info {
+                            @include flex-center(column, center, flex-start);
+
+                            p {
+                                color: var(--text-black);
+                                font-size: 15px;
+                                font-weight: 700;
+                                line-height: 24px;
+                            }
+
+                            span {
+                                color: var(--text-input-gray);
+                                font-size: 13px;
+                            }
+                        }
+
+                    }
+
+
+                }
+            }
+
+            .no-result-box {
+                margin-top: 20px;
+                @include flex-center(row, flex-start, center);
+                display: none;
+                gap: 8px;
+                color: var(--text-dark-gray);
+
+                &.active {
+                    display: flex;
+                }
+
+                .icon {
+                    font-size: 22px;
+                }
+
+                p {
+                    font-size: 13px;
+                    font-weight: 700;
+                }
+
+            }
+
+        }
+
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        cursor: pointer;
+        font-size: 25px;
+        color: #ffffff;
+        border: none;
+        background: none;
+        background-color: red;
+        width: 33px;
+        height: 33px;
+        padding: 6px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 18.5px;
+        background: #585CE1;
+
+    }
+}
+
+
+
+
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+
+    }
+
+    100% {
+        opacity: 1;
+    }
+}

@@ -7,6 +7,9 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+
+import NewGroupModal from "../../../components/Groups/Components/NewGroup/NewGroupModal";
+import { useModal } from "../../../contexts/ModalContext.jsx";
 import "./style.scss";
 
 const groups = [
@@ -47,6 +50,8 @@ const groups = [
 
 function GroupsList() {
 
+  const { showModal, closeModal } = useModal();
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -64,11 +69,15 @@ function GroupsList() {
     handleClose();
   };
 
+  const handleNewGroup = () => {
+    showModal(<NewGroupModal closeModal={closeModal} />)
+  }
+
   return (
     <div className="group-list-box">
       <SearchInput placeholder={"Gruplarda aratın"} />
       <div>
-        <button className="create-buttons">Yeni Grup Oluştur</button>
+        <button onClick={handleNewGroup} className="create-buttons">Yeni Grup Oluştur</button>
       </div>
       <div className="user-list">
         {groups.map((group) => (
@@ -112,8 +121,8 @@ function GroupsList() {
                     style: {
                       maxHeight: 48 * 2,
                       width: "16ch",
-                      
-                      padding:"0px",
+
+                      padding: "0px",
                       borderRadius: "8px",
                       border: "4px solid #CFD5F2",
                       fontWeight: "bold",
