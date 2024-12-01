@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useModal } from "../../contexts/ModalContext.jsx";
 import { HiMenu } from "react-icons/hi";
 import { IoChatbubbleEllipses } from "react-icons/io5";
 import { PiPhoneFill } from "react-icons/pi";
@@ -10,10 +11,12 @@ import { IoMdSettings } from "react-icons/io";
 
 import { useOutsideClick } from "../../hooks/useOutsideClick";
 import "./style.scss";
+import SettingsModal from "../../components/Settings/SettingsModal.jsx";
 
 function Sidebar() {
-  
+
   const [isOpen, setIsOpen] = useState(false);
+  const { showModal, closeModal } = useModal();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -43,7 +46,7 @@ function Sidebar() {
   };
 
   const handleSettings = () => {
-  //! Setting Modal içeriği oluşturulup showModal(<SettingsModal> isteği yapılacak );
+    showModal(<SettingsModal closeModal={closeModal} />)
   }
 
   return (
