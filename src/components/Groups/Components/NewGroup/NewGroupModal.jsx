@@ -6,9 +6,9 @@ import { TbPhotoEdit } from "react-icons/tb";
 import GroupImage from "../../../../assets/YardimlasmaGrubu.png"
 import star from "../../../../assets/svg/star.svg";
 import adminPP from "../../../../assets/users/hamza.png";
-import "./style.scss";
 import AddUser from "../AddUser.jsx";
 import { useState } from "react";
+import "./style.scss";
 
 function NewGroupModal({ closeModal, isGroupSettings }) {
 

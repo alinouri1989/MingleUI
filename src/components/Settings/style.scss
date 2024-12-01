@@ -90,7 +90,8 @@
         .dynamic-content {
             flex: 1;
             height: 100%;
-            padding: 15px;
+            padding: 15px 0px 0px 15px;
+
 
             h3 {
                 font-size: 17px;
@@ -155,7 +156,6 @@
             }
 
             .theme-box {
-
                 .theme-select {
                     margin-bottom: 20px;
 
@@ -194,11 +194,11 @@
                     .grid {
                         display: grid;
                         grid-template-columns: repeat(4, 1fr);
-                     
+
 
                         .gradient-box {
                             width: 47px;
-                            height:47px;
+                            height: 47px;
                             border-radius: 10px;
                             cursor: pointer;
                             border: 4px solid var(--smooth-light-blue);
@@ -223,6 +223,131 @@
                         strong {
                             font-weight: bold;
                         }
+                    }
+                }
+            }
+
+            .account-box {
+                overflow: scroll;
+                height: 440px;
+                width: 100%;
+                overflow-x: hidden;
+                padding-right: 15px;
+                @include flex-center(column, flex-start, flex-start);
+                gap: 18px;
+
+
+                h3 {
+                    margin-bottom: 0;
+                }
+
+                .edit-btn {
+                    background-color: var(--smooth-light-blue);
+                    color: var(--blue);
+                    padding: 6px;
+                    border-radius: 50%;
+                    font-size: 16px;
+                    @include flex-center(row, center, center);
+                }
+
+                .image-box {
+                    width: 100%;
+                    position: relative;
+                    width: max-content;
+
+                    img {
+                        width: 90px;
+                        border-radius: 50%;
+                        object-fit: cover;
+                    }
+
+                    .edit-btn {
+                        position: absolute;
+                        top: 6px;
+                        right: -3px;
+                    }
+                }
+
+                .name-box {
+                    width: 100%;
+                    @include flex-center(row, space-between, center);
+                    padding-bottom: 10px;
+                    border-bottom: 1px solid var(--smooth-light-blue);
+
+                    p {
+                        font-size: 16px;
+                    }
+                }
+
+                .email-and-phone-box {
+                    width: 100%;
+
+                    .email-box {
+                        p {
+                            margin: 3px 0px;
+                            font-size: 16px;
+                        }
+
+                        span,
+                        input {
+                            color: var(--text-input-gray);
+                            font-size: 14px;
+                        }
+                    }
+                }
+
+                .phone-box {
+                    margin: 15px 0px;
+                    padding-bottom: 15px;
+                    border-bottom: 1px solid var(--smooth-light-blue);
+
+                    p {
+                        margin: 3px 0px;
+                        font-size: 16px;
+                    }
+
+                    .phone-edit-box {
+                        @include flex-center(row, space-between, center);
+
+                        p,
+                        input {
+                            color: var(--text-input-gray);
+                            font-size: 14px;
+                        }
+                    }
+                }
+
+                .biography-box {
+                    margin: 3px 0px;
+
+                    p {
+                        font-size: 16px;
+                    }
+
+                    .biograpy-edit-box {
+                        @include flex-center(row, space-between, center);
+                        margin-bottom: 3px;
+                    }
+
+
+                    span,
+                    input {
+                        color: var(--text-input-gray);
+                        font-size: 14px;
+                        width: 100%;
+                    }
+
+                    input {
+                        height: auto;
+                        /* Allow the input to expand based on content */
+                        min-height: 30px;
+                        /* Set a minimum height */
+                        resize: vertical;
+                        /* Allow the user to resize the input field vertically */
+                        padding: 5px;
+                        /* Optional: adds some space inside the input */
+                        box-sizing: border-box;
+                        /* Ensures padding is included in the height calculation */
                     }
                 }
             }

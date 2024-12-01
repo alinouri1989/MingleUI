@@ -34,7 +34,7 @@ const Theme = () => {
     <div className="theme-box">
       {/* Tema Ayarları */}
       <div className="theme-select">
-        <label>Tema</label>
+        <h3>Tema</h3>
         <select
           value={themeMode}
           onChange={(e) => handleThemeChange(e.target.value)}

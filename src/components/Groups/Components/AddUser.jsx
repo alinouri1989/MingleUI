@@ -5,13 +5,11 @@ import { useState } from "react";
 import { HiUserAdd } from "react-icons/hi";
 import { HiCheckCircle } from "react-icons/hi2";
 
-
 import star from "../../../assets/svg/star.svg";
 import { BiSearchAlt } from "react-icons/bi";
 import { TiThList } from "react-icons/ti";
 import Okan from "../../../assets/users/okan.png";
 import { AiFillInfoCircle } from "react-icons/ai";
-
 
 import "../../Chats/Components/NewChat/style.scss";
 
