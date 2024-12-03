@@ -1,9 +1,13 @@
+import { useEffect } from 'react';
 import AppRoutes from './routes/AppRoutes'
-
+import { Toaster } from 'react-hot-toast';
 function App() {
+
+
 
   return (
     <>
+      <Toaster position="top-center" />
       <AppRoutes />
     </>
   )

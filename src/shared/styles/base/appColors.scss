@@ -21,15 +21,23 @@
 }
 
 [data-theme='dark'] {
+  --blue: #717ee4;
+  --hoverBlue: #2F469C;
+  --smooth-blue: #1b1b1b;
+  --smooth-blue-hover: #2636ac;
+  --smooth-light-blue: #1f2eb5;
+
+  --smooth-red: #B04141;
 
   --text-black: #E0E0E0;
   --text-dark-gray: #A5A5A5;
   --text-input-gray: #B0B0B0;
-  --text-white: rgb(20, 20, 20);
+  --text-white: rgb(33, 33, 33);
 
-  --smooth-stroke-color: #2A2A2A;
-  --user-message-box-color: #333333;
-  --user-message-text-color: #C0C0C0;
+  --smooth-white-color: #1A1A1A;
+  --smooth-border-color: #3E3E3E;
+  --user-message-box-color: #2C2C2C;
+  --user-message-text-color: #D6D6D6;
 
   --overlay-background: #1f1f1f7f;
 }

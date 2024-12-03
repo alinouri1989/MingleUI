@@ -194,6 +194,8 @@
                     .grid {
                         display: grid;
                         grid-template-columns: repeat(4, 1fr);
+                        width: max-content;
+                        gap: 22px;
 
 
                         .gradient-box {
@@ -202,7 +204,6 @@
                             border-radius: 10px;
                             cursor: pointer;
                             border: 4px solid var(--smooth-light-blue);
-                            margin-bottom: 20px;
                             @include transition();
 
                             &.selected {
@@ -228,7 +229,7 @@
             }
 
             .account-box {
-                overflow: scroll;
+                overflow: auto;
                 height: 440px;
                 width: 100%;
                 overflow-x: hidden;
@@ -324,30 +325,102 @@
                         font-size: 16px;
                     }
 
+
                     .biograpy-edit-box {
                         @include flex-center(row, space-between, center);
                         margin-bottom: 3px;
                     }
 
 
-                    span,
-                    input {
+                    .biography-span,
+                    textarea {
                         color: var(--text-input-gray);
                         font-size: 14px;
                         width: 100%;
+                        word-break: break-word;
+                        overflow-wrap: break-word;
+                        white-space: normal;
+                        line-height: 30px;
                     }
 
+
+                    textarea {
+                        resize: none;
+                       height: 100px;
+                    }
+
+
                     input {
-                        height: auto;
+                        @include flex-center(row, flex-start, flex-start);
+                        height: 200px;
+                        border: 2px solid red;
                         /* Allow the input to expand based on content */
-                        min-height: 30px;
-                        /* Set a minimum height */
-                        resize: vertical;
-                        /* Allow the user to resize the input field vertically */
-                        padding: 5px;
-                        /* Optional: adds some space inside the input */
-                        box-sizing: border-box;
-                        /* Ensures padding is included in the height calculation */
+                    }
+                }
+
+                .option-buttons {
+                    width: 100%;
+                    @include flex-center(row, flex-start, center);
+                    gap: 10px;
+
+                    button {
+                        padding: 7px 15px;
+                        font-size: 14px;
+                        border-radius: 7px;
+                        @include transition();
+
+                        &:first-child {
+                            background-color: var(--smooth-light-blue);
+                            color: var(--blue);
+                        }
+
+                        &:last-child {
+                            background-color: var(--blue);
+                            color: var(--text-white);
+
+                            &:hover {
+                                background-color: var(--hoverBlue);
+                            }
+                        }
+                    }
+                }
+
+                .change-password-box {
+                    width: 100%;
+
+                    .inputs-box {
+                        margin-top: 20px;
+                        @include flex-center(column, flex-start, center);
+                        gap: 15px;
+
+                        .input-box {
+                            width: 100%;
+
+                            p {
+                                color: var(--text-dark-gray);
+                                margin-bottom: 7px;
+                                font-size: 15px;
+                            }
+
+                            input {
+                                background-color: var(--smooth-light-blue);
+                                border-radius: 7px;
+                                width: 100%;
+                                padding: 6px 12px;
+                                font-size: 15px;
+                                color: var(--blue);
+                            }
+                        }
+                    }
+
+                    .option-buttons {
+                        margin-top: 35px;
+                        @include flex-center(row, center, center);
+                        gap: 17px;
+
+                        button {
+                            width: 120px;
+                        }
                     }
                 }
             }

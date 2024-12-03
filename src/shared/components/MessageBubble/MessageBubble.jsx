@@ -11,6 +11,7 @@ import { LuCheck } from "react-icons/lu";
 import { LuCheckCheck } from "react-icons/lu";
 
 import './style.scss';
+import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
 
 function MessageBubble({ text, timestamp, isSender, status, profileImage, userName, isGroupMessageBubble }) {
 
@@ -26,12 +27,13 @@ function MessageBubble({ text, timestamp, isSender, status, profileImage, userNa
     };
 
     const handleDelete = () => {
-        alert("Silindi");
+      SuccessAlert("Mesaj Silindi")
         handleClose();
     };
 
     const handleCopy = () => {
         navigator.clipboard.writeText(text);
+        SuccessAlert("Mesaj Kopyalandı")
         handleClose();
     };
 

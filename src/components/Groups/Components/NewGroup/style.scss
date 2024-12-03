@@ -140,8 +140,7 @@
                 select {
                     color: var(--text-dark-gray);
                     font-size: 14px;
-                    border-bottom: 2px solid var(--smooth-light-blue);
-                    padding-bottom: 3px;
+                    margin-left: -3px;
                 }
 
             }
@@ -153,6 +152,7 @@
             .other-users .user-box {
                 @include flex-center(row, space-between, center);
                 width: 100%;
+                gap: 15px;
             }
 
             .remove-user-box {
@@ -162,7 +162,7 @@
                 background-color: transparent;
 
                 .icon {
-                    font-size: 22px;
+                    font-size: 27px;
                 }
 
                 span {
