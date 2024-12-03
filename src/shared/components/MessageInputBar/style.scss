@@ -45,6 +45,16 @@
             width: 100px;
             height: 100%;
 
+            .emoji-picker {
+                position: absolute;
+                bottom: 75px;
+                right: 92px;
+                z-index: 1000;
+                background-color: white;
+                border: 1px solid #ddd;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+            }
             .add-emoji-button {
                 width: 30px;
                 height: 30px;
