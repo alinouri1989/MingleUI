@@ -4,9 +4,12 @@ import { MdOutlineEmojiEmotions } from "react-icons/md";
 import EmojiPicker from "emoji-picker-react";
 
 import "./style.scss";
+import { useModal } from "../../../contexts/ModalContext";
+import ImageModal from "../ImageModal/ImageModal";
 
 function MessageInputBar() {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const { showModal, closeModal } = useModal();
     const [message, setMessage] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
     const emojiPickerRef = useRef(null);
@@ -30,7 +33,11 @@ function MessageInputBar() {
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
-            setSelectedFile(e.target.files[0]);
+            const file = e.target.files[0];
+            setSelectedFile(file);
+            console.log(file);
+
+            showModal(<ImageModal closeModal={closeModal} image={URL.createObjectURL(file)} />);
         }
     };
 
@@ -69,7 +76,7 @@ function MessageInputBar() {
                     value={message}
                     onChange={handleInputChange}
                 />
-                
+
                 <div className="emoji-and-send-buttons">
                     <button className="add-emoji-button" onClick={toggleEmojiPicker}>
                         <MdOutlineEmojiEmotions />

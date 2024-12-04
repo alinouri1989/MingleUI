@@ -5,10 +5,13 @@ import { HiMiniVideoCamera } from "react-icons/hi2";
 import { IoMdSettings } from "react-icons/io";
 import YardimlasmaGrubu from "../../../assets/YardimlasmaGrubu.png";
 import Hamza from "../../../assets/users/hamza.png";
+import { useModal } from '../../../contexts/ModalContext';
+import NewGroupModal from './NewGroup/NewGroupModal';
 
 function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupDetails }) {
     const isAdmin = true;
 
+    const { showModal, closeModal } = useModal();
     // Grup üyelerini bir dizi olarak tanımladık
     const groupMembers = [
         { id: 1, name: "Hamza Doğan", status: "online", isAdmin: true, avatar: Hamza },
@@ -24,7 +27,7 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupDetails }) {
     ];
 
     const handleGroupSettings = () => {
-        console.log("Grup ayarları açılır.")
+        showModal(<NewGroupModal closeModal={closeModal} isGroupSettings={true} />)
     }
 
     return (
@@ -75,8 +78,6 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupDetails }) {
                                 ))}
                             </div>
                         </div>
-
-
                     </div>
                 </>
             }

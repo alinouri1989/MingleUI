@@ -14,7 +14,11 @@
             font-size: 16px;
             color: var(--blue);
             font-weight: 700;
+        }
 
+        .setting-icon {
+            color: var(--blue);
+            font-size: 26px;
         }
     }
 
@@ -40,6 +44,7 @@
                 height: 120px;
                 background: var(--smooth-light-blue, #E8EBFD);
                 border-radius: 50%;
+                object-fit: cover;
             }
 
             .group-image-box {
@@ -62,6 +67,7 @@
                     width: 35px;
                     height: 35px;
                     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+                    cursor: pointer;
                 }
             }
         }
@@ -187,6 +193,7 @@
                 color: var(--blue);
                 font-size: 14px;
                 font-weight: 700;
+                @include transition();
 
                 &:first-child {
                     .icon {
@@ -199,6 +206,11 @@
                     background-color: var(--blue);
                     color: var(--text-white);
 
+                }
+
+                &.disabled {
+                    opacity: 0.7;
+                    pointer-events: none;
                 }
             }
 
@@ -324,7 +336,8 @@
                         cursor: pointer;
 
 
-                        .add-user-box,.added-user {
+                        .add-user-box,
+                        .added-user {
                             @include flex-center(row, center, center);
                             position: absolute;
                             display: none;
@@ -333,8 +346,8 @@
                             font-size: 15px;
                             color: var(--blue);
                             opacity: 0;
-                          
-                            
+
+
 
                             .icon {
                                 font-size: 22px;
@@ -344,7 +357,8 @@
                         &:hover {
                             background-color: var(--smooth-light-blue);
 
-                            .add-user-box,.added-user {
+                            .add-user-box,
+                            .added-user {
                                 display: flex;
                                 animation: fadeIn 0.7s forwards;
                             }

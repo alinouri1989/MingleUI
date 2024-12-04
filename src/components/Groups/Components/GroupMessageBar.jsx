@@ -2,6 +2,8 @@ import React from 'react'
 import MessageBubble from "../../../shared/components/MessageBubble/MessageBubble.jsx";
 
 function GroupMessageBar({ groupedMessages }) {
+
+
     return (
         <div className="group-message-bar">
             <div className="messages-list">
@@ -11,13 +13,14 @@ function GroupMessageBar({ groupedMessages }) {
                         {messages.map((msg) => (
                             <MessageBubble
                                 key={msg.id}
-                                text={msg.text}
+                                content={msg.content}
                                 timestamp={msg.timestamp}
                                 isSender={msg.sender === 'user1'}
                                 status={msg.status}
                                 profileImage={msg.profileImage}
                                 userName={msg.userName}
                                 isGroupMessageBubble={true}
+                                messageType={msg.messageType}
                             />
                         ))}
                     </div>

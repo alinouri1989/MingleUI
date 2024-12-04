@@ -13,8 +13,9 @@ import CallSound from "../../../assets/Sounds/MingleCallSound.mp3";
 import "./CallModal.scss";
 
 function CallModal({ closeModal, user }) {
+    
     const userName = "Okan Doğan";
-    const callStatus = "Aranıyor...";
+    const callStatus = "10:21";
     const [isMicrophoneOn, setMicrophoneMode] = useState(true);
     const [isSpeakerOn, setSpeakerMode] = useState(true);
     const audioRef = useRef(null);
@@ -47,7 +48,7 @@ function CallModal({ closeModal, user }) {
         setSpeakerMode((prevMode) => {
             const newMode = !prevMode;
             if (audioRef.current) {
-                audioRef.current.volume = newMode ? 1 : 0; 
+                audioRef.current.volume = newMode ? 1 : 0;
             }
             return newMode;
         });

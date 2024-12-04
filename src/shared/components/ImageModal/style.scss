@@ -1,0 +1,41 @@
+@use "../../../shared/styles/main.scss" as*;
+
+.image-modal-box {
+    padding: 10px;
+
+    .title-box {
+        @include flex-center(row, flex-start, center);
+        gap: 10px;
+        color: var(--blue);
+        padding: 6px 10px;
+        width: 100%;
+        border-bottom: 3px solid var(--smooth-light-blue);
+        margin-bottom: 15px;
+
+        svg {
+            font-size: 22px;
+        }
+
+        p {
+            font-size: 17px;
+        }
+
+    }
+
+    img {
+        max-width: 500px;
+        max-height: 400px;
+        border-radius: 10px;
+    }
+
+    .send-image-btn {
+        margin-top: 15px;
+        width: 100%;
+        padding: 8px;
+        background-color: var(--smooth-light-blue);
+        color: var(--blue);
+
+        border-radius: 7px;
+    }
+
+}

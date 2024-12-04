@@ -11,10 +11,11 @@ function UserMessageBar({ groupedMessages }) {
                         {messages.map((msg) => (
                             <MessageBubble
                                 key={msg.id}
-                                text={msg.text}
+                                content={msg.content}
                                 timestamp={msg.timestamp}
                                 isSender={msg.sender === 'user1'}
                                 status={msg.status}
+                                messageType={msg.messageType}
                             />
                         ))}
                     </div>

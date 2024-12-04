@@ -13,7 +13,7 @@ import { LuCheckCheck } from "react-icons/lu";
 import './style.scss';
 import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
 
-function MessageBubble({ text, timestamp, isSender, status, profileImage, userName, isGroupMessageBubble }) {
+function MessageBubble({ content, timestamp, isSender, status, profileImage, userName, messageType, isGroupMessageBubble }) {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -27,12 +27,12 @@ function MessageBubble({ text, timestamp, isSender, status, profileImage, userNa
     };
 
     const handleDelete = () => {
-      SuccessAlert("Mesaj Silindi")
+        SuccessAlert("Mesaj Silindi")
         handleClose();
     };
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(text);
+        navigator.clipboard.writeText(content);
         SuccessAlert("Mesaj Kopyalandı")
         handleClose();
     };
@@ -51,23 +51,27 @@ function MessageBubble({ text, timestamp, isSender, status, profileImage, userNa
     return (
         <div className={"message-bubble-box"}>
 
-            <div className={`message-box ${isSender ? 'sender' : 'receiver'}`}>
+            <div className={`message-box ${isSender ? 'sender' : 'receiver'}`} >
                 {isGroupMessageBubble &&
                     !isSender &&
 
                     <div className='image-box'>
                         <img src={profileImage} alt="" />
                     </div>
-
                 }
 
-                <div className='message-text'>
+
+                <div className='message-content'>
                     {!isSender &&
                         <div className='user-info'>
                             <p>{userName}</p>
                         </div>
                     }
-                    <p>{text}</p>
+
+                    {messageType === "text"
+                        ? <p>{content}</p>
+                        : <img className='image' src={content} alt="" />
+                    }
                 </div>
 
                 <div className='message-hour'>
@@ -124,22 +128,24 @@ function MessageBubble({ text, timestamp, isSender, status, profileImage, userNa
                                 />
                             </MenuItem>
 
-                            <MenuItem
-                                onClick={handleCopy}
-                                sx={{ color: "#585CE1" }}
-                            >
-                                <ListItemIcon fontSize={"small"} sx={{ color: "inherit" }}>
-                                    <ContentCopyIcon />
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary="Kopyala"
-                                    primaryTypographyProps={{
-                                        fontFamily: "Montserrat",
-                                        fontWeight: "700",
-                                        fontSize: "14px",
-                                    }}
-                                />
-                            </MenuItem>
+                            {messageType === "text" &&
+                                <MenuItem
+                                    onClick={handleCopy}
+                                    sx={{ color: "#585CE1" }}
+                                >
+                                    <ListItemIcon fontSize={"small"} sx={{ color: "inherit" }}>
+                                        <ContentCopyIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="Kopyala"
+                                        primaryTypographyProps={{
+                                            fontFamily: "Montserrat",
+                                            fontWeight: "700",
+                                            fontSize: "14px",
+                                        }}
+                                    />
+                                </MenuItem>
+                            }
                         </Menu>
                     </div>
                 )}
