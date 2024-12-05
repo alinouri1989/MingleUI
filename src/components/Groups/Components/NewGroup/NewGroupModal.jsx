@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import CloseModalButton from "../../../../contexts/components/CloseModalButton.jsx";
 import { useModal } from "../../../../contexts/ModalContext.jsx";
 import { MdPersonRemoveAlt1 } from "react-icons/md";
@@ -10,6 +10,7 @@ import adminPP from "../../../../assets/users/hamza.png";
 import AddUser from "../AddUser.jsx";
 import "./style.scss";
 
+// Kodun başlangıcında gerekli değişiklikler
 function NewGroupModal({ closeModal, isGroupSettings }) {
     const [isAddUserModal, setAddUserModal] = useState(false);
 
@@ -22,45 +23,77 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
     const exitsGroupName = "Yardımlaşma Grubu";
     const exitsGroupDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores id vitae corporis ex, atque animi distinctio minima commodi explicabo qui?";
 
-    // State to store input values
-    const [groupName, setGroupName] = useState(isGroupSettings ? exitsGroupName : "");
-    const [groupDescription, setGroupDescription] = useState(isGroupSettings ? exitsGroupDescription : "");
-    const [groupImage, setGroupImage] = useState(isGroupSettings ? exitsGroupImage : null);
+    // State for group data
+    const initialData = {
+        groupName: isGroupSettings ? exitsGroupName : "",
+        groupDescription: isGroupSettings ? exitsGroupDescription : "",
+        groupImage: isGroupSettings ? exitsGroupImage : null,
+        groupMembers: [
+            { id: 1, name: "Okan Doğan", role: "Üye", avatar: "https://randomuser.me/api/portraits/men/1.jpg" },
+            { id: 2, name: "Ayşe Yılmaz", role: "Üye", avatar: "https://randomuser.me/api/portraits/women/2.jpg" }
+        ]
+    };
+
+    const [formData, setFormData] = useState(initialData);
+    const [updatedRoles, setUpdatedRoles] = useState([]);
+
+    // Kaydet butonunun etkinliğini izlemek için state
+    const [isSaveDisabled, setSaveDisabled] = useState(true);
+
+    useEffect(() => {
+        // formData ve initialData'yı karşılaştır
+        const isSameData = JSON.stringify(formData) === JSON.stringify(initialData);
+        setSaveDisabled(isSameData);
+    }, [formData]);
 
     // Handlers for input changes
-    const handleGroupNameChange = (e) => setGroupName(e.target.value);
-    const handleGroupDescriptionChange = (e) => setGroupDescription(e.target.value);
+    const handleGroupNameChange = (e) =>
+        setFormData((prev) => ({ ...prev, groupName: e.target.value }));
+    const handleGroupDescriptionChange = (e) =>
+        setFormData((prev) => ({ ...prev, groupDescription: e.target.value }));
 
     const handleGroupImageEdit = (e) => {
         const file = e.target.files[0];
         if (file) {
             const imageUrl = URL.createObjectURL(file);
-            setGroupImage(imageUrl);
+            setFormData((prev) => ({ ...prev, groupImage: imageUrl }));
         }
     };
 
-    // Determine if save button should be active
-    const isSaveButtonDisabled =
-        groupName === exitsGroupName &&
-        groupDescription === exitsGroupDescription &&
-        groupImage === exitsGroupImage;
+    const handleRoleChange = (id, newRole) => {
+        const updatedMembers = formData.groupMembers.map((member) =>
+            member.id === id ? { ...member, role: newRole } : member
+        );
+        setFormData((prev) => ({ ...prev, groupMembers: updatedMembers }));
 
-    const handleCreateGroup = () => {
-        // Your create group logic here
+        if (!updatedRoles.includes(id)) {
+            setUpdatedRoles((prev) => [...prev, id]);
+        }
+    };
+
+    const handleAddUser = (newUser) => {
+        setFormData((prev) => ({
+            ...prev,
+            groupMembers: [...prev.groupMembers, newUser]
+        }));
+    };
+
+    const handleRemoveUser = (id) => {
+        const filteredMembers = formData.groupMembers.filter(
+            (member) => member.id !== id
+        );
+        setFormData((prev) => ({ ...prev, groupMembers: filteredMembers }));
     };
 
     const handleSaveChanges = () => {
-        // Your save changes logic here
+        console.log("Saved Data: ", formData);
+        // Backend service logic here
     };
 
-    const handleAddUser = () => {
-        setAddUserModal(!isAddUserModal);
+    const handleSubmit = () => {
+        console.log("Final Data: ", formData);
+     ü
     };
-
-    const closeUserModal = () => {
-        setAddUserModal(!isAddUserModal);
-    };
-
     return (
         <div className="new-group-modal">
             <CloseModalButton closeModal={closeModal} />
@@ -81,8 +114,8 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
                 <div className="choose-group-image">
                     <p>Grup Resmi</p>
                     <div className="group-image-box">
-                        {groupImage ? (
-                            <img src={groupImage} alt="Group" />
+                        {formData.groupImage ? (
+                            <img src={formData.groupImage} alt="Group" />
                         ) : (
                             <div className="group-image">GRUP</div>
                         )}
@@ -103,7 +136,7 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
                         <input
                             type="text"
                             placeholder="Bir grup adı belirle..."
-                            value={groupName}
+                            value={formData.groupName}
                             onChange={handleGroupNameChange}
                         />
                     </div>
@@ -112,7 +145,7 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
                         <input
                             type="text"
                             placeholder="Grup açıklaması belirle..."
-                            value={groupDescription}
+                            value={formData.groupDescription}
                             onChange={handleGroupDescriptionChange}
                         />
                     </div>
@@ -130,51 +163,62 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
                     </div>
 
                     <div className="other-users">
-                        <div className="user-box">
-                            <div className="user-info">
-                                <img
-                                    src="https://randomuser.me/api/portraits/men/1.jpg"
-                                    alt="User Image"
-                                />
-                                <div className="username-and-role-box">
-                                    <p>Okan Doğan</p>
-                                    <select name="" defaultValue="Üye">
-                                        <option value="Üye">Üye</option>
-                                        <option value="Yönetici">Yönetici</option>
-                                    </select>
+                        {formData.groupMembers.map((user) => (
+                            <div className="user-box" key={user.id}>
+                                <div className="user-info">
+                                    <img src={user.avatar} alt="User" />
+                                    <div className="username-and-role-box">
+                                        <p>{user.name}</p>
+                                        <select
+                                            defaultValue={user.role}
+                                            onChange={(e) =>
+                                                handleRoleChange(user.id, e.target.value)
+                                            }
+                                        >
+                                            <option value="Üye">Üye</option>
+                                            <option value="Yönetici">Yönetici</option>
+                                        </select>
+                                    </div>
                                 </div>
+                                {isAdmin && (
+                                    <button
+                                        className="remove-user-box"
+                                        onClick={() => handleRemoveUser(user.id)}
+                                    >
+                                        <MdPersonRemoveAlt1 className="icon" />
+                                        <span>Gruptan Çıkar</span>
+                                    </button>
+                                )}
                             </div>
-
-                            {isAdmin && (
-                                <button className="remove-user-box">
-                                    <MdPersonRemoveAlt1 className="icon" />
-                                    <span>Gruptan Çıkar</span>
-                                </button>
-                            )}
-                        </div>
+                        ))}
                     </div>
 
                     <div className="option-buttons">
-                        <button onClick={handleAddUser}>
+                        <button onClick={() => setAddUserModal(true)}>
                             <HiUserAdd className="icon" />
                             Üye Ekle
                         </button>
-                        
                         {isGroupSettings ? (
                             <button
                                 onClick={handleSaveChanges}
-                                disabled={isSaveButtonDisabled}
-                                className={isSaveButtonDisabled ? "disabled" : ""}
+                                disabled={isSaveDisabled}
+                                className={isSaveDisabled ? "disabled" : ""}
                             >
                                 Kaydet
                             </button>
                         ) : (
-                            <button onClick={handleCreateGroup}>Grubu Oluştur</button>
+                            <button onClick={handleSubmit}>Grubu Oluştur</button>
                         )}
                     </div>
                 </div>
-            </div>
-            {isAddUserModal && <AddUser closeUserModal={closeUserModal} />}
+                </div>
+                {isAddUserModal && (
+                    <AddUser
+                        closeUserModal={() => setAddUserModal(false)}
+                        onAddUser={handleAddUser}
+                    />
+                )}
+           
         </div>
     );
 }
