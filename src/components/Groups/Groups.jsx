@@ -5,7 +5,7 @@ import MessageInputBar from "../../shared/components/MessageInputBar/MessageInpu
 import GroupMessageBar from "./Components/GroupMessageBar";
 import GroupDetailsBar from "./Components/GroupDetailsBar";
 import GroupTopBar from "./Components/GroupTopBar";
-import "../ChatsAndGroups.scss";
+import "../layout.scss";
 
 // Props ile kullanıcıyı alıcak. ya da url ile id üzerinden kullanıcı bilgisni alıcak hub durumu felan şimdilik statik
 

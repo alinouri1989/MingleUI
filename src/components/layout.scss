@@ -2,7 +2,7 @@
 
 
 .chat-general-box,
-.group-general-box {
+.group-general-box,.archive-general-box {
     @include flex-center(column, space-between, center);
     flex: 1;
     height: 100%;
