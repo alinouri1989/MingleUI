@@ -40,7 +40,11 @@ function Calls() {
   // Handlers
 
   const handleVoiceCall = () => {
-    showModal(<CallModal closeModal={closeModal} />);
+    showModal(<CallModal isVideoCall={false} closeModal={closeModal} />);
+  }
+  
+  const handleVideoCall = () => {
+    showModal(<CallModal isVideoCall={true} closeModal={closeModal} />);
   }
 
   return (
@@ -58,7 +62,7 @@ function Calls() {
             <div className='call-options'>
               <button><IoChatbubbleEllipses /></button>
               <button onClick={handleVoiceCall}><PiPhoneFill /></button>
-              <button><HiMiniVideoCamera /></button>
+              <button onClick={handleVideoCall}><HiMiniVideoCamera /></button>
             </div>
           </div>
           <div className='call-details'>

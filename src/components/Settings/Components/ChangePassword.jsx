@@ -35,7 +35,7 @@ function ChangePassword() {
                 <div className='input-box'>
                     <p>Yeni Şifre</p>
                     <input
-                        type="password"
+                        type="text"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                     />
@@ -43,7 +43,7 @@ function ChangePassword() {
                 <div className='input-box'>
                     <p>Yeni Şifre Tekrar</p>
                     <input
-                        type="password"
+                        type="text"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                     />
