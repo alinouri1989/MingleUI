@@ -1,19 +1,23 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-function ChangePassword({ handleChangePassword }) {
+function ChangePassword() {
+
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
 
-    // Implementation is necesary 
+    const isDisabled = !currentPassword || !newPassword || !confirmPassword;
+
     const handleSave = () => {
         if (newPassword !== confirmPassword) {
             alert("Yeni şifreler eşleşmiyor!");
             return;
         }
-        console.log("Mevcut Şifre:", currentPassword);
-        console.log("Yeni Şifre:", newPassword);
+
         alert("Şifre başarıyla değiştirildi!");
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
     };
 
     return (
@@ -46,8 +50,14 @@ function ChangePassword({ handleChangePassword }) {
                 </div>
             </div>
             <div className='option-buttons'>
-                <button onClick={handleChangePassword}>Vazgeç</button>
-                <button onClick={handleSave}>Kaydet</button>
+                <button
+                    onClick={handleSave}
+                    disabled={isDisabled}
+                    className={`savePassword ${isDisabled ? 'disabled' : ''}`}
+                >
+                    Kaydet
+                </button>
+
             </div>
         </div>
     );

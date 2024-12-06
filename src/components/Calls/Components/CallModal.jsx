@@ -12,10 +12,11 @@ import { PiPhoneSlashFill } from "react-icons/pi";
 import CallSound from "../../../assets/Sounds/MingleCallSound.mp3";
 import "./CallModal.scss";
 
-function CallModal({ closeModal, user }) {
+function CallModal({ closeModal, user}) {
     
     const userName = "Okan Doğan";
-    const callStatus = "10:21";
+    const callStatus = "Aranıyor...";
+    
     const [isMicrophoneOn, setMicrophoneMode] = useState(true);
     const [isSpeakerOn, setSpeakerMode] = useState(true);
     const audioRef = useRef(null);

@@ -29,12 +29,18 @@
         width: 100%;
 
         .sidebar {
-            @include flex-center(column, flex-start, center);
+            @include flex-center(column, space-between, center);
             width: 200px;
             height: 100%;
             padding: 15px 15px 0px 0px;
             gap: 13px;
             border-right: 1px solid var(--smooth-light-blue);
+
+            .menu-list {
+                width: 100%;
+                @include flex-center(column, flex-start, center);
+                gap: 13px;
+            }
 
             .menu-item {
                 @include flex-center(row, flex-start, center);
@@ -85,7 +91,26 @@
                     font-weight: 700;
                 }
             }
+
+            .logout {
+
+                color: var(--smooth-red);
+
+                .icon {
+                    color: var(--smooth-red);
+                }
+
+                &:hover {
+                    background-color: var(--smooth-light-blue);
+
+                    p {
+                        color: var(--smooth-red);
+                    }
+                }
+            }
         }
+
+
 
         .dynamic-content {
             flex: 1;
@@ -346,7 +371,7 @@
 
                     textarea {
                         resize: none;
-                       height: 100px;
+                        height: 100px;
                     }
 
 
@@ -358,73 +383,79 @@
                     }
                 }
 
-                .option-buttons {
-                    width: 100%;
-                    @include flex-center(row, flex-start, center);
-                    gap: 10px;
 
-                    button {
-                        padding: 7px 15px;
-                        font-size: 14px;
-                        border-radius: 7px;
-                        @include transition();
+            }
 
-                        &:first-child {
-                            background-color: var(--smooth-light-blue);
-                            color: var(--blue);
+            .change-password-box {
+                width: 100%;
+
+                .inputs-box {
+                    margin-top: 20px;
+                    @include flex-center(column, flex-start, center);
+                    gap: 15px;
+
+                    .input-box {
+                        width: 100%;
+
+                        p {
+                            color: var(--text-dark-gray);
+                            margin-bottom: 7px;
+                            font-size: 15px;
                         }
 
-                        &:last-child {
-                            background-color: var(--blue);
-                            color: var(--text-white);
-
-                            &:hover {
-                                background-color: var(--hoverBlue);
-                            }
+                        input {
+                            background-color: var(--smooth-light-blue);
+                            border-radius: 7px;
+                            width: 100%;
+                            padding: 6px 12px;
+                            font-size: 15px;
+                            color: var(--blue);
                         }
                     }
                 }
 
-                .change-password-box {
-                    width: 100%;
+                .option-buttons {
+                    margin-top: 35px;
+                    @include flex-center(row, center, center);
+                    gap: 17px;
 
-                    .inputs-box {
-                        margin-top: 20px;
-                        @include flex-center(column, flex-start, center);
-                        gap: 15px;
-
-                        .input-box {
-                            width: 100%;
-
-                            p {
-                                color: var(--text-dark-gray);
-                                margin-bottom: 7px;
-                                font-size: 15px;
-                            }
-
-                            input {
-                                background-color: var(--smooth-light-blue);
-                                border-radius: 7px;
-                                width: 100%;
-                                padding: 6px 12px;
-                                font-size: 15px;
-                                color: var(--blue);
-                            }
-                        }
-                    }
-
-                    .option-buttons {
-                        margin-top: 35px;
-                        @include flex-center(row, center, center);
-                        gap: 17px;
-
-                        button {
-                            width: 120px;
-                        }
+                    button {
+                        width: 120px;
                     }
                 }
             }
 
+            .option-buttons {
+                width: 100%;
+                @include flex-center(row, flex-start, center);
+                gap: 10px;
+
+                button {
+                    padding: 7px 15px;
+                    font-size: 14px;
+                    border-radius: 7px;
+                    @include transition();
+
+                    &:first-child {
+                        background-color: var(--smooth-light-blue);
+                        color: var(--blue);
+                    }
+
+                    &:last-child {
+                        background-color: var(--blue);
+                        color: var(--text-white);
+
+                        &:hover {
+                            background-color: var(--hoverBlue);
+                        }
+                    }
+                }
+                .savePassword{
+                    &.disabled{
+                        opacity: 0.7;
+                    }
+                }
+            }
         }
     }
 }
