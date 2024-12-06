@@ -1,5 +1,7 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import MingleLogo from "../../../assets/logos/MingleLogoWithText.svg";
+import CallSound from "../../../assets/Sounds/MingleCallSound.mp3";
+
 
 import { MdScreenShare } from "react-icons/md";
 import { HiMiniVideoCamera } from "react-icons/hi2";
@@ -8,6 +10,7 @@ import { HiMiniSpeakerXMark } from "react-icons/hi2";
 import { TbMicrophoneFilled } from "react-icons/tb";
 import { TbMicrophoneOff } from "react-icons/tb";
 import { PiPhoneSlashFill } from "react-icons/pi";
+import { HiVideoCameraSlash } from "react-icons/hi2";
 
 import "./CallModal.scss";
 
@@ -23,15 +26,40 @@ function CallModal({ closeModal, user, isVideoCall: initialVideoCall }) {
     const [isRemoteConnected, setRemoteConnected] = useState(false);
     const localStreamRef = useRef(null);
     const remoteStreamRef = useRef(null);
+    const audioRef = useRef(null);
+
+    // useEffect(() => {
+
+    //     const audio = new Audio(CallSound);
+    //     audio.loop = true;
+    //     audio.play();
+    //     audioRef.current = audio;
+
+    //     const timer = setTimeout(() => {
+    //         audio.pause();
+    //         audio.currentTime = 0;
+    //     }, 20000);
+
+    //     return () => {
+    //         clearTimeout(timer);
+    //         audio.pause();
+    //         audio.currentTime = 0;
+    //     };
+    // }, []);
 
     const handleMicrophoneMode = () => {
         setMicrophoneMode(!isMicrophoneOn);
     };
 
     const handleSpeakerMode = () => {
-        setSpeakerMode(!isSpeakerOn);
+        setSpeakerMode((prevMode) => {
+            const newMode = !prevMode;
+            if (audioRef.current) {
+                audioRef.current.volume = newMode ? 1 : 0;
+            }
+            return newMode;
+        });
     };
-
     const handleCameraToggle = () => {
         setVideoCall(!isVideoCall);
         if (!isVideoCall) {
@@ -45,11 +73,7 @@ function CallModal({ closeModal, user, isVideoCall: initialVideoCall }) {
                     console.error("Kamera başlatılamadı:", err);
                 });
         } else {
-            // Kamerayı devre dışı bırak
-            if (localStreamRef.current.srcObject) {
-                localStreamRef.current.srcObject.getTracks().forEach((track) => track.stop());
-                localStreamRef.current.srcObject = null;
-            }
+
         }
     };
 
@@ -98,26 +122,28 @@ function CallModal({ closeModal, user, isVideoCall: initialVideoCall }) {
             }
 
             {/* Kamera Görünümü */}
-            {isVideoCall && (
-                <>
-                    <div className="camera-bar">
+
+            <>
+                <div className={`camera-bar ${!isVideoCall ? "webcam-closed" : ""} `}>
+                    {isVideoCall &&
                         <div className={`device-camera-box ${isRemoteConnected ? 'remote-connected' : ''}`}>
                             <video ref={localStreamRef} autoPlay muted></video>
                         </div>
-                        {isRemoteConnected && (
-                            <div className="other-camera-box">
-                                <video ref={remoteStreamRef} autoPlay></video>
-                                <div className="user-info">
-                                    <img src={userImage} alt="" />
-                                    <p>{userName}</p>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                    {isRemoteConnected && <p className="video-call-time-status">{callStatus2}</p>}
+                    }
 
-                </>
-            )}
+                    {isRemoteConnected && (
+                        <div className="other-camera-box">
+                            <video ref={remoteStreamRef} autoPlay></video>
+                            <div className="user-info">
+                                <img src={userImage} alt="" />
+                                <p>{userName}</p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+                {isRemoteConnected && <p className="video-call-time-status">{callStatus2}</p>}
+            </>
+
 
 
             {/* Arama seçenekleri */}
@@ -127,7 +153,8 @@ function CallModal({ closeModal, user, isVideoCall: initialVideoCall }) {
                 </button>
 
                 <button onClick={handleCameraToggle}>
-                    <HiMiniVideoCamera />
+                    {isVideoCall ? <HiMiniVideoCamera /> : <HiVideoCameraSlash />}
+
                 </button>
 
                 <button onClick={handleSpeakerMode}>
@@ -145,7 +172,7 @@ function CallModal({ closeModal, user, isVideoCall: initialVideoCall }) {
 
             {!isRemoteConnected && (
                 <button className="simulate-connection" onClick={simulateRemoteConnection}>
-                    122
+                    Karşı Tarafı Bağla (Simülasyon)
                 </button>
             )}
         </div>

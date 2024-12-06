@@ -83,10 +83,19 @@
         @include flex-center(row, center, center);
         position: relative;
 
+        &.webcam-closed {
+           
+            height: 0%;
+            
+        }
+
         .device-camera-box {
             width: 65%;
             border-radius: 40px;
             z-index: 3;
+            opacity: 0;
+            /* Başlangıçta görünmez */
+            animation: fadeIn 1.5s ease-in-out forwards;
 
             video {
                 height: 100%;
@@ -157,9 +166,7 @@
 
     .video-call-time-status {
         margin: 16px 0px 12px 0px;
-        
-        z-index: 10;
-
+        color: var(--text-input-gray)
     }
 
     .call-option-buttons {
@@ -195,5 +202,17 @@
             }
 
         }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        /* Başlangıç: tamamen görünmez */
+    }
+
+    to {
+        opacity: 1;
+        /* Bitiş: tamamen görünür */
     }
 }
