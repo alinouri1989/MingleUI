@@ -4,6 +4,7 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
@@ -101,8 +102,8 @@ function MessageBubble({ content, timestamp, isSender, status, profileImage, use
                             slotProps={{
                                 paper: {
                                     style: {
-                                        maxHeight: 48 * 2,
-                                        width: "16ch",
+                                        maxHeight: 48 * 3,
+                                        width: "18ch",
                                         borderRadius: "8px",
                                         border: "4px solid #CFD5F2",
                                         fontWeight: "bold",
@@ -116,10 +117,27 @@ function MessageBubble({ content, timestamp, isSender, status, profileImage, use
                                 sx={{ color: "#EB6262" }}
                             >
                                 <ListItemIcon sx={{ color: "inherit" }}>
+                                    <DeleteOutlineRoundedIcon />
+                                </ListItemIcon>
+                                <ListItemText
+                                    primary="Benden sil"
+                                    primaryTypographyProps={{
+                                        fontFamily: "Montserrat",
+                                        fontWeight: "700",
+                                        fontSize: "14px",
+                                    }}
+                                />
+                            </MenuItem>
+
+                            <MenuItem
+                                onClick={handleDelete}
+                                sx={{ color: "#EB6262" }}
+                            >
+                                <ListItemIcon sx={{ color: "inherit" }}>
                                     <DeleteIcon />
                                 </ListItemIcon>
                                 <ListItemText
-                                    primary="Sil"
+                                    primary="Herkesten sil"
                                     primaryTypographyProps={{
                                         fontFamily: "Montserrat",
                                         fontWeight: "700",

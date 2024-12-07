@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { TbEdit } from "react-icons/tb";
 import { FaCheck } from "react-icons/fa";
+import { MdClose } from 'react-icons/md';
 import userImage from "../../../assets/users/hamza.png";
+import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
+import ImageSearchRoundedIcon from '@mui/icons-material/ImageSearchRounded';
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
 
 function Account() {
 
@@ -15,6 +24,25 @@ function Account() {
   const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [isEditingBiography, setIsEditingBiography] = useState(false);
 
+  const [isShowProfileImage, setIsShowProfileImage] = useState(false);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+
+
+  // User Image Edit States
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+
+  //! User Informations Edit Handlers
 
   const handleUsernameChange = () => {
     setIsEditingUsername(!isEditingUsername);
@@ -28,16 +56,149 @@ function Account() {
     setIsEditingBiography(!isEditingBiography);
   };
 
+  //! User Profile Image Menu Item Handlers
+
+  const handleChangeProfileImage = () => {
+    handleClose();
+    document.getElementById("image-upload-input").click();
+  };
+
+  const handleShowProfileImage = () => {
+    handleClose();
+    setIsShowProfileImage(true);
+  };
+
+  const handleDeleteProfileImage = () => {
+    handleClose();
+    setSelectedImage(null);
+  };
+
+  // Resim seçme işlemi
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setSelectedImage(e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <div className="account-box">
       <h3>Hesap</h3>
       <div className="image-box">
-        <img src={userImage} alt="User Profile Image" />
-        <button className="edit-btn">
+        <img
+          className="profile-image"
+          src={selectedImage || userImage}
+          alt="User Profile Image"
+        />
+        <IconButton
+          className={"edit-btn"}
+          aria-label="more"
+          id="long-button"
+          aria-controls={open ? "long-menu" : undefined}
+          aria-expanded={open ? "true" : undefined}
+          aria-haspopup="true"
+          onClick={handleClick}
+        >
           <TbEdit />
-        </button>
+        </IconButton>
+        <Menu
+          className="menu-box"
+          id="long-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          MenuListProps={{
+            "aria-labelledby": "long-button",
+          }}
+          slotProps={{
+            paper: {
+              style: {
+                maxHeight: 48 * 3,
+                width: "18ch",
+                borderRadius: "8px",
+                border: "4px solid #CFD5F2",
+                fontWeight: "bold",
+                boxShadow: "none",
+                marginLeft: "36px",
+                marginTop: "-27px"
+              },
+            },
+          }}
+        >
+
+          <MenuItem
+            onClick={handleShowProfileImage}
+            sx={{ color: "#585CE1" }}
+          >
+
+            <ListItemIcon sx={{ color: "inherit" }}>
+              <ImageSearchRoundedIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="Görüntüle"
+              primaryTypographyProps={{
+                fontFamily: "Montserrat",
+                fontWeight: "700",
+                fontSize: "14px",
+              }}
+            />
+          </MenuItem>
+
+          <MenuItem
+            onClick={handleChangeProfileImage}
+            sx={{ color: "#585CE1" }}
+          >
+            <ListItemIcon fontSize={"small"} sx={{ color: "inherit" }}>
+              <AddPhotoAlternateRoundedIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="Değiştir"
+              primaryTypographyProps={{
+                fontFamily: "Montserrat",
+                fontWeight: "700",
+                fontSize: "14px",
+              }}
+            />
+          </MenuItem>
+
+          <MenuItem
+            onClick={handleDeleteProfileImage}
+            sx={{ color: "#EB6262" }}
+          >
+            <ListItemIcon sx={{ color: "inherit" }}>
+              <DeleteOutlineRoundedIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="Kaldır"
+              primaryTypographyProps={{
+                fontFamily: "Montserrat",
+                fontWeight: "700",
+                fontSize: "14px",
+              }}
+            />
+          </MenuItem>
+        </Menu>
+        {isShowProfileImage &&
+          <div className="full-size-profil-image-box">
+            <img src={selectedImage || userImage} alt="UserImage" />
+            <button onClick={() => setIsShowProfileImage(false)}>
+              <MdClose />
+            </button>
+          </div>
+        }
+        <input
+          id="image-upload-input"
+          type="file"
+          accept="image/*"
+          style={{ display: "none" }}
+          onChange={handleImageUpload}
+        />
       </div>
+
       <div className="name-box">
         {isEditingUsername ? (
           <input
@@ -102,7 +263,7 @@ function Account() {
           )}
         </div>
       </div>
-    </div>
+    </div >
   );
 }
 
