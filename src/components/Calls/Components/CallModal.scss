@@ -83,10 +83,9 @@
         @include flex-center(row, center, center);
         position: relative;
 
-        &.webcam-closed {
-           
+        &.only-voice-call {
             height: 0%;
-            
+            display: none;
         }
 
         .device-camera-box {
@@ -166,7 +165,8 @@
 
     .video-call-time-status {
         margin: 16px 0px 12px 0px;
-        color: var(--text-input-gray)
+        color: var(--text-input-gray);
+        z-index: 20;
     }
 
     .call-option-buttons {
@@ -215,4 +215,9 @@
         opacity: 1;
         /* Bitiş: tamamen görünür */
     }
+}
+
+.simulate-connection{
+    position: fixed;
+    bottom: 2px;
 }

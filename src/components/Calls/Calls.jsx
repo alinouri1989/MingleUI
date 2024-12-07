@@ -40,11 +40,11 @@ function Calls() {
   // Handlers
 
   const handleVoiceCall = () => {
-    showModal(<CallModal isVideoCall={false} closeModal={closeModal} />);
+    showModal(<CallModal isVideoCallMode={false} closeModal={closeModal} />);
   }
-  
+
   const handleVideoCall = () => {
-    showModal(<CallModal isVideoCall={true} closeModal={closeModal} />);
+    showModal(<CallModal isVideoCallMode={true} closeModal={closeModal} />);
   }
 
   return (
