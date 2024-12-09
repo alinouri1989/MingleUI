@@ -12,6 +12,10 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, user }) {
     const handleVoiceCall = () => {
         showModal(<CallModal closeModal={closeModal} />);
     }
+    const handleVideoCall = () => {
+        showModal(<CallModal isVideoCallMode={true} closeModal={closeModal} />);
+      }
+    
 
     return (
         <div className={`user-details-sidebar ${isSidebarOpen ? "open" : ""}`}>
@@ -49,7 +53,7 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, user }) {
                                 <p>Sesli Ara</p>
                             </div>
                             <div className='button-box'>
-                                <button><HiMiniVideoCamera /></button>
+                                <button onClick={handleVideoCall}><HiMiniVideoCamera /></button>
                                 <p>Görüntülü Ara</p>
                             </div>
                         </div>

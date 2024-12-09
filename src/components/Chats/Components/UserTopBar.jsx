@@ -16,6 +16,10 @@ function UserTopBar({ isSidebarOpen, toggleSidebar }) {
         showModal(<CallModal closeModal={closeModal} />);
     }
 
+    const handleVideoCall = () => {
+        showModal(<CallModal isVideoCallMode={true} closeModal={closeModal} />);
+    }
+
     return (
         <div className={`user-top-bar ${isSidebarOpen ? 'close' : ''}`}>
             <div className="user-info">
@@ -32,7 +36,7 @@ function UserTopBar({ isSidebarOpen, toggleSidebar }) {
             <div className="top-bar-buttons">
                 <div className='call-options'>
                     <button onClick={handleVoiceCall}><PiPhoneFill /></button>
-                    <button><HiMiniVideoCamera /></button>
+                    <button onClick={handleVideoCall}><HiMiniVideoCamera /></button>
                 </div>
                 <IoIosArrowDropleftCircle
                     className="sidebar-toggle-buttons"

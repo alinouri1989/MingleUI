@@ -1,29 +1,56 @@
-import { useState,useEffect } from "react";
-import CloseModalButton from "../../../../contexts/components/CloseModalButton.jsx";
+import { useState, useEffect } from "react";
 import { useModal } from "../../../../contexts/ModalContext.jsx";
+
+import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
+import ImageSearchRoundedIcon from '@mui/icons-material/ImageSearchRounded';
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+
 import { MdPersonRemoveAlt1 } from "react-icons/md";
-import { HiUserAdd } from "react-icons/hi";
-import { TbPhotoEdit } from "react-icons/tb";
-import star from "../../../../assets/svg/star.svg";
+import { HiUserAdd } from "react-icons/hi"
+import { MdClose } from 'react-icons/md';
+import { TbEdit } from "react-icons/tb";
 import { IoMdSettings } from "react-icons/io";
-import adminPP from "../../../../assets/users/hamza.png";
+
+import star from "../../../../assets/svg/star.svg";
+import adminPP from "../../../../assets/users/Deneme12.png";
+import GroupImageDefault from "../../../../assets/users/GroupImage.png";
 import AddUser from "../AddUser.jsx";
+import CloseModalButton from "../../../../contexts/components/CloseModalButton.jsx";
 import "./style.scss";
 
-// Kodun başlangıcında gerekli değişiklikler
+
 function NewGroupModal({ closeModal, isGroupSettings }) {
+
     const [isAddUserModal, setAddUserModal] = useState(false);
 
-    const { showModal } = useModal();
-    const adminName = "Hamza Doğan";
-    const adminRole = "Kurucu";
-    const isAdmin = true;
+    // User Image Edit States
+    const [anchorEl, setAnchorEl] = useState(null);
+    const open = Boolean(anchorEl);
 
+    const handleClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleClose = () => {
+        setAnchorEl(null);
+    };
+
+
+    // Mock Variables
+    const adminName = "Hamza Doğan";
+    const adminRole = "Yönetici";
+    const isAdmin = true;
     const exitsGroupImage = "https://images.unsplash.com/photo-1733035997778-65e038269fb8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw2Nnx8fGVufDB8fHx8fA%3D%3D";
     const exitsGroupName = "Yardımlaşma Grubu";
     const exitsGroupDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores id vitae corporis ex, atque animi distinctio minima commodi explicabo qui?";
-
-    // State for group data
+    const groupImageDefault = GroupImageDefault;
+    
+    // initial State for group data
     const initialData = {
         groupName: isGroupSettings ? exitsGroupName : "",
         groupDescription: isGroupSettings ? exitsGroupDescription : "",
@@ -35,22 +62,20 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
     };
 
     const [formData, setFormData] = useState(initialData);
-    const [updatedRoles, setUpdatedRoles] = useState([]);
 
-    // Kaydet butonunun etkinliğini izlemek için state
+    const [updatedRoles, setUpdatedRoles] = useState([]);
+    const [isShowProfileImage, setIsShowProfileImage] = useState(false);
     const [isSaveDisabled, setSaveDisabled] = useState(true);
 
     useEffect(() => {
-        // formData ve initialData'yı karşılaştır
         const isSameData = JSON.stringify(formData) === JSON.stringify(initialData);
         setSaveDisabled(isSameData);
     }, [formData]);
 
     // Handlers for input changes
-    const handleGroupNameChange = (e) =>
-        setFormData((prev) => ({ ...prev, groupName: e.target.value }));
-    const handleGroupDescriptionChange = (e) =>
-        setFormData((prev) => ({ ...prev, groupDescription: e.target.value }));
+    const handleGroupNameChange = (e) => setFormData((prev) => ({ ...prev, groupName: e.target.value }));
+
+    const handleGroupDescriptionChange = (e) => setFormData((prev) => ({ ...prev, groupDescription: e.target.value }));
 
     const handleGroupImageEdit = (e) => {
         const file = e.target.files[0];
@@ -85,15 +110,36 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
         setFormData((prev) => ({ ...prev, groupMembers: filteredMembers }));
     };
 
+    // For Settings
     const handleSaveChanges = () => {
         console.log("Saved Data: ", formData);
         // Backend service logic here
     };
 
+    // Create New Group Logis is here.
     const handleSubmit = () => {
         console.log("Final Data: ", formData);
-     ü
+        // This code will be implemented with backend
     };
+
+    // ==== Edit Methods ====
+
+    const handleChangeGroupImage = () => {
+        handleClose();
+        document.getElementById("image-upload-input").click();
+    };
+
+    const handleShowGroupImage = () => {
+        handleClose();
+        setIsShowProfileImage(true);
+    };
+
+    const handleDeleteGroupImage = () => {
+        handleClose();
+        setFormData((prev) => ({ ...prev, groupImage: initialData.groupImage }));
+    };
+
+
     return (
         <div className="new-group-modal">
             <CloseModalButton closeModal={closeModal} />
@@ -117,17 +163,118 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
                         {formData.groupImage ? (
                             <img src={formData.groupImage} alt="Group" />
                         ) : (
-                            <div className="group-image">GRUP</div>
+                            // Cloud group image right now only example.
+                            <img src={groupImageDefault} alt="Group" />
                         )}
                         <label className="edit-image-btn">
-                            <TbPhotoEdit />
+                            <IconButton
+                                className={"edit-btn"}
+                                aria-label="more"
+                                id="long-button"
+                                aria-controls={open ? "long-menu" : undefined}
+                                aria-expanded={open ? "true" : undefined}
+                                aria-haspopup="true"
+                                onClick={handleClick}
+                            >
+                                <TbEdit />
+                            </IconButton>
+                            <Menu
+                                className="menu-box"
+                                id="long-menu"
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
+                                MenuListProps={{
+                                    "aria-labelledby": "long-button",
+                                }}
+                                slotProps={{
+                                    paper: {
+                                        style: {
+                                            maxHeight: 48 * 3,
+                                            width: "18ch",
+                                            borderRadius: "8px",
+                                            border: "4px solid #CFD5F2",
+                                            fontWeight: "bold",
+                                            boxShadow: "none",
+                                            marginLeft: "36px",
+                                            marginTop: "-27px"
+                                        },
+                                    },
+                                }}
+                            >
+
+                                <MenuItem
+                                    onClick={handleShowGroupImage}
+                                    sx={{ color: "#585CE1" }}
+                                >
+
+                                    <ListItemIcon sx={{ color: "inherit" }}>
+                                        <ImageSearchRoundedIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="Görüntüle"
+                                        primaryTypographyProps={{
+                                            fontFamily: "Montserrat",
+                                            fontWeight: "700",
+                                            fontSize: "14px",
+                                        }}
+                                    />
+                                </MenuItem>
+
+                                <MenuItem
+                                    onClick={handleChangeGroupImage}
+                                    sx={{ color: "#585CE1" }}
+                                >
+                                    <ListItemIcon fontSize={"small"} sx={{ color: "inherit" }}>
+                                        <AddPhotoAlternateRoundedIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="Değiştir"
+                                        primaryTypographyProps={{
+                                            fontFamily: "Montserrat",
+                                            fontWeight: "700",
+                                            fontSize: "14px",
+                                        }}
+                                    />
+                                </MenuItem>
+
+                                <MenuItem
+                                    onClick={handleDeleteGroupImage}
+                                    sx={{ color: "#EB6262" }}
+                                >
+                                    <ListItemIcon sx={{ color: "inherit" }}>
+                                        <DeleteOutlineRoundedIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="Kaldır"
+                                        primaryTypographyProps={{
+                                            fontFamily: "Montserrat",
+                                            fontWeight: "700",
+                                            fontSize: "14px",
+                                        }}
+                                    />
+                                </MenuItem>
+                            </Menu>
                             <input
+                                id="image-upload-input"
                                 type="file"
                                 accept="image/*"
-                                onChange={handleGroupImageEdit}
                                 style={{ display: "none" }}
+                                onChange={handleGroupImageEdit}
                             />
                         </label>
+                        {isShowProfileImage &&
+                            <div className="full-size-group-image-box">
+                                {formData.groupImage ?
+                                    <img src={formData.groupImage} alt="Group Image" />
+                                    :
+                                    <img src={groupImageDefault} alt="Group" />
+                                }
+                                <button onClick={() => setIsShowProfileImage(false)}>
+                                    <MdClose />
+                                </button>
+                            </div>
+                        }
                     </div>
                 </div>
                 <div className="input-boxs">
@@ -211,14 +358,14 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
                         )}
                     </div>
                 </div>
-                </div>
-                {isAddUserModal && (
-                    <AddUser
-                        closeUserModal={() => setAddUserModal(false)}
-                        onAddUser={handleAddUser}
-                    />
-                )}
-           
+            </div>
+            {isAddUserModal && (
+                <AddUser
+                    closeUserModal={() => setAddUserModal(false)}
+                    onAddUser={handleAddUser}
+                />
+            )}
+
         </div>
     );
 }

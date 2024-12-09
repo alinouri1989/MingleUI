@@ -28,7 +28,6 @@ function Account() {
   const [selectedImage, setSelectedImage] = useState(null);
 
 
-
   // User Image Edit States
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);

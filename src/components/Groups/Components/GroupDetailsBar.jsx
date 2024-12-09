@@ -6,7 +6,7 @@ import { IoMdSettings } from "react-icons/io";
 import YardimlasmaGrubu from "../../../assets/YardimlasmaGrubu.png";
 import Hamza from "../../../assets/users/hamza.png";
 import { useModal } from '../../../contexts/ModalContext';
-import NewGroupModal from './NewGroup/NewGroupModal';
+import NewGroupModal from './NewAndSettingsGroup/NewGroupModal';
 
 function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupDetails }) {
     const isAdmin = true;

@@ -8,7 +8,7 @@ import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 
-import NewGroupModal from "../../../components/Groups/Components/NewGroup/NewGroupModal";
+import NewGroupModal from "../../../components/Groups/Components/NewAndSettingsGroup/NewGroupModal";
 import { useModal } from "../../../contexts/ModalContext.jsx";
 import "./style.scss";
 

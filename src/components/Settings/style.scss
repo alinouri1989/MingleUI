@@ -268,12 +268,13 @@
                 }
 
                 .edit-btn {
-                    background-color: var(--smooth-light-blue);
+                    background-color: var(--text-white);
                     color: var(--blue);
                     padding: 6px;
                     border-radius: 50%;
                     font-size: 16px;
                     @include flex-center(row, center, center);
+                    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
                 }
 
                 .image-box {
