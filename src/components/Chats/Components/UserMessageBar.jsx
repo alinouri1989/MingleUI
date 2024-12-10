@@ -21,7 +21,6 @@ function UserMessageBar({ groupedMessages }) {
                     </div>
                 ))}
             </div>
-            <div className="bottom-transparent-linear-gradient"></div>
         </div>
     )
 }

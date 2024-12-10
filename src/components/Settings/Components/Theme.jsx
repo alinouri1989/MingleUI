@@ -1,16 +1,10 @@
 import { useState } from "react";
 
+import { ChatBackgroundColorsThemes } from "../../../constants/ChatBackgroundColors";
+import { SuccessAlert } from "../../../helpers/customAlert";
+
 const Theme = () => {
-  const gradients = [
-    { colorId: "color1", colorCode: "white" },
-    { colorId: "color2", colorCode: "linear-gradient(to right, #ff7eb3, #ff758c)" },
-    { colorId: "color3", colorCode: "linear-gradient(to right, #8e9eab, #eef2f3)" },
-    { colorId: "color4", colorCode: "linear-gradient(to right, #00c6ff, #0072ff)" },
-    { colorId: "color5", colorCode: "linear-gradient(to right, #f6d365, #fda085)" },
-    { colorId: "color6", colorCode: "linear-gradient(to right, #84fab0, #8fd3f4)" },
-    { colorId: "color7", colorCode: "linear-gradient(to right, #a1c4fd, #c2e9fb)" },
-    { colorId: "color8", colorCode: "linear-gradient(to right, #ff9a9e, #fad0c4)" },
-  ];
+
 
   const [themeMode, setThemeMode] = useState("Light"); // Backend'den gelen başlangıç teması
   const [selectedColorId, setSelectedColorId] = useState("color1");
@@ -21,11 +15,23 @@ const Theme = () => {
 
 
   const handleThemeChange = (newTheme) => {
-    setThemeMode(newTheme);
-    // Burada veritabanına kayıt işlemi yapılabilir dispatch ile redux metodu çağırarak
+    try {
+      setThemeMode(newTheme);
+      // Burada veritabanına kayıt işlemi yapılabilir dispatch ile redux metodu çağırarak
+      
+    } catch (error) {
+      
+    }
   };
+
   const handleSelectedChatBackgroundColor = (colorId) => {
     setSelectedColorId(colorId);
+    try {
+      SuccessAlert("Duvar kağıdı değiştirildi");
+    
+    } catch (error) {
+      
+    }
     //! Dispatch ile veritabanına ve redux üzerinde kayıt işlemi yapılacak ve sohbet üzerinde o redux'a göre arka plan değişir.
   }
 
@@ -48,14 +54,14 @@ const Theme = () => {
       <div className="wallpaper">
         <label>Sohbet Duvar Kağıdı</label>
         <div className="grid">
-          {gradients.map((gradient) => (
+          {ChatBackgroundColorsThemes.map((gradient) => (
             <div
-              key={gradient.colorId}
-              className={`gradient-box ${selectedColorId === gradient.colorId ? "selected" : ""
+              key={gradient.id}
+              className={`gradient-box ${selectedColorId === gradient.id ? "selected" : ""
                 }`}
-              onClick={() => handleSelectedChatBackgroundColor(gradient.colorId)}
+              onClick={() => handleSelectedChatBackgroundColor(gradient.id)}
               style={{
-                background: gradient.colorCode,
+                background: gradient.backgroundImage,
               }}
             ></div>
           ))}
