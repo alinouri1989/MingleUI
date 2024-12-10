@@ -1,7 +1,7 @@
 export const ChatBackgroundColorsThemes = [
     {
       id: 'color1',
-      backgroundImage: 'white',
+      backgroundImage: 'linear-gradient(1deg, rgba(255, 255, 255, 1), rgba(255, 255, 255))',
     },
     {
       id: 'color2',
@@ -36,7 +36,7 @@ export const ChatBackgroundColorsThemes = [
   export const ChatBackgroundColors = [
     {
       id: 'color1',
-      backgroundImage: 'white',
+      backgroundImage: 'linear-gradient(1deg, rgba(255, 255, 255, 1), rgba(255, 255, 255))',
     },
     {
       id: 'color2',

@@ -1,11 +1,12 @@
 import React from 'react'
 import MessageBubble from "../../../shared/components/MessageBubble/MessageBubble.jsx";
+import { useSelector } from 'react-redux';
 
 function GroupMessageBar({ groupedMessages }) {
 
-
+    const { backgroundImage } = useSelector((state) => state.chatBackgroundColor);
     return (
-        <div className="group-message-bar">
+        <div className="group-message-bar" style={{ backgroundImage }}>
             <div className="messages-list">
                 {Object.entries(groupedMessages).map(([date, messages]) => (
                     <div key={date} className="date-group">
