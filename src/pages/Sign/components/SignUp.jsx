@@ -1,20 +1,43 @@
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Logo from "../../../assets/logos/MingleLogoWithText.svg";
 import { IoEye } from "react-icons/io5";
 import { IoEyeOff } from "react-icons/io5";
-
+import { useDispatch, useSelector } from "react-redux"
+import { SuccessAlert } from "../../../helpers/customAlert.js"
 import MembershipModal from "./MembershipModal";
 import { useModal } from "../../../contexts/ModalContext";
 import { Link } from "react-router-dom";
+import { createAccount } from "../../../store/Thunks/SignThunks";
+
 
 
 function SignUp() {
 
+  const { showModal } = useModal();
+  const dispatch = useDispatch();
+
+  const { isAccountCreated, status, error } = useSelector((state) => state.Sign);
+
   const [showPassword, setShowPassword] = useState(false);
   const [showAgainPassword, setShowAgainPassword] = useState(false);
 
-  const { showModal } = useModal();
+  const [formData, setFormData] = useState({
+    DisplayName: '',
+    Email: '',
+    Password: '',
+    PasswordAgain: '',
+    BirthDate: ''
+  });
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(createAccount(formData));
+  };
+
+  if (isAccountCreated) {
+    SuccessAlert("Hesap Oluşturuldu")
+  }
 
   const handleMembershipAgreementModal = () => {
     showModal(<MembershipModal />);
@@ -35,7 +58,10 @@ function SignUp() {
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" viewBox="0 0 25 26" fill="none">
               <path d="M2.08333 25.9639C2.08333 25.9639 0 25.9639 0 23.8805C0 21.7972 2.08333 15.5472 12.5 15.5472C22.9167 15.5472 25 21.7972 25 23.8805C25 25.9639 22.9167 25.9639 22.9167 25.9639H2.08333ZM12.5 13.4639C14.1576 13.4639 15.7473 12.8054 16.9194 11.6333C18.0915 10.4612 18.75 8.87147 18.75 7.21387C18.75 5.55626 18.0915 3.96655 16.9194 2.79445C15.7473 1.62235 14.1576 0.963867 12.5 0.963867C10.8424 0.963867 9.25268 1.62235 8.08058 2.79445C6.90848 3.96655 6.25 5.55626 6.25 7.21387C6.25 8.87147 6.90848 10.4612 8.08058 11.6333C9.25268 12.8054 10.8424 13.4639 12.5 13.4639Z" fill="#828A96" />
             </svg>
-            <input type="text" required placeholder='Ad Soyad' />
+            <input
+              value={formData.DisplayName}
+              onChange={(e) => setFormData({ ...formData, DisplayName: e.target.value })}
+              type="text" required placeholder='Ad Soyad' />
           </div>
 
           <div className='input-box'>
@@ -43,7 +69,10 @@ function SignUp() {
               <path d="M4.125 6.82565V21.3257C4.125 21.8064 4.31596 22.2674 4.65587 22.6073C4.99578 22.9472 5.45679 23.1382 5.9375 23.1382H24.0625C24.5432 23.1382 25.0042 22.9472 25.3441 22.6073C25.684 22.2674 25.875 21.8064 25.875 21.3257V6.82565H4.125ZM4.125 5.01315H25.875C26.3557 5.01315 26.8167 5.20411 27.1566 5.54402C27.4965 5.88393 27.6875 6.34495 27.6875 6.82565V21.3257C27.6875 22.2871 27.3056 23.2091 26.6258 23.8889C25.9459 24.5687 25.0239 24.9507 24.0625 24.9507H5.9375C4.97609 24.9507 4.05406 24.5687 3.37424 23.8889C2.69442 23.2091 2.3125 22.2871 2.3125 21.3257V6.82565C2.3125 6.34495 2.50346 5.88393 2.84337 5.54402C3.18328 5.20411 3.6443 5.01315 4.125 5.01315Z" fill="#828A96" />
               <path d="M26.1016 6.82565L19.0926 14.8369C18.5823 15.4203 17.9531 15.8879 17.2472 16.2083C16.5413 16.5286 15.7752 16.6943 15 16.6943C14.2248 16.6943 13.4587 16.5286 12.7528 16.2083C12.0469 15.8879 11.4177 15.4203 10.9074 14.8369L3.89844 6.82565H26.1016ZM6.30725 6.82565L12.2704 13.6425C12.6106 14.0315 13.0301 14.3433 13.5008 14.557C13.9714 14.7706 14.4822 14.8811 14.9991 14.8811C15.5159 14.8811 16.0268 14.7706 16.4974 14.557C16.9681 14.3433 17.3876 14.0315 17.7278 13.6425L23.6927 6.82565H6.30725Z" fill="#828A96" />
             </svg>
-            <input type="email" required placeholder='Email' />
+            <input
+              value={formData.Email}
+              onChange={(e) => setFormData({ ...formData, Email: e.target.value })}
+              type="email" required placeholder='Email' />
           </div>
 
           <div className='input-box password'>
@@ -51,7 +80,10 @@ function SignUp() {
               <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 30 30" fill="none">
                 <path fillRule="evenodd" clipRule="evenodd" d="M8.95832 8.94023C8.95832 5.60281 11.6626 2.89856 15 2.89856C18.3374 2.89856 21.0417 5.60281 21.0417 8.94023V12.5652H21.525C22.5883 12.5652 23.4583 13.4352 23.4583 14.4986V22.9569C23.4583 24.5519 22.1533 25.8569 20.5583 25.8569H9.44166C7.84666 25.8569 6.54166 24.5519 6.54166 22.9569V14.4986C6.54166 13.4352 7.41166 12.5652 8.47499 12.5652H8.95832V8.94023ZM18.625 8.94023V12.5652H11.375V8.94023C11.375 6.93681 12.9966 5.31523 15 5.31523C17.0034 5.31523 18.625 6.93681 18.625 8.94023ZM15 15.284C14.5195 15.2835 14.0531 15.4466 13.6778 15.7466C13.3024 16.0466 13.0403 16.4654 12.9348 16.9342C12.8293 17.403 12.8866 17.8937 13.0972 18.3256C13.3079 18.7575 13.6594 19.1047 14.0937 19.3101V22.2319C14.0937 22.4722 14.1892 22.7028 14.3592 22.8727C14.5291 23.0427 14.7596 23.1381 15 23.1381C15.2403 23.1381 15.4708 23.0427 15.6408 22.8727C15.8108 22.7028 15.9062 22.4722 15.9062 22.2319V19.3101C16.3406 19.1047 16.6921 18.7575 16.9027 18.3256C17.1134 17.8937 17.1707 17.403 17.0652 16.9342C16.9596 16.4654 16.6976 16.0466 16.3222 15.7466C15.9468 15.4466 15.4805 15.2835 15 15.284Z" fill="#828A96" />
               </svg>
-              <input type={showPassword ? "text" : "password"} placeholder='Şifre' />
+              <input
+                value={formData.Password}
+                onChange={(e) => setFormData({ ...formData, Password: e.target.value })}
+                type={showPassword ? "text" : "password"} placeholder='Şifre' />
             </div>
             {showPassword
               ? <IoEyeOff className='icon' onClick={() => setShowPassword(!showPassword)} />
@@ -64,7 +96,10 @@ function SignUp() {
               <svg xmlns="http://www.w3.org/2000/svg" width="29" height="30" viewBox="0 0 29 30" fill="none">
                 <path d="M14.5 3.38052C21.1736 3.38052 26.5833 8.79023 26.5833 15.4639C26.5833 18.0449 25.7737 20.4374 24.395 22.4009L20.5416 15.4639H24.1666C24.1664 13.2359 23.3967 11.0765 21.9876 9.35077C20.5785 7.62506 18.6166 6.43905 16.4337 5.99337C14.2508 5.5477 11.981 5.86971 10.0082 6.90495C8.03541 7.94019 6.48076 9.62508 5.60726 11.6746C4.73375 13.7242 4.59502 16.0125 5.21451 18.1526C5.83401 20.2926 7.1737 22.153 9.00697 23.419C10.8402 24.685 13.0545 25.2789 15.2753 25.1002C17.496 24.9215 19.5869 23.9812 21.1941 22.4384L22.4 24.6073C20.2072 26.5076 17.4016 27.5516 14.5 27.5472C7.82633 27.5472 2.41663 22.1375 2.41663 15.4639C2.41663 8.79023 7.82633 3.38052 14.5 3.38052ZM14.5 9.42219C15.4614 9.42219 16.3834 9.80411 17.0632 10.4839C17.743 11.1637 18.125 12.0858 18.125 13.0472V14.2555H19.3333V20.2972H9.66663V14.2555H10.875V13.0472C10.875 12.0858 11.2569 11.1637 11.9367 10.4839C12.6165 9.80411 13.5386 9.42219 14.5 9.42219ZM14.5 11.8389C14.204 11.8389 13.9183 11.9476 13.6972 12.1442C13.476 12.3409 13.3347 12.6119 13.3001 12.9058L13.2916 13.0472V14.2555H15.7083V13.0472C15.7083 12.7512 15.5996 12.4656 15.4029 12.2444C15.2063 12.0232 14.9353 11.8819 14.6413 11.8473L14.5 11.8389Z" fill="#828A96" />
               </svg>
-              <input type={showAgainPassword ? "text" : "password"} required placeholder='Şifre Tekrar' />
+              <input
+                value={formData.PasswordAgain}
+                onChange={(e) => setFormData({ ...formData, PasswordAgain: e.target.value })}
+                type={showAgainPassword ? "text" : "password"} required placeholder='Şifre Tekrar' />
             </div>
 
             {showAgainPassword
@@ -99,7 +134,10 @@ function SignUp() {
                 </clipPath>
               </defs>
             </svg>
-            <input required placeholder='Doğum Tarihi' />
+            <input
+              value={formData.BirthDate}
+              onChange={(e) => setFormData({ ...formData, BirthDate: e.target.value })}
+              required placeholder='Doğum Tarihi' />
           </div>
         </div>
 
@@ -116,7 +154,7 @@ function SignUp() {
           </p>
         </div>
 
-        <button className='sign-buttons'>Oluştur</button>
+        <button onClick={(e) => handleSubmit(e)} className='sign-buttons'>Oluştur</button>
 
         <p className='change-sign-method-text'>
           Zaten bir hesabın var mı?

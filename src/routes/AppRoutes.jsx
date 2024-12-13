@@ -9,6 +9,7 @@ import Calls from '../components/Calls/Calls.jsx';
 import Home from '../components/Home/Home.jsx';
 
 function AppRoutes() {
+
     const user = true;
 
     return (
