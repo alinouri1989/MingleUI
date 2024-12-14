@@ -10,7 +10,7 @@ import Home from '../components/Home/Home.jsx';
 
 function AppRoutes() {
 
-    const user = true;
+    const user = null;
 
     return (
         <Routes>

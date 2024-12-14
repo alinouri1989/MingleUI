@@ -50,13 +50,13 @@ function Chats() {
   return (
     <>
       <div className='chat-general-box'>
-        {/* <WelcomeScreen text={"Kişisel sohbetleriniz uçtan uca şifrelidir"}/> */}
+        <WelcomeScreen text={"Kişisel sohbetleriniz uçtan uca şifrelidir"}/>
 
-        <UserTopBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        {/* <UserTopBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
         <UserMessageBar groupedMessages={groupedMessages} />
-        <MessageInputBar />
+        <MessageInputBar /> */}
       </div>
-      <UserDetailsBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      {/* <UserDetailsBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} /> */}
     </>
 
   )

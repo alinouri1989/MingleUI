@@ -3,24 +3,27 @@ import { useEffect, useState } from "react";
 import Logo from "../../../assets/logos/MingleLogoWithText.svg";
 import { IoEye } from "react-icons/io5";
 import { IoEyeOff } from "react-icons/io5";
-import { useDispatch, useSelector } from "react-redux"
-import { SuccessAlert } from "../../../helpers/customAlert.js"
+import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert.js"
 import MembershipModal from "./MembershipModal";
 import { useModal } from "../../../contexts/ModalContext";
-import { Link } from "react-router-dom";
-import { createAccount } from "../../../store/Thunks/SignThunks";
-
-
+import { Link, useNavigate } from "react-router-dom";
+import { useRegisterUserMutation } from "../../../store/Slices/authApi.js";
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import { registerLocale } from 'react-datepicker';
+import tr from 'date-fns/locale/tr';
+import PreLoader from "../../../shared/components/PreLoader/PreLoader.jsx";
+registerLocale('tr', tr); 
 
 function SignUp() {
 
+  const navigate = useNavigate();
   const { showModal } = useModal();
-  const dispatch = useDispatch();
-
-  const { isAccountCreated, status, error } = useSelector((state) => state.Sign);
+  const [registerUser, { isLoading, isSuccess }] = useRegisterUserMutation();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showAgainPassword, setShowAgainPassword] = useState(false);
+  const [isMembershipAgreementAccepted, setIsMembershipAgreementAccepted] = useState(false);
 
   const [formData, setFormData] = useState({
     DisplayName: '',
@@ -30,14 +33,60 @@ function SignUp() {
     BirthDate: ''
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(createAccount(formData));
+  const today = new Date();
+  const handleDateChange = (date) => {
+    if (date) {
+      // Eğer kullanıcı tarih seçtiyse, tarihi ISO formatında kaydet
+      const isoDate = date.toISOString();
+      setFormData({
+        ...formData,
+        BirthDate: isoDate
+      });
+    } else {
+      // Eğer kullanıcı tarihi temizlediyse, formData.BirthDate null olmalı
+      setFormData({
+        ...formData,
+        BirthDate: null
+      });
+    }
   };
 
-  if (isAccountCreated) {
-    SuccessAlert("Hesap Oluşturuldu")
-  }
+  const handleKeyPressForBirthDate = (e) => {
+    const allowedKeys = [
+      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-',
+      'Backspace', 'Delete',
+      'ArrowLeft', 'ArrowRight'
+    ];
+    if (!allowedKeys.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+  // Form validity check
+  const isFormValid =
+    formData.DisplayName.trim() &&
+    formData.Email.trim() &&
+    formData.Password.trim() &&
+    formData.PasswordAgain.trim() &&
+    formData.BirthDate &&
+    isMembershipAgreementAccepted;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (isFormValid) {
+      try {
+        await registerUser(formData).unwrap();
+        SuccessAlert("Hesap Oluşturuldu");
+        navigate('/giris-yap');
+
+      } catch (error) {
+        console.error('Registration failed:', error);
+      }
+    }
+    else {
+      ErrorAlert("Tüm alanlar dolmalıdır");
+    }
+  };
 
   const handleMembershipAgreementModal = () => {
     showModal(<MembershipModal />);
@@ -53,7 +102,6 @@ function SignUp() {
 
       <form>
         <div className='inputs-container'>
-
           <div className='input-box'>
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" viewBox="0 0 25 26" fill="none">
               <path d="M2.08333 25.9639C2.08333 25.9639 0 25.9639 0 23.8805C0 21.7972 2.08333 15.5472 12.5 15.5472C22.9167 15.5472 25 21.7972 25 23.8805C25 25.9639 22.9167 25.9639 22.9167 25.9639H2.08333ZM12.5 13.4639C14.1576 13.4639 15.7473 12.8054 16.9194 11.6333C18.0915 10.4612 18.75 8.87147 18.75 7.21387C18.75 5.55626 18.0915 3.96655 16.9194 2.79445C15.7473 1.62235 14.1576 0.963867 12.5 0.963867C10.8424 0.963867 9.25268 1.62235 8.08058 2.79445C6.90848 3.96655 6.25 5.55626 6.25 7.21387C6.25 8.87147 6.90848 10.4612 8.08058 11.6333C9.25268 12.8054 10.8424 13.4639 12.5 13.4639Z" fill="#828A96" />
@@ -134,16 +182,23 @@ function SignUp() {
                 </clipPath>
               </defs>
             </svg>
-            <input
-              value={formData.BirthDate}
-              onChange={(e) => setFormData({ ...formData, BirthDate: e.target.value })}
-              required placeholder='Doğum Tarihi' />
+            <DatePicker
+              selected={formData.BirthDate ? new Date(formData.BirthDate) : null}
+              onChange={handleDateChange}
+              dateFormat="dd-MM-yyyy"
+              placeholderText="Doğum Tarihi"
+              required
+              locale="tr"
+              className="datepicker-input"
+              onKeyDown={handleKeyPressForBirthDate}
+              maxDate={today}
+            />
           </div>
         </div>
 
         <div className="membership-agreement-box">
           <div className="checkbox-wrapper-46">
-            <input className="inp-cbx" id="cbx-46" type="checkbox" />
+            <input onClick={() => setIsMembershipAgreementAccepted(!isMembershipAgreementAccepted)} className="inp-cbx" id="cbx-46" type="checkbox" />
             <label className="cbx" htmlFor="cbx-46"><span>
               <svg width="12px" height="10px" viewBox="0 0 12 10">
                 <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
@@ -154,13 +209,21 @@ function SignUp() {
           </p>
         </div>
 
-        <button onClick={(e) => handleSubmit(e)} className='sign-buttons'>Oluştur</button>
+        <button
+          onClick={(e) => handleSubmit(e)}
+          className="sign-buttons"
+          disabled={!isFormValid}
+          style={{ opacity: isFormValid ? 1 : 0.7 }}>
+          Oluştur
+        </button>
 
         <p className='change-sign-method-text'>
           Zaten bir hesabın var mı?
           <Link to="/giris-yap">Giris yap</Link>
         </p>
+
       </form >
+      {isLoading && <PreLoader />}
     </div>
   )
 }

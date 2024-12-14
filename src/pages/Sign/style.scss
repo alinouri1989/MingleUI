@@ -141,12 +141,98 @@ form {
                 box-shadow: var(--blue) 0px 0px 0px 3px;
             }
 
-            input {
+            input,
+            .datepicker-input {
                 width: 100%;
                 height: 100%;
                 font-size: 13px;
                 font-weight: 600;
                 color: var(--text-dark-gray);
+            }
+
+            .datepicker-input {
+                height: 42px;
+                width: 280px;
+            }
+
+            .react-datepicker__header,
+            .react-datepicker__header .react-datepicker__current-month,
+            .react-datepicker__header .react-datepicker__day-names {
+                color: white !important;
+            }
+
+            .react-datepicker__header {
+                background-color: var(--blue);
+                border-bottom: 2px solid var(--blue);
+                padding: 15px;
+                color: white !important;
+            }
+
+            .react-datepicker__navigation {
+                color: white !important;
+            }
+
+            .datepicker__background-color {
+                background-color: #007bff
+            }
+
+            .datepicker__border-color {
+                border-color: #aeaeae;
+            }
+
+            .datepicker__highlighted-color {
+                color: #3dcc4a
+            }
+
+            .datepicker__holidays-color {
+                background-color: red
+            }
+
+            .react-datepicker__day {
+                margin: 7px;
+                border-radius: 50%;
+                @include transition();
+             
+            }
+
+            .react-datepicker__day--selected {
+                background-color: var(--blue);
+                color: white;
+                border-radius: 50%;
+            }
+
+            .react-datepicker__month {
+                font-size: 14px;
+                font-weight: bold;
+                color: #ffffff;
+            }
+
+            .react-datepicker__day-name {
+                color: white !important;
+                margin: 7px;
+            }
+
+            .react-datepicker__day--today {
+                background-color: var(--smooth-light-blue) !important;
+                color: var(--blue) !important;
+                border-radius: 50% !important;
+            }
+
+            .react-datepicker__day--keyboard-selected {
+                background-color: var(--blue);
+                color: white;
+                border-radius: 50%;
+            }
+
+            .react-datepicker {
+                border: 2px solid var(--smooth-light-blue) !important;
+                border-radius: 4px !important;
+                box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px !important;
+                box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px !important;
+            }
+
+            .react-datepicker__triangle {
+                border-top-color: var(--smooth-light-blue) !important;
             }
         }
 
@@ -256,7 +342,7 @@ form {
             font-style: normal;
             font-weight: 600;
 
-            @include screen(768px){
+            @include screen(768px) {
                 text-align: center;
             }
         }
