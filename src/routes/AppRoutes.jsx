@@ -1,5 +1,6 @@
-import React from 'react';
+import { useSelector } from 'react-redux';
 import { Route, Routes, Navigate } from 'react-router-dom';
+
 import Sign from "../pages/Sign/Sign.jsx";
 import Layout from '../Layout/Layout.jsx';
 import Chats from '../components/Chats/Chats.jsx';
@@ -10,7 +11,7 @@ import Home from '../components/Home/Home.jsx';
 
 function AppRoutes() {
 
-    const user = null;
+    const { user } = useSelector((state) => state.auth); 
 
     return (
         <Routes>

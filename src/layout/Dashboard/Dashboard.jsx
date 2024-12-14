@@ -8,9 +8,11 @@ import ArchivesList from "./components/ArchivesList";
 import GroupsList from "./components/GroupsList";
 
 import "./style.scss";
+import { useSelector } from "react-redux";
 
 function Dashboard() {
     const location = useLocation();
+    const { user } = useSelector(state => state.auth)
 
     const renderComponent = () => {
         switch (location.pathname) {
@@ -32,8 +34,8 @@ function Dashboard() {
     return (
         <div className="dashboard-container">
             <div className="user-info-box">
-                <img src={UserImage} alt="Kullanıcı Resmi" />
-                <p>Hamza Doğan</p>
+                <img src={user.profilePhoto} alt="User" />
+                <p>{user.displayName}</p>
             </div>
             <div className="dynamic-list-box">{renderComponent()}</div>
         </div>

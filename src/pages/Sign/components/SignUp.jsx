@@ -7,13 +7,13 @@ import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert.js"
 import MembershipModal from "./MembershipModal";
 import { useModal } from "../../../contexts/ModalContext";
 import { Link, useNavigate } from "react-router-dom";
-import { useRegisterUserMutation } from "../../../store/Slices/authApi.js";
+import { useRegisterUserMutation } from "../../../store/Slices/auth/authApi.js";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale } from 'react-datepicker';
 import tr from 'date-fns/locale/tr';
 import PreLoader from "../../../shared/components/PreLoader/PreLoader.jsx";
-registerLocale('tr', tr); 
+registerLocale('tr', tr);
 
 function SignUp() {
 

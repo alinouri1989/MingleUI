@@ -4,8 +4,9 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { Link } from 'react-router-dom';
-import { useLoginUserMutation } from '../../../store/Slices/authApi';
+import { useLoginUserMutation } from '../../../store/Slices/auth/authApi.js';
 import { SuccessAlert } from '../../../helpers/customAlert';
+import PreLoader from "../../../shared/components/PreLoader/PreLoader.jsx";
 
 function SignIn() {
 
@@ -102,6 +103,7 @@ function SignIn() {
           <Link to="/uye-ol">Hesap Oluştur</Link>
         </p>
       </form >
+      {isLoading && <PreLoader />}
     </div >
   )
 }
