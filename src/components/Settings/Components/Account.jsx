@@ -2,7 +2,6 @@ import { useState } from "react";
 import { TbEdit } from "react-icons/tb";
 import { FaCheck } from "react-icons/fa";
 import { MdClose } from 'react-icons/md';
-import userImage from "../../../assets/users/hamza.png";
 import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
 import ImageSearchRoundedIcon from '@mui/icons-material/ImageSearchRounded';
 import IconButton from "@mui/material/IconButton";
@@ -12,23 +11,39 @@ import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useSelector } from "react-redux";
+import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
+import { useUpdateDisplayNameMutation, useUpdatePhoneNumberMutation, useUpdateBiographyMutation, useRemoveProfilePhotoMutation, useUpdateProfilePhotoMutation } from "../../../store/Slices/accountSettings/accountSettingsApi";
+import PreLoader from "../../../shared/components/PreLoader/PreLoader";
+import { defaultProfilePhoto } from "../../../constants/DefaultProfilePhoto";
 
 function Account() {
 
   const { user } = useSelector(state => state.auth);
 
-  const email = "hamzadogan20@gmail.com"
-  const [username, setUserName] = useState("Hamza Doğan");
-  const [phone, setPhoneName] = useState("0546 893 44 13");
-  const [biography, setBiography] = useState("Merhaba, Ben Mingle kullanıyorum!");
+  const [username, setUserName] = useState(user.displayName || "");
+  const [phone, setPhoneName] = useState(user.phoneNumber || "Belirtilmedi");
+  const [biography, setBiography] = useState(user.biography || "");
+  const [selectedImage, setSelectedImage] = useState(user.profilePhoto || "");
 
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [isEditingBiography, setIsEditingBiography] = useState(false);
 
   const [isShowProfileImage, setIsShowProfileImage] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
 
+
+  const [updateDisplayName, { isLoading: isLoadingDisplayName }] = useUpdateDisplayNameMutation();
+  const [updateBiography, { isLoading: isLoadingBiography }] = useUpdateBiographyMutation();
+  const [updatePhoneNumber, { isLoading: isLoadingPhoneNumber }] = useUpdatePhoneNumberMutation();
+  const [updateProfilePhoto, { isLoading: isLoadingProfilePhoto }] = useUpdateProfilePhotoMutation();
+  const [removeProfilePhoto, { isLoading: isLoadingRemovePhoto }] = useRemoveProfilePhotoMutation();
+
+  const isLoading =
+    isLoadingDisplayName ||
+    isLoadingBiography ||
+    isLoadingPhoneNumber ||
+    isLoadingProfilePhoto ||
+    isLoadingRemovePhoto;
 
   // User Image Edit States
   const [anchorEl, setAnchorEl] = useState(null);
@@ -45,16 +60,43 @@ function Account() {
 
   //! User Informations Edit Handlers
 
-  const handleUsernameChange = () => {
+  const handleUsernameChange = async () => {
     setIsEditingUsername(!isEditingUsername);
+
+    if (user.displayName != username) {
+      try {
+        await updateDisplayName(username);
+        SuccessAlert("Ad Soyad Değiştirildi")
+      } catch (error) {
+        ErrorAlert("İsim Değiştirilemedi");
+      }
+    }
   };
 
-  const handlePhoneChange = () => {
+  const handlePhoneChange = async () => {
     setIsEditingPhone(!isEditingPhone);
+
+    if (user.phoneNumber != phone) {
+      try {
+        await updatePhoneNumber(phone);
+        SuccessAlert("Telefon Numarası Güncellendi")
+      } catch (error) {
+        ErrorAlert("Güncelleme Başarısız");
+      }
+    }
   };
 
-  const handleBiographyChange = () => {
+  const handleBiographyChange = async () => {
     setIsEditingBiography(!isEditingBiography);
+
+    if (user.biography != biography) {
+      try {
+        await updateBiography(biography);
+        SuccessAlert("Biyografi Güncellendi")
+      } catch (error) {
+        ErrorAlert("Biyografi Güncellenemedi");
+      }
+    }
   };
 
   //! User Profile Image Menu Item Handlers
@@ -69,13 +111,19 @@ function Account() {
     setIsShowProfileImage(true);
   };
 
-  const handleDeleteProfileImage = () => {
+  const handleDeleteProfileImage = async () => {
     handleClose();
-    setSelectedImage(null);
+    try {
+      await removeProfilePhoto();
+      SuccessAlert("Fotoğraf Kaldırıldı")
+      setSelectedImage(defaultProfilePhoto)
+    } catch {
+      ErrorAlert("Kaldırılamadı")
+    }
   };
 
   // Resim seçme işlemi
-  const handleImageUpload = (event) => {
+  const handleImageUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -83,6 +131,13 @@ function Account() {
         setSelectedImage(e.target.result);
       };
       reader.readAsDataURL(file);
+    }
+
+    try {
+      await updateProfilePhoto(file)
+      SuccessAlert("Fotoğraf Güncellendi")
+    } catch (error) {
+      ErrorAlert("Fotoğraf Güncellenemedi")
     }
   };
 
@@ -92,7 +147,7 @@ function Account() {
       <div className="image-box">
         <img
           className="profile-image"
-          src={selectedImage || userImage}
+          src={user.profilePhoto}
           alt="User Profile Image"
         />
         <IconButton
@@ -166,26 +221,28 @@ function Account() {
             />
           </MenuItem>
 
-          <MenuItem
-            onClick={handleDeleteProfileImage}
-            sx={{ color: "#EB6262" }}
-          >
-            <ListItemIcon sx={{ color: "inherit" }}>
-              <DeleteOutlineRoundedIcon />
-            </ListItemIcon>
-            <ListItemText
-              primary="Kaldır"
-              primaryTypographyProps={{
-                fontFamily: "Montserrat",
-                fontWeight: "700",
-                fontSize: "14px",
-              }}
-            />
-          </MenuItem>
+          {selectedImage !== defaultProfilePhoto &&
+            <MenuItem
+              onClick={handleDeleteProfileImage}
+              sx={{ color: "#EB6262" }}
+            >
+              <ListItemIcon sx={{ color: "inherit" }}>
+                <DeleteOutlineRoundedIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary="Kaldır"
+                primaryTypographyProps={{
+                  fontFamily: "Montserrat",
+                  fontWeight: "700",
+                  fontSize: "14px",
+                }}
+              />
+            </MenuItem>
+          }
         </Menu>
         {isShowProfileImage &&
           <div className="full-size-profil-image-box">
-            <img src={selectedImage || userImage} alt="UserImage" />
+            <img src={user.profilePhoto} alt="UserImage" />
             <button onClick={() => setIsShowProfileImage(false)}>
               <MdClose />
             </button>
@@ -264,6 +321,7 @@ function Account() {
           )}
         </div>
       </div>
+      {isLoading && <PreLoader />}
     </div >
   );
 }

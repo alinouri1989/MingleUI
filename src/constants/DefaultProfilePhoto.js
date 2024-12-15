@@ -1,0 +1,1 @@
+export const defaultProfilePhoto = "https://res.cloudinary.com/mingle-realtime-messaging-app/image/upload/v1734185072/DefaultUserProfilePhoto.png"
