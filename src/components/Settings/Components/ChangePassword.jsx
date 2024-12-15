@@ -1,55 +1,82 @@
 import { useState } from 'react';
+import { useChangePasswordMutation } from '../../../store/Slices/accountSettings/accountSettingsApi';
+import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
+import PreLoader from '../../../shared/components/PreLoader/PreLoader';
 
 function ChangePassword() {
 
-    const [currentPassword, setCurrentPassword] = useState('');
-    const [newPassword, setNewPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
+    const [changePassword, { isLoading }] = useChangePasswordMutation();
+    const [formData, setFormData] = useState({
+        currentPassword: '',
+        newPassword: '',
+        newPasswordAgain: '',
+    });
 
-    const isDisabled = !currentPassword || !newPassword || !confirmPassword;
+    const isDisabled =
+        !formData.newPasswordAgain || !formData.newPassword || !formData.confirmPassword;
 
-    const handleSave = () => {
-        if (newPassword !== confirmPassword) {
-            alert("Yeni şifreler eşleşmiyor!");
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleSave = async () => {
+        if (formData.newPassword !== formData.newPasswordAgain) {
+            ErrorAlert('Yeni şifreler eşleşmiyor!');
             return;
         }
-
-        alert("Şifre başarıyla değiştirildi!");
-        setCurrentPassword('');
-        setNewPassword('');
-        setConfirmPassword('');
+        console.log(formData);
+        try {
+            await changePassword(formData); // Backend ile uyumlu `formData`
+            setFormData({
+                currentPassword: '',
+                newPassword: '',
+                newPasswordAgain: '',
+            });
+            SuccessAlert('Şifre başarıyla değiştirildi!');
+        } catch (error) {
+            console.error(error);
+            const errorMessage = error?.data?.message || 'Şifre değiştirilemedi.';
+            ErrorAlert(errorMessage);
+        }
     };
 
     return (
-        <div className='change-password-box'>
+        <div className="change-password-box">
             <h3>Şifreni Değiştir</h3>
-            <div className='inputs-box'>
-                <div className='input-box'>
+            <div className="inputs-box">
+                <div className="input-box">
                     <p>Mevcut Şifreniz</p>
                     <input
-                        type="password"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        type="text"
+                        name="currentPassword"
+                        value={formData.currentPassword}
+                        onChange={handleInputChange}
                     />
                 </div>
-                <div className='input-box'>
+                <div className="input-box">
                     <p>Yeni Şifre</p>
                     <input
                         type="text"
-                        value={newPassword}
-                        onChange={(e) => setNewPassword(e.target.value)}
+                        name="newPassword"
+                        value={formData.newPassword}
+                        onChange={handleInputChange}
                     />
                 </div>
-                <div className='input-box'>
+                <div className="input-box">
                     <p>Yeni Şifre Tekrar</p>
                     <input
                         type="text"
-                        value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        name="newPasswordAgain"
+                        value={formData.newPasswordAgain}
+                        onChange={handleInputChange}
                     />
                 </div>
             </div>
-            <div className='option-buttons'>
+            <div className="option-buttons">
                 <button
                     onClick={handleSave}
                     disabled={isDisabled}
@@ -57,8 +84,8 @@ function ChangePassword() {
                 >
                     Kaydet
                 </button>
-
             </div>
+            {isLoading && <PreLoader />}
         </div>
     );
 }
