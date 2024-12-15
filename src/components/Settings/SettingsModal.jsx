@@ -15,6 +15,8 @@ import Help from "./Components/Help.jsx"
 
 import "./style.scss";
 import Security from "./Components/Security.jsx";
+import { useLogoutUserMutation } from "../../store/Slices/auth/authApi.js";
+import { ErrorAlert, SuccessAlert } from "../../helpers/customAlert.js";
 
 function SettingsModal({ closeModal }) {
 
@@ -26,11 +28,17 @@ function SettingsModal({ closeModal }) {
   ];
 
   const [activeMenu, setActiveMenu] = useState("account");
+  const [logoutUser] = useLogoutUserMutation();
 
-
-  const handleLogout = () => {
-
-  }
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      SuccessAlert("Çıkış Yapıldı")
+      closeModal();
+    } catch {
+      ErrorAlert("Çıkış Yapılamıyor")
+    }
+  };
 
   return (
     <div className="setting-general-box">

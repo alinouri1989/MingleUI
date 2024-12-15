@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getJwtFromCookie } from '../../helpers/getJwtFromCookie';
 import { setUser } from './authSlice';
+import { removeJwtFromCookie } from '../../helpers/removeJwtFromCookie';
 
 // RTK Query auth API
 export const authApi = createApi({
@@ -64,6 +65,34 @@ export const authApi = createApi({
         };
       },
     }),
+
+    // Logout endpoint
+    logoutUser: builder.mutation({
+      query: () => {
+        const token = getJwtFromCookie();
+        return {
+          url: '/Authentication/SignOut',
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+      },
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        try {
+          await queryFulfilled;
+          removeJwtFromCookie();
+
+          dispatch(setUser({
+            user: null,
+            token: null,
+          }));
+
+        } catch (error) {
+          console.error('Logout failed:', error);
+        }
+      }
+    }),
   }),
 });
 
@@ -71,4 +100,5 @@ export const {
   useRegisterUserMutation,
   useLoginUserMutation,
   useGetUserProfileQuery,
+  useLogoutUserMutation,
 } = authApi;
