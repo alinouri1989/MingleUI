@@ -12,7 +12,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useSelector } from "react-redux";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
-import { useUpdateDisplayNameMutation, useUpdatePhoneNumberMutation, useUpdateBiographyMutation, useRemoveProfilePhotoMutation, useUpdateProfilePhotoMutation } from "../../../store/Slices/accountSettings/accountSettingsApi";
+import { useUpdateDisplayNameMutation, useUpdatePhoneNumberMutation, useUpdateBiographyMutation, useRemoveProfilePhotoMutation, useUpdateProfilePhotoMutation } from "../../../store/Slices/userSettings/userSettingsApi";
 import PreLoader from "../../../shared/components/PreLoader/PreLoader";
 import { defaultProfilePhoto } from "../../../constants/DefaultProfilePhoto";
 
@@ -20,10 +20,10 @@ function Account() {
 
   const { user } = useSelector(state => state.auth);
 
-  const [username, setUserName] = useState(user.displayName || "");
-  const [phone, setPhoneName] = useState(user.phoneNumber || "Belirtilmedi");
-  const [biography, setBiography] = useState(user.biography || "");
-  const [selectedImage, setSelectedImage] = useState(user.profilePhoto || "");
+  const [username, setUserName] = useState(user?.displayName || "");
+  const [phone, setPhoneName] = useState(user?.phoneNumber || "Belirtilmedi");
+  const [biography, setBiography] = useState(user?.biography || "");
+  const [selectedImage, setSelectedImage] = useState(user?.profilePhoto || "");
 
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [isEditingPhone, setIsEditingPhone] = useState(false);
@@ -147,7 +147,7 @@ function Account() {
       <div className="image-box">
         <img
           className="profile-image"
-          src={user.profilePhoto}
+          src={user?.profilePhoto || ""}
           alt="User Profile Image"
         />
         <IconButton
@@ -277,7 +277,7 @@ function Account() {
       <div className="email-and-phone-box">
         <div className="email-box">
           <p>Email</p>
-          <span>{user.email}</span>
+          <span>{user?.email}</span>
         </div>
         <div className="phone-box">
           <p>Telefon</p>

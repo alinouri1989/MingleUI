@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useChangePasswordMutation } from '../../../store/Slices/accountSettings/accountSettingsApi';
+import { useChangePasswordMutation } from '../../../store/Slices/userSettings/userSettingsApi';
 import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
 import PreLoader from '../../../shared/components/PreLoader/PreLoader';
 

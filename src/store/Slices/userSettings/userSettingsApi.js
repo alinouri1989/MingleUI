@@ -1,8 +1,9 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { getJwtFromCookie } from '../../helpers/getJwtFromCookie';
-import {updateUserField} from "../../helpers/updateUserField.js";
+import { getJwtFromCookie } from '../../helpers/getJwtFromCookie.js';
+import { updateUserField } from "../../helpers/updateUserField.js";
+import { setUser } from '../auth/authSlice.js';
 
-export const accountSettingsApi = createApi({
+export const userSettingsApi = createApi({
   reducerPath: 'accountSettingsApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:5105/api/',
@@ -117,6 +118,37 @@ export const accountSettingsApi = createApi({
         body: formData,
       }),
     }),
+
+    // ============ Theme Settings  ============
+
+    changeChatBackground: builder.mutation({
+      query: (colorId) => ({
+        url: 'User/ChangeChatBackground',
+        method: 'PATCH',
+        body: { chatBackground: colorId },
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch, getState }) {
+        try {
+          await queryFulfilled;
+
+          const currentUser = getState().auth.user;
+
+          dispatch(
+            setUser({
+              user: {
+                ...currentUser, 
+                settings: {
+                  ...currentUser.settings,
+                  chatBackground: arg,
+                }
+              }
+            })
+          );
+        } catch (error) {
+          console.error('Error updating chat background:', error);
+        }
+      },
+    }),
   }),
 });
 
@@ -127,4 +159,5 @@ export const {
   useUpdatePhoneNumberMutation,
   useUpdateBiographyMutation,
   useChangePasswordMutation,
-} = accountSettingsApi;
+  useChangeChatBackgroundMutation
+} = userSettingsApi;

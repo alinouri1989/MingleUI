@@ -1,9 +1,13 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import MessageBubble from '../../../shared/components/MessageBubble/MessageBubble.jsx';
+import { getChatBackgroundColor } from '../../../helpers/getChatBackgroundColor.js';
 
 function UserMessageBar({ groupedMessages }) {
-  const { backgroundImage } = useSelector((state) => state.chatBackgroundColor);
+  
+  const { user } = useSelector((state) => state.auth);
+
+  const backgroundImage = getChatBackgroundColor(user.settings.chatBackground)
 
   return (
     <div className="user-message-bar" style={{ backgroundImage }}>
