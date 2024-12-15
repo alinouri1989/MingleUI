@@ -11,14 +11,16 @@ import MenuItem from "@mui/material/MenuItem";
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import { useSelector } from "react-redux";
 
 function Account() {
+
+  const { user } = useSelector(state => state.auth);
 
   const email = "hamzadogan20@gmail.com"
   const [username, setUserName] = useState("Hamza Doğan");
   const [phone, setPhoneName] = useState("0546 893 44 13");
   const [biography, setBiography] = useState("Merhaba, Ben Mingle kullanıyorum!");
-
 
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [isEditingPhone, setIsEditingPhone] = useState(false);
@@ -218,7 +220,7 @@ function Account() {
       <div className="email-and-phone-box">
         <div className="email-box">
           <p>Email</p>
-          <span>{email}</span>
+          <span>{user.email}</span>
         </div>
         <div className="phone-box">
           <p>Telefon</p>
