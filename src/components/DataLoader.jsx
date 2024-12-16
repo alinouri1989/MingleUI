@@ -4,6 +4,7 @@ import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie";
 import { authApi } from "../store/Slices/auth/authApi";
 import { setUser } from "../store/Slices/auth/authSlice";
 import MinglePreLoader from "../shared/components/MinglePreLoader/MinglePreLoader";
+import { applyTheme } from "../helpers/applyTheme";
 
 const DataLoader = ({ children }) => {
     const dispatch = useDispatch();
@@ -14,22 +15,30 @@ const DataLoader = ({ children }) => {
 
     useEffect(() => {
         const initializeAuth = async () => {
-            const jwt = getJwtFromCookie(); // JWT'yi cookie'den al
+            const jwt = getJwtFromCookie();
 
             if (jwt) {
                 try {
-                    // Kullanıcı bilgilerini almak için getUserProfile çağrısı
+
                     const userProfile = await dispatch(
                         authApi.endpoints.getUserProfile.initiate()
                     ).unwrap();
 
-                    // Kullanıcı bilgilerini ve token'ı Redux store'a kaydet
                     dispatch(
                         setUser({
                             user: userProfile,
                             token: jwt,
                         })
                     );
+
+                    // Kullanıcı teması ayarla
+                    const theme = userProfile?.settings?.theme || "DefaultSystemMode";
+
+                    if (theme === "DefaultSystemMode" || theme === "Light") {
+                        applyTheme("Light");
+                    } else if (theme === "Dark") {
+                        applyTheme("Dark");
+                    }
                 } catch (error) {
                     console.error("Failed to fetch user profile:", error);
                 }
@@ -38,7 +47,7 @@ const DataLoader = ({ children }) => {
             // İşlem tamamlandığında bir timeout ile loading'i kaldır
             setTimeout(() => {
                 setIsLoading(false); // 1 saniye gecikmeli olarak içeriği göster
-            },900);
+            }, 900);
         };
 
         initializeAuth();
@@ -46,9 +55,7 @@ const DataLoader = ({ children }) => {
 
     // Eğer loading devam ediyorsa özel bir loading component göster
     if (isLoading) {
-        return (
-            <MinglePreLoader />
-        );
+        return <MinglePreLoader />;
     }
 
     return <>{children}</>;

@@ -13,7 +13,7 @@ function ChangePassword() {
     });
 
     const isDisabled =
-        !formData.newPasswordAgain || !formData.newPassword || !formData.confirmPassword;
+        !formData.newPasswordAgain || !formData.newPassword || !formData.currentPassword;
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;

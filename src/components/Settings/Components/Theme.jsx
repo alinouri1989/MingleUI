@@ -3,26 +3,42 @@ import { useState } from "react";
 import { ChatBackgroundColorsThemes } from "../../../constants/ChatBackgroundColors";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
 import { useDispatch, useSelector } from "react-redux";
-import { useChangeChatBackgroundMutation } from "../../../store/Slices/userSettings/userSettingsApi";
+import { useChangeChatBackgroundMutation, useChangeThemeMutation } from "../../../store/Slices/userSettings/userSettingsApi";
 import PreLoader from "../../../shared/components/PreLoader/PreLoader";
-
+import { applyTheme } from "../../../helpers/applyTheme";
 
 const Theme = () => {
 
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const [themeMode, setThemeMode] = useState();
-  const [changeChatBackground, { isLoading }] = useChangeChatBackgroundMutation();
+  const [changeChatBackground, { isLoading: chatBackgroundLoading }] = useChangeChatBackgroundMutation();
+  const [changeTheme, { isLoading: themeLoading }] = useChangeThemeMutation();
+
+  const isLoading = chatBackgroundLoading || themeLoading;
 
 
-  const handleThemeChange = (newTheme) => {
+  const handleThemeChange = async (newTheme) => {
+    const themeReverseMapping = {
+      DefaultSystemMode: 0,
+      Light: 1,
+      Dark: 2,
+    };
+
     try {
+      await changeTheme(themeReverseMapping[newTheme]);
+      
+      if (newTheme === "DefaultSystemMode" || newTheme === "Light") {
+        applyTheme("Light");
+      } else if (newTheme === "Dark") {
+        applyTheme("Dark");
+      }
 
-
+      SuccessAlert("Tema değiştirildi");
     } catch (error) {
-
+      ErrorAlert("Tema değiştirilemedi");
     }
   };
+
 
   const handleSelectedChatBackgroundColor = async (colorId) => {
     try {
@@ -39,12 +55,12 @@ const Theme = () => {
       <div className="theme-select">
         <h3>Tema</h3>
         <select
-          value={themeMode}
+          value={user?.settings?.theme || "DefaultSystemMode"}
           onChange={(e) => handleThemeChange(e.target.value)}
         >
-          <option value="Dark">Koyu</option>
-          <option value="Light">Açık</option>
           <option value="DefaultSystemMode">Varsayılan Sistem Modu</option>
+          <option value="Light">Açık</option>
+          <option value="Dark">Koyu</option>
         </select>
       </div>
 

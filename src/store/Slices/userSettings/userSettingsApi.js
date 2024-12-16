@@ -136,7 +136,7 @@ export const userSettingsApi = createApi({
           dispatch(
             setUser({
               user: {
-                ...currentUser, 
+                ...currentUser,
                 settings: {
                   ...currentUser.settings,
                   chatBackground: arg,
@@ -149,6 +149,42 @@ export const userSettingsApi = createApi({
         }
       },
     }),
+
+    changeTheme: builder.mutation({
+      query: (themeId) => ({
+        url: 'User/ChangeTheme',
+        method: 'PATCH',
+        body: { theme: themeId },
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch, getState }) {
+        try {
+          await queryFulfilled;
+
+          const currentUser = getState().auth.user;
+          const themeMapping = {
+            0: "DefaultSystemMode",
+            1: "Light",
+            2: "Dark",
+          };
+
+
+          dispatch(
+            setUser({
+              user: {
+                ...currentUser,
+                settings: {
+                  ...currentUser.settings,
+                  theme: themeMapping[arg],
+                },
+              },
+            })
+          );
+        } catch (error) {
+          console.error('Error updating theme:', error);
+        }
+      },
+    }),
+
   }),
 });
 
@@ -159,5 +195,6 @@ export const {
   useUpdatePhoneNumberMutation,
   useUpdateBiographyMutation,
   useChangePasswordMutation,
-  useChangeChatBackgroundMutation
+  useChangeChatBackgroundMutation,
+  useChangeThemeMutation
 } = userSettingsApi;
