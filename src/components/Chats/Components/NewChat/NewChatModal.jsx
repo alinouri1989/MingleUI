@@ -1,39 +1,33 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { useModal } from "../../../../contexts/ModalContext.jsx";
 import CloseButton from "../../../../contexts/components/CloseModalButton.jsx";
-
+import PreLoader from "../../../../shared/components/PreLoader/PreLoader.jsx";
 import star from "../../../../assets/svg/star.svg";
 import { BiSearchAlt } from "react-icons/bi";
 import { TiThList } from "react-icons/ti";
-import Okan from "../../../../assets/users/okan.png";
 import { AiFillInfoCircle } from "react-icons/ai";
-
+import { searchUsersApi, useSearchUsersQuery } from "../../../../store/Slices/searchUsers/searchUserApi.js";
 import "./style.scss";
+import { useDebounce } from "../../../../hooks/useDebounce.jsx";
+import { useDispatch } from "react-redux";
 
 function NewChatModal() {
-  // This Component is not full modular. But It will be more effective
   const { closeModal } = useModal();
-  const resultNumber = 4;
-  const isProfilPhoto = false;
-
   const [inputValue, setInputValue] = useState("");
-  const [showUsersBox, setShowUsersBox] = useState(false);
-  const [showNoResult, setShowNoResult] = useState(false);
+  const debouncedSearchQuery = useDebounce(inputValue, 300);
+  const { data, error, isLoading, refetch } = useSearchUsersQuery(debouncedSearchQuery, {
+    skip: !debouncedSearchQuery,
+  });
+
+  const users = error ? [] : data ? Object.entries(data) : [];
+
+  const handleGoToChat = (userId) => {
+    console.log("Kullanıcı ID'si:", userId);
+
+  };
 
   const handleInputChange = (e) => {
-    const value = e.target.value;
-    setInputValue(value);
-
-    if (value === ".") {
-      setShowUsersBox(false);
-      setShowNoResult(true);
-    } else if (value.length > 0) {
-      setShowUsersBox(true);
-      setShowNoResult(false);
-    } else {
-      setShowUsersBox(false);
-      setShowNoResult(false);
-    }
+    setInputValue(e.target.value);
   };
 
   return (
@@ -55,71 +49,50 @@ function NewChatModal() {
         </div>
       </div>
 
-      {/* Conditional Rendering for No Result Box */}
-      <div className={`no-result-box ${showNoResult ? "active" : ""}`}>
-        <AiFillInfoCircle className="icon" />
-        <p>Böyle bir kullanıcı bulunamadı</p>
-      </div>
+      {/* Yükleme Durumu */}
+      {isLoading && <PreLoader />}
 
-      {/* Conditional Rendering for Users Box */}
-      <div className={`user-list-box ${showUsersBox ? "active" : ""}`}>
-        <div className="result-number-box">
-          <TiThList className="icon" />
-          <p>{resultNumber} kullanıcı listeleniyor</p>
+      {users.length === 0 && error && !isLoading && (
+        <div className="no-result-box active">
+          <AiFillInfoCircle className="icon" />
+          <p>{error?.data?.message || "Böyle bir kullanıcı bulunamadı"}</p>
         </div>
+      )}
 
-        <div className="users-box">
-          <div className="user-box">
-            <img src={Okan} alt="User Img" />
-            <div className="user-info">
-              <p>Okan Doğan</p>
-              <span>okandogan20@gmail.com</span>
-            </div>
+      {/* Kullanıcı Listesi */}
+      {users.length > 0 && (
+        <div className="user-list-box active">
+          <div className="result-number-box">
+            <TiThList className="icon" />
+            <p>{users.length} kullanıcı listeleniyor</p>
           </div>
 
-          <div className="user-box">
-            {isProfilPhoto ? (
-              <img src={Okan} alt="User Img" />
-            ) : (
-              <div className="default-profile-image">
-                <p>OK</p>
-              </div>
-            )}
-            <div className="user-info">
-              <p>Okan Doğan</p>
-              <span>okndoganlar77@outlook.com</span>
+          {users &&
+            <div className="users-box">
+              {users.map(([userId, user]) => (
+                <div
+                  key={userId} // ID key olarak kullanıldı
+                  className="user-box"
+                  onClick={() => handleGoToChat(userId)} // ID parametre olarak gönderiliyor
+                  style={{ cursor: "pointer" }} // Hover için pointer eklendi
+                >
+                  {user.profilePhoto ? (
+                    <img src={user.profilePhoto} alt={user.displayName} />
+                  ) : (
+                    <div className="default-profile-image">
+                      <p>{user.displayName?.charAt(0) || "?"}</p>
+                    </div>
+                  )}
+                  <div className="user-info">
+                    <p>{user.displayName}</p>
+                    <span>{user.email}</span>
+                  </div>
+                </div>
+              ))}
             </div>
-          </div>
-
-          <div className="user-box">
-            {isProfilPhoto ? (
-              <img src={Okan} alt="User Img" />
-            ) : (
-              <div className="default-profile-image">
-                <p>OK</p>
-              </div>
-            )}
-            <div className="user-info">
-              <p>Okan Doğan</p>
-              <span>okandogan01@hotmail.com</span>
-            </div>
-          </div>
-
-          <div className="user-box">
-            {isProfilPhoto ? (
-              <img src={Okan} alt="User Img" />
-            ) : (
-              <div className="default-profile-image">
-                <p>OKA</p>
-              </div>
-            )}
-            <div className="user-info">
-              <p>Okan Doğan Aslan</p>
-              <span>okandgnasln33@hotmail.com</span>
-            </div>
-          </div>
+          }
         </div>
-      </div>
+      )}
     </div>
   );
 }
