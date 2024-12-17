@@ -15,16 +15,17 @@ function NewChatModal() {
   const { closeModal } = useModal();
   const [inputValue, setInputValue] = useState("");
   const debouncedSearchQuery = useDebounce(inputValue, 300);
-  const { data, error, isLoading, refetch } = useSearchUsersQuery(debouncedSearchQuery, {
+  const { data, error, isFetching } = useSearchUsersQuery(debouncedSearchQuery, {
     skip: !debouncedSearchQuery,
   });
-
+  
   const users = error ? [] : data ? Object.entries(data) : [];
 
   const handleGoToChat = (userId) => {
     console.log("Kullanıcı ID'si:", userId);
 
   };
+  console.log("Loading:",isFetching);
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -50,9 +51,9 @@ function NewChatModal() {
       </div>
 
       {/* Yükleme Durumu */}
-      {isLoading && <PreLoader />}
+      {isFetching && <PreLoader />}
 
-      {users.length === 0 && error && !isLoading && (
+      {users.length === 0 && error && !isFetching && (
         <div className="no-result-box active">
           <AiFillInfoCircle className="icon" />
           <p>{error?.data?.message || "Böyle bir kullanıcı bulunamadı"}</p>
@@ -60,7 +61,7 @@ function NewChatModal() {
       )}
 
       {/* Kullanıcı Listesi */}
-      {users.length > 0 && (
+      {!isFetching && users.length > 0 && (
         <div className="user-list-box active">
           <div className="result-number-box">
             <TiThList className="icon" />
