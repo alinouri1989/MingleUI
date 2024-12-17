@@ -8,7 +8,6 @@ import { applyTheme } from "../helpers/applyTheme";
 
 const DataLoader = ({ children }) => {
     const dispatch = useDispatch();
-    const { user } = useSelector((state) => state.auth);
 
     // State: Loading durumunu kontrol eder
     const [isLoading, setIsLoading] = useState(true);
@@ -44,16 +43,14 @@ const DataLoader = ({ children }) => {
                 }
             }
 
-            // İşlem tamamlandığında bir timeout ile loading'i kaldır
             setTimeout(() => {
-                setIsLoading(false); // 1 saniye gecikmeli olarak içeriği göster
+                setIsLoading(false); 
             }, 900);
         };
 
         initializeAuth();
     }, [dispatch]);
 
-    // Eğer loading devam ediyorsa özel bir loading component göster
     if (isLoading) {
         return <MinglePreLoader />;
     }
