@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useModal } from "../../../../contexts/ModalContext.jsx";
 import CloseButton from "../../../../contexts/components/CloseModalButton.jsx";
 import PreLoader from "../../../../shared/components/PreLoader/PreLoader.jsx";
@@ -6,26 +6,26 @@ import star from "../../../../assets/svg/star.svg";
 import { BiSearchAlt } from "react-icons/bi";
 import { TiThList } from "react-icons/ti";
 import { AiFillInfoCircle } from "react-icons/ai";
-import { searchUsersApi, useSearchUsersQuery } from "../../../../store/Slices/searchUsers/searchUserApi.js";
-import "./style.scss";
+import { useSearchUsersQuery } from "../../../../store/Slices/searchUsers/searchUserApi.js";
 import { useDebounce } from "../../../../hooks/useDebounce.jsx";
-import { useDispatch } from "react-redux";
+import "./style.scss";
+
 
 function NewChatModal() {
+
   const { closeModal } = useModal();
   const [inputValue, setInputValue] = useState("");
   const debouncedSearchQuery = useDebounce(inputValue, 300);
+
   const { data, error, isFetching } = useSearchUsersQuery(debouncedSearchQuery, {
     skip: !debouncedSearchQuery,
   });
-  
+
   const users = error ? [] : data ? Object.entries(data) : [];
 
   const handleGoToChat = (userId) => {
-    console.log("Kullanıcı ID'si:", userId);
 
   };
-  console.log("Loading:",isFetching);
 
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -72,18 +72,12 @@ function NewChatModal() {
             <div className="users-box">
               {users.map(([userId, user]) => (
                 <div
-                  key={userId} // ID key olarak kullanıldı
+                  key={userId}
                   className="user-box"
-                  onClick={() => handleGoToChat(userId)} // ID parametre olarak gönderiliyor
-                  style={{ cursor: "pointer" }} // Hover için pointer eklendi
+                  onClick={() => handleGoToChat(userId)}
+                  style={{ cursor: "pointer" }}
                 >
-                  {user.profilePhoto ? (
-                    <img src={user.profilePhoto} alt={user.displayName} />
-                  ) : (
-                    <div className="default-profile-image">
-                      <p>{user.displayName?.charAt(0) || "?"}</p>
-                    </div>
-                  )}
+                  <img src={user.profilePhoto} alt={user.displayName} />
                   <div className="user-info">
                     <p>{user.displayName}</p>
                     <span>{user.email}</span>

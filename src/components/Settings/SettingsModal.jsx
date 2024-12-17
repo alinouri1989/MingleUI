@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import CloseButton from "../../contexts/components/CloseModalButton.jsx";
 import { IoMdSettings } from "react-icons/io";
 import { FaUserCog } from "react-icons/fa";
-import { IoIosHelpCircle } from "react-icons/io";
 import { PiPaintBrushFill } from "react-icons/pi";
 import { MdSecurity } from "react-icons/md";
 import { LuLogOut } from "react-icons/lu";
@@ -15,10 +14,14 @@ import Help from "./Components/Help.jsx"
 
 import "./style.scss";
 import Security from "./Components/Security.jsx";
-import { useLogoutUserMutation } from "../../store/Slices/auth/authApi.js";
+import { authApi, useLogoutUserMutation } from "../../store/Slices/auth/authApi.js";
 import { ErrorAlert, SuccessAlert } from "../../helpers/customAlert.js";
+import { useDispatch } from "react-redux";
+import { userSettingsApi } from "../../store/Slices/userSettings/userSettingsApi.js";
 
 function SettingsModal({ closeModal }) {
+  
+  const dispatch = useDispatch();
 
   const menuItems = [
     { id: "account", icon: <FaUserCog />, text: "Hesap", component: <Account /> },
@@ -33,6 +36,8 @@ function SettingsModal({ closeModal }) {
   const handleLogout = async () => {
     try {
       await logoutUser();
+      dispatch(authApi.util.resetApiState()); 
+      dispatch(userSettingsApi.util.resetApiState());
       SuccessAlert("Çıkış Yapıldı")
       closeModal();
     } catch {
