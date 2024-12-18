@@ -1,47 +1,63 @@
-
 import { MdClose } from 'react-icons/md';
-
-import { useState } from "react";
 import { HiUserAdd } from "react-icons/hi";
 import { HiCheckCircle } from "react-icons/hi2";
-
 import star from "../../../assets/svg/star.svg";
 import { BiSearchAlt } from "react-icons/bi";
 import { TiThList } from "react-icons/ti";
-import Okan from "../../../assets/users/okan.png";
 import { AiFillInfoCircle } from "react-icons/ai";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
+import Okan from "../../../assets/users/okan.png"; // Örnek bir kullanıcı fotoğrafı
 import "../../Chats/Components/NewChat/style.scss";
+import { useDebounce } from '../../../hooks/useDebounce';
+import { useSearchUsersQuery } from '../../../store/Slices/searchUsers/searchUserApi';
+import { addUser } from '../../../store/Slices/Group/participants';
+import PreLoader from '../../../shared/components/PreLoader/PreLoader';
+import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
 
 function AddUser({ closeUserModal }) {
+    const groupMembers = useSelector((state) => state.groupParticipants.participants);
 
-    const resultNumber = 4;
-    const isProfilPhoto = false;
-    const isUserAdded = true;
-
+    const dispatch = useDispatch(); // Redux dispatch fonksiyonu
     const [inputValue, setInputValue] = useState("");
-    const [showUsersBox, setShowUsersBox] = useState(false);
-    const [showNoResult, setShowNoResult] = useState(false);
+    const debouncedSearchQuery = useDebounce(inputValue, 300); // Debounced arama query
+    const { data, error, isFetching } = useSearchUsersQuery(debouncedSearchQuery, {
+        skip: !debouncedSearchQuery,
+    });
+
+    const users = error ? [] : data ? Object.entries(data) : []; // API'den gelen kullanıcı verilerini işleyin
 
     const handleInputChange = (e) => {
-        const value = e.target.value;
-        setInputValue(value);
+        setInputValue(e.target.value); // Arama kutusundaki değer değiştikçe set et
+    };
 
-        if (value === ".") {
-            setShowUsersBox(false);
-            setShowNoResult(true);
-        } else if (value.length > 0) {
-            setShowUsersBox(true);
-            setShowNoResult(false);
-        } else {
-            setShowUsersBox(false);
-            setShowNoResult(false);
+    const handleAddSelectedUser = (userId) => {
+        const selectedUser = users.find(([id, user]) => id === userId);
+
+        if (selectedUser) {
+            const [id, user] = selectedUser;
+            const { profilePhoto, displayName } = user;
+
+            // Eğer `groupMembers` içinde kullanıcı zaten varsa, hiçbir şey yapmadan çık
+            const isAlreadyAdded = groupMembers.some((member) => member.userId === id);
+            if (isAlreadyAdded) {
+                ErrorAlert("Bu Kullanıcı Eklendi")
+                return; // İşlemi durdur
+            }
+
+            // Kullanıcıyı ekle
+            dispatch(addUser({
+                userId: id,
+                profilePhoto,
+                displayName,
+                role: 1
+            }));
+
+            SuccessAlert("Kullanıcı Eklendi");
         }
     };
 
-    const handleAddSelectedUser = () => {
-
-    }
 
     return (
         <div className='add-user-modal'>
@@ -64,96 +80,59 @@ function AddUser({ closeUserModal }) {
                         </div>
                     </div>
 
-                    {/* Conditional Rendering for No Result Box */}
-                    <div className={`no-result-box ${showNoResult ? "active" : ""}`}>
-                        <AiFillInfoCircle className="icon" />
-                        <p>Böyle bir kullanıcı bulunamadı</p>
-                    </div>
+                    {/* Yükleniyor durumu */}
+                    {isFetching && <PreLoader />}
 
-                    {/* Conditional Rendering for Users Box */}
-                    <div className={`user-list-box ${showUsersBox ? "active" : ""}`}>
-                        <div className="result-number-box">
-                            <TiThList className="icon" />
-                            <p>{resultNumber} kullanıcı listeleniyor</p>
+                    {/* Sonuç bulunamadığında hata mesajı */}
+                    {users.length === 0 && error && !isFetching && (
+                        <div className="no-result-box active">
+                            <AiFillInfoCircle className="icon" />
+                            <p>{error?.data?.message || "Böyle bir kullanıcı bulunamadı"}</p>
                         </div>
+                    )}
 
-                        <div className="users-box">
-                            <div onClick={handleAddSelectedUser} className="user-box">
-                                <img src={Okan} alt="User Img" />
-                                <div className="user-info">
-                                    <p>Okan Doğan</p>
-                                    <span>okandogan20@gmail.com</span>
-                                </div>
-                                {isUserAdded ?
-                                    <div className='added-user'>
-                                        <p>Eklendi</p>
-                                        <HiCheckCircle className='icon' />
-                                    </div> : <div className='add-user-box'>
-                                        <HiUserAdd className='icon' />
-                                        <p>Ekle</p>
-                                    </div>
-                                }
+                    {/* Kullanıcıları listeleme */}
+                    {!isFetching && users.length > 0 && (
+                        <div className="user-list-box active">
+                            <div className="result-number-box">
+                                <TiThList className="icon" />
+                                <p>{users.length} kullanıcı listeleniyor</p>
                             </div>
 
-                            <div className="user-box">
-                                {isProfilPhoto ? (
-                                    <img src={Okan} alt="User Img" />
-                                ) : (
-                                    <div className="default-profile-image">
-                                        <p>OK</p>
-                                    </div>
-                                )}
-                                <div className="user-info">
-                                    <p>Okan Doğan</p>
-                                    <span>okndoganlar77@outlook.com</span>
-                                </div>
-                                <div className='add-user-box'>
-                                    <HiUserAdd className='icon' />
-                                    <p>Ekle</p>
-                                </div>
-                            </div>
+                            <div className="users-box">
+                                {users.map(([userId, user]) => {
+                                    const isAlreadyAdded = groupMembers.some((member) => member.userId === userId);
 
-                            <div className="user-box">
-                                {isProfilPhoto ? (
-                                    <img src={Okan} alt="User Img" />
-                                ) : (
-                                    <div className="default-profile-image">
-                                        <p>OK</p>
-                                    </div>
-                                )}
-                                <div className="user-info">
-                                    <p>Okan Doğan</p>
-                                    <span>okandogan01@hotmail.com</span>
-                                </div>
-                                <div className='add-user-box'>
-                                    <HiUserAdd className='icon' />
-                                    <p>Ekle</p>
-                                </div>
-                            </div>
-
-                            <div className="user-box">
-                                {isProfilPhoto ? (
-                                    <img src={Okan} alt="User Img" />
-                                ) : (
-                                    <div className="default-profile-image">
-                                        <p>OKA</p>
-                                    </div>
-                                )}
-                                <div className="user-info">
-                                    <p>Okan Doğan Aslan</p>
-                                    <span>okandgnasln33@hotmail.com</span>
-                                </div>
-                                <div className='add-user-box'>
-                                    <HiUserAdd className='icon' />
-                                    <p>Ekle</p>
-                                </div>
+                                    return (
+                                        <div key={userId} className="user-box" onClick={() => handleAddSelectedUser(userId)}>
+                                            <img src={user.profilePhoto || Okan} alt={user.displayName} />
+                                            <div className="user-info">
+                                                <p>{user.displayName}</p>
+                                                <span>{user.email}</span>
+                                            </div>
+                                            <div className='add-user-box'>
+                                                {isAlreadyAdded ? (
+                                                    <>
+                                                        <HiCheckCircle className='icon' />
+                                                        <p>Eklendi</p>
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        <HiUserAdd className='icon' />
+                                                        <p>Ekle</p>
+                                                    </>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default AddUser
+export default AddUser;

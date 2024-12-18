@@ -18,14 +18,18 @@ import { IoMdSettings } from "react-icons/io";
 
 import star from "../../../../assets/svg/star.svg";
 import adminPP from "../../../../assets/users/Deneme12.png";
-import GroupImageDefault from "../../../../assets/users/GroupImage.png";
+import { defaultGroupPhoto } from "../../../../constants/DefaultProfilePhoto.js";
 import AddUser from "../AddUser.jsx";
 import CloseModalButton from "../../../../contexts/components/CloseModalButton.jsx";
 import "./style.scss";
+import { useDispatch, useSelector } from "react-redux";
+import { changeRole, removeUser } from "../../../../store/Slices/Group/participants.js";
+import { SuccessAlert } from "../../../../helpers/customAlert.js";
 
 
 function NewGroupModal({ closeModal, isGroupSettings }) {
 
+    const dispatch = useDispatch();
     const [isAddUserModal, setAddUserModal] = useState(false);
 
     // User Image Edit States
@@ -40,6 +44,8 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
         setAnchorEl(null);
     };
 
+    const [isShowProfileImage, setIsShowProfileImage] = useState(false);
+    const [isSaveDisabled, setSaveDisabled] = useState(true);
 
     // Mock Variables
     const adminName = "Hamza Doğan";
@@ -48,24 +54,37 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
     const exitsGroupImage = "https://images.unsplash.com/photo-1733035997778-65e038269fb8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw2Nnx8fGVufDB8fHx8fA%3D%3D";
     const exitsGroupName = "Yardımlaşma Grubu";
     const exitsGroupDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores id vitae corporis ex, atque animi distinctio minima commodi explicabo qui?";
-    const groupImageDefault = GroupImageDefault;
-    
+    const groupImageDefault = defaultGroupPhoto;
+
     // initial State for group data
     const initialData = {
-        groupName: isGroupSettings ? exitsGroupName : "",
-        groupDescription: isGroupSettings ? exitsGroupDescription : "",
-        groupImage: isGroupSettings ? exitsGroupImage : null,
-        groupMembers: [
-            { id: 1, name: "Okan Doğan", role: "Üye", avatar: "https://randomuser.me/api/portraits/men/1.jpg" },
-            { id: 2, name: "Ayşe Yılmaz", role: "Üye", avatar: "https://randomuser.me/api/portraits/women/2.jpg" }
+        name: isGroupSettings ? exitsGroupName : "",
+        description: isGroupSettings ? exitsGroupDescription : "",
+        photo: isGroupSettings ? exitsGroupImage : null,
+        participants:  [
+            { id: 1, displayName: "Okan Doğan", role: 1, profilePhoto: "https://randomuser.me/api/portraits/men/1.jpg" },
+            { id: 2, name: "Ayşe Yılmaz", role: 1, profilePhoto: "https://randomuser.me/api/portraits/women/2.jpg" }
         ]
     };
 
     const [formData, setFormData] = useState(initialData);
 
-    const [updatedRoles, setUpdatedRoles] = useState([]);
-    const [isShowProfileImage, setIsShowProfileImage] = useState(false);
-    const [isSaveDisabled, setSaveDisabled] = useState(true);
+
+    const getPhotoURL = (photo) => {
+        if (photo instanceof File) {
+            return URL.createObjectURL(photo);
+        }
+    
+        return photo || groupImageDefault;
+    };
+
+    // Temizlik için useEffect
+    useEffect(() => {
+        if (formData.photo instanceof File) {
+            const objectURL = URL.createObjectURL(formData.photo);
+            return () => URL.revokeObjectURL(objectURL);
+        }
+    }, [formData.photo]);
 
     useEffect(() => {
         const isSameData = JSON.stringify(formData) === JSON.stringify(initialData);
@@ -73,53 +92,19 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
     }, [formData]);
 
     // Handlers for input changes
-    const handleGroupNameChange = (e) => setFormData((prev) => ({ ...prev, groupName: e.target.value }));
+    const handleGroupNameChange = (e) => setFormData((prev) => ({ ...prev, name: e.target.value }));
 
-    const handleGroupDescriptionChange = (e) => setFormData((prev) => ({ ...prev, groupDescription: e.target.value }));
+    const handleGroupDescriptionChange = (e) => setFormData((prev) => ({ ...prev, description: e.target.value }));
 
     const handleGroupImageEdit = (e) => {
         const file = e.target.files[0];
         if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setFormData((prev) => ({ ...prev, groupImage: imageUrl }));
+            setFormData((prev) => ({ ...prev, photo: file }));
         }
     };
-
-    const handleRoleChange = (id, newRole) => {
-        const updatedMembers = formData.groupMembers.map((member) =>
-            member.id === id ? { ...member, role: newRole } : member
-        );
-        setFormData((prev) => ({ ...prev, groupMembers: updatedMembers }));
-
-        if (!updatedRoles.includes(id)) {
-            setUpdatedRoles((prev) => [...prev, id]);
-        }
-    };
-
-    const handleAddUser = (newUser) => {
-        setFormData((prev) => ({
-            ...prev,
-            groupMembers: [...prev.groupMembers, newUser]
-        }));
-    };
-
-    const handleRemoveUser = (id) => {
-        const filteredMembers = formData.groupMembers.filter(
-            (member) => member.id !== id
-        );
-        setFormData((prev) => ({ ...prev, groupMembers: filteredMembers }));
-    };
-
     // For Settings
     const handleSaveChanges = () => {
         console.log("Saved Data: ", formData);
-        // Backend service logic here
-    };
-
-    // Create New Group Logis is here.
-    const handleSubmit = () => {
-        console.log("Final Data: ", formData);
-        // This code will be implemented with backend
     };
 
     // ==== Edit Methods ====
@@ -136,9 +121,33 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
 
     const handleDeleteGroupImage = () => {
         handleClose();
-        setFormData((prev) => ({ ...prev, groupImage: initialData.groupImage }));
+        setFormData((prev) => ({ ...prev, photo: null}));
     };
 
+    const handleRemoveUser = (userId) => {
+        const removedUser = participants.find((member) => member.userId === userId);
+
+        setFormData((prev) => ({
+            ...prev,
+            participants: prev.participants.filter(
+                (member) => member.userId !== userId
+            ),
+        }));
+
+        if (removedUser) {
+            SuccessAlert(`${removedUser.displayName} gruptan çıkarıldı.`);
+        }
+    };
+
+    const handleRoleChange = (userId, newRole) => {
+        dispatch(changeRole({ userId, newRole: parseInt(newRole, 10) }));
+    };
+
+
+    // Create New Group Logis is here.
+    const handleSubmit = () => {
+        console.log(formData);
+    };
 
     return (
         <div className="new-group-modal">
@@ -160,12 +169,7 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
                 <div className="choose-group-image">
                     <p>Grup Resmi</p>
                     <div className="group-image-box">
-                        {formData.groupImage ? (
-                            <img src={formData.groupImage} alt="Group" />
-                        ) : (
-                            // Cloud group image right now only example.
-                            <img src={groupImageDefault} alt="Group" />
-                        )}
+                        <img src={getPhotoURL(formData.photo)} alt="Group" />
                         <label className="edit-image-btn">
                             <IconButton
                                 className={"edit-btn"}
@@ -265,11 +269,7 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
                         </label>
                         {isShowProfileImage &&
                             <div className="full-size-group-image-box">
-                                {formData.groupImage ?
-                                    <img src={formData.groupImage} alt="Group Image" />
-                                    :
-                                    <img src={groupImageDefault} alt="Group" />
-                                }
+                               <img src={getPhotoURL(formData.photo)} alt="Group" />
                                 <button onClick={() => setIsShowProfileImage(false)}>
                                     <MdClose />
                                 </button>
@@ -283,7 +283,7 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
                         <input
                             type="text"
                             placeholder="Bir grup adı belirle..."
-                            value={formData.groupName}
+                            value={formData.name}
                             onChange={handleGroupNameChange}
                         />
                     </div>
@@ -292,7 +292,7 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
                         <input
                             type="text"
                             placeholder="Grup açıklaması belirle..."
-                            value={formData.groupDescription}
+                            value={formData.description}
                             onChange={handleGroupDescriptionChange}
                         />
                     </div>
@@ -310,27 +310,27 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
                     </div>
 
                     <div className="other-users">
-                        {formData.groupMembers.map((user) => (
-                            <div className="user-box" key={user.id}>
+                        {participants.map((user) => (
+                            <div className="user-box" key={user.userId}>
                                 <div className="user-info">
-                                    <img src={user.avatar} alt="User" />
+                                    <img src={user.profilePhoto} alt={user.displayName} />
                                     <div className="username-and-role-box">
-                                        <p>{user.name}</p>
+                                        <p>{user.displayName}</p>
                                         <select
-                                            defaultValue={user.role}
+                                            defaultValue={user.role} // Başlangıç değeri
                                             onChange={(e) =>
-                                                handleRoleChange(user.id, e.target.value)
+                                                handleRoleChange(user.userId, e.target.value) // Yeni rol
                                             }
                                         >
-                                            <option value="Üye">Üye</option>
-                                            <option value="Yönetici">Yönetici</option>
+                                            <option value={1}>Üye</option> {/* Rol: 1 */}
+                                            <option value={0}>Yönetici</option> {/* Rol: 0 */}
                                         </select>
                                     </div>
                                 </div>
                                 {isAdmin && (
                                     <button
                                         className="remove-user-box"
-                                        onClick={() => handleRemoveUser(user.id)}
+                                        onClick={() => handleRemoveUser(user.userId)}
                                     >
                                         <MdPersonRemoveAlt1 className="icon" />
                                         <span>Gruptan Çıkar</span>
@@ -362,7 +362,6 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
             {isAddUserModal && (
                 <AddUser
                     closeUserModal={() => setAddUserModal(false)}
-                    onAddUser={handleAddUser}
                 />
             )}
 
