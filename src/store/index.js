@@ -3,11 +3,13 @@ import { authApi } from "./Slices/auth/authApi.js"
 import authReducer from "./Slices/auth/authSlice.js";
 import { userSettingsApi } from './Slices/userSettings/userSettingsApi.js';
 import { searchUsersApi } from './Slices/searchUsers/searchUserApi.js';
+import groupMembersReducer from "./Slices/newGroup/groupMembers.js";
 
 const store = configureStore({
   reducer: {
     //RTK Reducers
     auth: authReducer,
+    groupMembers: groupMembersReducer,
 
     // RTK Query API reducers
     [authApi.reducerPath]: authApi.reducer,
