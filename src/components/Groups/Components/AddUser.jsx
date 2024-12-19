@@ -12,14 +12,12 @@ import Okan from "../../../assets/users/okan.png"; // Örnek bir kullanıcı fot
 import "../../Chats/Components/NewChat/style.scss";
 import { useDebounce } from '../../../hooks/useDebounce';
 import { useSearchUsersQuery } from '../../../store/Slices/searchUsers/searchUserApi';
-import { addUser } from '../../../store/Slices/Group/participants';
 import PreLoader from '../../../shared/components/PreLoader/PreLoader';
 import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
 
 function AddUser({ closeUserModal, setFormData, formData }) {
-    const groupMembers = useSelector((state) => state.groupParticipants.participants);
 
-    const dispatch = useDispatch(); // Redux dispatch fonksiyonu
+
     const [inputValue, setInputValue] = useState("");
     const debouncedSearchQuery = useDebounce(inputValue, 300); // Debounced arama query
     const { data, error, isFetching } = useSearchUsersQuery(debouncedSearchQuery, {
@@ -52,10 +50,10 @@ function AddUser({ closeUserModal, setFormData, formData }) {
             }));
 
             // Başarılı ekleme mesajı
-            SuccessAlert("Kullanıcı Eklendi");
+            SuccessAlert("Kullanıcı Eklendi",1000);
         } else {
             // Eğer kullanıcı zaten eklenmişse bir şey yapmıyoruz
-            ErrorAlert("Bu kullanıcı eklendi.");
+            ErrorAlert("Bu kullanıcı eklendi.",1500);
         }
     };
 

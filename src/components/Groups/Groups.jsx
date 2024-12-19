@@ -10,6 +10,7 @@ import "../layout.scss";
 // Props ile kullanıcıyı alıcak. ya da url ile id üzerinden kullanıcı bilgisni alıcak hub durumu felan şimdilik statik
 
 function Chats() {
+  //props olarak chatId alacak
 
   // Sidebar açık/kapalı durumu için state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -17,6 +18,9 @@ function Chats() {
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+  // Mock chatId
+  const chatId = "11e6021d-0eba-469d-9f9b-1b92ff4976ca";
 
   // Mock mesajlar
   const Messages = [
@@ -55,7 +59,10 @@ function Chats() {
         <GroupMessageBar groupedMessages={groupedMessages} />
         <MessageInputBar />
       </div>
-      <GroupDetailsBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+     {isSidebarOpen ? 
+     <GroupDetailsBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} chatId={chatId} />
+     : null
+    }
     </>
 
   )

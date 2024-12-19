@@ -1,34 +1,44 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { IoIosArrowDroprightCircle } from "react-icons/io";
 import { PiPhoneFill } from "react-icons/pi";
 import { HiMiniVideoCamera } from "react-icons/hi2";
 import { IoMdSettings } from "react-icons/io";
 import YardimlasmaGrubu from "../../../assets/YardimlasmaGrubu.png";
-import Hamza from "../../../assets/users/hamza.png";
 import { useModal } from '../../../contexts/ModalContext';
 import NewGroupModal from './NewAndSettingsGroup/NewGroupModal';
+import { useGetGroupProfileQuery } from '../../../store/Slices/Group/GroupApi';
+import PreLoader from '../../../shared/components/PreLoader/PreLoader';
+import { useSelector } from 'react-redux';
+import {jwtDecode} from 'jwt-decode';
 
-function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupDetails }) {
-    const isAdmin = true;
-
+function GroupDetailsBar({ isSidebarOpen, toggleSidebar, chatId }) {
     const { showModal, closeModal } = useModal();
-    // Grup üyelerini bir dizi olarak tanımladık
-    const groupMembers = [
-        { id: 1, name: "Hamza Doğan", status: "online", isAdmin: true, avatar: Hamza },
-        { id: 2, name: "Ahmet Yılmaz", status: "online", isAdmin: false, avatar: Hamza },
-        { id: 3, name: "Fatma Kaya", status: "offline", isAdmin: false, avatar: Hamza },
-        { id: 5, name: "Zeynep Çelik", status: "offline", isAdmin: false, avatar: Hamza },
-        { id: 6, name: "Ferhan Hacısalih", status: "offline", isAdmin: false, avatar: Hamza },
-        { id: 7, name: "Nazmi Koçak", status: "offline", isAdmin: false, avatar: Hamza },
-        { id: 8, name: "Nazmi Koçak", status: "offline", isAdmin: false, avatar: Hamza },
-        { id: 9, name: "Nazmi Koçak", status: "offline", isAdmin: false, avatar: Hamza },
+    const { data, isLoading } = useGetGroupProfileQuery(chatId);
 
-        // Daha fazla üye ekleyebilirsiniz
-    ];
+    const [groupInformation, setGroupInformation] = useState(null);
 
+    // Token ile kullanıcı ID'sini çek
+    const { token } = useSelector((state) => state.auth);
+    const decodedToken = token ? jwtDecode(token) : null;
+    const userId = decodedToken?.sub;
+
+    // Gelen veriyi state'e koy
+    useEffect(() => {
+        if (data) {
+            const groupData = Object.values(data)[0];
+            setGroupInformation(groupData);
+        }
+    }, [data]);
+
+    // Yönetici kontrolü
+    const isAdmin = userId &&
+        groupInformation?.participants?.[userId] &&
+        groupInformation.participants[userId].Role === 0;
+
+    // Grup ayarlarını aç
     const handleGroupSettings = () => {
-        showModal(<NewGroupModal closeModal={closeModal} isGroupSettings={true} />)
-    }
+        showModal(<NewGroupModal closeModal={closeModal} isGroupSettings={true} />);
+    };
 
     return (
         <div className={`group-details-sidebar ${isSidebarOpen ? "open" : ""}`}>
@@ -49,38 +59,48 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupDetails }) {
                     </div>
 
                     <div className='sidebar-content-box'>
-                        <div className='group-info-box'>
-                            <img src={YardimlasmaGrubu} alt={`profile`} />
-                            <p>Yardımlaşma Grubu</p>
-                        </div>
+                        {/* Grup Bilgileri */}
+                        {groupInformation ? (
+                            <>
+                                <div className='group-info-box'>
+                                    <img src={groupInformation.photo || YardimlasmaGrubu} alt={`profile`} />
+                                    <p>{groupInformation.name}</p>
+                                </div>
 
-                        <div className='description'>
-                            <strong>Grup Açıklaması</strong>
-                            <div className='line'></div>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores id vitae corporis ex, atque animi distinctio minima commodi explicabo qui?</p>
-                        </div>
-                        <div className='group-members-box'>
-                            <h2>Grup Üyeleri - {groupMembers.length}</h2>
-                            <div className='members-list'>
-                                {groupMembers.map(member => (
-                                    <div key={member.id} className='member-box'>
-                                        <div className="image-box">
-                                            <img src={member.avatar} alt={member.name} />
-                                            <p className={`user-status ${member.status}`}></p>
-                                        </div>
-                                        <div className='user-info'>
-                                            <p>{member.name}</p>
-                                            <span className={member.isAdmin ? "admin" : ""}>
-                                                {member.isAdmin ? "Yönetici" : "Üye"}
-                                            </span>
-                                        </div>
+                                <div className='description'>
+                                    <strong>Grup Açıklaması</strong>
+                                    <div className='line'></div>
+                                    <p>{groupInformation.description || "Açıklama bulunmuyor."}</p>
+                                </div>
+
+                                {/* Üyeler */}
+                                <div className='group-members-box'>
+                                    <h2>Grup Üyeleri - {Object.keys(groupInformation.participants || {}).length}</h2>
+                                    <div className='members-list'>
+                                        {Object.entries(groupInformation.participants || {}).map(([id, member]) => (
+                                            <div key={id} className='member-box'>
+                                                <div className="image-box">
+                                                    <img src={member.ProfilePhoto} alt={member.DisplayName} />
+                                                    <p className={`user-status ${id === userId ? "active" : ""}`}></p>
+                                                </div>
+                                                <div className='user-info'>
+                                                    <p>{member.DisplayName}</p>
+                                                    <span className={member.Role === 0 ? "admin" : ""}>
+                                                        {member.Role === 0 ? "Yönetici" : "Üye"}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
-                            </div>
-                        </div>
+                                </div>
+                            </>
+                        ) : (
+                            <p>Grup bilgileri yükleniyor...</p>
+                        )}
                     </div>
                 </>
             }
+            {isLoading && <PreLoader />}
         </div>
     );
 }

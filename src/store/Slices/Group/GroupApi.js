@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getJwtFromCookie } from '../../helpers/getJwtFromCookie';
 
-export const newGroupApi = createApi({
+export const GroupApi = createApi({
   reducerPath: 'newGroupApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'http://localhost:5105/api/GroupChat',
@@ -49,7 +49,15 @@ export const newGroupApi = createApi({
         };
       },
     }),
+    
+    // Yeni query: GetGroupProfile
+    getGroupProfile: builder.query({
+      query: (chatId) => ({
+        url: `/GetGroupProfile/${chatId}`,
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
-export const { useCreateGroupMutation } = newGroupApi;
+export const { useCreateGroupMutation, useGetGroupProfileQuery } = GroupApi;

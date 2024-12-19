@@ -3,20 +3,18 @@ import { authApi } from "./Slices/auth/authApi.js"
 import authReducer from "./Slices/auth/authSlice.js";
 import { userSettingsApi } from './Slices/userSettings/userSettingsApi.js';
 import { searchUsersApi } from './Slices/searchUsers/searchUserApi.js';
-import participantsReducer from "./Slices/Group/participants.js";
-import { newGroupApi } from './Slices/Group/newGroupApi.js';
+import { GroupApi } from './Slices/Group/GroupApi.js';
 
 const store = configureStore({
   reducer: {
     //RTK Reducers
     auth: authReducer,
-    groupParticipants: participantsReducer,
 
     // RTK Query API reducers
     [authApi.reducerPath]: authApi.reducer,
     [userSettingsApi.reducerPath]: userSettingsApi.reducer,
     [searchUsersApi.reducerPath]: searchUsersApi.reducer,
-    [newGroupApi.reducerPath]: newGroupApi.reducer,
+    [GroupApi.reducerPath]: GroupApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
@@ -24,7 +22,7 @@ const store = configureStore({
       (authApi.middleware,
         userSettingsApi.middleware,
         searchUsersApi.middleware,
-        newGroupApi.middleware
+        GroupApi.middleware
       ),
 });
 

@@ -21,19 +21,18 @@ import adminPP from "../../../../assets/users/Deneme12.png";
 import { defaultGroupPhoto } from "../../../../constants/DefaultProfilePhoto.js";
 import AddUser from "../AddUser.jsx";
 import CloseModalButton from "../../../../contexts/components/CloseModalButton.jsx";
-import { useDispatch, useSelector } from "react-redux";
-import { changeRole, removeUser } from "../../../../store/Slices/Group/participants.js";
+import { useDispatch } from "react-redux";
+
 import { ErrorAlert, SuccessAlert } from "../../../../helpers/customAlert.js";
 
 import "./style.scss";
-import { useCreateGroupMutation } from "../../../../store/Slices/Group/newGroupApi.js";
+import { useCreateGroupMutation } from "../../../../store/Slices/Group/GroupApi.js";
 import PreLoader from "../../../../shared/components/PreLoader/PreLoader.jsx";
 
 function NewGroupModal({ closeModal, isGroupSettings }) {
 
     const dispatch = useDispatch();
     const [createGroup, { isLoading }] = useCreateGroupMutation();
-
 
     const [isAddUserModal, setAddUserModal] = useState(false);
 
@@ -121,10 +120,6 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
             setFormData((prev) => ({ ...prev, photo: file }));
         }
     };
-    // For Settings
-    const handleSaveChanges = () => {
-        console.log("Saved Data: ", formData);
-    };
 
     // ==== Edit Methods ====
 
@@ -142,6 +137,8 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
         handleClose();
         setFormData((prev) => ({ ...prev, photo: null }));
     };
+
+    // Create
 
     const handleRemoveUser = (userId) => {
         // formData'daki participants nesnesinin anahtarlarını alıyoruz
@@ -162,7 +159,7 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
             }));
 
             const removedUserName = formData.participants[userToRemove].DisplayName;
-            SuccessAlert(`${removedUserName} gruptan çıkarıldı.`);
+            SuccessAlert(`${removedUserName} gruptan çıkarıldı.`,1500);
         }
     };
 
@@ -179,8 +176,7 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
             participants: updatedParticipants
         }));
 
-        const updatedUserName = updatedParticipants[userId].DisplayName;
-        SuccessAlert(`${updatedUserName} rolü başarıyla değiştirildi.`);
+        SuccessAlert(`Rol Değiştirildi`);
     };
 
     // Create New Group Logis is here.
@@ -188,7 +184,6 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
         try {
             const response = await createGroup(formData);
             
-            // Yanıtın hata içerip içermediğini kontrol et
             if (response?.error) {
                 const errorMessage = response.error?.data?.message || "Bir hata oluştu, lütfen tekrar deneyin.";
                 ErrorAlert(errorMessage);
@@ -197,6 +192,7 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
     
             // Eğer hata yoksa başarı mesajını göster
             SuccessAlert("Grup Oluşturuldu");
+            closeModal();
         } catch (error) {
             // Backend'den hata dönerse buraya düşer
             const errorMessage = error?.data?.message || "Bir hata oluştu, lütfen tekrar deneyin.";
@@ -204,6 +200,10 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
         }
     };
 
+    //For Settings
+    const handleSaveChanges = () => {
+        console.log("Saved Data: ", formData);
+    };
 
     return (
         <div className="new-group-modal">

@@ -11,7 +11,6 @@ import ListItemText from "@mui/material/ListItemText";
 
 function UserCallCard({ image, status, name, callStatus, lastDate }) {
 
-
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -27,7 +26,6 @@ function UserCallCard({ image, status, name, callStatus, lastDate }) {
     console.log("Arama kaydı silindi");
     handleClose();
   };
-
 
   const renderCallStatus = () => {
     let icon = null;
