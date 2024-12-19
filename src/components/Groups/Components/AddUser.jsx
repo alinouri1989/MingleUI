@@ -16,7 +16,7 @@ import { addUser } from '../../../store/Slices/Group/participants';
 import PreLoader from '../../../shared/components/PreLoader/PreLoader';
 import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
 
-function AddUser({ closeUserModal }) {
+function AddUser({ closeUserModal, setFormData, formData }) {
     const groupMembers = useSelector((state) => state.groupParticipants.participants);
 
     const dispatch = useDispatch(); // Redux dispatch fonksiyonu
@@ -35,29 +35,29 @@ function AddUser({ closeUserModal }) {
     const handleAddSelectedUser = (userId) => {
         const selectedUser = users.find(([id, user]) => id === userId);
 
-        if (selectedUser) {
-            const [id, user] = selectedUser;
-            const { profilePhoto, displayName } = user;
+        if (!formData.participants || !formData.participants[userId]) {
+            // Yeni kullanıcıyı participants'a ekliyoruz
 
-            // Eğer `groupMembers` içinde kullanıcı zaten varsa, hiçbir şey yapmadan çık
-            const isAlreadyAdded = groupMembers.some((member) => member.userId === id);
-            if (isAlreadyAdded) {
-                ErrorAlert("Bu Kullanıcı Eklendi")
-                return; // İşlemi durdur
-            }
-
-            // Kullanıcıyı ekle
-            dispatch(addUser({
-                userId: id,
-                profilePhoto,
-                displayName,
-                role: 1
+            console.log(selectedUser);
+            setFormData((prevState) => ({
+                ...prevState,
+                participants: {
+                    ...prevState.participants,
+                    [userId]: {
+                        DisplayName: selectedUser[1].displayName,
+                        Role: 1,
+                        ProfilePhoto: selectedUser[1].profilePhoto,
+                    }
+                }
             }));
 
+            // Başarılı ekleme mesajı
             SuccessAlert("Kullanıcı Eklendi");
+        } else {
+            // Eğer kullanıcı zaten eklenmişse bir şey yapmıyoruz
+            ErrorAlert("Bu kullanıcı eklendi.");
         }
     };
-
 
     return (
         <div className='add-user-modal'>
@@ -101,7 +101,8 @@ function AddUser({ closeUserModal }) {
 
                             <div className="users-box">
                                 {users.map(([userId, user]) => {
-                                    const isAlreadyAdded = groupMembers.some((member) => member.userId === userId);
+                                    // formData'dan participants içinde userId kontrolü yapıyoruz
+                                    const isAlreadyAdded = formData.participants && formData.participants[userId];
 
                                     return (
                                         <div key={userId} className="user-box" onClick={() => handleAddSelectedUser(userId)}>
