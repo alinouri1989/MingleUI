@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getJwtFromCookie } from '../../helpers/getJwtFromCookie';
+import { prepareGroupFormData } from '../../helpers/prepareGroupFormData';
 
 export const GroupApi = createApi({
   reducerPath: 'newGroupApi',
@@ -15,49 +16,40 @@ export const GroupApi = createApi({
   }),
   endpoints: (builder) => ({
     createGroup: builder.mutation({
-      query: (formData) => {
-        const form = new FormData();
-
-        // "Name" ekleniyor
-        form.append('Name', formData.name);
-
-        // "Description" (opsiyonel) ekleniyor
-        if (formData.description) {
-          form.append('Description', formData.description);
-        }
-
-        // "Photo" (opsiyonel) ekleniyor
-        if (formData.photo) {
-          form.append('Photo', formData.photo);
-        }
-
-        if (formData.participants) {
-          const formattedParticipants = {};
-
-          Object.entries(formData.participants).forEach(([userId, user]) => {
-            formattedParticipants[userId] = Number(user.Role); 
-          });
-
-          form.append('Participants', JSON.stringify(formattedParticipants));
-          console.log('Formatted Participants:', formattedParticipants);
-        }
-
-        return {
-          url: '/CreateGroup',
-          method: 'POST',
-          body: form,
-        };
-      },
+      query: (formData) => ({
+        url: '/CreateGroup',
+        method: 'POST',
+        body: prepareGroupFormData(formData),
+      }),
     }),
-    
-    // Yeni query: GetGroupProfile
+
     getGroupProfile: builder.query({
       query: (chatId) => ({
         url: `/GetGroupProfile/${chatId}`,
         method: 'GET',
       }),
     }),
+
+    editGroup: builder.mutation({
+      query: ({ groupId, formData }) => ({
+        url: `/EditGroup/${groupId}`,
+        method: 'PUT',
+        body: prepareGroupFormData(formData),
+      }),
+    }),
+
+    leaveGroup: builder.mutation({
+      query: (groupId) => ({
+        url: `/LeaveGroup/${groupId}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
-export const { useCreateGroupMutation, useGetGroupProfileQuery } = GroupApi;
+export const {
+  useCreateGroupMutation,
+  useGetGroupProfileQuery,
+  useEditGroupMutation,
+  useLeaveGroupMutation
+} = GroupApi;

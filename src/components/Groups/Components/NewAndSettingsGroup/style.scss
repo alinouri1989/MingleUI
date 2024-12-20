@@ -206,16 +206,20 @@
 
             .remove-user-box {
                 @include flex-center(row, center, center);
+                width: 142px;
                 gap: 7px;
                 color: var(--smooth-red);
                 background-color: transparent;
+                padding:4px;
+                border-radius: 7px;
+                background-color: rgb(251, 229, 229);
 
                 .icon {
-                    font-size: 27px;
+                    font-size: 24px;
                 }
 
                 span {
-                    font-size: 13px;
+                    font-size: 12.5px;
                 }
             }
         }

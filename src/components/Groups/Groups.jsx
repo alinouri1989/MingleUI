@@ -7,7 +7,6 @@ import GroupDetailsBar from "./Components/GroupDetailsBar";
 import GroupTopBar from "./Components/GroupTopBar";
 import "../layout.scss";
 
-// Props ile kullanıcıyı alıcak. ya da url ile id üzerinden kullanıcı bilgisni alıcak hub durumu felan şimdilik statik
 
 function Chats() {
   //props olarak chatId alacak
@@ -20,7 +19,7 @@ function Chats() {
   };
 
   // Mock chatId
-  const chatId = "11e6021d-0eba-469d-9f9b-1b92ff4976ca";
+  const chatId = "e47722ac-94c0-4ba7-b65b-28d23b78813d";
 
   // Mock mesajlar
   const Messages = [
@@ -59,10 +58,7 @@ function Chats() {
         <GroupMessageBar groupedMessages={groupedMessages} />
         <MessageInputBar />
       </div>
-     {isSidebarOpen ? 
-     <GroupDetailsBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} chatId={chatId} />
-     : null
-    }
+        <GroupDetailsBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} chatId={chatId} />
     </>
 
   )

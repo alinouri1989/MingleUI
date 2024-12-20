@@ -11,6 +11,8 @@ import ListItemText from "@mui/material/ListItemText";
 import NewGroupModal from "../../../components/Groups/Components/NewAndSettingsGroup/NewGroupModal";
 import { useModal } from "../../../contexts/ModalContext.jsx";
 import "./style.scss";
+import { useLeaveGroupMutation } from "../../../store/Slices/Group/GroupApi.js";
+import PreLoader from "../../../shared/components/PreLoader/PreLoader.jsx";
 
 const groups = [
   {
@@ -51,7 +53,7 @@ const groups = [
 function GroupsList() {
 
   const { showModal, closeModal } = useModal();
-
+  const [leaveGroup, { isLoading: leaveLoading }] = useLeaveGroupMutation();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -64,10 +66,16 @@ function GroupsList() {
   };
 
 
-  const handleLeaveGroup = () => {
-    console.log("Gruptan Çıkıldı");
-    handleClose();
-  };
+
+  const handleLeaveGroup = async () => {
+    try {
+      await leaveGroup(groupId).unwrap();
+      SuccessAlert("Gruptan Çıktın")
+      closeModal();
+    } catch (error) {
+      ErrorAlert("Bir hata meydana geldi");
+    }
+  }
 
   const handleNewGroup = () => {
     showModal(<NewGroupModal closeModal={closeModal} />)
@@ -152,6 +160,7 @@ function GroupsList() {
           </div>
         ))}
       </div>
+      {leaveLoading && <PreLoader />}
     </div>
   )
 }

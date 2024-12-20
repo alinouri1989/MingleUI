@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useModal } from "../../../../contexts/ModalContext.jsx";
 
 import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
 import ImageSearchRoundedIcon from '@mui/icons-material/ImageSearchRounded';
@@ -17,23 +16,28 @@ import { TbEdit } from "react-icons/tb";
 import { IoMdSettings } from "react-icons/io";
 
 import star from "../../../../assets/svg/star.svg";
-import adminPP from "../../../../assets/users/Deneme12.png";
 import { defaultGroupPhoto } from "../../../../constants/DefaultProfilePhoto.js";
 import AddUser from "../AddUser.jsx";
 import CloseModalButton from "../../../../contexts/components/CloseModalButton.jsx";
-import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 
 import { ErrorAlert, SuccessAlert } from "../../../../helpers/customAlert.js";
 
-import "./style.scss";
-import { useCreateGroupMutation } from "../../../../store/Slices/Group/GroupApi.js";
+import { useCreateGroupMutation, useEditGroupMutation, useLeaveGroupMutation } from "../../../../store/Slices/Group/GroupApi.js";
 import PreLoader from "../../../../shared/components/PreLoader/PreLoader.jsx";
+import "./style.scss";
 
-function NewGroupModal({ closeModal, isGroupSettings }) {
+function NewGroupModal({ closeModal, isGroupSettings, groupInformation, groupId, userId, refetch }) {
 
-    const dispatch = useDispatch();
-    const [createGroup, { isLoading }] = useCreateGroupMutation();
+    const [createGroup, { isLoading: createLoading }] = useCreateGroupMutation();
+    const [editGroup, { isLoading: editLoading }] = useEditGroupMutation();
+    const [leaveGroup, { isLoading: leaveLoading }] = useLeaveGroupMutation();
 
+    const isLoading = editLoading || createLoading || leaveLoading;
+
+    const { user } = useSelector(state => state.auth);
+
+    console.log(groupInformation)
     const [isAddUserModal, setAddUserModal] = useState(false);
 
     // User Image Edit States
@@ -52,37 +56,17 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
     const [isSaveDisabled, setSaveDisabled] = useState(true);
 
     // Mock Variables
-    const adminName = "Hamza Doğan";
+
     const adminRole = "Yönetici";
     const isAdmin = true;
-    const exitsGroupImage = "https://images.unsplash.com/photo-1733035997778-65e038269fb8?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHw2Nnx8fGVufDB8fHx8fA%3D%3D";
-    const exitsGroupName = "Yardımlaşma Grubu";
-    const exitsGroupDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores id vitae corporis ex, atque animi distinctio minima commodi explicabo qui?";
+
     const groupImageDefault = defaultGroupPhoto;
 
-    const mockParticipants = {
-        "AjV1coDxdaafW5LSbKFpOfgAF9g1": {
-            DisplayName: "Nazmi Koçak",
-            Role: 0,
-            ProfilePhoto: "https://media.licdn.com/dms/image/v2/D4D03AQFKMmOugHW2hA/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1697381628491?e=1739404800&v=beta&t=c3VsHUs3G4KRD-cxHyvgqF7_ougt0B4KMesw06NUeVk"
-        },
-        "VtDDjqykOzXOSpETtOutQfsSrVo2": {
-            DisplayName: "Ferhan HACISALİHOĞLU",
-            Role: 1,
-            ProfilePhoto: "https://res.cloudinary.com/mingle-realtime-messaging-app/image/upload/v1734185072/DefaultUserProfilePhoto.png"
-        },
-        "zzQ9tf3j2fc0mvx8obyNshSjY9s1": {
-            DisplayName: "Hamza DOĞAN",
-            Role: 1,
-            ProfilePhoto: "https://res.cloudinary.com/mingle-realtime-messaging-app/image/upload/v1734185072/DefaultUserProfilePhoto.png"
-        }
-    };
-
     const initialData = {
-        name: isGroupSettings ? exitsGroupName : "",
-        description: isGroupSettings ? exitsGroupDescription : "",
-        photo: isGroupSettings ? exitsGroupImage : null,
-        participants: isGroupSettings ? mockParticipants : null
+        name: isGroupSettings ? groupInformation.name : "",
+        description: isGroupSettings ? groupInformation.description : "",
+        photo: isGroupSettings ? groupInformation.photo : null,
+        participants: isGroupSettings ? groupInformation.participants : null
     };
 
     const [formData, setFormData] = useState(initialData);
@@ -96,7 +80,6 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
         return photo || groupImageDefault;
     };
 
-    // Temizlik için useEffect
     useEffect(() => {
         if (formData.photo instanceof File) {
             const objectURL = URL.createObjectURL(formData.photo);
@@ -159,37 +142,48 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
             }));
 
             const removedUserName = formData.participants[userToRemove].DisplayName;
-            SuccessAlert(`${removedUserName} gruptan çıkarıldı.`,1500);
+            SuccessAlert(`${removedUserName} gruptan çıkarıldı.`, 1500);
         }
     };
 
     const handleRoleChange = (userId, newRole) => {
-        const updatedParticipants = { ...formData.participants };
-
-        // Kullanıcının rolünü güncelliyoruz
-        if (updatedParticipants[userId]) {
-            updatedParticipants[userId].Role = Number(newRole);
-        }
+        const updatedParticipants = {
+            ...formData.participants,
+            [userId]: {
+                ...formData.participants[userId],
+                Role: Number(newRole)
+            }
+        };
 
         setFormData((prevFormData) => ({
             ...prevFormData,
-            participants: updatedParticipants
+            participants: updatedParticipants,
         }));
 
         SuccessAlert(`Rol Değiştirildi`);
     };
 
+    const handleLeaveGroup = async () => {
+        try {
+            await leaveGroup(groupId).unwrap();
+            SuccessAlert("Gruptan Çıktın")
+            closeModal();
+        } catch (error) {
+            ErrorAlert("Bir hata meydana geldi");
+        }
+    }
+
     // Create New Group Logis is here.
     const handleSubmit = async () => {
         try {
             const response = await createGroup(formData);
-            
+
             if (response?.error) {
                 const errorMessage = response.error?.data?.message || "Bir hata oluştu, lütfen tekrar deneyin.";
                 ErrorAlert(errorMessage);
                 return; // Hata durumunda işlemi sonlandır
             }
-    
+
             // Eğer hata yoksa başarı mesajını göster
             SuccessAlert("Grup Oluşturuldu");
             closeModal();
@@ -201,8 +195,16 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
     };
 
     //For Settings
-    const handleSaveChanges = () => {
-        console.log("Saved Data: ", formData);
+    const handleSaveChanges = async () => {
+        console.log("sonuç", groupId);
+        try {
+            await editGroup({ groupId, formData }).unwrap();
+            refetch() //Group Information
+            SuccessAlert("Değişiklikler kayıt edildi");
+        } catch (error) {
+            console.log(error);
+            ErrorAlert("Bir hata meydana geldi")
+        }
     };
 
     return (
@@ -357,47 +359,73 @@ function NewGroupModal({ closeModal, isGroupSettings }) {
                 <div className="group-members-box">
                     <h2>Grup Üyeleri</h2>
 
-                    <div className="group-admin">
-                        <img src={adminPP} alt="Admin Profile Image" />
-                        <div className="admin-info">
-                            <p>{adminName}</p>
-                            <span>{adminRole}</span>
+                    {!isGroupSettings &&
+                        <div className="group-admin">
+                            <img src={user.profilePhoto} alt="Admin Profile Image" />
+                            <div className="admin-info">
+                                <p>{user.displayName}</p>
+                                <span>Yönetici</span>
+                            </div>
                         </div>
-                    </div>
+                    }
 
                     <div className="other-users">
-                        {formData.participants && Object.keys(formData.participants).map((userId) => {
-                            const user = formData.participants[userId];  // Mock verisinden kullanıcı bilgisi
-                            return (
-                                <div className="user-box" key={userId}>
-                                    <div className="user-info">
-                                        <img src={user.ProfilePhoto} alt={user.DisplayName} />
-                                        <div className="username-and-role-box">
-                                            <p>{user.DisplayName}</p>
-                                            <select
-                                                defaultValue={user.Role} // "Admin" -> 0, "Member" -> 1
-                                                onChange={(e) =>
-                                                    handleRoleChange(userId, e.target.value) // Yeni rol
+                        {formData.participants &&
+                            Object.keys(formData.participants)
+                                .sort((a, b) => {
+                                    const userA = formData.participants[a];
+                                    const userB = formData.participants[b];
+
+                                    // Öncelikle isCurrentUser olan kullanıcıyı en üste taşır
+                                    if (a === userId) return -1;
+                                    if (b === userId) return 1;
+
+                                    // Sonrasında Role değeri 0 olanları önce sıralar (Yönetici)
+                                    if (userA.Role === 0 && userB.Role !== 0) return -1;
+                                    if (userA.Role !== 0 && userB.Role === 0) return 1;
+
+                                    // Diğerleri için sıralama yapmaz
+                                    return 0;
+                                })
+                                .map((participantId) => {
+                                    const user = formData.participants[participantId];
+                                    const isCurrentUser = participantId === userId;
+
+                                    return (
+                                        <div className="user-box" key={participantId}>
+                                            <div className="user-info">
+                                                <img src={user.ProfilePhoto} alt={user.DisplayName} />
+                                                <div className="username-and-role-box">
+                                                    <p>{user.DisplayName}</p>
+                                                    {isCurrentUser ? (
+                                                        <p style={{ color: "#585CE1", fontSize: "14px" }}>Yönetici</p>
+                                                    ) : (
+                                                        <select
+                                                            defaultValue={user.Role}
+                                                            onChange={(e) => handleRoleChange(participantId, e.target.value)}
+                                                        >
+                                                            <option value={1}>Üye</option>
+                                                            <option value={0}>Yönetici</option>
+                                                        </select>
+                                                    )}
+                                                </div>
+                                            </div>
+                                            <button
+                                                className="remove-user-box"
+                                                onClick={() =>
+                                                    isCurrentUser
+                                                        ? handleLeaveGroup()
+                                                        : handleRemoveUser(participantId)
                                                 }
                                             >
-                                                <option value={1}>Üye</option> {/* Rol: 1 */}
-                                                <option value={0}>Yönetici</option> {/* Rol: 0 */}
-                                            </select>
+                                                <MdPersonRemoveAlt1 className="icon" />
+                                                <span>{isCurrentUser ? "Gruptan Ayrıl" : "Gruptan Çıkar"}</span>
+                                            </button>
                                         </div>
-                                    </div>
-                                    {isAdmin && (
-                                        <button
-                                            className="remove-user-box"
-                                            onClick={() => handleRemoveUser(userId)}
-                                        >
-                                            <MdPersonRemoveAlt1 className="icon" />
-                                            <span>Gruptan Çıkar</span>
-                                        </button>
-                                    )}
-                                </div>
-                            );
-                        })}
+                                    );
+                                })}
                     </div>
+
 
                     <div className="option-buttons">
                         <button onClick={() => setAddUserModal(true)}>

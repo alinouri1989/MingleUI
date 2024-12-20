@@ -176,6 +176,7 @@
         .biography,
         .description {
             @include flex-center(column, center, center);
+            text-align: center;
         }
 
         .user-info-box,
@@ -201,6 +202,13 @@
 
         }
 
+        .date-box{
+            p{
+                color: var(--text-dark-gray);
+                margin: 10px 0px;
+                font-size: 13.8px;
+            }
+        }
         .status {
             width: max-content;
             background-color: rgb(241, 241, 241);
