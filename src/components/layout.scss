@@ -251,6 +251,7 @@
         .biography,
         .description {
             margin: 20px 0px;
+            width: 100%;
 
             strong {
                 font-size: 15px;
@@ -262,7 +263,7 @@
                 margin: 10px 0px;
                 border-radius: 30px;
                 height: 4px;
-                width: 80%;
+                width: 70%;
                 background-color: var(--blue);
             }
 

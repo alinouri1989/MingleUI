@@ -19,7 +19,7 @@ export const GroupApi = createApi({
       query: (formData) => ({
         url: '/CreateGroup',
         method: 'POST',
-        body: prepareGroupFormData(formData),
+        body: prepareGroupFormData(formData,false),
       }),
     }),
 
@@ -34,7 +34,7 @@ export const GroupApi = createApi({
       query: ({ groupId, formData }) => ({
         url: `/EditGroup/${groupId}`,
         method: 'PUT',
-        body: prepareGroupFormData(formData),
+        body: prepareGroupFormData(formData, true),
       }),
     }),
 

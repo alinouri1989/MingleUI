@@ -65,7 +65,7 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, chatId }) {
                             {groupInformation ? (
                                 <>
                                     <div className='group-info-box'>
-                                        <img src={groupInformation.photo || YardimlasmaGrubu} alt={`profile`} />
+                                        <img src={groupInformation.photoUrl} alt={`profile`} />
                                         <p>{groupInformation.name}</p>
                                     </div>
 

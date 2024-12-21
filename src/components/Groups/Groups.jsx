@@ -19,7 +19,7 @@ function Chats() {
   };
 
   // Mock chatId
-  const chatId = "e47722ac-94c0-4ba7-b65b-28d23b78813d";
+  const chatId = "b97917f4-7740-45c6-887a-9bfd3885db2e";
 
   // Mock mesajlar
   const Messages = [

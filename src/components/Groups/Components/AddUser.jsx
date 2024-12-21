@@ -8,7 +8,7 @@ import { AiFillInfoCircle } from "react-icons/ai";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import Okan from "../../../assets/users/okan.png"; // Örnek bir kullanıcı fotoğrafı
+import Okan from "../../../assets/users/okan.png"; 
 import "../../Chats/Components/NewChat/style.scss";
 import { useDebounce } from '../../../hooks/useDebounce';
 import { useSearchUsersQuery } from '../../../store/Slices/searchUsers/searchUserApi';
@@ -19,15 +19,15 @@ function AddUser({ closeUserModal, setFormData, formData }) {
 
 
     const [inputValue, setInputValue] = useState("");
-    const debouncedSearchQuery = useDebounce(inputValue, 300); // Debounced arama query
+    const debouncedSearchQuery = useDebounce(inputValue, 300); 
     const { data, error, isFetching } = useSearchUsersQuery(debouncedSearchQuery, {
         skip: !debouncedSearchQuery,
     });
 
-    const users = error ? [] : data ? Object.entries(data) : []; // API'den gelen kullanıcı verilerini işleyin
+    const users = error ? [] : data ? Object.entries(data) : []; 
 
     const handleInputChange = (e) => {
-        setInputValue(e.target.value); // Arama kutusundaki değer değiştikçe set et
+        setInputValue(e.target.value);
     };
 
     const handleAddSelectedUser = (userId) => {

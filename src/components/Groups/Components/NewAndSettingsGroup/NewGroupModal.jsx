@@ -37,7 +37,6 @@ function NewGroupModal({ closeModal, isGroupSettings, groupInformation, groupId,
 
     const { user } = useSelector(state => state.auth);
 
-    console.log(groupInformation)
     const [isAddUserModal, setAddUserModal] = useState(false);
 
     // User Image Edit States
@@ -65,12 +64,12 @@ function NewGroupModal({ closeModal, isGroupSettings, groupInformation, groupId,
     const initialData = {
         name: isGroupSettings ? groupInformation.name : "",
         description: isGroupSettings ? groupInformation.description : "",
+        photoUrl: isGroupSettings ? groupInformation.photoUrl : null,
         photo: isGroupSettings ? groupInformation.photo : null,
         participants: isGroupSettings ? groupInformation.participants : null
     };
 
     const [formData, setFormData] = useState(initialData);
-
 
     const getPhotoURL = (photo) => {
         if (photo instanceof File) {
@@ -100,7 +99,11 @@ function NewGroupModal({ closeModal, isGroupSettings, groupInformation, groupId,
     const handleGroupImageEdit = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setFormData((prev) => ({ ...prev, photo: file }));
+            setFormData((prev) => ({
+                ...prev,
+                photoUrl: isGroupSettings ? file : prev.photoUrl,
+                photo: isGroupSettings ? null : file,
+            }));
         }
     };
 
@@ -118,7 +121,7 @@ function NewGroupModal({ closeModal, isGroupSettings, groupInformation, groupId,
 
     const handleDeleteGroupImage = () => {
         handleClose();
-        setFormData((prev) => ({ ...prev, photo: null }));
+        setFormData((prev) => ({ ...prev, photo: null, photoUrl: null }));
     };
 
     // Create
@@ -196,11 +199,11 @@ function NewGroupModal({ closeModal, isGroupSettings, groupInformation, groupId,
 
     //For Settings
     const handleSaveChanges = async () => {
-        console.log("sonuç", groupId);
         try {
             await editGroup({ groupId, formData }).unwrap();
             refetch() //Group Information
             SuccessAlert("Değişiklikler kayıt edildi");
+            closeModal();
         } catch (error) {
             console.log(error);
             ErrorAlert("Bir hata meydana geldi")
@@ -227,7 +230,13 @@ function NewGroupModal({ closeModal, isGroupSettings, groupInformation, groupId,
                 <div className="choose-group-image">
                     <p>Grup Resmi</p>
                     <div className="group-image-box">
-                        <img src={getPhotoURL(formData.photo)} alt="Group" />
+                        {isGroupSettings
+                            ? <img src={getPhotoURL(formData.photoUrl)} alt="Group" />
+
+
+                            : <img src={getPhotoURL(formData.photo)} alt="Group" />
+                        }
+
                         <label className="edit-image-btn">
                             <IconButton
                                 className={"edit-btn"}
@@ -327,7 +336,7 @@ function NewGroupModal({ closeModal, isGroupSettings, groupInformation, groupId,
                         </label>
                         {isShowProfileImage &&
                             <div className="full-size-group-image-box">
-                                <img src={getPhotoURL(formData.photo)} alt="Group" />
+                                <img src={getPhotoURL(formData.photoUrl || formData.photo)} alt="Group" />
                                 <button onClick={() => setIsShowProfileImage(false)}>
                                     <MdClose />
                                 </button>
