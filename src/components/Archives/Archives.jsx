@@ -6,10 +6,12 @@ import UserMessageBar from "../Chats/Components/UserMessageBar";
 import MessageInputBar from "../../shared/components/MessageInputBar/MessageInputBar";
 import "../layout.scss";
 import UserDetailsBar from "../Chats/Components/UserDetailsBar";
+import { useParams } from "react-router-dom";
 
 
 function Archives() {
 
+  const { id } = useParams(); // URL'den ID'yi al
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -49,12 +51,17 @@ function Archives() {
   return (
     <>
       <div className='archive-general-box'>
-        {/* <WelcomeScreen text={"Arşivlenmiş sohbetleriniz uçtan uca şifrelidir"}/> */}
-        <UserTopBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        <UserMessageBar groupedMessages={groupedMessages} />
-        <MessageInputBar />
+        {!id && <WelcomeScreen text={"Kişisel arşivleriniz uçtan uca şifrelidir"} />}
+
+        {id &&
+          <>
+            <UserTopBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            <UserMessageBar groupedMessages={groupedMessages} />
+            <MessageInputBar />
+          </>
+        }
       </div>
-      <UserDetailsBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      {id && <UserDetailsBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
     </>
 
   )

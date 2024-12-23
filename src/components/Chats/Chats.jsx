@@ -6,11 +6,12 @@ import UserMessageBar from "./Components/UserMessageBar";
 import MessageInputBar from "../../shared/components/MessageInputBar/MessageInputBar";
 import "../layout.scss";
 import UserDetailsBar from "./Components/UserDetailsBar";
+import { useParams } from "react-router-dom";
 
 // Props ile kullanıcıyı alıcak. ya da url ile id üzerinden kullanıcı bilgisni alıcak hub durumu felan şimdilik statik
 
 function Chats() {
-
+  const { id } = useParams(); // URL'den ID'yi al
   // Sidebar açık/kapalı durumu için state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -33,7 +34,7 @@ function Chats() {
     { id: 12, content: 'Kolay gelsin, merakla bekliyorum!', timestamp: '10:15', date: 'Bugün', sender: 'user2', receiver: 'user1', status: "sent", messageType: "text" },
     { id: 13, content: 'https://plus.unsplash.com/premium_photo-1732568404499-8561e0788a13?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', timestamp: '10:15', date: 'Bugün', sender: 'user2', receiver: 'user1', status: "sent", messageType: "image" },
   ];
-  
+
   // Gruplama fonksiyonu
   const groupMessagesByDate = (messages) => {
     return messages.reduce((grouped, message) => {
@@ -50,13 +51,17 @@ function Chats() {
   return (
     <>
       <div className='chat-general-box'>
-        {/* <WelcomeScreen text={"Kişisel sohbetleriniz uçtan uca şifrelidir"}/> */}
+        {!id && <WelcomeScreen text={"Kişisel sohbetleriniz uçtan uca şifrelidir"} />}
 
-        <UserTopBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        <UserMessageBar groupedMessages={groupedMessages} />
-        <MessageInputBar />
+        {id &&
+          <>
+            <UserTopBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+            <UserMessageBar groupedMessages={groupedMessages} />
+            <MessageInputBar />
+          </>
+        }
       </div>
-      <UserDetailsBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+      {id && <UserDetailsBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
     </>
 
   )

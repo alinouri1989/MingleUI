@@ -5,7 +5,7 @@ import { prepareGroupFormData } from '../../helpers/prepareGroupFormData';
 export const GroupApi = createApi({
   reducerPath: 'newGroupApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:5105/api/GroupChat',
+    baseUrl: 'http://localhost:5069/api/GroupChat',
     prepareHeaders: (headers) => {
       const token = getJwtFromCookie();
       if (token) {
@@ -19,7 +19,7 @@ export const GroupApi = createApi({
       query: (formData) => ({
         url: '/CreateGroup',
         method: 'POST',
-        body: prepareGroupFormData(formData,false),
+        body: prepareGroupFormData(formData, false),
       }),
     }),
 

@@ -7,9 +7,10 @@ import { useModal } from "../../contexts/ModalContext.jsx";
 
 import "./style.scss";
 import CallModal from './Components/CallModal';
+import { useParams } from 'react-router-dom';
 
 function Calls() {
-
+  const { id } = useParams(); // URL'den ID'yi al
   const { showModal, closeModal } = useModal();
 
   const callStatus = "unAnsweredIncomingCall";
@@ -49,9 +50,7 @@ function Calls() {
 
   return (
     <div className='calls-general-box'>
-      {/* <WelcomeScreen text="Kişisel aramalarınız uçtan uca şifrelidir" /> */}
-
-      <div className='call-info-bar-box'>
+      {id ? <div className='call-info-bar-box'>
         <h2>Arama Bilgisi</h2>
         <div className='details-box'>
           <div className='user-and-call-box'>
@@ -77,6 +76,7 @@ function Calls() {
           </div>
         </div>
       </div>
+        : <WelcomeScreen text="Kişisel aramalarınız uçtan uca şifrelidir" />}
     </div>
   )
 }

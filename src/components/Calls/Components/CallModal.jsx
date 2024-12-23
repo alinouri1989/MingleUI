@@ -29,7 +29,7 @@ function CallModal({ closeModal, user, isVideoCallMode }) {
     const [isRemoteConnected, setRemoteConnected] = useState(false);
 
     const [isVideoCall, setIsVideoCall] = useState(false);
-    
+
     const localStreamRef = useRef(null);
     const remoteStreamRef = useRef(null);
     const audioRef = useRef(null);
@@ -96,7 +96,7 @@ function CallModal({ closeModal, user, isVideoCallMode }) {
         if (!isWebcamOpen) {
             // Kamera aç
             setIsWebcamOpen(true); // Kamera açık durumunu güncelle
-            setIsVideoCall(true); 
+            setIsVideoCall(true);
             navigator.mediaDevices
                 .getUserMedia({ video: true, audio: true })
                 .then((stream) => {

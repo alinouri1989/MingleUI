@@ -5,7 +5,7 @@ import { getJwtFromCookie } from '../../helpers/getJwtFromCookie';
 export const searchUsersApi = createApi({
     reducerPath: 'searchUsersApi', // API'nin Reducer Path'i
     baseQuery: fetchBaseQuery({
-        baseUrl: 'http://localhost:5105/api/User', // Backend'in base URL'si
+        baseUrl: 'http://localhost:5069/api/User', // Backend'in base URL'si
         prepareHeaders: (headers) => {
             const token = getJwtFromCookie(); // JWT Token'ı Cookie'den al
             if (token) {

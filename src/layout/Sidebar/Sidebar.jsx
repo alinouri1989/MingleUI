@@ -14,7 +14,6 @@ import "./style.scss";
 import SettingsModal from "../../components/Settings/SettingsModal.jsx";
 
 function Sidebar() {
-
   const [isOpen, setIsOpen] = useState(false);
   const { showModal, closeModal } = useModal();
   const location = useLocation();
@@ -34,7 +33,6 @@ function Sidebar() {
     { icon: <AiFillHome className="icon" />, label: "Anasayfa", path: "/anasayfa" },
   ];
 
-
   useOutsideClick(sidebarRef, () => {
     if (isOpen) setIsOpen(false);
   });
@@ -46,8 +44,13 @@ function Sidebar() {
   };
 
   const handleSettings = () => {
-    showModal(<SettingsModal closeModal={closeModal} />)
-  }
+    showModal(<SettingsModal closeModal={closeModal} />);
+  };
+
+  // Helper function to check if the current path includes a substring (for dynamic paths like /sohbetler/12345)
+  const isActive = (path) => {
+    return location.pathname.includes(path) ? "active" : "";
+  };
 
   return (
     <div ref={sidebarRef} className={`sidebar-container ${isOpen ? "open" : ""}`}>
@@ -64,8 +67,7 @@ function Sidebar() {
           {navItems.map((item, index) => (
             <button
               key={index}
-              className={`nav-buttons ${isOpen ? "open" : ""} ${location.pathname === item.path ? "active" : ""
-                }`}
+              className={`nav-buttons ${isOpen ? "open" : ""} ${isActive(item.path)}`}
               onClick={() => handleNavigation(item.path)}
             >
               {item.icon}
@@ -77,8 +79,7 @@ function Sidebar() {
 
       <div className="bottom-box" style={{ width: isOpen ? "100%" : "" }}>
         <button
-          className={`nav-buttons ${isOpen ? "open" : ""} ${location.pathname === "/ayarlar" ? "active" : ""
-            }`}
+          className={`nav-buttons ${isOpen ? "open" : ""} ${location.pathname === "/ayarlar" ? "active" : ""}`}
           onClick={() => handleSettings()}
         >
           <IoMdSettings className="icon" />

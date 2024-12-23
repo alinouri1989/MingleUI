@@ -6,7 +6,7 @@ import { setUser } from '../auth/authSlice.js';
 export const userSettingsApi = createApi({
   reducerPath: 'accountSettingsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:5105/api/',
+    baseUrl: 'http://localhost:5069/api/',
     prepareHeaders: (headers) => {
       const token = getJwtFromCookie();
       if (token) {
@@ -20,7 +20,7 @@ export const userSettingsApi = createApi({
     // Remove Profile Photo
     removeProfilePhoto: builder.mutation({
       query: () => ({
-        url: 'User/RemoveProfilePhoto',
+        url: 'User/ProfilePhoto',
         method: 'PATCH',
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch, getState }) {
@@ -59,7 +59,7 @@ export const userSettingsApi = createApi({
     // Update Display Name
     updateDisplayName: builder.mutation({
       query: (newDisplayName) => ({
-        url: 'User/UpdateDisplayName',
+        url: 'User/DisplayName',
         method: 'PATCH',
         body: { displayName: newDisplayName },
       }),
@@ -77,7 +77,7 @@ export const userSettingsApi = createApi({
     // Update Phone Number
     updatePhoneNumber: builder.mutation({
       query: (newPhoneNumber) => ({
-        url: 'User/UpdatePhoneNumber',
+        url: 'User/PhoneNumber',
         method: 'PATCH',
         body: { phoneNumber: newPhoneNumber },
       }),
@@ -95,7 +95,7 @@ export const userSettingsApi = createApi({
     // Update Biography
     updateBiography: builder.mutation({
       query: (newBiography) => ({
-        url: 'User/UpdateBiography',
+        url: 'User/Biography',
         method: 'PATCH',
         body: { biography: newBiography },
       }),
@@ -113,7 +113,7 @@ export const userSettingsApi = createApi({
     // Change Password
     changePassword: builder.mutation({
       query: (formData) => ({
-        url: 'User/ChangePassword',
+        url: 'User/Password',
         method: 'PATCH',
         body: formData,
       }),
@@ -121,38 +121,9 @@ export const userSettingsApi = createApi({
 
     // ============ Theme Settings  ============
 
-    changeChatBackground: builder.mutation({
-      query: (colorId) => ({
-        url: 'User/ChangeChatBackground',
-        method: 'PATCH',
-        body: { chatBackground: colorId },
-      }),
-      async onQueryStarted(arg, { queryFulfilled, dispatch, getState }) {
-        try {
-          await queryFulfilled;
-
-          const currentUser = getState().auth.user;
-
-          dispatch(
-            setUser({
-              user: {
-                ...currentUser,
-                settings: {
-                  ...currentUser.settings,
-                  chatBackground: arg,
-                }
-              }
-            })
-          );
-        } catch (error) {
-          console.error('Error updating chat background:', error);
-        }
-      },
-    }),
-
     changeTheme: builder.mutation({
       query: (themeId) => ({
-        url: 'User/ChangeTheme',
+        url: 'User/Theme',
         method: 'PATCH',
         body: { theme: themeId },
       }),
@@ -181,6 +152,35 @@ export const userSettingsApi = createApi({
           );
         } catch (error) {
           console.error('Error updating theme:', error);
+        }
+      },
+    }),
+
+    changeChatBackground: builder.mutation({
+      query: (colorId) => ({
+        url: 'User/ChatBackground',
+        method: 'PATCH',
+        body: { chatBackground: colorId },
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch, getState }) {
+        try {
+          await queryFulfilled;
+
+          const currentUser = getState().auth.user;
+
+          dispatch(
+            setUser({
+              user: {
+                ...currentUser,
+                settings: {
+                  ...currentUser.settings,
+                  chatBackground: arg,
+                }
+              }
+            })
+          );
+        } catch (error) {
+          console.error('Error updating chat background:', error);
         }
       },
     }),

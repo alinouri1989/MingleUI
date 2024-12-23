@@ -6,10 +6,12 @@ import GroupMessageBar from "./Components/GroupMessageBar";
 import GroupDetailsBar from "./Components/GroupDetailsBar";
 import GroupTopBar from "./Components/GroupTopBar";
 import "../layout.scss";
+import { useParams } from "react-router-dom";
 
 
 function Chats() {
   //props olarak chatId alacak
+  const { id } = useParams(); // URL'den ID'yi al
 
   // Sidebar açık/kapalı durumu için state
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -53,12 +55,15 @@ function Chats() {
   return (
     <>
       <div className='group-general-box'>
-        {/* <WelcomeScreen content={"Kişisel sohbetleriniz uçtan uca şifrelidir"}/> */}
-        <GroupTopBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-        <GroupMessageBar groupedMessages={groupedMessages} />
-        <MessageInputBar />
+        {!id && <WelcomeScreen text={"Grup sohbetleriniz uçtan uca şifrelidir"} />}
+        {id && <>
+          <GroupTopBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+          <GroupMessageBar groupedMessages={groupedMessages} />
+          <MessageInputBar />
+        </>
+        }
       </div>
-        <GroupDetailsBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} chatId={chatId} />
+      {id && <GroupDetailsBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} chatId={chatId} />}
     </>
 
   )

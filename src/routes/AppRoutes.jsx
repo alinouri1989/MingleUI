@@ -11,7 +11,7 @@ import Home from '../components/Home/Home.jsx';
 
 function AppRoutes() {
 
-    const { user } = useSelector((state) => state.auth); 
+    const { user } = useSelector((state) => state.auth);
 
     return (
         <Routes>
@@ -36,9 +36,13 @@ function AppRoutes() {
                     <Route path="/" element={<Layout />}>
                         <Route path="anasayfa" element={<Home />} />
                         <Route path="sohbetler" element={<Chats />} />
+                        <Route path="sohbetler/:id" element={<Chats />} />
                         <Route path="arsivler" element={<Archives />} />
+                        <Route path="arsivler/:id" element={<Archives />} />
                         <Route path="gruplar" element={<Groups />} />
+                        <Route path="gruplar/:id" element={<Groups />} />
                         <Route path="aramalar" element={<Calls />} />
+                        <Route path="aramalar/:id" element={<Calls />} />
                     </Route>
 
                     {/* Giriş yapmış kullanıcı public rotalara erişmeye çalışırsa */}

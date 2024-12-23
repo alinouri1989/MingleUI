@@ -7,13 +7,13 @@ import { removeJwtFromCookie } from '../../helpers/removeJwtFromCookie';
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:5105/api/',
+    baseUrl: 'http://localhost:5069/api/',
   }),
   endpoints: (builder) => ({
     // Register (SignUp) endpoint
     registerUser: builder.mutation({
       query: (formData) => ({
-        url: 'Authentication/SignUp',
+        url: 'Auth/SignUp',
         method: 'POST',
         body: formData,
       }),
@@ -22,7 +22,7 @@ export const authApi = createApi({
     // Login (SignIn) endpoint
     loginUser: builder.mutation({
       query: (formData) => ({
-        url: 'Authentication/SignIn',
+        url: 'Auth/SignIn',
         method: 'POST',
         body: formData,
       }),
@@ -57,7 +57,7 @@ export const authApi = createApi({
       query: () => {
         const token = getJwtFromCookie();
         return {
-          url: 'User/GetUserProfile',
+          url: 'User/UserProfile',
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -71,7 +71,7 @@ export const authApi = createApi({
       query: () => {
         const token = getJwtFromCookie();
         return {
-          url: '/Authentication/SignOut',
+          url: '/Auth/SignOut',
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
