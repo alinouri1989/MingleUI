@@ -24,19 +24,33 @@ function CallModal({ closeModal, user, isVideoCallMode }) {
     const [isMicrophoneOn, setMicrophoneMode] = useState(true);
     const [isSpeakerOn, setSpeakerMode] = useState(true);
 
+
     const [isWebcamOpen, setIsWebcamOpen] = useState(false);
     const [isRemoteConnected, setRemoteConnected] = useState(false);
 
     const [isVideoCall, setIsVideoCall] = useState(false);
-
+    
     const localStreamRef = useRef(null);
     const remoteStreamRef = useRef(null);
     const audioRef = useRef(null);
 
     useEffect(() => {
         if (isVideoCallMode) {
-            setIsWebcamOpen(true);
+            setIsWebcamOpen(!isWebcamOpen);
             setIsVideoCall(true);
+
+            if (!isWebcamOpen) {
+                navigator.mediaDevices
+                    .getUserMedia({ video: true, audio: true })
+                    .then((stream) => {
+                        localStreamRef.current.srcObject = stream;
+                    })
+                    .catch((err) => {
+                        console.error("Kamera başlatılamadı:", err);
+                    });
+            } else {
+
+            }
         }
     }, []);
 
@@ -46,24 +60,23 @@ function CallModal({ closeModal, user, isVideoCallMode }) {
         }
     }, [isRemoteConnected, isWebcamOpen]);
 
-    // useEffect(() => {
+    useEffect(() => {
+        const audio = new Audio(CallSound);
+        audio.loop = true;
+        audio.play();
+        audioRef.current = audio;
 
-    //     const audio = new Audio(CallSound);
-    //     audio.loop = true;
-    //     audio.play();
-    //     audioRef.current = audio;
+        const timer = setTimeout(() => {
+            audio.pause();
+            audio.currentTime = 0;
+        }, 20000);
 
-    //     const timer = setTimeout(() => {
-    //         audio.pause();
-    //         audio.currentTime = 0;
-    //     }, 20000);
-
-    //     return () => {
-    //         clearTimeout(timer);
-    //         audio.pause();
-    //         audio.currentTime = 0;
-    //     };
-    // }, []);
+        return () => {
+            clearTimeout(timer);
+            audio.pause();
+            audio.currentTime = 0;
+        };
+    }, []);
 
     const handleMicrophoneMode = () => {
         setMicrophoneMode(!isMicrophoneOn);
@@ -78,24 +91,31 @@ function CallModal({ closeModal, user, isVideoCallMode }) {
             return newMode;
         });
     };
-    const handleCameraToggle = () => {
-        setIsWebcamOpen(!isWebcamOpen);
-        setIsVideoCall(true);
 
+    const handleCameraToggle = () => {
         if (!isWebcamOpen) {
+            // Kamera aç
+            setIsWebcamOpen(true); // Kamera açık durumunu güncelle
+            setIsVideoCall(true); 
             navigator.mediaDevices
                 .getUserMedia({ video: true, audio: true })
                 .then((stream) => {
-                    localStreamRef.current.srcObject = stream;
+                    localStreamRef.current.srcObject = stream; // Kamerayı bağla
                 })
                 .catch((err) => {
                     console.error("Kamera başlatılamadı:", err);
                 });
         } else {
-
+            // Kamera kapat
+            console.log("Girdi");
+            if (localStreamRef.current?.srcObject) {
+                // Tüm medya akışlarını durdur
+                localStreamRef.current.srcObject.getTracks().forEach((track) => track.stop());
+                localStreamRef.current.srcObject = null; // Referansı temizle
+            }
+            setIsWebcamOpen(false); // Kamera kapalı durumunu güncelle
         }
     };
-    console.log(isRemoteConnected)
 
     const handleCloseCall = () => {
         if (localStreamRef.current?.srcObject) {
