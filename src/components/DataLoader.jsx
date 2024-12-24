@@ -53,7 +53,6 @@ const DataLoader = ({ children }) => {
         return <MinglePreLoader />;
     }
 
-    // Eğer kullanıcı varsa SignalRProvider ile sar
     return user ? <SignalRProvider>{children}</SignalRProvider> : <>{children}</>;
 };
 
