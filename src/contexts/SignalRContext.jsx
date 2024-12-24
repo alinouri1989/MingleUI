@@ -5,7 +5,6 @@ import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
 // SignalR context oluşturuyoruz
 const SignalRContext = createContext();
 
-// SignalR context'e erişim sağlamak için hook
 export const useSignalR = () => {
     const context = useContext(SignalRContext);
     
@@ -33,52 +32,57 @@ export const SignalRProvider = ({ children }) => {
     console.log("Bağlantı durumu", connectionStatus);
 
     useEffect(() => {
-        const token = getJwtFromCookie();
+    const token = getJwtFromCookie();
 
-        // ChatHub bağlantısını oluşturuyoruz
-        const chatConnection = new HubConnectionBuilder()
-            .withUrl("http://localhost:5069/ChatHub", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-            .configureLogging(LogLevel.Information)
-            .withAutomaticReconnect()
-            .build();
+    const chatConnection = new HubConnectionBuilder()
+        .withUrl("http://localhost:5069/ChatHub", {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        })
+        .configureLogging(LogLevel.Information)
+        .withAutomaticReconnect()
+        .build();
 
-        // Bağlantı başlatılmadan önce durumu güncelliyoruz
-        setConnectionStatus("connecting");
+    setConnectionStatus("connecting");
 
-        // Bağlantıyı başlatıyoruz ve başarılı olduğunda durumu güncelliyoruz
-        chatConnection
-            .start()
-            .then(() => {
-                console.log("Bağlantı başarılı!");
-                setConnectionStatus("connected");
-                setLoading(false); 
-            })
-            .catch((err) => {
-                console.error("Bağlantı hatası:", err);
-                setConnectionStatus("failed");
-                setError(err);
-                setLoading(false);
-            });
+    chatConnection
+        .start()
+        .then(() => {
+            console.log("Bağlantı başarılı!");
+            setConnectionStatus("connected");
+            setLoading(false);
+        })
+        .catch((err) => {
+            console.error("Bağlantı hatası:", err);
+            setConnectionStatus("failed");
+            setError(err);
+            setLoading(false);
+        });
 
-        setChatConnection(chatConnection);
+    setChatConnection(chatConnection);
 
-        // Cleanup - bağlantıyı durdurma
-        return () => {
-            if (chatConnection) {
-                chatConnection.stop();
-            }
-        };
-    }, []);
+    // Tarayıcı sekmesi kapandığında veya site değiştirildiğinde bağlantıyı durdur
+    const handleBeforeUnload = () => {
+        if (chatConnection) {
+            chatConnection.stop();
+        }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    // Cleanup
+    return () => {
+        if (chatConnection) {
+            chatConnection.stop();
+        }
+        window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+}, []);
 
     console.log("ChatConnection", chatConnection);
 
-    // Yükleme devam ediyorsa, çocuk bileşenleri render etmiyoruz
     if (loading) {
-        return null; // veya loading spinner gösterebilirsiniz
+        return null;
     }
 
     return (

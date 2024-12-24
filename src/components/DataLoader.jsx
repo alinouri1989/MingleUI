@@ -5,11 +5,11 @@ import { authApi } from "../store/Slices/auth/authApi";
 import { setUser } from "../store/Slices/auth/authSlice";
 import MinglePreLoader from "../shared/components/MinglePreLoader/MinglePreLoader";
 import { applyTheme } from "../helpers/applyTheme";
-import { SignalRProvider } from "../contexts/SignalRContext"; // SignalRProvider'ı ekledik
+import { SignalRProvider } from "../contexts/SignalRContext"; 
 
 const DataLoader = ({ children }) => {
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.auth.user); // Kullanıcı durumunu kontrol ediyoruz
+    const user = useSelector((state) => state.auth.user); 
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
