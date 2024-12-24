@@ -21,7 +21,7 @@ export const userSettingsApi = createApi({
     removeProfilePhoto: builder.mutation({
       query: () => ({
         url: 'User/ProfilePhoto',
-        method: 'PATCH',
+        method: 'DELETE',
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch, getState }) {
         try {
@@ -40,7 +40,7 @@ export const userSettingsApi = createApi({
         const formDataWithHeaders = new FormData();
         formDataWithHeaders.append('ProfilePhoto', file);
         return {
-          url: 'User/UpdateProfilePhoto',
+          url: 'User/ProfilePhoto',
           method: 'PATCH',
           body: formDataWithHeaders,
         };

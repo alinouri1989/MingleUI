@@ -18,7 +18,7 @@ export const searchUsersApi = createApi({
         // Kullanıcıları Arama Endpointi
         searchUsers: builder.query({
             query: (query) => ({
-                url: "SearchUsers",
+                url: "Users",
                 method: "GET",
                 params: { Query: query },
             }),

@@ -1,5 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useModal } from "../../../../contexts/ModalContext.jsx";
+import { useNavigate } from 'react-router-dom';
+
+
 import CloseButton from "../../../../contexts/components/CloseModalButton.jsx";
 import PreLoader from "../../../../shared/components/PreLoader/PreLoader.jsx";
 import star from "../../../../assets/svg/star.svg";
@@ -9,11 +12,13 @@ import { AiFillInfoCircle } from "react-icons/ai";
 import { useSearchUsersQuery } from "../../../../store/Slices/searchUsers/searchUserApi.js";
 import { useDebounce } from "../../../../hooks/useDebounce.jsx";
 import "./style.scss";
-
+import { useSignalR } from "../../../../contexts/SignalRContext.jsx";
 
 function NewChatModal() {
-
+  const navigate = useNavigate();
   const { closeModal } = useModal();
+  const { chatConnection, connectionStatus } = useSignalR();
+  console.log("ChatCon", chatConnection)
   const [inputValue, setInputValue] = useState("");
   const debouncedSearchQuery = useDebounce(inputValue, 300);
 
@@ -23,8 +28,45 @@ function NewChatModal() {
 
   const users = error ? [] : data ? Object.entries(data) : [];
 
-  const handleGoToChat = (userId) => {
 
+  useEffect(() => {
+    const handleReceiveCreateChat = (response) => {
+      console.log("ReceiveCreateChat yanıtı:", response);
+      if (response.chatId) {
+        console.log("Yeni sohbet oluşturuldu, Chat ID:", response.chatId);
+        // Gerekli işlemleri burada yapabilirsiniz
+        closeModal();
+        navigate(`/chat/${response.chatId}`);
+      } else {
+        console.error("Chat ID alınamadı:", response);
+      }
+    };
+
+    if (chatConnection) {
+      chatConnection.on("ReceiveCreateChat", handleReceiveCreateChat);
+    }
+
+    // Cleanup - Event listener'ı kaldırma
+    return () => {
+      if (chatConnection) {
+        chatConnection.off("ReceiveCreateChat", handleReceiveCreateChat);
+      }
+    };
+  }, [chatConnection]);
+
+  const handleGoToChat = async (userId) => {
+    if (connectionStatus !== "connected") {
+      console.error("Bağlantı henüz kurulmadı.");
+      return;
+    }
+
+    try {
+      const chatType = "Individual";
+      await chatConnection.invoke("CreateChat", chatType, userId);
+      console.log("CreateChat talebi gönderildi.");
+    } catch (err) {
+      console.error("CreateChat isteği sırasında hata:", err);
+    }
   };
 
   const handleInputChange = (e) => {

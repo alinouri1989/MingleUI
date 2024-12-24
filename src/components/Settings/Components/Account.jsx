@@ -298,6 +298,7 @@ function Account() {
             </button>
           </div>
         </div>
+        
         <div className="biography-box">
           <div className="biograpy-edit-box">
             <p>Biyografi</p>
