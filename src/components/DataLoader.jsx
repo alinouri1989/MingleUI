@@ -5,11 +5,11 @@ import { authApi } from "../store/Slices/auth/authApi";
 import { setUser } from "../store/Slices/auth/authSlice";
 import MinglePreLoader from "../shared/components/MinglePreLoader/MinglePreLoader";
 import { applyTheme } from "../helpers/applyTheme";
+import { SignalRProvider } from "../contexts/SignalRContext"; // SignalRProvider'ı ekledik
 
 const DataLoader = ({ children }) => {
     const dispatch = useDispatch();
-
-    // State: Loading durumunu kontrol eder
+    const user = useSelector((state) => state.auth.user); // Kullanıcı durumunu kontrol ediyoruz
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
@@ -18,7 +18,6 @@ const DataLoader = ({ children }) => {
 
             if (jwt) {
                 try {
-
                     const userProfile = await dispatch(
                         authApi.endpoints.getUserProfile.initiate()
                     ).unwrap();
@@ -32,7 +31,6 @@ const DataLoader = ({ children }) => {
 
                     // Kullanıcı teması ayarla
                     const theme = userProfile?.settings?.theme || "DefaultSystemMode";
-
                     if (theme === "DefaultSystemMode" || theme === "Light") {
                         applyTheme("Light");
                     } else if (theme === "Dark") {
@@ -44,7 +42,7 @@ const DataLoader = ({ children }) => {
             }
 
             setTimeout(() => {
-                setIsLoading(false); 
+                setIsLoading(false);
             }, 900);
         };
 
@@ -55,7 +53,8 @@ const DataLoader = ({ children }) => {
         return <MinglePreLoader />;
     }
 
-    return <>{children}</>;
+    // Eğer kullanıcı varsa SignalRProvider ile sar
+    return user ? <SignalRProvider>{children}</SignalRProvider> : <>{children}</>;
 };
 
 export default DataLoader;

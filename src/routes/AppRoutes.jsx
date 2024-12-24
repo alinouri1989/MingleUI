@@ -9,9 +9,8 @@ import Groups from '../components/Groups/Groups.jsx';
 import Calls from '../components/Calls/Calls.jsx';
 import Home from '../components/Home/Home.jsx';
 
-import { SignalRProvider } from '../contexts/SignalRContext'; // SignalRProvider'ı burada kullanıyoruz.
-
 function AppRoutes() {
+
     const { user } = useSelector((state) => state.auth);
 
     return (
@@ -29,24 +28,28 @@ function AppRoutes() {
 
             {/* Protected Routes */}
             {user && (
-                <Route
-                    path="/"
-                    element={
-                        <SignalRProvider>
-                            <Layout />
-                        </SignalRProvider>
-                    }
-                >
-                    <Route path="anasayfa" element={<Home />} />
-                    <Route path="sohbetler" element={<Chats />} />
-                    <Route path="sohbetler/:id" element={<Chats />} />
-                    <Route path="arsivler" element={<Archives />} />
-                    <Route path="arsivler/:id" element={<Archives />} />
-                    <Route path="gruplar" element={<Groups />} />
-                    <Route path="gruplar/:id" element={<Groups />} />
-                    <Route path="aramalar" element={<Calls />} />
-                    <Route path="aramalar/:id" element={<Calls />} />
-                </Route>
+                <>
+                    {/* Giriş yapılmış kullanıcılar için yönlendirme */}
+                    <Route path="/" element={<Navigate to="/anasayfa" replace />} />
+
+                    {/* Layout ile korunan rotalar */}
+                    <Route path="/" element={<Layout />}>
+                        <Route path="anasayfa" element={<Home />} />
+                        <Route path="sohbetler" element={<Chats />} />
+                        <Route path="sohbetler/:id" element={<Chats />} />
+                        <Route path="arsivler" element={<Archives />} />
+                        <Route path="arsivler/:id" element={<Archives />} />
+                        <Route path="gruplar" element={<Groups />} />
+                        <Route path="gruplar/:id" element={<Groups />} />
+                        <Route path="aramalar" element={<Calls />} />
+                        <Route path="aramalar/:id" element={<Calls />} />
+                    </Route>
+
+                    {/* Giriş yapmış kullanıcı public rotalara erişmeye çalışırsa */}
+                    <Route path="/giris-yap" element={<Navigate to="/anasayfa" replace />} />
+                    <Route path="/uye-ol" element={<Navigate to="/anasayfa" replace />} />
+                    <Route path="/sifre-yenile" element={<Navigate to="/anasayfa" replace />} />
+                </>
             )}
 
             {/* Default: Tanımlı olmayan rotalar */}
