@@ -4,6 +4,7 @@ import MessageBubble from '../../../shared/components/MessageBubble/MessageBubbl
 import { getChatBackgroundColor } from '../../../helpers/getChatBackgroundColor.js';
 import { useSignalR } from '../../../contexts/SignalRContext.jsx';
 import { getUserIdFromToken } from '../../../helpers/getUserIdFromToken.js';
+import { convertToLocalTime } from '../../../helpers/convertToLocalTime.js';
 
 function UserMessageBar() {
   const { token, user } = useSelector((state) => state.auth);
@@ -35,7 +36,7 @@ function UserMessageBar() {
     const [messageId, message] = Object.entries(messageObj)[0];
 
     // Tarihi ayır
-    const sentDate = message.status.sent[userId]; // user.id'yi kullanarak mesajın gönderildiği zamanı al
+    const sentDate = message.status.sent[userId];
     const date = sentDate ? new Date(sentDate).toLocaleDateString() : "Invalid Date"; // Tarih ayarlama
 
     // Geçerli bir tarih varsa işlemi yap
@@ -45,29 +46,38 @@ function UserMessageBar() {
     return acc;
   }, {});
 
-  console.log(messages);
-  console.log(groupedMessagesByDate);
 
   return (
-    <div className="user-message-bar" style={{ backgroundImage }}>
+    <div className="user-message-bar " style={{ backgroundImage }}>
       <div className="messages-list">
         {Object.entries(groupedMessagesByDate).map(([date, messages]) => (
           <div key={date} className="date-group">
             <div className="date-heading">{date}</div>
-            {messages.map((msg) => (
-              <MessageBubble
-                key={msg.id} // Mesaj ID'sini key olarak kullan
-                content={msg.content}
-                timestamp={msg.status.sent[userId]} // Gönderim zamanı
-                isSender={msg.sender !== userId} // Mesajı gönderen kullanıcı mı?
-                status={msg.status} // Mesajın durum bilgisi
-                messageType={msg.type} // Mesaj türü
-              />
-            ))}
+            {messages.map((msg) => {
+              // Gönderen kullanıcıyı bul
+              const senderId = Object.keys(msg.status.sent)[0];
+              const isSender = senderId === userId;
+
+              // Mesajın gönderim zamanını dönüştür
+              const formattedTimestamp = convertToLocalTime(msg.status.sent[senderId]);
+
+              return (
+                <MessageBubble
+                  key={msg.id}
+                  content={msg.content}
+                  timestamp={formattedTimestamp} // Dönüştürülmüş zaman
+                  isSender={isSender}
+                  status={msg.status}
+                  messageType={msg.type}
+                  userId={userId}
+                />
+              );
+            })}
           </div>
         ))}
       </div>
     </div>
+
   );
 }
 

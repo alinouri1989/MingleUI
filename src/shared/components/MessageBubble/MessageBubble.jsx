@@ -14,14 +14,15 @@ import { LuCheckCheck } from "react-icons/lu";
 import './style.scss';
 import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
 
-function MessageBubble({ content, timestamp, isSender, status, profileImage, userName, messageType, isGroupMessageBubble }) {
+function MessageBubble({ userId, content, timestamp, isSender, status, profileImage, userName, messageType, isGroupMessageBubble }) {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
-    console.log(content);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
+    console.log(userId);
+    console.log("Gönderen mi", isSender);
 
     const handleClose = () => {
         setAnchorEl(null);
@@ -41,12 +42,22 @@ function MessageBubble({ content, timestamp, isSender, status, profileImage, use
     let statusIcon;
     let statusColor;
 
-    if (status === "sent") {
-        statusIcon = <LuCheck />;
-        statusColor = "#828A96";
-    } else if (status === "delivered" || status === "read") {
+    if (status.read && status.read[userId]) {
+        // Eğer mesaj okunduysa
         statusIcon = <LuCheckCheck />;
-        statusColor = status === "read" ? "#585CE1" : "#828A96";
+        statusColor = "#585CE1"; // Mavi (Okundu)
+    } else if (status.delivered && status.delivered[userId]) {
+        // Eğer mesaj teslim edildiyse
+        statusIcon = <LuCheckCheck />;
+        statusColor = "#828A96"; // Gri (Teslim Edildi)
+    } else if (status.sent && status.sent[userId]) {
+        // Eğer mesaj gönderildiyse
+        statusIcon = <LuCheck />;
+        statusColor = "#828A96"; // Gri (Gönderildi)
+    } else {
+        // Durum yoksa (Invalid)
+        statusIcon = <LuCheck />;
+        statusColor = "#828A96"; // Varsayılan gri
     }
 
     return (
