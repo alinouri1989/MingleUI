@@ -18,7 +18,7 @@ function MessageBubble({ content, timestamp, isSender, status, profileImage, use
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
-
+    console.log(content);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -69,7 +69,7 @@ function MessageBubble({ content, timestamp, isSender, status, profileImage, use
                         </div>
                     }
 
-                    {messageType === "text"
+                    {messageType === 0
                         ? <p>{content}</p>
                         : <img className='image' src={content} alt="" />
                     }
@@ -146,7 +146,7 @@ function MessageBubble({ content, timestamp, isSender, status, profileImage, use
                                 />
                             </MenuItem>
 
-                            {messageType === "text" &&
+                            {messageType === 0 &&
                                 <MenuItem
                                     onClick={handleCopy}
                                     sx={{ color: "#585CE1" }}

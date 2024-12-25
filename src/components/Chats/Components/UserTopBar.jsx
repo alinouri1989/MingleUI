@@ -5,7 +5,11 @@ import { IoIosArrowDropleftCircle } from "react-icons/io";
 import CallModal from '../../Calls/Components/CallModal';
 import { useModal } from '../../../contexts/ModalContext';
 
-function UserTopBar({ isSidebarOpen, toggleSidebar }) {
+function UserTopBar({ isSidebarOpen, toggleSidebar ,recipientProfile}) {
+
+    if (!recipientProfile) {
+        return null; // Veya bir yüklenme animasyonu
+      }
     // Props olarak alır.
     const userName = "Okan Doğan"
     const status = "online"
@@ -24,11 +28,11 @@ function UserTopBar({ isSidebarOpen, toggleSidebar }) {
         <div className={`user-top-bar ${isSidebarOpen ? 'close' : ''}`}>
             <div className="user-info">
                 <div className="image-box">
-                    <img src="https://randomuser.me/api/portraits/men/1.jpg" alt={`${userName} profile`} />
+                    <img src={recipientProfile.profilePhoto} alt={`${recipientProfile.displayName} profile`} />
                     <p className={`status ${status}`}></p>
                 </div>
                 <div className="name-and-status-box">
-                    <p className="user-name">{userName}</p>
+                    <p className="user-name">{recipientProfile.displayName}</p>
                     <span>{status == "online" ? "Çevrimiçi" : "Çevrimdışı"}</span>
                 </div>
             </div>

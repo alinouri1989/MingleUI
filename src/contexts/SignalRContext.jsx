@@ -29,8 +29,6 @@ export const SignalRProvider = ({ children }) => {
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true); // Yükleme durumu
 
-    console.log("Bağlantı durumu", connectionStatus);
-
     useEffect(() => {
     const token = getJwtFromCookie();
 
@@ -79,7 +77,6 @@ export const SignalRProvider = ({ children }) => {
     };
 }, []);
 
-    console.log("ChatConnection", chatConnection);
 
     if (loading) {
         return null;

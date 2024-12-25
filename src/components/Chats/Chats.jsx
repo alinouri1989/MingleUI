@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import WelcomeScreen from "../WelcomeScreen/WelcomeScreen";
 
 import UserTopBar from "./Components/UserTopBar";
@@ -7,64 +7,72 @@ import MessageInputBar from "../../shared/components/MessageInputBar/MessageInpu
 import "../layout.scss";
 import UserDetailsBar from "./Components/UserDetailsBar";
 import { useParams } from "react-router-dom";
-
-// Props ile kullanıcıyı alıcak. ya da url ile id üzerinden kullanıcı bilgisni alıcak hub durumu felan şimdilik statik
+import { useSignalR } from "../../contexts/SignalRContext";
 
 function Chats() {
   const { id } = useParams(); // URL'den ID'yi al
-  // Sidebar açık/kapalı durumu için state
+  const { chatConnection } = useSignalR(); // SignalR bağlantısını al
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [recipientProfile, setRecipientProfile] = useState(null); // Profil bilgilerini tut
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const mockMessages = [
-    { id: 1, content: 'Merhaba!', timestamp: '09:20', date: '22.09.2024', sender: 'user1', receiver: 'user2', status: "read", messageType: "text" },
-    { id: 2, content: 'Nasılsın?', timestamp: '09:22', date: '22.09.2024', sender: 'user2', receiver: 'user1', status: "read", messageType: "text" },
-    { id: 3, content: 'İyiyim, teşekkürler!', timestamp: '09:25', date: '22.09.2024', sender: 'user1', receiver: 'user2', status: "read", messageType: "text" },
-    { id: 4, content: 'Öyle işte kendimce çalışmalar yapıyorum seni de iyi gördüm', timestamp: '09:25', date: '22.09.2024', sender: 'user1', receiver: 'user2', status: "read", messageType: "text" },
-    { id: 5, content: ':)', timestamp: '09:25', date: '22.09.2024', sender: 'user1', receiver: 'user2', status: "read", messageType: "text" },
-    { id: 6, content: 'Dün bir şeyler yazmıştın?', timestamp: '14:10', date: 'Dün', sender: 'user2', receiver: 'user1', status: "delivered", messageType: "text" },
-    { id: 7, content: 'Evet, yeni bir projeye başladım.', timestamp: '14:15', date: 'Dün', sender: 'user1', receiver: 'user2', status: "delivered", messageType: "text" },
-    { id: 8, content: 'Hangi proje?', timestamp: '14:20', date: 'Dün', sender: 'user2', receiver: 'user1', status: "delivered", messageType: "text" },
-    { id: 9, content: 'Chat uygulaması geliştiriyorum.', timestamp: '10:00', date: 'Bugün', sender: 'user1', receiver: 'user2', status: "sent", messageType: "text" },
-    { id: 10, content: 'Wow! Harika bir fikir! 😉', timestamp: '10:05', date: 'Bugün', sender: 'user2', receiver: 'user1', status: "sent", messageType: "text" },
-    { id: 11, content: 'Teşekkürler! WebSocket entegrasyonu yapacağım. Ancak nasıl yapacağım konusunda tam bir fikrim yok isterseniz bunu daha sonra detaylı bir şekilde konuşalım.', timestamp: '10:10', date: 'Bugün', sender: 'user1', receiver: 'user2', status: "sent", messageType: "text" },
-    { id: 12, content: 'Kolay gelsin, merakla bekliyorum!', timestamp: '10:15', date: 'Bugün', sender: 'user2', receiver: 'user1', status: "sent", messageType: "text" },
-    { id: 13, content: 'https://plus.unsplash.com/premium_photo-1732568404499-8561e0788a13?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', timestamp: '10:15', date: 'Bugün', sender: 'user2', receiver: 'user1', status: "sent", messageType: "image" },
-  ];
+  useEffect(() => {
+    if (chatConnection && id) {
+      // Backend'deki RecipientProfile metodunu çağır
+      chatConnection
+        .invoke("RecipientProfile", id)
+        .then(() => {
+          console.log("Profil bilgisi başarıyla talep edildi");
+        })
+        .catch((error) => {
+          console.error("Profil bilgisi alınırken hata:", error);
+        });
 
-  // Gruplama fonksiyonu
-  const groupMessagesByDate = (messages) => {
-    return messages.reduce((grouped, message) => {
-      const { date } = message;
-      if (!grouped[date]) grouped[date] = [];
-      grouped[date].push(message);
-      return grouped;
-    }, {});
-  };
+      // Profil bilgisini dinle
+      const handleProfile = (profile) => {
+        setRecipientProfile(profile);
+      };
 
+      chatConnection.on("ReceiveRecipientProfile", handleProfile);
 
-  const groupedMessages = groupMessagesByDate(mockMessages);
+      // Cleanup
+      return () => {
+        chatConnection.off("ReceiveRecipientProfile", handleProfile);
+      };
+    }
+  }, [chatConnection, id]);
 
   return (
     <>
-      <div className='chat-general-box'>
-        {!id && <WelcomeScreen text={"Kişisel sohbetleriniz uçtan uca şifrelidir"} />}
+      <div className="chat-general-box">
+        {!id && (
+          <WelcomeScreen text={"Kişisel sohbetleriniz uçtan uca şifrelidir"} />
+        )}
 
-        {id &&
+        {id && (
           <>
-            <UserTopBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
-            <UserMessageBar groupedMessages={groupedMessages} />
-            <MessageInputBar />
+            <UserTopBar
+              isSidebarOpen={isSidebarOpen}
+              toggleSidebar={toggleSidebar}
+              recipientProfile={recipientProfile} // Profili üst bileşene geçir
+            />
+            <UserMessageBar groupedMessages={{}}  /> {/* Örnek veriyi gruplama */}
+            <MessageInputBar chatId={id} />
           </>
-        }
+        )}
       </div>
-      {id && <UserDetailsBar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />}
+      {id && (
+        <UserDetailsBar
+          isSidebarOpen={isSidebarOpen}
+          toggleSidebar={toggleSidebar}
+          recipientProfile={recipientProfile} // Sidebar için profil bilgisi
+        />
+      )}
     </>
-
-  )
+  );
 }
 
-export default Chats
+export default Chats;

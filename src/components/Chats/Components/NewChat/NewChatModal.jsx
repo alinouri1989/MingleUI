@@ -11,14 +11,13 @@ import { TiThList } from "react-icons/ti";
 import { AiFillInfoCircle } from "react-icons/ai";
 import { useSearchUsersQuery } from "../../../../store/Slices/searchUsers/searchUserApi.js";
 import { useDebounce } from "../../../../hooks/useDebounce.jsx";
-import "./style.scss";
 import { useSignalR } from "../../../../contexts/SignalRContext.jsx";
+import "./style.scss";
 
 function NewChatModal() {
   const navigate = useNavigate();
   const { closeModal } = useModal();
   const { chatConnection, connectionStatus } = useSignalR();
-  console.log("ChatCon", chatConnection)
   const [inputValue, setInputValue] = useState("");
   const debouncedSearchQuery = useDebounce(inputValue, 300);
 
@@ -34,9 +33,8 @@ function NewChatModal() {
       console.log("ReceiveCreateChat yanıtı:", response);
       if (response.chatId) {
         console.log("Yeni sohbet oluşturuldu, Chat ID:", response.chatId);
-        // Gerekli işlemleri burada yapabilirsiniz
         closeModal();
-        navigate(`/chat/${response.chatId}`);
+        navigate(`/sohbetler/${response.chatId}`);
       } else {
         console.error("Chat ID alınamadı:", response);
       }

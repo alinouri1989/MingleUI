@@ -6,8 +6,11 @@ import EmojiPicker from "emoji-picker-react";
 import "./style.scss";
 import { useModal } from "../../../contexts/ModalContext";
 import ImageModal from "../ImageModal/ImageModal";
+import { useSignalR } from "../../../contexts/SignalRContext";
 
-function MessageInputBar() {
+function MessageInputBar({ chatId }) {
+    const { chatConnection } = useSignalR(); // SignalR bağlantısını al
+
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const { showModal, closeModal } = useModal();
     const [message, setMessage] = useState("");
@@ -31,6 +34,7 @@ function MessageInputBar() {
         fileInputRef.current.click();
     };
 
+
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
@@ -38,6 +42,43 @@ function MessageInputBar() {
             console.log(file);
 
             showModal(<ImageModal closeModal={closeModal} image={URL.createObjectURL(file)} />);
+        }
+    };
+
+    const handleSendMessage = async () => {
+        if (!message && !selectedFile) {
+            console.error("Boş bir mesaj gönderilemez.");
+            return;
+        }
+
+        // ContentType'ı belirleme
+        let contentType;
+        if (message) {
+            contentType = 0; // Text
+        } else if (selectedFile) {
+            contentType = 4; // File
+        }
+
+        // DTO'yu oluşturma
+        const sendMessageDto = {
+            ContentType: contentType,
+            TextContent: message || null,
+            FileContent: selectedFile ? await selectedFile.arrayBuffer() : null,
+        };
+
+        try {
+            // SignalR bağlantısını kontrol et
+            if (!chatConnection) {
+                console.error("SignalR bağlantısı yok.");
+                return;
+            }
+
+            await chatConnection.invoke("SendMessage", chatId, sendMessageDto);
+            setMessage("");
+            setSelectedFile(null);
+            console.log("Mesaj başarıyla gönderildi.");
+        } catch (error) {
+            console.error("Mesaj gönderme hatası:", error);
         }
     };
 
@@ -86,7 +127,7 @@ function MessageInputBar() {
                             <EmojiPicker onEmojiClick={handleEmojiClick} />
                         </div>
                     )}
-                    <button className="send-message-button">
+                    <button onClick={handleSendMessage} className="send-message-button">
                         <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 27 27" fill="none">
                             <path
                                 fillRule="evenodd"

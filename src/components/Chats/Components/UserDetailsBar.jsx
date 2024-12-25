@@ -5,17 +5,20 @@ import { HiMiniVideoCamera } from "react-icons/hi2";
 import { useModal } from '../../../contexts/ModalContext';
 import CallModal from '../../Calls/Components/CallModal';
 
-function UserDetailsBar({ isSidebarOpen, toggleSidebar, user }) {
+function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile }) {
+
+    if (!recipientProfile) {
+        return null; 
+    }
 
     const { showModal, closeModal } = useModal();
-
     const handleVoiceCall = () => {
         showModal(<CallModal closeModal={closeModal} />);
     }
     const handleVideoCall = () => {
         showModal(<CallModal isVideoCallMode={true} closeModal={closeModal} />);
-      }
-    
+    }
+
 
     return (
         <div className={`user-details-sidebar ${isSidebarOpen ? "open" : ""}`}>
@@ -28,9 +31,9 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, user }) {
 
                     <div className='sidebar-content-box'>
                         <div className='user-info-box'>
-                            <img src="https://randomuser.me/api/portraits/men/1.jpg" alt={`profile`} />
-                            <p>Okan Doğan</p>
-                            <span>okandogan20@gmail.com</span>
+                            <img src={recipientProfile.profilePhoto} alt={`profile`} />
+                            <p>{recipientProfile.displayName}</p>
+                            <span>{recipientProfile.email}</span>
                         </div>
                         <div className='status'>
                             <p className='circle'></p>
@@ -45,7 +48,7 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, user }) {
                         <div className='biography'>
                             <strong>Biyografi</strong>
                             <div className='line'></div>
-                            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores id vitae corporis ex, atque animi distinctio minima commodi explicabo qui?</p>
+                            <p>{recipientProfile.biography}</p>
                         </div>
                         <div className='call-buttons'>
                             <div className='button-box'>
