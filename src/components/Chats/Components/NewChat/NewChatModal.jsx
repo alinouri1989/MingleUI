@@ -27,6 +27,8 @@ function NewChatModal() {
 
   const users = error ? [] : data ? Object.entries(data) : [];
 
+  console.log("Chat connection", chatConnection);
+  console.log("connectionstatus", connectionStatus);
 
   useEffect(() => {
     const handleReceiveCreateChat = (response) => {
@@ -53,7 +55,7 @@ function NewChatModal() {
   }, [chatConnection]);
 
   const handleGoToChat = async (userId) => {
-    if (connectionStatus !== "connected") {
+    if (connectionStatus.chat !== "connected") {
       console.error("Bağlantı henüz kurulmadı.");
       return;
     }

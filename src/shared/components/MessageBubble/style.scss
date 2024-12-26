@@ -11,6 +11,10 @@
         gap: 10px;
         height: max-content;
     
+        opacity: 0; /* Başlangıç opaklığı */
+        transform: translateY(45px);
+        animation: slideUpFadeIn 0.8s ease forwards; /* Animasyonu uygula */
+
 
         .image-box {
             img {
@@ -52,7 +56,6 @@
             font-size: 14px;
             @include flex-center(column, center, flex-start);
             box-shadow: rgba(42, 42, 42, 0.205) 0px 2px 8px 0px;
-
             .user-info {
                 width: 100%;
                 @include flex-center(row, flex-start, center);
@@ -86,5 +89,19 @@
         padding: 3px 5px;
         font-size: 17px;
         color: var(--text-input-gray);
+        opacity: 0; /* Başlangıç opaklığı */
+        transform: translateY(45px);
+        animation: slideUpFadeIn 0.8s ease forwards; /* Animasyonu uygula */
+    }
+}
+
+@keyframes slideUpFadeIn {
+    0% {
+        opacity: 0; /* Görünmez */
+        transform: translateY(40px); /* Aşağıda başla */
+    }
+    100% {
+        opacity: 1; /* Görünür */
+        transform: translateY(0); /* Yukarı çık */
     }
 }

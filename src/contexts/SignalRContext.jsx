@@ -7,83 +7,118 @@ const SignalRContext = createContext();
 
 export const useSignalR = () => {
     const context = useContext(SignalRContext);
-    
+
     // Eğer SignalRProvider içerisinde değilse, hata fırlatıyoruz
     if (!context) {
         throw new Error("useSignalR must be used within a SignalRProvider");
     }
 
-    const { chatConnection, connectionStatus, error, loading } = context;
+    const { chatConnection, messageConnection, connectionStatus, error, loading } = context;
 
-    // Eğer chatConnection hala null ise, kullanıcıya uyarı verebiliriz
-    if (loading) {
-        console.warn("Bağlantı yükleniyor...");
-    }
-
-    return { chatConnection, connectionStatus, error, loading };
+    return { chatConnection, messageConnection, connectionStatus, error, loading };
 };
 
 export const SignalRProvider = ({ children }) => {
     const [chatConnection, setChatConnection] = useState(null);
-    const [connectionStatus, setConnectionStatus] = useState("disconnected");
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(true); // Yükleme durumu
+    const [messageConnection, setMessageConnection] = useState(null);
+    const [connectionStatus, setConnectionStatus] = useState({
+        chat: "disconnected",
+        message: "disconnected",
+    });
+    const [error, setError] = useState({ chat: null, message: null });
+    const [loading, setLoading] = useState({ chat: true, message: true });
 
     useEffect(() => {
-    const token = getJwtFromCookie();
+        const token = getJwtFromCookie();
 
-    const chatConnection = new HubConnectionBuilder()
-        .withUrl("http://localhost:5069/ChatHub", {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
-        .configureLogging(LogLevel.Information)
-        .withAutomaticReconnect()
-        .build();
+        // ChatHub bağlantısını başlat
+        const chatConnection = new HubConnectionBuilder()
+            .withUrl("http://localhost:5069/ChatHub", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .configureLogging(LogLevel.Information)
+            .withAutomaticReconnect()
+            .build();
 
-    setConnectionStatus("connecting");
+        setConnectionStatus((prev) => ({ ...prev, chat: "connecting" }));
 
-    chatConnection
-        .start()
-        .then(() => {
-            console.log("Bağlantı başarılı!");
-            setConnectionStatus("connected");
-            setLoading(false);
-        })
-        .catch((err) => {
-            console.error("Bağlantı hatası:", err);
-            setConnectionStatus("failed");
-            setError(err);
-            setLoading(false);
+        chatConnection
+            .start()
+            .then(() => {
+                console.log("ChatHub bağlantısı başarılı!");
+                setConnectionStatus((prev) => ({ ...prev, chat: "connected" }));
+                setLoading((prev) => ({ ...prev, chat: false }));
+            })
+            .catch((err) => {
+                console.error("ChatHub bağlantı hatası:", err);
+                setConnectionStatus((prev) => ({ ...prev, chat: "failed" }));
+                setError((prev) => ({ ...prev, chat: err }));
+                setLoading((prev) => ({ ...prev, chat: false }));
+            });
+
+        setChatConnection(chatConnection);
+
+        // MessageHub bağlantısını başlat
+        const messageConnection = new HubConnectionBuilder()
+            .withUrl("http://localhost:5069/MessageHub", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .configureLogging(LogLevel.Information)
+            .withAutomaticReconnect()
+            .build();
+
+        setConnectionStatus((prev) => ({ ...prev, message: "connecting" }));
+
+        chatConnection.onclose((error) => {
+            console.error("ChatHub connection closed", error);
+            setConnectionStatus((prev) => ({ ...prev, chat: "disconnected" }));
+            setError((prev) => ({ ...prev, chat: error }));
         });
 
-    setChatConnection(chatConnection);
+        messageConnection
+            .start()
+            .then(() => {
+                console.log("MessageHub bağlantısı başarılı!");
+                setConnectionStatus((prev) => ({ ...prev, message: "connected" }));
+                setLoading((prev) => ({ ...prev, message: false }));
+            })
+            .catch((err) => {
+                console.error("MessageHub bağlantı hatası:", err);
+                setConnectionStatus((prev) => ({ ...prev, message: "failed" }));
+                setError((prev) => ({ ...prev, message: err }));
+                setLoading((prev) => ({ ...prev, message: false }));
+            });
 
-    // Tarayıcı sekmesi kapandığında veya site değiştirildiğinde bağlantıyı durdur
-    const handleBeforeUnload = () => {
-        if (chatConnection) {
-            chatConnection.stop();
-        }
-    };
-    window.addEventListener("beforeunload", handleBeforeUnload);
+        setMessageConnection(messageConnection);
 
-    // Cleanup
-    return () => {
-        if (chatConnection) {
-            chatConnection.stop();
-        }
-        window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-}, []);
+        // Tarayıcı sekmesi kapandığında veya site değiştirildiğinde bağlantıyı durdur
+        const handleBeforeUnload = () => {
+            if (chatConnection) chatConnection.stop();
+            if (messageConnection) messageConnection.stop();
+        };
 
+        window.addEventListener("beforeunload", handleBeforeUnload);
 
-    if (loading) {
+        // Cleanup
+        return () => {
+            if (chatConnection) chatConnection.stop();
+            if (messageConnection) messageConnection.stop();
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, []);
+
+    if (loading.chat || loading.message) {
         return null;
     }
 
     return (
-        <SignalRContext.Provider value={{ chatConnection, connectionStatus, error, loading }}>
+        <SignalRContext.Provider
+            value={{ chatConnection, messageConnection, connectionStatus, error, loading }}
+        >
             {children}
         </SignalRContext.Provider>
     );

@@ -9,7 +9,7 @@ import ImageModal from "../ImageModal/ImageModal";
 import { useSignalR } from "../../../contexts/SignalRContext";
 
 function MessageInputBar({ chatId }) {
-    const { chatConnection } = useSignalR(); // SignalR bağlantısını al
+    const { messageConnection } = useSignalR(); // SignalR bağlantısını al
 
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const { showModal, closeModal } = useModal();
@@ -21,6 +21,8 @@ function MessageInputBar({ chatId }) {
     const handleEmojiClick = (emojiData) => {
         setMessage((prev) => prev + emojiData.emoji);
     };
+
+    console.log("Acık mı", messageConnection);
 
     const toggleEmojiPicker = () => {
         setShowEmojiPicker((prev) => !prev);
@@ -67,13 +69,8 @@ function MessageInputBar({ chatId }) {
         };
 
         try {
-            // SignalR bağlantısını kontrol et
-            if (!chatConnection) {
-                console.error("SignalR bağlantısı yok.");
-                return;
-            }
 
-            await chatConnection.invoke("SendMessage", chatId, sendMessageDto);
+            await messageConnection.invoke("SendMessage", chatId, sendMessageDto);
             setMessage("");
             setSelectedFile(null);
             console.log("Mesaj başarıyla gönderildi.");
