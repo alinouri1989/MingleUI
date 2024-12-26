@@ -22,7 +22,6 @@ function MessageInputBar({ chatId }) {
         setMessage((prev) => prev + emojiData.emoji);
     };
 
-    console.log("Acık mı", messageConnection);
 
     const toggleEmojiPicker = () => {
         setShowEmojiPicker((prev) => !prev);

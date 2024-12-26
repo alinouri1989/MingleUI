@@ -10,6 +10,7 @@ import { SuccessAlert } from '../../../helpers/customAlert.js';
 function UserMessageBar() {
   const { token, user } = useSelector((state) => state.auth);
   const userId = getUserIdFromToken(token);
+ 
 
   const { messageConnection } = useSignalR(); // SignalR bağlantısını al
 
@@ -25,14 +26,8 @@ function UserMessageBar() {
           return [...prevMessages, ...newMessageArray];
         });
       });
-
-
-      messageConnection.on("ReceiveTest", (data) => {
-        // "ReceiveTest" olayı tetiklendiğinde gelen veriyi alert ile göster
-
-        SuccessAlert(JSON.stringify(data.textContent))
-      });
     }
+
 
     return () => {
       if (messageConnection) {
@@ -40,7 +35,8 @@ function UserMessageBar() {
       }
     };
   }, [messageConnection]);
-  console.log(messages)
+ 
+
 
   useEffect(() => {
     if (messagesEndRef.current) {
