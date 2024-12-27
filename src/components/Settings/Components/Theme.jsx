@@ -55,7 +55,7 @@ const Theme = () => {
       <div className="theme-select">
         <h3>Tema</h3>
         <select
-          value={user?.settings?.theme || "DefaultSystemMode"}
+          value={user?.userSettings?.theme || "DefaultSystemMode"}
           onChange={(e) => handleThemeChange(e.target.value)}
         >
           <option value="DefaultSystemMode">Varsayılan Sistem Modu</option>
@@ -70,7 +70,7 @@ const Theme = () => {
           {ChatBackgroundColorsThemes.map((gradient) => (
             <div
               key={gradient.id}
-              className={`gradient-box ${user?.settings?.chatBackground === gradient.id ? "selected" : ""
+              className={`gradient-box ${user?.userSettings?.chatBackground === gradient.id ? "selected" : ""
                 }`}
               onClick={() => handleSelectedChatBackgroundColor(gradient.id)}
               style={{

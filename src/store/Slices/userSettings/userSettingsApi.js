@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getJwtFromCookie } from '../../helpers/getJwtFromCookie.js';
 import { updateUserField } from "../../helpers/updateUserField.js";
 import { setUser } from '../auth/authSlice.js';
+import { current } from '@reduxjs/toolkit';
 
 export const userSettingsApi = createApi({
   reducerPath: 'accountSettingsApi',
@@ -138,13 +139,12 @@ export const userSettingsApi = createApi({
             2: "Dark",
           };
 
-
           dispatch(
             setUser({
               user: {
                 ...currentUser,
-                settings: {
-                  ...currentUser.settings,
+                userSettings: {
+                  ...currentUser.userSettings,
                   theme: themeMapping[arg],
                 },
               },
@@ -172,8 +172,8 @@ export const userSettingsApi = createApi({
             setUser({
               user: {
                 ...currentUser,
-                settings: {
-                  ...currentUser.settings,
+                userSettings: {
+                  ...currentUser.userSettings,
                   chatBackground: arg,
                 }
               }

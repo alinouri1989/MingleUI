@@ -1,12 +1,16 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
+import { useDispatch } from "react-redux";
+import store from '../store/index.js';
+import { initializeChats } from "../store/Slices/chats/chatSlice.js";
 
 // SignalR context oluşturuyoruz
 const SignalRContext = createContext();
 
 export const useSignalR = () => {
     const context = useContext(SignalRContext);
+    const dispatch = useDispatch(); // Redux dispatch
 
     // Eğer SignalRProvider içerisinde değilse, hata fırlatıyoruz
     if (!context) {
@@ -60,7 +64,6 @@ export const SignalRProvider = ({ children }) => {
 
         setChatConnection(chatConnection);
 
-        // MessageHub bağlantısını başlat
         const messageConnection = new HubConnectionBuilder()
             .withUrl("http://localhost:5069/MessageHub", {
                 headers: {
@@ -85,6 +88,12 @@ export const SignalRProvider = ({ children }) => {
                 console.log("MessageHub bağlantısı başarılı!");
                 setConnectionStatus((prev) => ({ ...prev, message: "connected" }));
                 setLoading((prev) => ({ ...prev, message: false }));
+
+
+                chatConnection.on("ReceiveInitialChats", (data) => {
+                    console.log("Gelen sohbetler:", data);
+                    store.dispatch(initializeChats(data)); 
+                });
             })
             .catch((err) => {
                 console.error("MessageHub bağlantı hatası:", err);
@@ -95,7 +104,6 @@ export const SignalRProvider = ({ children }) => {
 
         setMessageConnection(messageConnection);
 
-        // Tarayıcı sekmesi kapandığında veya site değiştirildiğinde bağlantıyı durdur
         const handleBeforeUnload = () => {
             if (chatConnection) chatConnection.stop();
             if (messageConnection) messageConnection.stop();

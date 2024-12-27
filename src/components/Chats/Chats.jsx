@@ -6,7 +6,7 @@ import UserMessageBar from "./Components/UserMessageBar";
 import MessageInputBar from "../../shared/components/MessageInputBar/MessageInputBar";
 import "../layout.scss";
 import UserDetailsBar from "./Components/UserDetailsBar";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { useSignalR } from "../../contexts/SignalRContext";
 
 function Chats() {
@@ -14,6 +14,9 @@ function Chats() {
   const { chatConnection } = useSignalR(); // SignalR bağlantısını al
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [recipientProfile, setRecipientProfile] = useState(null); // Profil bilgilerini tut
+
+  const location = useLocation();
+  console.log(location.pathname);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -59,7 +62,7 @@ function Chats() {
               toggleSidebar={toggleSidebar}
               recipientProfile={recipientProfile} // Profili üst bileşene geçir
             />
-            <UserMessageBar groupedMessages={{}}  /> {/* Örnek veriyi gruplama */}
+            <UserMessageBar groupedMessages={{}} ChatId={id} /> {/* Örnek veriyi gruplama */}
             <MessageInputBar chatId={id} />
           </>
         )}

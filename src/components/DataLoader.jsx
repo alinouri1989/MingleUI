@@ -30,7 +30,7 @@ const DataLoader = ({ children }) => {
                     );
 
                     // Kullanıcı teması ayarla
-                    const theme = userProfile?.settings?.theme || "DefaultSystemMode";
+                    const theme = userProfile?.userSettings?.theme || "DefaultSystemMode";
                     if (theme === "DefaultSystemMode" || theme === "Light") {
                         applyTheme("Light");
                     } else if (theme === "Dark") {

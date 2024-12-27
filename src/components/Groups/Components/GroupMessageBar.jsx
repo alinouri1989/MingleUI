@@ -7,7 +7,7 @@ function GroupMessageBar({ groupedMessages }) {
 
      const { user } = useSelector((state) => state.auth);
     
-      const backgroundImage = getChatBackgroundColor(user.settings.chatBackground)
+      const backgroundImage = getChatBackgroundColor(user.userSettings.chatBackground)
 
     return (
         <div className="group-message-bar" style={{ backgroundImage }}>

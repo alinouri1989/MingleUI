@@ -31,13 +31,13 @@ function Dashboard() {
 
     return (
         <>
-            {/* <div className="dashboard-container">
+            <div className="dashboard-container">
                 <div className="user-info-box">
                     <img src={user.profilePhoto} alt="User" />
                     <p>{user.displayName}</p>
                 </div>
                 <div className="dynamic-list-box">{renderComponent()}</div>
-            </div> */}
+            </div>
         </>
     )
 }

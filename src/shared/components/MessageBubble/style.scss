@@ -13,7 +13,7 @@
     
         opacity: 0; /* Başlangıç opaklığı */
         transform: translateY(45px);
-        animation: slideUpFadeIn 0.8s ease forwards; /* Animasyonu uygula */
+        animation: slideUpFadeIn 0.2s ease forwards; /* Animasyonu uygula */
 
 
         .image-box {
@@ -91,7 +91,7 @@
         color: var(--text-input-gray);
         opacity: 0; /* Başlangıç opaklığı */
         transform: translateY(45px);
-        animation: slideUpFadeIn 0.8s ease forwards; /* Animasyonu uygula */
+        animation: slideUpFadeIn 0.2s ease forwards; /* Animasyonu uygula */
     }
 }
 

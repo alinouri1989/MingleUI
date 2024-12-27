@@ -27,8 +27,6 @@ function NewChatModal() {
 
   const users = error ? [] : data ? Object.entries(data) : [];
 
-  console.log("Chat connection", chatConnection);
-  console.log("connectionstatus", connectionStatus);
 
   useEffect(() => {
     const handleReceiveCreateChat = (response) => {

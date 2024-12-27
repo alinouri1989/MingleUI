@@ -22,7 +22,6 @@ function MessageInputBar({ chatId }) {
         setMessage((prev) => prev + emojiData.emoji);
     };
 
-
     const toggleEmojiPicker = () => {
         setShowEmojiPicker((prev) => !prev);
     };
@@ -35,7 +34,6 @@ function MessageInputBar({ chatId }) {
         fileInputRef.current.click();
     };
 
-
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
@@ -47,6 +45,7 @@ function MessageInputBar({ chatId }) {
     };
 
     const handleSendMessage = async () => {
+        setMessage("");
         if (!message && !selectedFile) {
             console.error("Boş bir mesaj gönderilemez.");
             return;
@@ -66,11 +65,9 @@ function MessageInputBar({ chatId }) {
             TextContent: message || null,
             FileContent: selectedFile ? await selectedFile.arrayBuffer() : null,
         };
-
         try {
-
             await messageConnection.invoke("SendMessage", chatId, sendMessageDto);
-            setMessage("");
+
             setSelectedFile(null);
             console.log("Mesaj başarıyla gönderildi.");
         } catch (error) {
@@ -89,6 +86,19 @@ function MessageInputBar({ chatId }) {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                handleSendMessage();
+            }
+        };
+        document.addEventListener("keydown", handleKeyDown);
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [message, selectedFile]);
 
     return (
         <div className="message-input-bar">
@@ -135,7 +145,6 @@ function MessageInputBar({ chatId }) {
                     </button>
                 </div>
             </div>
-
         </div>
     );
 }

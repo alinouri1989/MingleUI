@@ -7,36 +7,57 @@ import { getUserIdFromToken } from '../../../helpers/getUserIdFromToken.js';
 import { convertToLocalTime } from '../../../helpers/convertToLocalTime.js';
 import { SuccessAlert } from '../../../helpers/customAlert.js';
 
-function UserMessageBar() {
+function UserMessageBar({ ChatId }) {
   const { token, user } = useSelector((state) => state.auth);
   const userId = getUserIdFromToken(token);
- 
 
-  const { messageConnection } = useSignalR(); // SignalR bağlantısını al
+  const { Individual } = useSelector((state) => state.chat);
 
-  const [messages, setMessages] = useState([]); // Mesajları tutmak için state
-  const backgroundImage = getChatBackgroundColor(user.settings.chatBackground);
+  console.log("gelen individual 1:",Individual);
+
+  const { messageConnection } = useSignalR();
+
+  const [messages, setMessages] = useState([]); 
+
+  const backgroundImage = getChatBackgroundColor(user.userSettings.chatBackground);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
+    setMessages([]);
+  }, [ChatId]);
+
+  useEffect(() => {
     if (messageConnection) {
-      messageConnection.on("ReceiveGetMessages", (newMessage) => {
+      const handleReceiveMessages = (newMessage) => {
         setMessages((prevMessages) => {
-          const newMessageArray = Array.isArray(newMessage) ? newMessage : [newMessage];
-          return [...prevMessages, ...newMessageArray];
+          console.log(newMessage);
+          // Gelen mesajın chatId'sini ayıkla
+          const [incomingChatId, chatMessages] = Object.entries(newMessage)[0];
+
+          // Eğer chatId eşleşiyorsa, mesajları ekle
+          if (incomingChatId === ChatId) {
+            const newMessageArray = Object.entries(chatMessages).map(([messageId, message]) => ({
+              id: messageId,
+              ...message,
+            }));
+            return [...prevMessages, ...newMessageArray];
+          }
+
+          // Eşleşmiyorsa eski state'i döndür
+          return prevMessages;
         });
-      });
+      };
+
+      messageConnection.on("ReceiveGetMessages", handleReceiveMessages);
+
+      // Cleanup: bağlantıyı ve dinleyiciyi temizle
+      return () => {
+        messageConnection.off("ReceiveGetMessages", handleReceiveMessages);
+      };
     }
+  }, [messageConnection, ChatId]);
 
-
-    return () => {
-      if (messageConnection) {
-        messageConnection.off("ReceiveGetMessages");
-      }
-    };
-  }, [messageConnection]);
- 
-
+  console.log(messages)
 
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -46,11 +67,8 @@ function UserMessageBar() {
 
   // Mesajları tarih bazlı gruplandırma
 
-  const groupedMessagesByDate = messages.reduce((acc, messageObj) => {
-    // Mesaj ID'yi ve içeriği ayıkla
-    const [messageId, message] = Object.entries(messageObj)[0];
-
-    // Tarihi ayıkla: "2024-12-26T07:58:45.275969Z" -> "2024-12-26"
+  const groupedMessagesByDate = messages.reduce((acc, message) => {
+    // Mesajın gönderim tarihini ayıkla
     const sentDate = Object.values(message.status.sent)[0]; // Gönderenin tarih bilgisi
     const date = sentDate ? sentDate.split("T")[0] : "Geçersiz Tarih"; // "2024-12-26"
 
@@ -70,7 +88,7 @@ function UserMessageBar() {
 
     // Geçerli bir grup başlığı varsa gruba ekle
     if (!acc[groupLabel]) acc[groupLabel] = [];
-    acc[groupLabel].push({ id: messageId, ...message });
+    acc[groupLabel].push({ id: message.id, ...message });
 
     return acc;
   }, {});
