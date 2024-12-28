@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
     Individual: [], // Her biri { id, participants, messages } içerecek
     Group: [], // Henüz boş
+    isChatsInitialized: false,
 };
 
 const chatSlice = createSlice({
@@ -11,33 +12,78 @@ const chatSlice = createSlice({
     reducers: {
         // Gelen veriyi redux state'e ekleme
         initializeChats: (state, action) => {
-            console.log("naber");
             const { Individual, Group } = action.payload;
 
-            // Individual'ı uygun formatta işleyerek sakla
+            // Individual verisini dönüştür
             state.Individual = Object.keys(Individual).map(chatId => ({
                 id: chatId,
                 participants: Individual[chatId].participants,
                 archivedFor: Individual[chatId].archivedFor,
                 createdDate: Individual[chatId].createdDate,
-                messages: Object.entries(Individual[chatId].messages).map(([messageId, messageData]) => ({
+                messages: Object.entries(Individual[chatId].messages || {}).map(([messageId, messageData]) => ({
                     id: messageId,
                     ...messageData,
                 })),
             }));
 
-            // Group'u doğrudan sakla (henüz boş)
-            state.Group = Group || [];
+            // Group verisini dönüştür (eğer gerekiyorsa)
+            state.Group = Object.keys(Group).map(chatId => ({
+                id: chatId,
+                participants: Group[chatId].participants,
+                archivedFor: Group[chatId].archivedFor,
+                createdDate: Group[chatId].createdDate,
+                messages: Object.entries(Group[chatId].messages || {}).map(([messageId, messageData]) => ({
+                    id: messageId,
+                    ...messageData,
+                })),
+            }));
+            state.isChatsInitialized = true;
         },
 
-        // Bireysel chat ekle
-        addIndividualChat: (state, action) => {
-            state.Individual.push(action.payload);
+        addMessageToIndividual: (state, action) => {
+            const { chatId, messageId, messageData } = action.payload;
+
+            const chat = state.Individual.find(chat => chat.id === chatId);
+
+            if (chat) {
+                const existingMessageIndex = chat.messages.findIndex(msg => msg.id === messageId);
+
+                if (existingMessageIndex > -1) {
+                    chat.messages[existingMessageIndex] = { ...chat.messages[existingMessageIndex], ...messageData };
+                } else {
+                    chat.messages.push({ id: messageId, ...messageData });
+                }
+
+                // Mesajları kontrol etmek için
+                console.log("Güncellenmiş mesajlar:", JSON.parse(JSON.stringify(chat.messages)));
+            }
         },
 
-        // Grup chat ekle
-        addGroupChat: (state, action) => {
-            state.Group.push(action.payload);
+        addMessageToGroup: (state, action) => {
+            const { chatId, messageId, messageData } = action.payload;
+
+            // İlgili chat'i bul veya oluştur
+            const chat = state.Group.find((chat) => chat.id === chatId);
+
+            if (chat) {
+                // Mesajı varsa güncelle, yoksa ekle
+                const existingMessageIndex = chat.messages.findIndex((msg) => msg.id === messageId);
+
+                if (existingMessageIndex > -1) {
+                    chat.messages[existingMessageIndex] = { id: messageId, ...messageData };
+                } else {
+                    chat.messages.push({ id: messageId, ...messageData });
+                }
+            } else {
+                // Eğer chatId yoksa yeni bir chat oluştur
+                state.Group.push({
+                    id: chatId,
+                    participants: [],
+                    archivedFor: {},
+                    createdDate: new Date().toISOString(),
+                    messages: [{ id: messageId, ...messageData }],
+                });
+            }
         },
 
         // Mesajları al (chatId üzerinden)
@@ -69,8 +115,8 @@ const chatSlice = createSlice({
 
 export const {
     initializeChats,
-    addIndividualChat,
-    addGroupChat,
+    addMessageToIndividual,
+    addMessageToGroup,
     removeIndividualChat,
     removeGroupChat,
     resetChats,

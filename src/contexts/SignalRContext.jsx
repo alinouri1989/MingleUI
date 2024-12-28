@@ -3,7 +3,7 @@ import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
 import { useDispatch } from "react-redux";
 import store from '../store/index.js';
-import { initializeChats } from "../store/Slices/chats/chatSlice.js";
+import { addMessageToGroup, addMessageToIndividual, initializeChats } from "../store/Slices/chats/chatSlice.js";
 
 // SignalR context oluşturuyoruz
 const SignalRContext = createContext();
@@ -54,6 +54,12 @@ export const SignalRProvider = ({ children }) => {
                 console.log("ChatHub bağlantısı başarılı!");
                 setConnectionStatus((prev) => ({ ...prev, chat: "connected" }));
                 setLoading((prev) => ({ ...prev, chat: false }));
+
+                chatConnection.on("ReceiveInitialChats", (data) => {
+                    console.log("Gelen sohbetler:", data);
+                    store.dispatch(initializeChats(data)); 
+                });
+
             })
             .catch((err) => {
                 console.error("ChatHub bağlantı hatası:", err);
@@ -83,24 +89,51 @@ export const SignalRProvider = ({ children }) => {
         });
 
         messageConnection
-            .start()
-            .then(() => {
-                console.log("MessageHub bağlantısı başarılı!");
-                setConnectionStatus((prev) => ({ ...prev, message: "connected" }));
-                setLoading((prev) => ({ ...prev, message: false }));
-
-
-                chatConnection.on("ReceiveInitialChats", (data) => {
-                    console.log("Gelen sohbetler:", data);
-                    store.dispatch(initializeChats(data)); 
-                });
-            })
-            .catch((err) => {
-                console.error("MessageHub bağlantı hatası:", err);
-                setConnectionStatus((prev) => ({ ...prev, message: "failed" }));
-                setError((prev) => ({ ...prev, message: err }));
-                setLoading((prev) => ({ ...prev, message: false }));
+        .start()
+        .then(() => {
+            console.log("MessageHub bağlantısı başarılı!");
+            setConnectionStatus((prev) => ({ ...prev, message: "connected" }));
+            setLoading((prev) => ({ ...prev, message: false }));
+    
+            // ReceiveGetMessages olayını dinle
+            messageConnection.on("ReceiveGetMessages", (data) => {
+                // Individual mesajları işle
+                if (data.Individual) {
+                    Object.entries(data.Individual).forEach(([chatId, messages]) => {
+                        Object.entries(messages).forEach(([messageId, messageData]) => {
+                            store.dispatch(
+                                addMessageToIndividual({
+                                    chatId,
+                                    messageId,
+                                    messageData,
+                                })
+                            );
+                        });
+                    });
+                }
+            
+                // Group mesajları işle
+                if (data.Group) {
+                    Object.entries(data.Group).forEach(([chatId, messages]) => {
+                        Object.entries(messages).forEach(([messageId, messageData]) => {
+                            store.dispatch(
+                                addMessageToGroup({
+                                    chatId,
+                                    messageId,
+                                    messageData,
+                                })
+                            );
+                        });
+                    });
+                }
             });
+        })
+        .catch((err) => {
+            console.error("MessageHub bağlantı hatası:", err);
+            setConnectionStatus((prev) => ({ ...prev, message: "failed" }));
+            setError((prev) => ({ ...prev, message: err }));
+            setLoading((prev) => ({ ...prev, message: false }));
+        });
 
         setMessageConnection(messageConnection);
 
@@ -110,7 +143,7 @@ export const SignalRProvider = ({ children }) => {
         };
 
         window.addEventListener("beforeunload", handleBeforeUnload);
-
+   
         // Cleanup
         return () => {
             if (chatConnection) chatConnection.stop();

@@ -6,14 +6,27 @@ import UserMessageBar from "./Components/UserMessageBar";
 import MessageInputBar from "../../shared/components/MessageInputBar/MessageInputBar";
 import "../layout.scss";
 import UserDetailsBar from "./Components/UserDetailsBar";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSignalR } from "../../contexts/SignalRContext";
+import { useSelector } from "react-redux";
 
 function Chats() {
   const { id } = useParams(); // URL'den ID'yi al
   const { chatConnection } = useSignalR(); // SignalR bağlantısını al
+  const navigate = useNavigate(); // Navigate fonksiyonu
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [recipientProfile, setRecipientProfile] = useState(null); // Profil bilgilerini tut
+  const [recipientProfile, setRecipientProfile] = useState(null);
+  const { Individual, isChatsInitialized, } = useSelector(state => state.chat);
+
+  useEffect(() => {
+    if (isChatsInitialized && id) {
+      const chatExists = Individual.some((chat) => chat.id === id);
+      if (!chatExists) {
+        navigate("/anasayfa", { replace: true }); // Anasayfaya yönlendir
+      }
+    }
+  }, [isChatsInitialized, Individual]);
+
 
   const location = useLocation();
   console.log(location.pathname);

@@ -21,8 +21,7 @@ function MessageBubble({ userId, content, timestamp, isSender, status, profileIm
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
-    console.log(userId);
-    console.log("Gönderen mi", isSender);
+
 
     const handleClose = () => {
         setAnchorEl(null);
