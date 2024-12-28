@@ -8,10 +8,19 @@ import ArchiveIcon from "@mui/icons-material/Archive";
 import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import { lastActiveDate } from "../../../helpers/dateHelper";
+import { getChatId } from "../../../store/Slices/chats/chatSlice";
+import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-function UserChatCard({ image, status, name, lastMessage, lastDate, unReadMessage, isArchive }) {
+function UserChatCard({ userId, image, status, name, lastMessage, lastDate, unReadMessage, isArchive }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { token } = useSelector(state => state.auth);
+  const chatState = useSelector(state => state.chat);  
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -31,11 +40,18 @@ function UserChatCard({ image, status, name, lastMessage, lastDate, unReadMessag
     handleClose();
   };
 
+  const handleGoChat = () => {
+    // Use `chatState` from Redux store and call `getChatId` with `authId` and `userId`
+    const chatId = getChatId(chatState, getUserIdFromToken(token), userId);
+    navigate(`/sohbetler/${chatId}`);
+  };
+
   return (
-    <div className="user-dashboard-card-box">
+    <div className="user-dashboard-card-box" onClick={() => handleGoChat()}>
+
       <div className="image-box">
         <img src={image} alt={`${name} profile`} />
-        <p className={`status ${status}`}></p>
+        <p className={`status ${status ? "online" : "offline"}`}></p>
       </div>
 
       <div className="user-name-and-sub-title">
@@ -44,7 +60,7 @@ function UserChatCard({ image, status, name, lastMessage, lastDate, unReadMessag
       </div>
 
       <div className="status-informations-box">
-        <span>{lastDate}</span>
+        <span>{lastActiveDate(lastDate)}</span>
         {unReadMessage > 0 && <p>{unReadMessage}</p>}
       </div>
 

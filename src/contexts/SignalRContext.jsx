@@ -4,6 +4,7 @@ import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
 import { useDispatch } from "react-redux";
 import store from '../store/index.js';
 import { addMessageToGroup, addMessageToIndividual, initializeChats } from "../store/Slices/chats/chatSlice.js";
+import { setInitialChatList, updateChatUserProperty } from "../store/Slices/chats/chatListSlice.js";
 
 // SignalR context oluşturuyoruz
 const SignalRContext = createContext();
@@ -17,20 +18,17 @@ export const useSignalR = () => {
         throw new Error("useSignalR must be used within a SignalRProvider");
     }
 
-    const { chatConnection, messageConnection, connectionStatus, error, loading } = context;
+    const { chatConnection, connectionStatus, error, loading } = context;
 
-    return { chatConnection, messageConnection, connectionStatus, error, loading };
+    return { chatConnection, connectionStatus, error, loading };
 };
 
 export const SignalRProvider = ({ children }) => {
     const [chatConnection, setChatConnection] = useState(null);
-    const [messageConnection, setMessageConnection] = useState(null);
-    const [connectionStatus, setConnectionStatus] = useState({
-        chat: "disconnected",
-        message: "disconnected",
-    });
-    const [error, setError] = useState({ chat: null, message: null });
-    const [loading, setLoading] = useState({ chat: true, message: true });
+    const [connectionStatus, setConnectionStatus] = useState("disconnected");
+    const [error, setError] = useState(null);
+    const dispatch = useDispatch();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const token = getJwtFromCookie();
@@ -46,119 +44,99 @@ export const SignalRProvider = ({ children }) => {
             .withAutomaticReconnect()
             .build();
 
-        setConnectionStatus((prev) => ({ ...prev, chat: "connecting" }));
+        setConnectionStatus("connecting");
 
         chatConnection
             .start()
             .then(() => {
                 console.log("ChatHub bağlantısı başarılı!");
-                setConnectionStatus((prev) => ({ ...prev, chat: "connected" }));
-                setLoading((prev) => ({ ...prev, chat: false }));
+                setConnectionStatus("connected");
+                setLoading(false);
 
                 chatConnection.on("ReceiveInitialChats", (data) => {
                     console.log("Gelen sohbetler:", data);
-                    store.dispatch(initializeChats(data)); 
+                    store.dispatch(initializeChats(data));
+                });
+
+                chatConnection.on("ReceiveGetMessages", (data) => {
+                    console.log("Gelen mesajlar:", data);
+                    if (data.Individual) {
+                        Object.entries(data.Individual).forEach(([chatId, messages]) => {
+                            Object.entries(messages).forEach(([messageId, messageData]) => {
+                                store.dispatch(
+                                    addMessageToIndividual({
+                                        chatId,
+                                        messageId,
+                                        messageData,
+                                    })
+                                );
+                            });
+                        });
+                    }
+
+
+                    if (data.Group) {
+                        Object.entries(data.Group).forEach(([chatId, messages]) => {
+                            Object.entries(messages).forEach(([messageId, messageData]) => {
+                                store.dispatch(
+                                    addMessageToGroup({
+                                        chatId,
+                                        messageId,
+                                        messageData,
+                                    })
+                                );
+                            });
+                        });
+                    }
+                });
+
+                chatConnection.on("ReceiveInitialGroupProfiles", (data) => {
+
+                });
+
+                chatConnection.on("ReceiveInitialRecipientProfiles", (data) => {
+                    dispatch(setInitialChatList(data));
+                });
+
+                chatConnection.on("ReceiveRecipientProfiles", (data) => {
+                    dispatch(updateChatUserProperty(data));
+                });
+
+                chatConnection.on("ReceiveCreateChat", (data) => {
+                    console.log(data);
                 });
 
             })
             .catch((err) => {
                 console.error("ChatHub bağlantı hatası:", err);
-                setConnectionStatus((prev) => ({ ...prev, chat: "failed" }));
-                setError((prev) => ({ ...prev, chat: err }));
-                setLoading((prev) => ({ ...prev, chat: false }));
+                setConnectionStatus("failed");
+                setError(err);
+                setLoading(false);
             });
 
         setChatConnection(chatConnection);
 
-        const messageConnection = new HubConnectionBuilder()
-            .withUrl("http://localhost:5069/MessageHub", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-            .configureLogging(LogLevel.Information)
-            .withAutomaticReconnect()
-            .build();
-
-        setConnectionStatus((prev) => ({ ...prev, message: "connecting" }));
-
-        chatConnection.onclose((error) => {
-            console.error("ChatHub connection closed", error);
-            setConnectionStatus((prev) => ({ ...prev, chat: "disconnected" }));
-            setError((prev) => ({ ...prev, chat: error }));
-        });
-
-        messageConnection
-        .start()
-        .then(() => {
-            console.log("MessageHub bağlantısı başarılı!");
-            setConnectionStatus((prev) => ({ ...prev, message: "connected" }));
-            setLoading((prev) => ({ ...prev, message: false }));
-    
-            // ReceiveGetMessages olayını dinle
-            messageConnection.on("ReceiveGetMessages", (data) => {
-                // Individual mesajları işle
-                if (data.Individual) {
-                    Object.entries(data.Individual).forEach(([chatId, messages]) => {
-                        Object.entries(messages).forEach(([messageId, messageData]) => {
-                            store.dispatch(
-                                addMessageToIndividual({
-                                    chatId,
-                                    messageId,
-                                    messageData,
-                                })
-                            );
-                        });
-                    });
-                }
-            
-                // Group mesajları işle
-                if (data.Group) {
-                    Object.entries(data.Group).forEach(([chatId, messages]) => {
-                        Object.entries(messages).forEach(([messageId, messageData]) => {
-                            store.dispatch(
-                                addMessageToGroup({
-                                    chatId,
-                                    messageId,
-                                    messageData,
-                                })
-                            );
-                        });
-                    });
-                }
-            });
-        })
-        .catch((err) => {
-            console.error("MessageHub bağlantı hatası:", err);
-            setConnectionStatus((prev) => ({ ...prev, message: "failed" }));
-            setError((prev) => ({ ...prev, message: err }));
-            setLoading((prev) => ({ ...prev, message: false }));
-        });
-
-        setMessageConnection(messageConnection);
-
         const handleBeforeUnload = () => {
             if (chatConnection) chatConnection.stop();
-            if (messageConnection) messageConnection.stop();
         };
 
         window.addEventListener("beforeunload", handleBeforeUnload);
-   
+
         // Cleanup
         return () => {
             if (chatConnection) chatConnection.stop();
-            if (messageConnection) messageConnection.stop();
             window.removeEventListener("beforeunload", handleBeforeUnload);
         };
     }, []);
 
-    if (loading.chat || loading.message) {
+    if (loading) {
         return null;
     }
 
+
     return (
         <SignalRContext.Provider
-            value={{ chatConnection, messageConnection, connectionStatus, error, loading }}
+            value={{ chatConnection, connectionStatus, error, loading }}
         >
             {children}
         </SignalRContext.Provider>

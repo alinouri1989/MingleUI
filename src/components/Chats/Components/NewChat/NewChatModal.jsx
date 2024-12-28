@@ -13,9 +13,12 @@ import { useSearchUsersQuery } from "../../../../store/Slices/searchUsers/search
 import { useDebounce } from "../../../../hooks/useDebounce.jsx";
 import { useSignalR } from "../../../../contexts/SignalRContext.jsx";
 import "./style.scss";
+import { addNewChat } from "../../../../store/Slices/chats/chatSlice.js";
+import { useDispatch } from "react-redux";
 
 function NewChatModal() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { closeModal } = useModal();
   const { chatConnection, connectionStatus } = useSignalR();
   const [inputValue, setInputValue] = useState("");
@@ -30,30 +33,41 @@ function NewChatModal() {
 
   useEffect(() => {
     const handleReceiveCreateChat = (response) => {
-      console.log("ReceiveCreateChat yanıtı:", response);
-      if (response.chatId) {
-        console.log("Yeni sohbet oluşturuldu, Chat ID:", response.chatId);
-        closeModal();
-        navigate(`/sohbetler/${response.chatId}`);
-      } else {
-        console.error("Chat ID alınamadı:", response);
-      }
+        console.log("ReceiveCreateChat yanıtı:", response);
+
+        const individualData = response?.Individual;
+        if (individualData) {
+            const chatId = Object.keys(individualData)[0]; 
+            if (chatId) {
+                const chatData = individualData[chatId]; 
+                console.log("Yeni sohbet oluşturuldu, Chat ID:", chatId);
+
+                // Redux state'ine ekle
+                dispatch(addNewChat({ chatId, chatData }));
+                navigate(`/sohbetler/${chatId}`);
+                closeModal();
+            } else {
+                console.error("Chat ID alınamadı:", response);
+            }
+        } else {
+            console.error("Individual bilgisi bulunamadı:", response);
+        }
     };
 
     if (chatConnection) {
-      chatConnection.on("ReceiveCreateChat", handleReceiveCreateChat);
+        chatConnection.on("ReceiveCreateChat", handleReceiveCreateChat);
     }
 
     // Cleanup - Event listener'ı kaldırma
     return () => {
-      if (chatConnection) {
-        chatConnection.off("ReceiveCreateChat", handleReceiveCreateChat);
-      }
+        if (chatConnection) {
+            chatConnection.off("ReceiveCreateChat", handleReceiveCreateChat);
+        }
     };
-  }, [chatConnection]);
+}, [chatConnection]);
 
   const handleGoToChat = async (userId) => {
-    if (connectionStatus.chat !== "connected") {
+    if (connectionStatus !== "connected") {
       console.error("Bağlantı henüz kurulmadı.");
       return;
     }

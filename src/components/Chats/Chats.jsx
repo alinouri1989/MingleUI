@@ -35,32 +35,6 @@ function Chats() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  useEffect(() => {
-    if (chatConnection && id) {
-      // Backend'deki RecipientProfile metodunu çağır
-      chatConnection
-        .invoke("RecipientProfile", id)
-        .then(() => {
-          console.log("Profil bilgisi başarıyla talep edildi");
-        })
-        .catch((error) => {
-          console.error("Profil bilgisi alınırken hata:", error);
-        });
-
-      // Profil bilgisini dinle
-      const handleProfile = (profile) => {
-        setRecipientProfile(profile);
-      };
-
-      chatConnection.on("ReceiveRecipientProfile", handleProfile);
-
-      // Cleanup
-      return () => {
-        chatConnection.off("ReceiveRecipientProfile", handleProfile);
-      };
-    }
-  }, [chatConnection, id]);
-
   return (
     <>
       <div className="chat-general-box">

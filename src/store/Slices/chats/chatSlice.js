@@ -10,6 +10,27 @@ const chatSlice = createSlice({
     name: 'chat',
     initialState,
     reducers: {
+        addNewChat: (state, action) => {
+            const { chatId, chatData } = action.payload;
+
+            // Gelen chat objesini uygun formata çevir
+            const newChat = {
+                id: chatId,
+                participants: chatData.participants,
+                archivedFor: chatData.archivedFor || {},
+                createdDate: chatData.createdDate,
+                messages: Object.entries(chatData.messages || {}).map(([messageId, messageData]) => ({
+                    id: messageId,
+                    ...messageData,
+                })),
+            };
+
+            // Yeni sohbeti Individual listesine ekle
+            state.Individual.push(newChat);
+
+            // Eklenen sohbeti loglamak için
+            console.log("Yeni sohbet eklendi:", newChat);
+        },
         // Gelen veriyi redux state'e ekleme
         initializeChats: (state, action) => {
             const { Individual, Group } = action.payload;
@@ -113,6 +134,14 @@ const chatSlice = createSlice({
     },
 });
 
+export const getChatId = (state, authId, receiveId) => {
+    // Individual sohbetlerinde authId ve receiveId'yi içeren bir chatId arıyoruz
+    const chat = state.Individual.find(chat =>
+        chat.participants.includes(authId) && chat.participants.includes(receiveId)
+    );
+    return chat ? chat.id : null;  // Eğer chat bulunamazsa null döndür
+};
+
 export const {
     initializeChats,
     addMessageToIndividual,
@@ -120,6 +149,7 @@ export const {
     removeIndividualChat,
     removeGroupChat,
     resetChats,
+    addNewChat,
     getChatMessages,
 } = chatSlice.actions;
 

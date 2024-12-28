@@ -17,8 +17,6 @@ function UserMessageBar({ ChatId }) {
   // ChatId ile eşleşen chat'i bul
   const chat = Individual.find(chat => chat?.id === ChatId);
 
-  console.log("Chat messages=", chat?.messages || "boş");
-
   const backgroundImage = getChatBackgroundColor(user.userSettings.chatBackground);
   const messagesEndRef = useRef(null);
 
@@ -32,13 +30,15 @@ function UserMessageBar({ ChatId }) {
 
   // Mesajları tarih bazlı gruplandırma
 
+
+
   const groupedMessagesByDate = chat?.messages?.reduce((acc, message) => {
     const sentDate = Object.values(message.status.sent)[0];
     const date = sentDate ? sentDate.split("T")[0] : "Geçersiz Tarih";
-  
+
     const today = new Date().toISOString().split("T")[0];
     const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
-  
+
     let groupLabel;
     if (date === today) {
       groupLabel = "Bugün";
@@ -47,13 +47,12 @@ function UserMessageBar({ ChatId }) {
     } else {
       groupLabel = date;
     }
-  
+
     if (!acc[groupLabel]) acc[groupLabel] = [];
     acc[groupLabel].push({ id: message.id, ...message });
-  
+
     return acc;
   }, {}) || {};
-
 
   return (
     <div className="user-message-bar " style={{ backgroundImage }}>

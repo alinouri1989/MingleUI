@@ -1,61 +1,18 @@
+import React from "react";
+import { useSelector } from "react-redux";
 import NewChatModal from "../../../components/Chats/Components/NewChat/NewChatModal";
 import { useModal } from "../../../contexts/ModalContext";
 import SearchInput from "./SearchInput";
 import UserChatCard from "./UserChatCard";
 import "./style.scss";
 
-
-const users = [
-    {
-        id: 1,
-        image: "https://randomuser.me/api/portraits/men/1.jpg",
-        status: "online",
-        name: "Okan Doğan",
-        lastMessage: "Sınav başarılı geç...",
-        lastDate: "16:20",
-        unReadMessage: 3,
-        isArchive: false,
-    },
-    {
-        id: 2,
-        image: "https://randomuser.me/api/portraits/women/2.jpg",
-        status: "online",
-        name: "Ayşe Yılmaz",
-        lastMessage: "Toplantı saat kaçta?",
-        lastDate: "22.10.2004",
-        unReadMessage: 1,
-        isArchive: false,
-    },
-    {
-        id: 3,
-        image: "https://randomuser.me/api/portraits/men/3.jpg",
-        status: "offline",
-        name: "Mehmet Kaya",
-        lastMessage: "Yarın görüşelim mi?",
-        lastDate: "14:45",
-        unReadMessage: 2,
-        isArchive: false,
-    },
-    {
-        id: 4,
-        image: "https://randomuser.me/api/portraits/women/4.jpg",
-        status: "offline",
-        name: "Elif Çelik",
-        lastMessage: "Dosyayı gönderdim.",
-        lastDate: "13:30",
-        unReadMessage: 0,
-        isArchive: false,
-    }
-];
-
-
 function ChatsList() {
-
     const { showModal, closeModal } = useModal();
+    const chatList = useSelector((state) => state.chatList.chatList);
 
     const handleNewChat = () => {
         showModal(<NewChatModal closeModal={closeModal} />);
-    }
+    };
 
     return (
         <div className="chat-list-box">
@@ -64,21 +21,22 @@ function ChatsList() {
                 <button onClick={handleNewChat} className="create-buttons">Yeni Sohbet</button>
             </div>
             <div className="user-list">
-                {users.map((user) => (
+                {Object.entries(chatList).map(([userId, user]) => (
                     <UserChatCard
-                        key={user.id}
-                        image={user.image}
-                        status={user.status}
-                        name={user.name}
-                        lastMessage={user.lastMessage}
-                        lastDate={user.lastDate}
-                        unReadMessage={user.unReadMessage}
+                        key={userId}  // React'e key'i veriyoruz, userId'yi burada kullanabiliriz
+                        userId={userId}  // userId'yi props olarak geçiriyoruz
+                        image={user.profilePhoto}
+                        status={user.connectionSettings?.lastConnectionDate === null}
+                        name={user.displayName}
+                        lastMessage={user.connectionSettings.lastMessage}
+                        lastDate={user.connectionSettings.lastConnectionDate}
+                        unReadMessage={user.connectionSettings.unReadMessage}
                         isArchive={user.isArchive}
                     />
                 ))}
             </div>
         </div>
-    )
+    );
 }
 
-export default ChatsList
+export default ChatsList;

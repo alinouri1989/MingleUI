@@ -9,7 +9,7 @@ import ImageModal from "../ImageModal/ImageModal";
 import { useSignalR } from "../../../contexts/SignalRContext";
 
 function MessageInputBar({ chatId }) {
-    const { messageConnection } = useSignalR(); // SignalR bağlantısını al
+    const { chatConnection } = useSignalR(); 
 
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const { showModal, closeModal } = useModal();
@@ -66,7 +66,7 @@ function MessageInputBar({ chatId }) {
             FileContent: selectedFile ? await selectedFile.arrayBuffer() : null,
         };
         try {
-            await messageConnection.invoke("SendMessage", chatId, sendMessageDto);
+            await chatConnection.invoke("SendMessage", chatId, sendMessageDto);
 
             setSelectedFile(null);
             console.log("Mesaj başarıyla gönderildi.");
