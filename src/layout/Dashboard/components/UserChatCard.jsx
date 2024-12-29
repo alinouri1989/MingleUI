@@ -8,19 +8,18 @@ import ArchiveIcon from "@mui/icons-material/Archive";
 import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { lastActiveDate } from "../../../helpers/dateHelper";
 import { getChatId } from "../../../store/Slices/chats/chatSlice";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-function UserChatCard({ userId, image, status, name, lastMessage, lastDate, unReadMessage, isArchive }) {
+function UserChatCard({ userId, image, status, name, lastMessageDate, lastMessage, lastDate, unReadMessage, isArchive }) {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { token } = useSelector(state => state.auth);
-  const chatState = useSelector(state => state.chat);  
+  const chatState = useSelector(state => state.chat);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -60,7 +59,7 @@ function UserChatCard({ userId, image, status, name, lastMessage, lastDate, unRe
       </div>
 
       <div className="status-informations-box">
-        <span>{lastActiveDate(lastDate)}</span>
+        <span>{lastMessageDate}</span>
         {unReadMessage > 0 && <p>{unReadMessage}</p>}
       </div>
 

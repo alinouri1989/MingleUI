@@ -10,6 +10,7 @@ import ListItemText from "@mui/material/ListItemText";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { LuCheck } from "react-icons/lu";
 import { LuCheckCheck } from "react-icons/lu";
+import { FaEarthAfrica } from "react-icons/fa6";
 
 import './style.scss';
 import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
@@ -55,7 +56,7 @@ function MessageBubble({ userId, content, timestamp, isSender, status, profileIm
         statusColor = "#828A96"; // Gri (Gönderildi)
     } else {
         // Durum yoksa (Invalid)
-        statusIcon = <LuCheck />;
+        statusIcon = <FaEarthAfrica />;
         statusColor = "#828A96"; // Varsayılan gri
     }
 

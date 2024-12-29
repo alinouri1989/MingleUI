@@ -166,17 +166,18 @@ export const userSettingsApi = createApi({
         try {
           await queryFulfilled;
 
-          const currentUser = getState().auth.user;
+          const currentAuth = getState().auth; // Tüm auth durumunu al
 
           dispatch(
             setUser({
+              ...currentAuth, // auth'un tamamını koru
               user: {
-                ...currentUser,
+                ...currentAuth.user, // user içindeki diğer alanları koru
                 userSettings: {
-                  ...currentUser.userSettings,
-                  chatBackground: arg,
-                }
-              }
+                  ...currentAuth.user.userSettings, // userSettings içindeki diğer alanları koru
+                  chatBackground: arg, // Sadece chatBackground'u güncelle
+                },
+              },
             })
           );
         } catch (error) {

@@ -9,15 +9,20 @@ import UserDetailsBar from "./Components/UserDetailsBar";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSignalR } from "../../contexts/SignalRContext";
 import { useSelector } from "react-redux";
+import { getUserIdFromToken } from "../../helpers/getUserIdFromToken";
 
 function Chats() {
   const { id } = useParams(); // URL'den ID'yi al
-  const { chatConnection } = useSignalR(); // SignalR bağlantısını al
   const navigate = useNavigate(); // Navigate fonksiyonu
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [recipientProfile, setRecipientProfile] = useState(null);
-  const { Individual, isChatsInitialized, } = useSelector(state => state.chat);
 
+  const { Individual, isChatsInitialized } = useSelector((state) => state.chat); // Chat bilgileri
+  const { chatList } = useSelector((state) => state.chatList); // Kullanıcı listesi bilgileri
+  const { token } = useSelector((state) => state.auth); // Kullanıcı token'ı
+  const UserId = getUserIdFromToken(token); // Token'dan kullanıcı ID'si al
+
+  // Chat var mı kontrolü ve yönlendirme
   useEffect(() => {
     if (isChatsInitialized && id) {
       const chatExists = Individual.some((chat) => chat.id === id);
@@ -25,11 +30,28 @@ function Chats() {
         navigate("/anasayfa", { replace: true }); // Anasayfaya yönlendir
       }
     }
-  }, [isChatsInitialized, Individual]);
+  }, [isChatsInitialized, Individual, id, navigate]);
 
+  // Recipient bilgilerini al
+  useEffect(() => {
+    if (id && Individual.length > 0 && chatList) {
+      // Individual içinde id ile eşleşen chat'i bul
+      const chat = Individual.find((chat) => chat.id === id);
 
-  const location = useLocation();
-  console.log(location.pathname);
+      if (chat) {
+        // participants dizisinden kullanıcı ID'siyle eşleşmeyen diğer ID'yi al
+        const recipientId = chat.participants.find((participant) => participant !== UserId);
+
+        if (recipientId) {
+          // chatList içinde recipientId ile eşleşen kullanıcıyı bul
+          const recipient = chatList[recipientId];
+          setRecipientProfile(recipient || null); // Kullanıcı bulunamazsa null ata
+        }
+      }
+    }
+  }, [id, Individual, chatList, UserId]);
+
+ 
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);

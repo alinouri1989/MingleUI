@@ -6,7 +6,7 @@ export const formatDateToTR = (dateString) => {
     }).format(new Date(dateString));
   };
 
- export const lastActiveDate=(dateString) => {
+ export const lastMessageDateHelper=(dateString) => {
     const now = new Date();  // Bugünün tarihi
     const date = new Date(dateString);  // Verilen tarih
   

@@ -31,6 +31,18 @@ const chatListSlice = createSlice({
                         state.chatList[userId][matchedKey] = value; // Eşleşen key'in değerini güncelle
                     }
                 });
+            } else {
+                // Eğer userId chatList'te yoksa, yeni bir kullanıcı ekle
+                state.chatList[userId] = {
+                    displayName: updates.displayName || "Unknown", // Güncellemelerde varsa displayName al, yoksa "Unknown" kullan
+                    email: updates.email || "",
+                    biography: updates.biography || "",
+                    profilePhoto: updates.profilePhoto || "https://res.cloudinary.com/mingle-realtime-messaging-app/image/upload/v1734185072/DefaultUserProfilePhoto.png",
+                    connectionSettings: {
+                        lastConnectionDate: updates.lastConnectionDate || null,
+                        connectionIds: updates.connectionSettings?.connectionIds || [] // Eğer connectionIds varsa al, yoksa boş dizi
+                    }
+                };
             }
         },
     },

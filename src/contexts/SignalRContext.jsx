@@ -1,10 +1,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import store from '../store/index.js';
 import { addMessageToGroup, addMessageToIndividual, initializeChats } from "../store/Slices/chats/chatSlice.js";
 import { setInitialChatList, updateChatUserProperty } from "../store/Slices/chats/chatListSlice.js";
+import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
 
 // SignalR context oluşturuyoruz
 const SignalRContext = createContext();
@@ -26,9 +27,12 @@ export const useSignalR = () => {
 export const SignalRProvider = ({ children }) => {
     const [chatConnection, setChatConnection] = useState(null);
     const [connectionStatus, setConnectionStatus] = useState("disconnected");
+    const {token} = useSelector(state=>state.auth);
+    const userId = getUserIdFromToken(token);
     const [error, setError] = useState(null);
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
+    
 
     useEffect(() => {
         const token = getJwtFromCookie();
@@ -56,7 +60,8 @@ export const SignalRProvider = ({ children }) => {
                 chatConnection.on("ReceiveInitialChats", (data) => {
                     console.log("Gelen sohbetler:", data);
                     store.dispatch(initializeChats(data));
-                });
+                
+                  });
 
                 chatConnection.on("ReceiveGetMessages", (data) => {
                     console.log("Gelen mesajlar:", data);
@@ -94,11 +99,14 @@ export const SignalRProvider = ({ children }) => {
 
                 });
 
+                chatConnection.invoke("DeliverMessage", "Individual", "25efee87-c72a-423d-897a-3628a59a46f6", "444d896e-abc9-4dd6-a11e-072006eb2d6d");
+
                 chatConnection.on("ReceiveInitialRecipientProfiles", (data) => {
                     dispatch(setInitialChatList(data));
                 });
 
-                chatConnection.on("ReceiveRecipientProfiles", (data) => {
+                chatConnection.on("ReceiveRecipientProfile", (data) => {
+                    console.log(data);
                     dispatch(updateChatUserProperty(data));
                 });
 
@@ -107,6 +115,8 @@ export const SignalRProvider = ({ children }) => {
                 });
 
             })
+
+            
             .catch((err) => {
                 console.error("ChatHub bağlantı hatası:", err);
                 setConnectionStatus("failed");
@@ -129,10 +139,10 @@ export const SignalRProvider = ({ children }) => {
         };
     }, []);
 
+
     if (loading) {
         return null;
     }
-
 
     return (
         <SignalRContext.Provider
