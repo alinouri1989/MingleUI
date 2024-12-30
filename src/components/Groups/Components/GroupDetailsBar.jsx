@@ -11,107 +11,108 @@ import PreLoader from '../../../shared/components/PreLoader/PreLoader';
 import { useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 import { formatDateToTR } from '../../../helpers/dateHelper';
+import { defaultGroupPhoto } from '../../../constants/DefaultProfilePhoto';
 
-function GroupDetailsBar({ isSidebarOpen, toggleSidebar, chatId }) {
+function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
     const { showModal, closeModal } = useModal();
-    const { data, isLoading ,refetch } = useGetGroupProfileQuery(chatId);
 
     const [groupInformation, setGroupInformation] = useState(null);
     const [groupId, setGroupID] = useState(null);
 
 
-        const { token } = useSelector((state) => state.auth);
-        const decodedToken = token ? jwtDecode(token) : null;
-        const userId = decodedToken?.sub;
+    const { token } = useSelector((state) => state.auth);
+    const decodedToken = token ? jwtDecode(token) : null;
+    const userId = decodedToken?.sub;
 
-        useEffect(() => {
-            if (data) {
-                const groupData = Object.values(data)[0];
-                const firstKey = Object.keys(data)[0];
-                setGroupID(firstKey);
-                setGroupInformation(groupData);
-            }
-        }, [data]);
 
-        const isAdmin = userId &&
-            groupInformation?.participants?.[userId] &&
-            groupInformation.participants[userId].Role === 0;
 
-        // Grup ayarlarını aç
-        const handleGroupSettings = () => {
-            showModal(<NewGroupModal closeModal={closeModal} isGroupSettings={true} groupInformation={groupInformation} groupId={groupId} userId={userId} refetch={refetch}/>);
-        };
+    const isAdmin = userId &&
+    groupProfile?.participants?.[userId] &&
+    groupProfile?.participants[userId].role === 0;
 
-        return (
-            <div className={`group-details-sidebar ${isSidebarOpen ? "open" : ""}`}>
-                {isSidebarOpen &&
-                    <>
-                        <div className='option-buttons'>
-                            <IoIosArrowDroprightCircle
-                                className="sidebar-toggle-buttons"
-                                onClick={toggleSidebar}
-                            />
-                            {isAdmin &&
-                                <button className='group-setting-btn'>
-                                    <IoMdSettings
-                                        onClick={handleGroupSettings}
-                                    />
-                                </button>
-                            }
-                        </div>
+        
+    // Grup ayarlarını aç
+    const handleGroupSettings = () => {
+        showModal(<NewGroupModal closeModal={closeModal} isGroupSettings={true} groupInformation={groupProfile} groupId={groupId} userId={userId} />);
+    };
 
-                        <div className='sidebar-content-box'>
-                            {/* Grup Bilgileri */}
-                            {groupInformation ? (
-                                <>
-                                    <div className='group-info-box'>
-                                        <img src={groupInformation.photoUrl} alt={`profile`} />
-                                        <p>{groupInformation.name}</p>
-                                    </div>
+    return (
+        <div className={`group-details-sidebar ${isSidebarOpen ? "open" : ""}`}>
+            {isSidebarOpen &&
+                <>
+                    <div className='option-buttons'>
+                        <IoIosArrowDroprightCircle
+                            className="sidebar-toggle-buttons"
+                            onClick={toggleSidebar}
+                        />
+                        {isAdmin &&
+                            <button className='group-setting-btn'>
+                                <IoMdSettings
+                                    onClick={handleGroupSettings}
+                                />
+                            </button>
+                        }
+                    </div>
 
-                                    <div className='date-box'>
-                                        <p>{formatDateToTR(groupInformation.createdDate)} tarihinde oluşturuldu</p>
-                                    </div>
+                    <div className='sidebar-content-box'>
+                        {/* Grup Bilgileri */}
+                        {groupProfile ? (
+                            <>
+                                <div className='group-info-box'>
+                                    <img src={defaultGroupPhoto} alt={`profile`} />
+                                    <p>{groupProfile.name}</p>
+                                </div>
 
-                                    <div className='description'>
-                                        <strong>Grup Açıklaması</strong>
-                                        <div className='line'></div>
-                                        <p>{groupInformation.description || "Açıklama bulunmuyor."}</p>
-                                    </div>
 
-                                    {/* Üyeler */}
-                                    <div className='group-members-box'>
-                                        <h2>Grup Üyeleri - {Object.keys(groupInformation.participants || {}).length}</h2>
-                                        <div className='members-list'>
-                                            {Object.entries(groupInformation.participants || {})
-                                                .sort(([, memberA], [, memberB]) => memberA.Role - memberB.Role) // Role değerine göre sıralama
-                                                .map(([id, member]) => (
-                                                    <div key={id} className='member-box'>
+                                <div className='date-box'>
+                                    <p>{formatDateToTR(groupProfile.createdDate)} tarihinde oluşturuldu</p>
+                                </div>
+
+                                <div className='description'>
+                                    <strong>Grup Açıklaması</strong>
+                                    <div className='line'></div>
+                                    <p>{groupProfile.description || "Açıklama bulunmuyor."}</p>
+                                </div>
+                  
+                                <div className="group-members-box">
+                                    <h2>
+                                        Grup Üyeleri - {Object.keys(groupProfile.participants).length}
+                                    </h2>
+                                    <div className="members-list">
+                                        {Object.entries(groupProfile.participants)
+                                            .sort(([, memberA], [, memberB]) => memberA.role - memberB.role) // Role değerine göre sıralama
+                                            .map(([id, member]) => {
+                                                const isOnline = member.lastConnectionDate == null;
+
+                                                return (
+                                                    <div key={id} className="member-box">
                                                         <div className="image-box">
-                                                            <img src={member.ProfilePhoto} alt={member.DisplayName} />
-                                                            <p className={`user-status ${id === userId ? "active" : ""}`}></p>
+                                                            <img
+                                                                src={member.profilePhoto}
+                                                                alt={member.displayName}
+                                                            />
+                                                            <p className={`user-status ${isOnline ? "online" : "offline"}`}></p>
                                                         </div>
-                                                        <div className='user-info'>
-                                                            <p>{member.DisplayName}</p>
-                                                            <span className={member.Role === 0 ? "admin" : ""}>
-                                                                {member.Role === 0 ? "Yönetici" : "Üye"}
+                                                        <div className="user-info">
+                                                            <p>{member.displayName}</p>
+                                                            <span className={member.role === 0 ? "admin" : ""}>
+                                                                {member.role === 0 ? "Yönetici" : "Üye"}
                                                             </span>
                                                         </div>
                                                     </div>
-                                                ))}
-                                        </div>
-
+                                                );
+                                            })}
                                     </div>
-                                </>
-                            ) : (
-                                <p>Grup bilgileri yükleniyor...</p>
-                            )}
-                        </div>
-                    </>
-                }
-                {isLoading && <PreLoader />}
-            </div>
-        );
-    }
+                                </div>
+                            </>
+                        ) : (
+                            <p>Grup bilgileri yükleniyor...</p>
+                        )}
+                    </div>
+                </>
+            }
+        </div>
+    );
+}
 
 export default GroupDetailsBar;

@@ -27,7 +27,7 @@ import { useCreateGroupMutation, useEditGroupMutation, useLeaveGroupMutation } f
 import PreLoader from "../../../../shared/components/PreLoader/PreLoader.jsx";
 import "./style.scss";
 
-function NewGroupModal({ closeModal, isGroupSettings, groupInformation, groupId, userId, refetch }) {
+function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, userId }) {
 
     const [createGroup, { isLoading: createLoading }] = useCreateGroupMutation();
     const [editGroup, { isLoading: editLoading }] = useEditGroupMutation();
@@ -62,11 +62,11 @@ function NewGroupModal({ closeModal, isGroupSettings, groupInformation, groupId,
     const groupImageDefault = defaultGroupPhoto;
 
     const initialData = {
-        name: isGroupSettings ? groupInformation.name : "",
-        description: isGroupSettings ? groupInformation.description : "",
-        photoUrl: isGroupSettings ? groupInformation.photoUrl : null,
-        photo: isGroupSettings ? groupInformation.photo : null,
-        participants: isGroupSettings ? groupInformation.participants : null
+        name: isGroupSettings ? groupProfile?.name : "",
+        description: isGroupSettings ? groupProfile?.description : "",
+        photoUrl: isGroupSettings ? groupProfile?.photoUrl : null,
+        photo: isGroupSettings ? groupProfile?.photo : null,
+        participants: isGroupSettings ? groupProfile?.participants : null
     };
 
     const [formData, setFormData] = useState(initialData);
@@ -201,7 +201,6 @@ function NewGroupModal({ closeModal, isGroupSettings, groupInformation, groupId,
     const handleSaveChanges = async () => {
         try {
             await editGroup({ groupId, formData }).unwrap();
-            refetch() //Group Information
             SuccessAlert("Değişiklikler kayıt edildi");
             closeModal();
         } catch (error) {

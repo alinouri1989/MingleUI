@@ -6,6 +6,8 @@ import { searchUsersApi } from './Slices/searchUsers/searchUserApi.js';
 import { GroupApi } from './Slices/Group/GroupApi.js';
 import chatReducer from "./Slices/chats/chatSlice.js";
 import chatListReducer from "./Slices/chats/chatListSlice.js";
+import groupListReducer from "./Slices/Group/groupListSlice.js";
+
 
 const store = configureStore({
   reducer: {
@@ -13,6 +15,7 @@ const store = configureStore({
     auth: authReducer,
     chat: chatReducer,
     chatList: chatListReducer,
+    groupList : groupListReducer,
 
     // RTK Query API reducers
     [authApi.reducerPath]: authApi.reducer,

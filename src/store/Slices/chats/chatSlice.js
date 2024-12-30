@@ -63,23 +63,42 @@ const chatSlice = createSlice({
 
         addMessageToIndividual: (state, action) => {
             const { chatId, messageId, messageData } = action.payload;
-
+        
             const chat = state.Individual.find(chat => chat.id === chatId);
-
+        
             if (chat) {
+                // Var olan sohbetin mesajını güncelle veya ekle
                 const existingMessageIndex = chat.messages.findIndex(msg => msg.id === messageId);
-
+        
                 if (existingMessageIndex > -1) {
                     chat.messages[existingMessageIndex] = { ...chat.messages[existingMessageIndex], ...messageData };
                 } else {
                     chat.messages.push({ id: messageId, ...messageData });
                 }
-
-                // Mesajları kontrol etmek için
+        
+                // Güncellenmiş mesajları kontrol etmek için
                 console.log("Güncellenmiş mesajlar:", JSON.parse(JSON.stringify(chat.messages)));
+            } else {
+                // Yeni sohbet ekle
+                const newChat = {
+                    id: Object.keys(action.payload.Individual)[0], // Yeni sohbetin ID'si
+                    participants: [], // Katılımcılar için bir yapı belirtebilirsiniz
+                    archivedFor: {},  // Varsayılan değerler
+                    createdDate: new Date().toISOString(), // Şimdiki tarih
+                    messages: Object.entries(action.payload.Individual).map(([chatId, messages]) => {
+                        return Object.entries(messages).map(([messageId, messageData]) => ({
+                            id: messageId,
+                            ...messageData
+                        }));
+                    }).flat() // Gelen mesajları formatla ve tek bir düz liste haline getir
+                };
+        
+                state.Individual.push(newChat);
+        
+                // Yeni eklenen sohbeti kontrol etmek için
+                console.log("Yeni sohbet eklendi:", JSON.parse(JSON.stringify(newChat)));
             }
         },
-
         
         addMessageToGroup: (state, action) => {
             const { chatId, messageId, messageData } = action.payload;

@@ -6,6 +6,7 @@ import store from '../store/index.js';
 import { addMessageToGroup, addMessageToIndividual, initializeChats } from "../store/Slices/chats/chatSlice.js";
 import { setInitialChatList, updateChatUserProperty } from "../store/Slices/chats/chatListSlice.js";
 import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
+import { setGroupList } from "../store/Slices/Group/groupListSlice.js";
 
 // SignalR context oluşturuyoruz
 const SignalRContext = createContext();
@@ -14,25 +15,24 @@ export const useSignalR = () => {
     const context = useContext(SignalRContext);
     const dispatch = useDispatch(); // Redux dispatch
 
-    // Eğer SignalRProvider içerisinde değilse, hata fırlatıyoruz
     if (!context) {
         throw new Error("useSignalR must be used within a SignalRProvider");
     }
 
-    const { chatConnection, connectionStatus, error, loading } = context;
+    const { chatConnection, notificationConnection, connectionStatus, error, loading } = context;
 
-    return { chatConnection, connectionStatus, error, loading };
+    return { chatConnection, notificationConnection, connectionStatus, error, loading };
 };
 
 export const SignalRProvider = ({ children }) => {
     const [chatConnection, setChatConnection] = useState(null);
+    const [notificationConnection, setNotificationConnection] = useState(null);
     const [connectionStatus, setConnectionStatus] = useState("disconnected");
-    const {token} = useSelector(state=>state.auth);
+    const { token } = useSelector(state => state.auth);
     const userId = getUserIdFromToken(token);
     const [error, setError] = useState(null);
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
-    
 
     useEffect(() => {
         const token = getJwtFromCookie();
@@ -48,20 +48,32 @@ export const SignalRProvider = ({ children }) => {
             .withAutomaticReconnect()
             .build();
 
+        const notificationConnection = new HubConnectionBuilder()
+            .withUrl("http://localhost:5069/NotificationHub", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .configureLogging(LogLevel.Information)
+            .withAutomaticReconnect()
+            .build();
+
         setConnectionStatus("connecting");
 
-        chatConnection
-            .start()
+        Promise.all([chatConnection.start(), notificationConnection.start()])
             .then(() => {
-                console.log("ChatHub bağlantısı başarılı!");
+                console.log("Hub bağlantıları başarılı!");
                 setConnectionStatus("connected");
                 setLoading(false);
 
+                //Initial Group / Individual Chats 
                 chatConnection.on("ReceiveInitialChats", (data) => {
-                    console.log("Gelen sohbetler:", data);
                     store.dispatch(initializeChats(data));
-                
-                  });
+                });
+                chatConnection.on("ReceiveInitialGroupProfiles", (data) => {
+                    console.log("initial Gelen grup profilleri:", data);
+                    dispatch(setGroupList(data));
+                });
 
                 chatConnection.on("ReceiveGetMessages", (data) => {
                     console.log("Gelen mesajlar:", data);
@@ -78,8 +90,6 @@ export const SignalRProvider = ({ children }) => {
                             });
                         });
                     }
-
-
                     if (data.Group) {
                         Object.entries(data.Group).forEach(([chatId, messages]) => {
                             Object.entries(messages).forEach(([messageId, messageData]) => {
@@ -95,12 +105,6 @@ export const SignalRProvider = ({ children }) => {
                     }
                 });
 
-                chatConnection.on("ReceiveInitialGroupProfiles", (data) => {
-
-                });
-
-                chatConnection.invoke("DeliverMessage", "Individual", "25efee87-c72a-423d-897a-3628a59a46f6", "444d896e-abc9-4dd6-a11e-072006eb2d6d");
-
                 chatConnection.on("ReceiveInitialRecipientProfiles", (data) => {
                     dispatch(setInitialChatList(data));
                 });
@@ -110,24 +114,81 @@ export const SignalRProvider = ({ children }) => {
                     dispatch(updateChatUserProperty(data));
                 });
 
+
+                // Group Proccessing
+
+                notificationConnection.on("ReceiveNewGroupProfiles", (data) => {
+                    console.log("NotificationHub'dan gelen grup profilleri:", data);
+                
+                //    BURAYA gelen data group chat de state.group içine psuhlanacak.
+                
+                    dispatch(setGroupList(data));
+                    // Gelen data'nın key'ini almak için Object.keys() kullanılıyor
+                    const groupId = Object.keys(data)[0];
+                    console.log("Group ID:", groupId);
+                
+                    if (groupId) {
+                        // ChatConnection'un bağlı olduğundan emin olarak işlem yapıyoruz
+                        if (chatConnection.state === "Connected") {
+                            chatConnection.invoke("CreateChat", "Group", groupId)
+                                .then(() => {
+                                    console.log(`Grup başarıyla gönderildi: ${groupId}`);
+                                })
+                                .catch((err) => {
+                                    console.error("Grup gönderimi sırasında hata:", err);
+                                });
+                        } else {
+                            console.error("ChatConnection şu anda bağlı değil, işlem gerçekleştirilemedi.");
+                            // Bağlantı durumunu beklemek için event-based bir çözüm eklenebilir
+                            chatConnection.onclose(() => {
+                                console.log("ChatConnection yeniden bağlanıyor...");
+                                chatConnection.start()
+                                    .then(() => {
+                                        console.log("ChatConnection yeniden bağlandı.");
+                                        chatConnection.invoke("CreateChat", "Group", groupId)
+                                            .then(() => {
+                                                console.log(`Grup başarıyla gönderildi: ${groupId}`);
+                                            })
+                                            .catch((err) => {
+                                                console.error("Grup gönderimi sırasında hata:", err);
+                                            });
+                                    })
+                                    .catch((err) => {
+                                        console.error("ChatConnection yeniden bağlanırken hata oluştu:", err);
+                                    });
+                            });
+                        }
+                    } else {
+                        console.error("Grup ID alınamadı.");
+                    }
+                });
+                // İlk oluşturulduğunda, yapılacak işlem
+
+                notificationConnection.on("ReceiveGroupProfiles", (data) => {
+                    console.log("NotificationHub'dan gelen grup profilleri:", data);
+                });
+                // Grup profilleri güncellendiğinde, yapılacak işlem
+
+                
                 chatConnection.on("ReceiveCreateChat", (data) => {
-                    console.log(data);
+                    console.log("Oluşturduktan sonra dönen chat", data);
+                    store.dispatch(initializeChats(data));
                 });
 
             })
-
-            
             .catch((err) => {
-                console.error("ChatHub bağlantı hatası:", err);
+                console.error("Hub bağlantı hatası:", err);
                 setConnectionStatus("failed");
                 setError(err);
                 setLoading(false);
             });
 
         setChatConnection(chatConnection);
+        setNotificationConnection(notificationConnection);
 
         const handleBeforeUnload = () => {
             if (chatConnection) chatConnection.stop();
+            if (notificationConnection) notificationConnection.stop();
         };
 
         window.addEventListener("beforeunload", handleBeforeUnload);
@@ -135,10 +196,10 @@ export const SignalRProvider = ({ children }) => {
         // Cleanup
         return () => {
             if (chatConnection) chatConnection.stop();
+            if (notificationConnection) notificationConnection.stop();
             window.removeEventListener("beforeunload", handleBeforeUnload);
         };
     }, []);
-
 
     if (loading) {
         return null;
@@ -146,7 +207,7 @@ export const SignalRProvider = ({ children }) => {
 
     return (
         <SignalRContext.Provider
-            value={{ chatConnection, connectionStatus, error, loading }}
+            value={{ chatConnection, notificationConnection, connectionStatus, error, loading }}
         >
             {children}
         </SignalRContext.Provider>

@@ -7,9 +7,10 @@ import "./style.scss";
 import { useModal } from "../../../contexts/ModalContext";
 import ImageModal from "../ImageModal/ImageModal";
 import { useSignalR } from "../../../contexts/SignalRContext";
+import { useLocation } from "react-router-dom";
 
 function MessageInputBar({ chatId }) {
-    const { chatConnection } = useSignalR(); 
+    const { chatConnection } = useSignalR();
 
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const { showModal, closeModal } = useModal();
@@ -17,6 +18,8 @@ function MessageInputBar({ chatId }) {
     const [selectedFile, setSelectedFile] = useState(null);
     const emojiPickerRef = useRef(null);
     const fileInputRef = useRef(null);
+    const location = useLocation();
+
 
     const handleEmojiClick = (emojiData) => {
         setMessage((prev) => prev + emojiData.emoji);
@@ -65,9 +68,19 @@ function MessageInputBar({ chatId }) {
             TextContent: message || null,
             FileContent: selectedFile ? await selectedFile.arrayBuffer() : null,
         };
+        
+        let chatType = '';
+    
+        // Check the pathname and determine the chat type
+        if (location.pathname.includes('sohbetler')) {
+            chatType = 'Individual'; // If "sohbetler" is in the pathname, chatType = Individual
+        } else if (location.pathname.includes('gruplar')) {
+            chatType = 'Group'; // If "gruplar" is in the pathname, chatType = Group
+        }
+    
         try {
-            await chatConnection.invoke("SendMessage", chatId, sendMessageDto);
-
+            await chatConnection.invoke("SendMessage", chatType, chatId, sendMessageDto);
+    
             setSelectedFile(null);
             console.log("Mesaj başarıyla gönderildi.");
         } catch (error) {

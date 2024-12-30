@@ -71,7 +71,7 @@ function Chats() {
               toggleSidebar={toggleSidebar}
               recipientProfile={recipientProfile} // Profili üst bileşene geçir
             />
-            <UserMessageBar groupedMessages={{}} ChatId={id} /> {/* Örnek veriyi gruplama */}
+            <UserMessageBar ChatId={id} /> {/* Örnek veriyi gruplama */}
             <MessageInputBar chatId={id} />
           </>
         )}

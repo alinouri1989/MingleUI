@@ -132,20 +132,21 @@ export const userSettingsApi = createApi({
         try {
           await queryFulfilled;
 
-          const currentUser = getState().auth.user;
+          const currentAuth = getState().auth; // Tüm auth durumunu al
           const themeMapping = {
             0: "DefaultSystemMode",
             1: "Light",
             2: "Dark",
           };
-
+          
           dispatch(
             setUser({
+              ...currentAuth, // auth'un tamamını koru
               user: {
-                ...currentUser,
+                ...currentAuth.user, // user içindeki diğer alanları koru
                 userSettings: {
-                  ...currentUser.userSettings,
-                  theme: themeMapping[arg],
+                  ...currentAuth.user.userSettings, // userSettings içindeki diğer alanları koru
+                  theme: themeMapping[arg], // theme alanını güncelle
                 },
               },
             })
