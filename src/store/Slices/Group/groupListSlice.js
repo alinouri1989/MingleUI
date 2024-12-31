@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const groupListSlice = createSlice({
   name: 'groupList',
   initialState: {
-    groupList: {}, 
+    groupList: {},
     isGroupListInitialized: false,
   },
   reducers: {

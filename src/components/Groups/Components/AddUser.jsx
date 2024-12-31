@@ -8,7 +8,7 @@ import { AiFillInfoCircle } from "react-icons/ai";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import Okan from "../../../assets/users/okan.png"; 
+import Okan from "../../../assets/users/okan.png";
 import "../../Chats/Components/NewChat/style.scss";
 import { useDebounce } from '../../../hooks/useDebounce';
 import { useSearchUsersQuery } from '../../../store/Slices/searchUsers/searchUserApi';
@@ -19,12 +19,12 @@ function AddUser({ closeUserModal, setFormData, formData }) {
 
 
     const [inputValue, setInputValue] = useState("");
-    const debouncedSearchQuery = useDebounce(inputValue, 300); 
+    const debouncedSearchQuery = useDebounce(inputValue, 300);
     const { data, error, isFetching } = useSearchUsersQuery(debouncedSearchQuery, {
         skip: !debouncedSearchQuery,
     });
 
-    const users = error ? [] : data ? Object.entries(data) : []; 
+    const users = error ? [] : data ? Object.entries(data) : [];
 
     const handleInputChange = (e) => {
         setInputValue(e.target.value);
@@ -50,10 +50,10 @@ function AddUser({ closeUserModal, setFormData, formData }) {
             }));
 
             // Başarılı ekleme mesajı
-            SuccessAlert("Kullanıcı Eklendi",1000);
+            SuccessAlert("Kullanıcı Eklendi", 1000);
         } else {
             // Eğer kullanıcı zaten eklenmişse bir şey yapmıyoruz
-            ErrorAlert("Bu kullanıcı eklendi.",1500);
+            ErrorAlert("Bu kullanıcı eklendi.", 1500);
         }
     };
 

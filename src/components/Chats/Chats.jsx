@@ -45,13 +45,13 @@ function Chats() {
         if (recipientId) {
           // chatList içinde recipientId ile eşleşen kullanıcıyı bul
           const recipient = chatList[recipientId];
-          setRecipientProfile(recipient || null); // Kullanıcı bulunamazsa null ata
+          setRecipientProfile(recipient || null);
         }
       }
     }
   }, [id, Individual, chatList, UserId]);
 
- 
+
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
