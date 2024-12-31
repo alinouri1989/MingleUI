@@ -4,12 +4,17 @@ import { PiPhoneFill } from "react-icons/pi";
 import { HiMiniVideoCamera } from "react-icons/hi2";
 import { useModal } from '../../../contexts/ModalContext';
 import CallModal from '../../Calls/Components/CallModal';
+import { formatDateForLastConnectionDate } from '../../../helpers/dateHelper';
 
 function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile }) {
 
     if (!recipientProfile) {
-        return null; 
+        return null;
     }
+
+    const status = recipientProfile.connectionSettings.lastConnectionDate ? 'offline' : 'online';
+    const lastConnectionDate = recipientProfile.connectionSettings.lastConnectionDate;
+
 
     const { showModal, closeModal } = useModal();
     const handleVoiceCall = () => {
@@ -18,7 +23,6 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile }) {
     const handleVideoCall = () => {
         showModal(<CallModal isVideoCallMode={true} closeModal={closeModal} />);
     }
-
 
     return (
         <div className={`user-details-sidebar ${isSidebarOpen ? "open" : ""}`}>
@@ -35,15 +39,17 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile }) {
                             <p>{recipientProfile.displayName}</p>
                             <span>{recipientProfile.email}</span>
                         </div>
-                        <div className='status'>
-                            <p className='circle'></p>
-                            <p>Çevrimiçi</p>
-                        </div>
-
-                        {/* <div className='status-2'>
-                            <p>Son Görülme</p>
-                            <span>28.10.2024</span>
-                        </div> */}
+                        {status == "online" ?
+                            <div className='status'>
+                                <p className='circle'></p>
+                                <p>Çevrimiçi</p>
+                            </div>
+                            :
+                            <div className='status-2'>
+                                <p>Son Görülme</p>
+                                <span>{formatDateForLastConnectionDate(lastConnectionDate)}</span>
+                            </div>
+                        }
 
                         <div className='biography'>
                             <strong>Biyografi</strong>

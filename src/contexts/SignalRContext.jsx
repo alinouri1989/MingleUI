@@ -113,7 +113,7 @@ export const SignalRProvider = ({ children }) => {
                     dispatch(setInitialChatList(data));
                 });
 
-                chatConnection.on("ReceiveRecipientProfile", (data) => {
+                chatConnection.on("ReceiveRecipientProfiles", (data) => {
                     console.log("ReceiveRecipientProfile Kullanıcı : ", data);
                     dispatch(updateChatUserProperty(data));
                 });
