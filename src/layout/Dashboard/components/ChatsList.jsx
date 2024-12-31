@@ -54,7 +54,8 @@ function ChatsList() {
                 isArchive: user.isArchive,
             };
         })
-        .filter((chat) => chat !== null);
+        .filter((chat) => chat !== null)
+        .sort((a, b) => b.lastMessageDate - a.lastMessageDate); // Tarihe göre sıralama (en son etkileşim üste)
 
     const handleNewChat = () => {
         showModal(<NewChatModal closeModal={closeModal} />);

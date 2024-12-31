@@ -13,41 +13,41 @@ const chatListSlice = createSlice({
             state.chatList = action.payload;
             state.isChatListInitialized = true;
         },
-        updateChatUserProperty: (state, action) => {
-            const [userId, updates] = Object.entries(action.payload)[0]; // İlk userId ve updates alınır
-            if (state.chatList[userId]) {
-                // updates içinde lastConnectionDate varsa, bu değeri güncelle
-                if (updates.hasOwnProperty('lastConnectionDate')) {
-                    state.chatList[userId].connectionSettings.lastConnectionDate = updates.lastConnectionDate;
-                }
-
-                // Diğer key'ler varsa, onları da güncelleyebilirsin
-                Object.entries(updates).forEach(([key, value]) => {
-                    const normalizedKey = key.toLowerCase(); // Gelen key'i küçük harfe çevir
-                    const matchedKey = Object.keys(state.chatList[userId]).find(
-                        (existingKey) => existingKey.toLowerCase() === normalizedKey
-                    );
-                    if (matchedKey) {
-                        state.chatList[userId][matchedKey] = value; // Eşleşen key'in değerini güncelle
-                    }
-                });
-            } else {
-                // Eğer userId chatList'te yoksa, yeni bir kullanıcı ekle
-                state.chatList[userId] = {
-                    displayName: updates.displayName || "Unknown", // Güncellemelerde varsa displayName al, yoksa "Unknown" kullan
-                    email: updates.email || "",
-                    biography: updates.biography || "",
-                    profilePhoto: updates.profilePhoto || "https://res.cloudinary.com/mingle-realtime-messaging-app/image/upload/v1734185072/DefaultUserProfilePhoto.png",
+        addNewUserToChatList: (state, action) => {
+            const newUserId = Object.keys(action.payload)[0];
+            const newUserData = action.payload[newUserId];
+            if (!state.chatList[newUserId]) {
+                state.chatList[newUserId] = {
+                    displayName: newUserData.displayName || "Unknown",
+                    email: newUserData.email || "",
+                    biography: newUserData.biography || "",
+                    profilePhoto: newUserData.profilePhoto || "https://res.cloudinary.com/mingle-realtime-messaging-app/image/upload/v1734185072/DefaultUserProfilePhoto.png",
                     connectionSettings: {
-                        lastConnectionDate: updates.lastConnectionDate || null,
-                        connectionIds: updates.connectionSettings?.connectionIds || [] // Eğer connectionIds varsa al, yoksa boş dizi
+                        lastConnectionDate: newUserData.connectionSettings?.lastConnectionDate || null,
+                        connectionIds: newUserData.connectionSettings?.connectionIds || []
                     }
                 };
+            }
+        },
+        updateUserInfoToChatList: (state, action) => {
+            const chatId = Object.keys(action.payload)[0]; // Gelen payload'dan chatId
+            const updates = action.payload[chatId]; // Güncellenmesi gereken alanlar
+
+            if (state.chatList[chatId]) {
+                Object.entries(updates).forEach(([key, value]) => {
+                    if (key === "connectionSettings") {
+                        // connectionSettings doğrudan güncellenir
+                        state.chatList[chatId].connectionSettings = value;
+                    } else {
+                        // Diğer alanlar doğrudan güncellenir
+                        state.chatList[chatId][key] = value;
+                    }
+                });
             }
         },
     },
 });
 
-export const { setInitialChatList, updateChatUserProperty } = chatListSlice.actions;
+export const { setInitialChatList, addNewUserToChatList, updateUserInfoToChatList } = chatListSlice.actions;
 
 export default chatListSlice.reducer;

@@ -4,7 +4,7 @@ import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
 import { useDispatch, useSelector } from "react-redux";
 import store from '../store/index.js';
 import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats } from "../store/Slices/chats/chatSlice.js";
-import { setInitialChatList, updateChatUserProperty } from "../store/Slices/chats/chatListSlice.js";
+import { addNewUserToChatList, setInitialChatList, updateUserInfoToChatList } from "../store/Slices/chats/chatListSlice.js";
 import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
 import { setGroupList } from "../store/Slices/Group/groupListSlice.js";
 import { useModal } from "./ModalContext.jsx";
@@ -114,8 +114,12 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 chatConnection.on("ReceiveRecipientProfiles", (data) => {
-                    console.log("ReceiveRecipientProfile Kullanıcı : ", data);
-                    dispatch(updateChatUserProperty(data));
+                    console.log("ReceiveRecipientProfile Kullanıcı verisi : ", data);
+                    dispatch(addNewUserToChatList(data));
+                });
+                notificationConnection.on("ReceiveRecipientProfiles", (data) => {
+                    console.log("notificationConnection güncelleme verisi : ", data);
+                    dispatch(updateUserInfoToChatList(data));
                 });
 
                 chatConnection.on("ReceiveCreateChat", (data) => {
@@ -193,6 +197,7 @@ export const SignalRProvider = ({ children }) => {
 
                 notificationConnection.on("ReceiveGroupProfiles", (data) => {
                     console.log("NotificationHub'dan gelen grup profilleri:", data);
+
                 });
                 // Grup profilleri güncellendiğinde, yapılacak işlem
             })

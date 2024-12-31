@@ -45,6 +45,7 @@ function Chats() {
         if (recipientId) {
           // chatList içinde recipientId ile eşleşen kullanıcıyı bul
           const recipient = chatList[recipientId];
+
           setRecipientProfile(recipient || null);
         }
       }
