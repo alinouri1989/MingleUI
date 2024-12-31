@@ -10,8 +10,15 @@ const chatSlice = createSlice({
     name: 'chat',
     initialState,
     reducers: {
-        addNewChat: (state, action) => {
+        addNewIndividualChat: (state, action) => {
             const { chatId, chatData } = action.payload;
+
+            // Eğer chatId zaten mevcutsa, yeni sohbeti eklemeyin
+            const chatExists = state.Individual.some(chat => chat.id === chatId);
+            if (chatExists) {
+                console.log("Bu sohbet zaten mevcut:", chatId);
+                return;
+            }
 
             // Gelen chat objesini uygun formata çevir
             const newChat = {
@@ -30,6 +37,34 @@ const chatSlice = createSlice({
 
             // Eklenen sohbeti loglamak için
             console.log("Yeni sohbet eklendi:", newChat);
+        },
+
+        addNewGroupChat: (state, action) => {
+            const { chatId, chatData } = action.payload;
+
+            // Eğer groupId zaten mevcutsa, yeni grup sohbetini eklemeyin
+            const groupExists = state.Group.some(groupChat => groupChat.id === chatId);
+            if (groupExists) {
+                console.log("Bu grup sohbeti zaten mevcut:", chatId);
+                return;
+            }
+
+            // Gelen chat objesini uygun formata çevir
+            const newGroupChat = {
+                id: chatId,
+                participants: chatData.participants,
+                archivedFor: chatData.archivedFor || {},
+                createdDate: chatData.createdDate,
+                groupName: chatData.groupName || "Unnamed Group", // Grup adı
+                admin: chatData.admin || null, // Grup yöneticisi
+                messages: Object.entries(chatData.messages || {}).map(([messageId, messageData]) => ({
+                    id: messageId,
+                    ...messageData,
+                })),
+            };
+
+            // Yeni grup sohbetini Group listesine ekle
+            state.Group.push(newGroupChat);
         },
         // Gelen veriyi redux state'e ekleme
         initializeChats: (state, action) => {
@@ -63,19 +98,19 @@ const chatSlice = createSlice({
 
         addMessageToIndividual: (state, action) => {
             const { chatId, messageId, messageData } = action.payload;
-        
+
             const chat = state.Individual.find(chat => chat.id === chatId);
-        
+
             if (chat) {
                 // Var olan sohbetin mesajını güncelle veya ekle
                 const existingMessageIndex = chat.messages.findIndex(msg => msg.id === messageId);
-        
+
                 if (existingMessageIndex > -1) {
                     chat.messages[existingMessageIndex] = { ...chat.messages[existingMessageIndex], ...messageData };
                 } else {
                     chat.messages.push({ id: messageId, ...messageData });
                 }
-        
+
                 // Güncellenmiş mesajları kontrol etmek için
                 console.log("Güncellenmiş mesajlar:", JSON.parse(JSON.stringify(chat.messages)));
             } else {
@@ -92,14 +127,14 @@ const chatSlice = createSlice({
                         }));
                     }).flat() // Gelen mesajları formatla ve tek bir düz liste haline getir
                 };
-        
+
                 state.Individual.push(newChat);
-        
+
                 // Yeni eklenen sohbeti kontrol etmek için
                 console.log("Yeni sohbet eklendi:", JSON.parse(JSON.stringify(newChat)));
             }
         },
-        
+
         addMessageToGroup: (state, action) => {
             const { chatId, messageId, messageData } = action.payload;
 
@@ -164,13 +199,14 @@ export const getChatId = (state, authId, receiveId) => {
 
 export const {
     initializeChats,
+    addNewIndividualChat,
+    addNewGroupChat,
     addMessageToIndividual,
     addMessageToGroup,
+    getChatMessages,
     removeIndividualChat,
     removeGroupChat,
     resetChats,
-    addNewChat,
-    getChatMessages,
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

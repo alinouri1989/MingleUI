@@ -19,19 +19,25 @@ import star from "../../../../assets/svg/star.svg";
 import { defaultGroupPhoto } from "../../../../constants/DefaultProfilePhoto.js";
 import AddUser from "../AddUser.jsx";
 import CloseModalButton from "../../../../contexts/components/CloseModalButton.jsx";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { ErrorAlert, SuccessAlert } from "../../../../helpers/customAlert.js";
 
 import { useCreateGroupMutation, useEditGroupMutation, useLeaveGroupMutation } from "../../../../store/Slices/Group/GroupApi.js";
 import PreLoader from "../../../../shared/components/PreLoader/PreLoader.jsx";
 import "./style.scss";
+import { useSignalR } from "../../../../contexts/SignalRContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, userId }) {
 
     const [createGroup, { isLoading: createLoading }] = useCreateGroupMutation();
     const [editGroup, { isLoading: editLoading }] = useEditGroupMutation();
     const [leaveGroup, { isLoading: leaveLoading }] = useLeaveGroupMutation();
+
+    const { chatConnection } = useSignalR();
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const isLoading = editLoading || createLoading || leaveLoading;
 
@@ -90,6 +96,42 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
         const isSameData = JSON.stringify(formData) === JSON.stringify(initialData);
         setSaveDisabled(isSameData);
     }, [formData]);
+
+
+
+    useEffect(() => {
+        const handleReceiveCreateChat = (response) => {
+            console.log("Group Chat Create yanıtı:", response);
+
+            const groupData = response?.Group;
+            if (groupData) {
+                const groupId = Object.keys(groupData)[0];
+                if (groupId) {
+                    const chatData = groupData[groupId];
+                    console.log("Yeni grup sohbeti oluşturuldu, Group ID:", groupId);
+
+                    dispatch(addNewGroupChat({ groupId, chatData }));
+                    closeModal();
+                } else {
+                    console.error("Group Chat ID alınamadı:", response);
+                }
+            } else {
+                console.error("Group bilgisi bulunamadı:", response);
+            }
+        };
+
+        if (chatConnection) {
+            chatConnection.on("ReceiveCreateChat", handleReceiveCreateChat);
+        }
+
+        // Cleanup - Event listener'ı kaldırma
+        return () => {
+            if (chatConnection) {
+                chatConnection.off("ReceiveCreateChat", handleReceiveCreateChat);
+            }
+        };
+    }, [chatConnection, dispatch, navigate]);
+
 
     // Handlers for input changes
     const handleGroupNameChange = (e) => setFormData((prev) => ({ ...prev, name: e.target.value }));

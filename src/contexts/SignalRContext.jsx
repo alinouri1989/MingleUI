@@ -3,10 +3,12 @@ import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
 import { useDispatch, useSelector } from "react-redux";
 import store from '../store/index.js';
-import { addMessageToGroup, addMessageToIndividual, initializeChats } from "../store/Slices/chats/chatSlice.js";
+import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats } from "../store/Slices/chats/chatSlice.js";
 import { setInitialChatList, updateChatUserProperty } from "../store/Slices/chats/chatListSlice.js";
 import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
 import { setGroupList } from "../store/Slices/Group/groupListSlice.js";
+import { useModal } from "./ModalContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 // SignalR context oluşturuyoruz
 const SignalRContext = createContext();
@@ -29,6 +31,8 @@ export const SignalRProvider = ({ children }) => {
     const [notificationConnection, setNotificationConnection] = useState(null);
     const [connectionStatus, setConnectionStatus] = useState("disconnected");
     const { token } = useSelector(state => state.auth);
+
+    const navigate = useNavigate();
     const userId = getUserIdFromToken(token);
     const [error, setError] = useState(null);
     const dispatch = useDispatch();
@@ -110,8 +114,32 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 chatConnection.on("ReceiveRecipientProfile", (data) => {
-                    console.log(data);
+                    console.log("ReceiveRecipientProfile Kullanıcı : ", data);
                     dispatch(updateChatUserProperty(data));
+                });
+
+                chatConnection.on("ReceiveCreateChat", (data) => {
+                    if (data.Individual) {
+                        const individualData = data.Individual;
+                        const chatId = Object.keys(individualData)[0];
+                        if (chatId) {
+                            const chatData = individualData[chatId];
+                            dispatch(addNewIndividualChat({ chatId, chatData }));
+                        } else {
+                            console.error("Chat ID alınamadı:", data);
+                        }
+                    } else if (data.Group) {
+                        const groupData = data.Group;
+                        const groupId = Object.keys(groupData)[0];
+                        if (groupId) {
+                            const groupChatData = groupData[groupId];
+                            dispatch(addNewGroupChat({ groupId, groupData: groupChatData }));
+                        } else {
+                            console.error("Group ID alınamadı:", data);
+                        }
+                    } else {
+                        console.error("Bilinmeyen chat türü:", data);
+                    }
                 });
 
 
@@ -119,14 +147,13 @@ export const SignalRProvider = ({ children }) => {
 
                 notificationConnection.on("ReceiveNewGroupProfiles", (data) => {
                     console.log("NotificationHub'dan gelen grup profilleri:", data);
-                
-                //    BURAYA gelen data group chat de state.group içine psuhlanacak.
-                
+
+
                     dispatch(setGroupList(data));
                     // Gelen data'nın key'ini almak için Object.keys() kullanılıyor
                     const groupId = Object.keys(data)[0];
                     console.log("Group ID:", groupId);
-                
+
                     if (groupId) {
                         // ChatConnection'un bağlı olduğundan emin olarak işlem yapıyoruz
                         if (chatConnection.state === "Connected") {
@@ -168,13 +195,6 @@ export const SignalRProvider = ({ children }) => {
                     console.log("NotificationHub'dan gelen grup profilleri:", data);
                 });
                 // Grup profilleri güncellendiğinde, yapılacak işlem
-
-                
-                chatConnection.on("ReceiveCreateChat", (data) => {
-                    console.log("Oluşturduktan sonra dönen chat", data);
-                    store.dispatch(initializeChats(data));
-                });
-
             })
             .catch((err) => {
                 console.error("Hub bağlantı hatası:", err);

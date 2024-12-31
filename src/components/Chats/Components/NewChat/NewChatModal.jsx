@@ -13,7 +13,7 @@ import { useSearchUsersQuery } from "../../../../store/Slices/searchUsers/search
 import { useDebounce } from "../../../../hooks/useDebounce.jsx";
 import { useSignalR } from "../../../../contexts/SignalRContext.jsx";
 import "./style.scss";
-import { addNewChat } from "../../../../store/Slices/chats/chatSlice.js";
+import { addNewIndividualChat } from "../../../../store/Slices/chats/chatSlice.js";
 import { useDispatch } from "react-redux";
 
 function NewChatModal() {
@@ -33,38 +33,34 @@ function NewChatModal() {
 
   useEffect(() => {
     const handleReceiveCreateChat = (response) => {
-        console.log("ReceiveCreateChat yanıtı:", response);
+      console.log("ReceiveCreateChat yanıtı:", response);
 
-        const individualData = response?.Individual;
-        if (individualData) {
-            const chatId = Object.keys(individualData)[0]; 
-            if (chatId) {
-                const chatData = individualData[chatId]; 
-                console.log("Yeni sohbet oluşturuldu, Chat ID:", chatId);
-
-                // Redux state'ine ekle
-                dispatch(addNewChat({ chatId, chatData }));
-                navigate(`/sohbetler/${chatId}`);
-                closeModal();
-            } else {
-                console.error("Chat ID alınamadı:", response);
-            }
+      const individualData = response?.Individual;
+      if (individualData) {
+        const chatId = Object.keys(individualData)[0];
+        if (chatId) {
+          console.log("Yeni sohbet oluşturuldu, Chat ID:", chatId);
+          navigate(`/sohbetler/${chatId}`);
+          closeModal();
         } else {
-            console.error("Individual bilgisi bulunamadı:", response);
+          console.error("Chat ID alınamadı:", response);
         }
+      } else {
+        console.error("Individual bilgisi bulunamadı:", response);
+      }
     };
 
     if (chatConnection) {
-        chatConnection.on("ReceiveCreateChat", handleReceiveCreateChat);
+      chatConnection.on("ReceiveCreateChat", handleReceiveCreateChat);
     }
 
     // Cleanup - Event listener'ı kaldırma
     return () => {
-        if (chatConnection) {
-            chatConnection.off("ReceiveCreateChat", handleReceiveCreateChat);
-        }
+      if (chatConnection) {
+        chatConnection.off("ReceiveCreateChat", handleReceiveCreateChat);
+      }
     };
-}, [chatConnection]);
+  }, [chatConnection]);
 
   const handleGoToChat = async (userId) => {
     if (connectionStatus !== "connected") {

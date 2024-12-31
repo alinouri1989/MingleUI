@@ -7,14 +7,12 @@ import IncomingCall from "./components/Calls/Components/IncomingCall/IncomingCal
 function App() {
   return (
     <>
-        <DataLoader>
-          <ModalProvider>
-            <Toaster position="top-center" />
-            <AppRoutes />
-            {/* <IncomingCall/> */}
-          </ModalProvider>
-        </DataLoader>
-        
+      <DataLoader>
+        <ModalProvider>
+          <Toaster position="top-center" />
+          <AppRoutes />
+        </ModalProvider>
+      </DataLoader>
     </>
   );
 }
