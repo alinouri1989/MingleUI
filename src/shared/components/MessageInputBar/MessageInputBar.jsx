@@ -41,7 +41,6 @@ function MessageInputBar({ chatId }) {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             setSelectedFile(file);
-            console.log(file);
 
             showModal(<ImageModal closeModal={closeModal} image={URL.createObjectURL(file)} />);
         }
@@ -68,21 +67,20 @@ function MessageInputBar({ chatId }) {
             TextContent: message || null,
             FileContent: selectedFile ? await selectedFile.arrayBuffer() : null,
         };
-        
+
         let chatType = '';
-    
+
         // Check the pathname and determine the chat type
         if (location.pathname.includes('sohbetler')) {
             chatType = 'Individual'; // If "sohbetler" is in the pathname, chatType = Individual
         } else if (location.pathname.includes('gruplar')) {
             chatType = 'Group'; // If "gruplar" is in the pathname, chatType = Group
         }
-    
+
         try {
             await chatConnection.invoke("SendMessage", chatType, chatId, sendMessageDto);
-    
+
             setSelectedFile(null);
-            console.log("Mesaj başarıyla gönderildi.");
         } catch (error) {
             console.error("Mesaj gönderme hatası:", error);
         }
