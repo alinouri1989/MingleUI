@@ -1,14 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import NewChatModal from "../../../components/Chats/Components/NewChat/NewChatModal";
 import { useModal } from "../../../contexts/ModalContext";
 import SearchInput from "./SearchInput";
 import UserChatCard from "./UserChatCard";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
-import "./style.scss";
 import { lastMessageDateHelper } from "../../../helpers/dateHelper";
 import NoChats from "../../../assets/NoChats.webp";
-
+import "./style.scss";
 
 function ChatsList() {
     const { showModal, closeModal } = useModal();
@@ -17,45 +16,59 @@ function ChatsList() {
     const { token } = useSelector((state) => state.auth); // Kullanıcı token'ı
     const UserId = getUserIdFromToken(token); // Token'dan kullanıcı ID'si al
 
-    // Individual üzerinden lastMessageDate ve lastMessage güncelleme
-    const enhancedChatList = Object.entries(chatList)
-        .map(([userId, user]) => {
-            // Individual'da eşleşen chat'i bul
-            const chatData = Individual.find(
-                (chat) =>
-                    chat.participants.includes(userId) && chat.participants.includes(UserId)
-            );
+    const [enhancedChatList, setEnhancedChatList] = useState([]);
 
-            // Eğer chatData veya chatData.messages boşsa, bu kullanıcıyı listelemeye alma
-            if (!chatData || !chatData.messages || chatData.messages.length === 0) {
-                return null; // Bu kullanıcıyı liste dışı bırak
-            }
+    useEffect(() => {
+        const updatedChatList = Object.entries(chatList)
+            .map(([userId, user]) => {
+                const chatData = Individual.find(
+                    (chat) =>
+                        chat.participants.includes(userId) &&
+                        chat.participants.includes(UserId)
+                );
 
-            const lastMessage =
-                chatData.messages.length > 0
-                    ? chatData.messages[chatData.messages.length - 1].content
-                    : user.connectionSettings.lastMessage;
+                if (!chatData || !chatData.messages || chatData.messages.length === 0) {
+                    return null;
+                }
 
-            const lastMessageDate =
-                chatData.messages.length > 0
-                    ? lastMessageDateHelper(
-                        Object.values(chatData.messages[chatData.messages.length - 1].status.sent)[0]
-                    )
-                    : user.connectionSettings.lastConnectionDate;
+                const lastMessage =
+                    chatData.messages.length > 0
+                        ? chatData.messages[chatData.messages.length - 1].content
+                        : user.connectionSettings.lastMessage;
 
-            return {
-                userId,
-                image: user.profilePhoto,
-                status: user.connectionSettings?.lastConnectionDate === null,
-                name: user.displayName,
-                lastMessage,
-                lastMessageDate,
-                unReadMessage: user.connectionSettings.unReadMessage,
-                isArchive: user.isArchive,
-            };
-        })
-        .filter((chat) => chat !== null)
-        .sort((a, b) => b.lastMessageDate - a.lastMessageDate); // Tarihe göre sıralama (en son etkileşim üste)
+                const lastMessageDate =
+                    chatData.messages.length > 0
+                        ? lastMessageDateHelper(
+                            Object.values(chatData.messages[chatData.messages.length - 1].status.sent)[0]
+                        )
+                        : user.connectionSettings.lastConnectionDate;
+
+                // Tarih sıralama için kullanılacak
+                const lastMessageDateForSort =
+                    chatData.messages.length > 0
+                        ? new Date(
+                            Object.values(chatData.messages[chatData.messages.length - 1].status.sent)[0]
+                        ).getTime()
+                        : new Date(user.connectionSettings.lastConnectionDate).getTime();
+
+                return {
+                    userId,
+                    image: user.profilePhoto,
+                    status: user.connectionSettings?.lastConnectionDate === null,
+                    name: user.displayName,
+                    lastMessage,
+                    lastMessageDate,
+                    lastMessageDateForSort, // Sadece sıralama için
+                    unReadMessage: user.connectionSettings.unReadMessage,
+                    isArchive: user.isArchive,
+                };
+            })
+            .filter((chat) => chat !== null)
+            .sort((a, b) => b.lastMessageDateForSort - a.lastMessageDateForSort); // Tarihe göre sıralama
+
+        setEnhancedChatList(updatedChatList);
+    }, [chatList, Individual, UserId]);
+
 
     const handleNewChat = () => {
         showModal(<NewChatModal closeModal={closeModal} />);
