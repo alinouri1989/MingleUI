@@ -6,7 +6,7 @@ import store from '../store/index.js';
 import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats } from "../store/Slices/chats/chatSlice.js";
 import { addNewUserToChatList, setInitialChatList, updateUserInfoToChatList } from "../store/Slices/chats/chatListSlice.js";
 import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
-import { setGroupList } from "../store/Slices/Group/groupListSlice.js";
+import { setGroupList, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
 import { useModal } from "./ModalContext.jsx";
 import { useNavigate } from "react-router-dom";
 
@@ -120,6 +120,8 @@ export const SignalRProvider = ({ children }) => {
                 notificationConnection.on("ReceiveRecipientProfiles", (data) => {
                     console.log("notificationConnection güncelleme verisi : ", data);
                     dispatch(updateUserInfoToChatList(data));
+                    dispatch(updateUserInfoToGroupList(data));
+
                 });
 
                 chatConnection.on("ReceiveCreateChat", (data) => {

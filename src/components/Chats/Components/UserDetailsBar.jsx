@@ -12,8 +12,8 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile }) {
         return null;
     }
 
-    const status = recipientProfile.connectionSettings.lastConnectionDate ? 'offline' : 'online';
-    const lastConnectionDate = recipientProfile.connectionSettings.lastConnectionDate;
+    const status = recipientProfile.lastConnectionDate ? 'offline' : 'online';
+    const lastConnectionDate = recipientProfile.lastConnectionDate;
 
 
     const { showModal, closeModal } = useModal();

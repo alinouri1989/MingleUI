@@ -22,10 +22,7 @@ const chatListSlice = createSlice({
                     email: newUserData.email || "",
                     biography: newUserData.biography || "",
                     profilePhoto: newUserData.profilePhoto || "https://res.cloudinary.com/mingle-realtime-messaging-app/image/upload/v1734185072/DefaultUserProfilePhoto.png",
-                    connectionSettings: {
-                        lastConnectionDate: newUserData.connectionSettings?.lastConnectionDate || null,
-                        connectionIds: newUserData.connectionSettings?.connectionIds || []
-                    }
+                    lastConnectionDate: newUserData.lastConnectionDate || null,
                 };
             }
         },
@@ -35,13 +32,7 @@ const chatListSlice = createSlice({
 
             if (state.chatList[chatId]) {
                 Object.entries(updates).forEach(([key, value]) => {
-                    if (key === "connectionSettings") {
-                        // connectionSettings doğrudan güncellenir
-                        state.chatList[chatId].connectionSettings = value;
-                    } else {
-                        // Diğer alanlar doğrudan güncellenir
-                        state.chatList[chatId][key] = value;
-                    }
+                    state.chatList[chatId][key] = value;
                 });
             }
         },

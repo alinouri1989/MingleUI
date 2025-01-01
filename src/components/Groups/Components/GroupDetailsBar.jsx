@@ -16,9 +16,7 @@ import { defaultGroupPhoto } from '../../../constants/DefaultProfilePhoto';
 function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
     const { showModal, closeModal } = useModal();
 
-    const [groupInformation, setGroupInformation] = useState(null);
     const [groupId, setGroupID] = useState(null);
-
 
     const { token } = useSelector((state) => state.auth);
     const decodedToken = token ? jwtDecode(token) : null;
@@ -27,10 +25,10 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
 
 
     const isAdmin = userId &&
-    groupProfile?.participants?.[userId] &&
-    groupProfile?.participants[userId].role === 0;
+        groupProfile?.participants?.[userId] &&
+        groupProfile?.participants[userId].role === 0;
 
-        
+
     // Grup ayarlarını aç
     const handleGroupSettings = () => {
         showModal(<NewGroupModal closeModal={closeModal} isGroupSettings={true} groupInformation={groupProfile} groupId={groupId} userId={userId} />);
@@ -73,7 +71,7 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
                                     <div className='line'></div>
                                     <p>{groupProfile.description || "Açıklama bulunmuyor."}</p>
                                 </div>
-                  
+
                                 <div className="group-members-box">
                                     <h2>
                                         Grup Üyeleri - {Object.keys(groupProfile.participants).length}

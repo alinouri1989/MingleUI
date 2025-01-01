@@ -31,17 +31,15 @@ function ChatsList() {
                     return null;
                 }
 
-                const lastMessage =
-                    chatData.messages.length > 0
-                        ? chatData.messages[chatData.messages.length - 1].content
-                        : user.connectionSettings.lastMessage;
+                const lastMessage = chatData?.messages[chatData?.messages.length - 1].content
+
 
                 const lastMessageDate =
                     chatData.messages.length > 0
                         ? lastMessageDateHelper(
                             Object.values(chatData.messages[chatData.messages.length - 1].status.sent)[0]
                         )
-                        : user.connectionSettings.lastConnectionDate;
+                        : user.lastConnectionDate;
 
                 // Tarih sıralama için kullanılacak
                 const lastMessageDateForSort =
@@ -49,17 +47,16 @@ function ChatsList() {
                         ? new Date(
                             Object.values(chatData.messages[chatData.messages.length - 1].status.sent)[0]
                         ).getTime()
-                        : new Date(user.connectionSettings.lastConnectionDate).getTime();
+                        : new Date(user.lastConnectionDate).getTime();
 
                 return {
                     userId,
                     image: user.profilePhoto,
-                    status: user.connectionSettings?.lastConnectionDate === null,
+                    status: user.lastConnectionDate === null,
                     name: user.displayName,
                     lastMessage,
                     lastMessageDate,
                     lastMessageDateForSort, // Sadece sıralama için
-                    unReadMessage: user.connectionSettings.unReadMessage,
                     isArchive: user.isArchive,
                 };
             })
@@ -93,7 +90,6 @@ function ChatsList() {
                             name={chat.name}
                             lastMessage={chat.lastMessage}
                             lastMessageDate={chat.lastMessageDate}
-                            unReadMessage={chat.unReadMessage}
                             isArchive={chat.isArchive}
                         />
                     ))
