@@ -30,8 +30,6 @@ function UserMessageBar({ ChatId }) {
 
   // Mesajları tarih bazlı gruplandırma
 
-
-
   const groupedMessagesByDate = chat?.messages?.reduce((acc, message) => {
     const sentDate = Object.values(message.status.sent)[0];
     const date = sentDate ? sentDate.split("T")[0] : "Geçersiz Tarih";

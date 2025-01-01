@@ -79,7 +79,6 @@ function MessageInputBar({ chatId }) {
 
         try {
             await chatConnection.invoke("SendMessage", chatType, chatId, sendMessageDto);
-
             setSelectedFile(null);
         } catch (error) {
             console.error("Mesaj gönderme hatası:", error);
