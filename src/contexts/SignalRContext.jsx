@@ -123,6 +123,7 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 chatConnection.on("ReceiveCreateChat", (data) => {
+                    console.log("Yeni grup chat oluşturuldu:", data);
                     if (data.Individual) {
                         const individualData = data.Individual;
                         const chatId = Object.keys(individualData)[0];
@@ -133,11 +134,13 @@ export const SignalRProvider = ({ children }) => {
                             console.error("Chat ID alınamadı:", data);
                         }
                     } else if (data.Group) {
+                        console.log("Buraya giriyor mu");
                         const groupData = data.Group;
                         const groupId = Object.keys(groupData)[0];
+
                         if (groupId) {
                             const groupChatData = groupData[groupId];
-                            dispatch(addNewGroupChat({ groupId, groupData: groupChatData }));
+                            dispatch(addNewGroupChat({ chatId: groupId, chatData: groupChatData }));
                         } else {
                             console.error("Group ID alınamadı:", data);
                         }

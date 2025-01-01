@@ -67,7 +67,8 @@ export const userSettingsApi = createApi({
       async onQueryStarted(arg, { queryFulfilled, dispatch, getState }) {
         try {
           await queryFulfilled;
-          const currentUser = getState().auth.user;
+          const currentUser = getState().auth;
+          console.log("Current User: ", currentUser);
           updateUserField(dispatch, currentUser, 'displayName', arg);
         } catch (error) {
           console.error('Error updating display name:', error);
@@ -85,7 +86,7 @@ export const userSettingsApi = createApi({
       async onQueryStarted(arg, { queryFulfilled, dispatch, getState }) {
         try {
           await queryFulfilled;
-          const currentUser = getState().auth.user;
+          const currentUser = getState().auth;
           updateUserField(dispatch, currentUser, 'phoneNumber', arg);
         } catch (error) {
           console.error('Error updating phone number:', error);
@@ -103,7 +104,7 @@ export const userSettingsApi = createApi({
       async onQueryStarted(arg, { queryFulfilled, dispatch, getState }) {
         try {
           await queryFulfilled;
-          const currentUser = getState().auth.user;
+          const currentUser = getState().auth;
           updateUserField(dispatch, currentUser, 'biography', arg);
         } catch (error) {
           console.error('Error updating biography:', error);
@@ -138,7 +139,7 @@ export const userSettingsApi = createApi({
             1: "Light",
             2: "Dark",
           };
-          
+
           dispatch(
             setUser({
               ...currentAuth, // auth'un tamamını koru

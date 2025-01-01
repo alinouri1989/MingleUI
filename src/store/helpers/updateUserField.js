@@ -1,15 +1,17 @@
 import { setUser } from "../Slices/auth/authSlice";
 
 export const updateUserField = (dispatch, currentUser, field, value) => {
-    if (!currentUser || currentUser[field] === value) return;
+    if (!currentUser || currentUser.user[field] === value) return;
+    console.log(currentUser),
+        console.log("girmedi"),
+        dispatch(
 
-    dispatch(
-        setUser({
-            user: {
-                ...currentUser,
-                [field]: value, 
-            },
-            token: currentUser.token,
-        })
-    );
+            setUser({
+                ...currentUser, // Tüm currentUser objesini koru
+                user: {
+                    ...currentUser.user, // Kullanıcı bilgilerini koru
+                    [field]: value, // Sadece güncellenmesi gereken alanı değiştir
+                },
+            })
+        );
 };

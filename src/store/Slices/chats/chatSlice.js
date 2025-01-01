@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    Individual: [], // Her biri { id, participants, messages } içerecek
-    Group: [], // Henüz boş
+    Individual: [],
+    Group: [],
     isChatsInitialized: false,
 };
 
@@ -10,6 +10,35 @@ const chatSlice = createSlice({
     name: 'chat',
     initialState,
     reducers: {
+        initializeChats: (state, action) => {
+            const { Individual, Group } = action.payload;
+
+            // Individual verisini dönüştür
+            state.Individual = Object.keys(Individual).map(chatId => ({
+                id: chatId,
+                participants: Individual[chatId].participants,
+                archivedFor: Individual[chatId].archivedFor,
+                createdDate: Individual[chatId].createdDate,
+                messages: Object.entries(Individual[chatId].messages || {}).map(([messageId, messageData]) => ({
+                    id: messageId,
+                    ...messageData,
+                })),
+            }));
+
+            // Group verisini dönüştür (eğer gerekiyorsa)
+            state.Group = Object.keys(Group).map(chatId => ({
+                id: chatId,
+                participants: Group[chatId].participants,
+                archivedFor: Group[chatId].archivedFor,
+                createdDate: Group[chatId].createdDate,
+                messages: Object.entries(Group[chatId].messages || {}).map(([messageId, messageData]) => ({
+                    id: messageId,
+                    ...messageData,
+                })),
+            }));
+            state.isChatsInitialized = true;
+        },
+
         addNewIndividualChat: (state, action) => {
             const { chatId, chatData } = action.payload;
 
@@ -42,58 +71,30 @@ const chatSlice = createSlice({
         addNewGroupChat: (state, action) => {
             const { chatId, chatData } = action.payload;
 
-            // Eğer groupId zaten mevcutsa, yeni grup sohbetini eklemeyin
+            if (!chatData || !chatData.participants) {
+                console.error("Geçersiz chatData yapısı:", chatData);
+                return;
+            }
+
             const groupExists = state.Group.some(groupChat => groupChat.id === chatId);
             if (groupExists) {
                 console.log("Bu grup sohbeti zaten mevcut:", chatId);
                 return;
             }
 
-            // Gelen chat objesini uygun formata çevir
             const newGroupChat = {
                 id: chatId,
                 participants: chatData.participants,
                 archivedFor: chatData.archivedFor || {},
                 createdDate: chatData.createdDate,
-                groupName: chatData.groupName || "Unnamed Group", // Grup adı
-                admin: chatData.admin || null, // Grup yöneticisi
+                groupName: chatData.groupName || "Unnamed Group",
+                admin: chatData.admin || null,
                 messages: Object.entries(chatData.messages || {}).map(([messageId, messageData]) => ({
                     id: messageId,
                     ...messageData,
                 })),
             };
-
-            // Yeni grup sohbetini Group listesine ekle
             state.Group.push(newGroupChat);
-        },
-        // Gelen veriyi redux state'e ekleme
-        initializeChats: (state, action) => {
-            const { Individual, Group } = action.payload;
-
-            // Individual verisini dönüştür
-            state.Individual = Object.keys(Individual).map(chatId => ({
-                id: chatId,
-                participants: Individual[chatId].participants,
-                archivedFor: Individual[chatId].archivedFor,
-                createdDate: Individual[chatId].createdDate,
-                messages: Object.entries(Individual[chatId].messages || {}).map(([messageId, messageData]) => ({
-                    id: messageId,
-                    ...messageData,
-                })),
-            }));
-
-            // Group verisini dönüştür (eğer gerekiyorsa)
-            state.Group = Object.keys(Group).map(chatId => ({
-                id: chatId,
-                participants: Group[chatId].participants,
-                archivedFor: Group[chatId].archivedFor,
-                createdDate: Group[chatId].createdDate,
-                messages: Object.entries(Group[chatId].messages || {}).map(([messageId, messageData]) => ({
-                    id: messageId,
-                    ...messageData,
-                })),
-            }));
-            state.isChatsInitialized = true;
         },
 
         addMessageToIndividual: (state, action) => {
@@ -162,26 +163,22 @@ const chatSlice = createSlice({
             }
         },
 
-        // Mesajları al (chatId üzerinden)
         getChatMessages: (state, action) => {
-            const { type, chatId } = action.payload; // type: "Individual" veya "Group"
+            const { type, chatId } = action.payload;
             const chat = type === "Individual"
                 ? state.Individual.find(chat => chat.id === chatId)
                 : state.Group.find(chat => chat.id === chatId);
             return chat ? chat.messages : [];
         },
 
-        // Belirli bir bireysel sohbeti sil
         removeIndividualChat: (state, action) => {
             state.Individual = state.Individual.filter(chat => chat.id !== action.payload);
         },
 
-        // Belirli bir grup sohbetini sil
         removeGroupChat: (state, action) => {
             state.Group = state.Group.filter(chat => chat.id !== action.payload);
         },
 
-        // Tüm sohbetleri sıfırla
         resetChats: (state) => {
             state.Individual = [];
             state.Group = [];
