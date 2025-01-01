@@ -21,13 +21,12 @@ function UserMessageBar({ ChatId }) {
   const messagesEndRef = useRef(null);
 
 
-
   useEffect(() => {
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [chat?.messages]);
-
+  console.log("chats:", chat?.messages);
   // Mesajları tarih bazlı gruplandırma
 
   const groupedMessagesByDate = chat?.messages?.reduce((acc, message) => {

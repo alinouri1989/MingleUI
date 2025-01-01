@@ -15,14 +15,24 @@ function GroupMessageBar({ groupId }) {
     const { groupList } = useSelector((state) => state.groupList);
     const currentUserId = getUserIdFromToken(token);
 
-    const GroupChat = Group?.find(group => group?.id === groupId);
-    console.log("GroupChatbilgisi", GroupChat);
+    const GroupChat = Group.find(group => group?.id === groupId);
     const backgroundImage = getChatBackgroundColor(user.userSettings.chatBackground)
-    const messagesEndRef = useRef(null);
+    const groupMessagesEndRef = useRef(null);
+
+    const colorPalette = ["#4984F1", "#3B3BBA", "#21BE43", "#FFAB3D", "#FF4D4D", "#7E51CD", "#10AA91", "#9F2162", "#94775D"];
+    const userColorsRef = useRef(new Map());
+
+    const assignColorToUser = (userId) => {
+        if (!userColorsRef.current.has(userId)) {
+            const availableColor = colorPalette[userColorsRef.current.size % colorPalette.length];
+            userColorsRef.current.set(userId, availableColor);
+        }
+        return userColorsRef.current.get(userId);
+    };
 
     useEffect(() => {
-        if (messagesEndRef.current) {
-            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        if (groupMessagesEndRef.current) {
+            groupMessagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     }, [GroupChat?.messages]);
 
@@ -76,6 +86,8 @@ function GroupMessageBar({ groupId }) {
                             // timestamp'i uygun formatta dönüştür
                             const formattedTimestamp = convertToLocalTime(msg.status.sent[userId]);
 
+                            const userColor = assignColorToUser(userId);
+
                             return (
                                 <MessageBubble
                                     key={msg.id}
@@ -86,13 +98,15 @@ function GroupMessageBar({ groupId }) {
                                     status={msg.status}
                                     isGroupMessageBubble={true}
                                     messageType={msg.type}
-                                    senderProfile={senderProfile} // senderProfile burada gönderici profil bilgilerini alır
+                                    senderProfile={senderProfile}
+                                    userColor={userColor}
                                 />
                             );
                         })}
                     </div>
                 ))}
             </div>
+            <div ref={groupMessagesEndRef} />
         </div>
     )
 }

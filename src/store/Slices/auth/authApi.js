@@ -57,7 +57,7 @@ export const authApi = createApi({
       query: () => {
         const token = getJwtFromCookie();
         return {
-          url: 'User/UserProfile',
+          url: 'User/UserInfo',
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,

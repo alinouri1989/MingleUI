@@ -5,6 +5,7 @@ import { useModal } from "../../../contexts/ModalContext";
 import { useSelector } from "react-redux";
 import "./style.scss";
 import GroupChatCard from "./GroupChatCard";
+import { lastMessageDateHelper } from "../../../helpers/dateHelper";
 
 function GroupsList() {
   const { showModal, closeModal } = useModal();
@@ -32,10 +33,18 @@ function GroupsList() {
 
           // Get the last message from the chat group, if available
           let lastMessage = "";
-          if (chatGroup && chatGroup.messages.length > 0) {
+          if (chatGroup && chatGroup?.messages?.length > 0) {
             const lastMessageIndex = chatGroup.messages.length - 1;
             lastMessage = chatGroup.messages[lastMessageIndex].content;
           }
+
+
+          const lastMessageDate =
+            chatGroup?.messages?.length > 0
+              ? lastMessageDateHelper(
+                Object.values(chatGroup.messages[chatGroup.messages.length - 1].status.sent)[0]
+              )
+              : "";
 
           return (
             <GroupChatCard
@@ -44,6 +53,7 @@ function GroupsList() {
               groupName={group.name}
               groupPhotoUrl={group.photoUrl}
               lastMessage={lastMessage}
+              lastMessageDate={lastMessageDate}
             />
           );
         })}

@@ -80,7 +80,7 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 chatConnection.on("ReceiveGetMessages", (data) => {
-                    console.log("Gelen mesajlar:", data);
+                    console.log("!!! Gelen mesajlar !!!!:", data);
                     if (data.Individual) {
                         Object.entries(data.Individual).forEach(([chatId, messages]) => {
                             Object.entries(messages).forEach(([messageId, messageData]) => {

@@ -11,7 +11,7 @@ import { defaultGroupPhoto } from "../../../constants/DefaultProfilePhoto.js";
 import "./style.scss";
 import { useNavigate } from "react-router-dom";
 
-function GroupChatCard({ groupId, groupName, groupPhotoUrl, lastMessage, createdDate }) {
+function GroupChatCard({ groupId, groupName, groupPhotoUrl, lastMessage, createdDate, lastMessageDate }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
@@ -52,7 +52,7 @@ function GroupChatCard({ groupId, groupName, groupPhotoUrl, lastMessage, created
             </div>
 
             <div className="status-informations-box">
-                <span>{new Date(createdDate).toLocaleString()}</span>
+                <span>{lastMessageDate}</span>
                 {/* Optional unread message count */}
                 {/* {group.unReadMessage > 0 && <p>{group.unReadMessage}</p>} */}
             </div>

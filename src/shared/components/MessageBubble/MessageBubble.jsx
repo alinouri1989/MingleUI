@@ -15,7 +15,7 @@ import { FaEarthAfrica } from "react-icons/fa6";
 import './style.scss';
 import { SuccessAlert } from '../../../helpers/customAlert';
 
-function MessageBubble({ userId, content, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
+function MessageBubble({ userId, userColor, content, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -76,7 +76,7 @@ function MessageBubble({ userId, content, timestamp, isSender, status, messageTy
 
                 <div className='message-content'>
                     {!isSender &&
-                        <div className='user-info'>
+                        <div className='user-info' style={{ color: userColor }}>
                             <p>{senderProfile?.displayName}</p>
                         </div>
                     }
