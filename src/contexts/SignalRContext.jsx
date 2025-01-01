@@ -31,12 +31,13 @@ export const SignalRProvider = ({ children }) => {
     const [notificationConnection, setNotificationConnection] = useState(null);
     const [connectionStatus, setConnectionStatus] = useState("disconnected");
     const { token } = useSelector(state => state.auth);
-
+    const { Individual, Group } = useSelector(state => state.chat);
     const navigate = useNavigate();
     const userId = getUserIdFromToken(token);
     const [error, setError] = useState(null);
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
+
 
     useEffect(() => {
         const token = getJwtFromCookie();
@@ -80,7 +81,7 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 chatConnection.on("ReceiveGetMessages", (data) => {
-                    console.log("!!! Gelen mesajlar !!!!:", data);
+                    console.log("Chat", data);
                     if (data.Individual) {
                         Object.entries(data.Individual).forEach(([chatId, messages]) => {
                             Object.entries(messages).forEach(([messageId, messageData]) => {
@@ -108,6 +109,12 @@ export const SignalRProvider = ({ children }) => {
                         });
                     }
                 });
+
+
+                chatConnection.on("Error", (data) => {
+                    console.log(data)
+                });
+
 
                 chatConnection.on("ReceiveInitialRecipientProfiles", (data) => {
                     dispatch(setInitialChatList(data));
@@ -153,10 +160,8 @@ export const SignalRProvider = ({ children }) => {
 
 
                 // Group Proccessing
-
                 notificationConnection.on("ReceiveNewGroupProfiles", (data) => {
                     console.log("NotificationHub'dan gelen grup profilleri:", data);
-
 
                     dispatch(setGroupList(data));
                     // Gelen data'nın key'ini almak için Object.keys() kullanılıyor
@@ -231,10 +236,58 @@ export const SignalRProvider = ({ children }) => {
         };
     }, []);
 
+    useEffect(() => {
+        if (chatConnection && (Individual?.length > 0 || Group?.length > 0)) {
+            deliverMessages();
+        }
+    }, [chatConnection, Individual, Group]);
+
+    const deliverMessages = async () => {
+        try {
+            const individualPromises = Individual.flatMap(chat =>
+                chat.messages
+                    .filter(message => {
+                        const isSent = message.status.sent && Object.keys(message.status.sent).includes(userId);
+                        const isDelivered = message.status.delivered && Object.keys(message.status.delivered).includes(userId);
+                        // Hem sent hem de delivered içinde userId varsa atlanır
+                        return !(isSent || isDelivered);
+                    })
+                    .map(message =>
+                        chatConnection.invoke("DeliverMessage", "Individual", chat.id, message.id)
+                    )
+            );
+
+            // Group mesajları filtreleme ve gönderme
+            const groupPromises = Group.flatMap(chat =>
+                chat.messages
+                    .filter(message => {
+                        // Eğer delivered doluysa ve userId eşleşiyorsa bu mesajı atla
+                        return !(
+                            message.status.delivered &&
+                            Object.keys(message.status.delivered).includes(userId)
+                        );
+                    })
+                    .map(message =>
+                        chatConnection.invoke("DeliverMessage", "Group", chat.id, message.id)
+                    )
+            );
+
+            // Tüm mesajları gönder
+            await Promise.all([...individualPromises, ...groupPromises]);
+
+            console.log("All messages delivered successfully.");
+        } catch (err) {
+            console.error("Error delivering messages:", err);
+        }
+    };
+
+
     if (loading) {
         return null;
     }
 
+
+    // Bağımlılıklar net tanımlandı
     return (
         <SignalRContext.Provider
             value={{ chatConnection, notificationConnection, connectionStatus, error, loading }}

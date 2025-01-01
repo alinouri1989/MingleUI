@@ -9,13 +9,11 @@ import "./shared/styles/main.scss";
 
 createRoot(document.getElementById('root')).render(
 
-   
+
         <BrowserRouter>
-            <Provider store={store}>
-              
-                    <App />
-            
-            </Provider>
+                <Provider store={store}>
+                        <App />
+                </Provider>
         </BrowserRouter>
-   
+
 );

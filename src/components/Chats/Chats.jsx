@@ -81,7 +81,7 @@ function Chats() {
         <UserDetailsBar
           isSidebarOpen={isSidebarOpen}
           toggleSidebar={toggleSidebar}
-          recipientProfile={recipientProfile} // Sidebar için profil bilgisi
+          recipientProfile={recipientProfile}
         />
       )}
     </>

@@ -22,7 +22,7 @@ function MessageBubble({ userId, userColor, content, timestamp, isSender, status
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
-
+    console.log(status);
 
 
     const handleClose = () => {
@@ -47,12 +47,12 @@ function MessageBubble({ userId, userColor, content, timestamp, isSender, status
         // Eğer mesaj okunduysa
         statusIcon = <LuCheckCheck />;
         statusColor = "#585CE1"; // Mavi (Okundu)
-    } else if (status.delivered && status.delivered[userId]) {
-        // Eğer mesaj teslim edildiyse
+    } else if (status.delivered && Object.keys(status.delivered).length > 0) {
+        // Eğer mesaj teslim edildiyse ve delivered doluysa
         statusIcon = <LuCheckCheck />;
         statusColor = "#828A96"; // Gri (Teslim Edildi)
     } else if (status.sent && status.sent[userId]) {
-        // Eğer mesaj gönderildiyse
+        // Eğer mesaj gönderildiyse ve delivered boşsa
         statusIcon = <LuCheck />;
         statusColor = "#828A96"; // Gri (Gönderildi)
     } else {
