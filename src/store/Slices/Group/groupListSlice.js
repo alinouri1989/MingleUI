@@ -10,7 +10,7 @@ const groupListSlice = createSlice({
     setGroupList(state, action) {
       state.groupList = {
         ...state.groupList,
-        ...action.payload, // Gelen veriyi ekliyoruz
+        ...action.payload,
       };
       state.isGroupListInitialized = true;
     },

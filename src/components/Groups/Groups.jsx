@@ -1,18 +1,18 @@
+import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import WelcomeScreen from "../WelcomeScreen/WelcomeScreen";
 import MessageInputBar from "../../shared/components/MessageInputBar/MessageInputBar";
 import GroupMessageBar from "./Components/GroupMessageBar";
 import GroupDetailsBar from "./Components/GroupDetailsBar";
 import GroupTopBar from "./Components/GroupTopBar";
-import "../layout.scss";
-import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { getUserIdFromToken } from "../../helpers/getUserIdFromToken";
+import "../layout.scss";
+
 
 function GroupChats() {
   const { id } = useParams(); // URL'den ID'yi al
   const navigate = useNavigate(); // Navigate fonksiyonu
-console.log(id);
+  console.log("Params", id);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [groupProfile, setGroupProfile] = useState(null);
 
@@ -20,58 +20,54 @@ console.log(id);
   const { Group, isChatsInitialized } = useSelector((state) => state.chat); // Group bilgileri
   const { groupList } = useSelector((state) => state.groupList); // Group list bilgileri
 
-  // Kullanıcı ID'si
-  const { token } = useSelector((state) => state.auth);
-  const UserId = getUserIdFromToken(token);
-
   // // Group sohbeti var mı kontrolü ve yönlendirme
-  // useEffect(() => {
-  //   if (isChatsInitialized && id) {
-  //     const groupExists = Group.some((group) => group.id === id);
-  //     if (!groupExists) {
-  //       navigate("/anasayfa", { replace: true });
-  //     }
-  //   }
-  // }, [isChatsInitialized, Group, id, navigate]);
+  useEffect(() => {
+    if (isChatsInitialized && id) {
+      const groupExists = Group.some((group) => group.id === id);
+      if (!groupExists) {
+        navigate("/anasayfa", { replace: true });
+      }
+    }
+  }, [isChatsInitialized, Group, id, navigate]);
 
   // // Grup profilini almak
 
 
-useEffect(() => {
-  if (id && Group?.length > 0 && groupList) {
+  useEffect(() => {
+    if (id && Group?.length > 0 && groupList) {
       // `id` ve `group.id` eşleşmesini kontrol et
       const matchedGroup = Group.find((group) => String(group.id) === String(id));
 
       if (matchedGroup) {
-          // matchedGroup içinde participants'tan ilk ID'yi al
-          const participantId = matchedGroup.participants?.[0];
+        // matchedGroup içinde participants'tan ilk ID'yi al
+        const participantId = matchedGroup.participants?.[0];
 
-          if (participantId) {
-              // groupList'te participantId ile eşleşen nesneyi bul
-              const matchedGroupListEntry = groupList[participantId];
+        if (participantId) {
+          // groupList'te participantId ile eşleşen nesneyi bul
+          const matchedGroupListEntry = groupList[participantId];
 
-              if (matchedGroupListEntry) {
-                  setGroupProfile({
-                      ...matchedGroupListEntry,
-                      groupId: matchedGroup.id, // Group'dan id ekle
-                      lastMessage: matchedGroup.messages?.[matchedGroup.messages.length - 1]?.content || "", // Son mesaj
-                  });
-              } else {
-                  console.warn("Eşleşen groupList verisi bulunamadı");
-                  setGroupProfile(null);
-              }
+          if (matchedGroupListEntry) {
+            setGroupProfile({
+              ...matchedGroupListEntry,
+              groupId: matchedGroup.id, // Group'dan id ekle
+              lastMessage: matchedGroup.messages?.[matchedGroup.messages.length - 1]?.content || "", // Son mesaj
+            });
           } else {
-              console.warn("Group'un participants içinde ID bulunamadı");
-              setGroupProfile(null);
+            console.warn("Eşleşen groupList verisi bulunamadı");
+            setGroupProfile(null);
           }
-      } else {
-          console.warn("Eşleşen Group bulunamadı");
+        } else {
+          console.warn("Group'un participants içinde ID bulunamadı");
           setGroupProfile(null);
+        }
+      } else {
+        console.warn("Eşleşen Group bulunamadı");
+        setGroupProfile(null);
       }
-  } else {
+    } else {
       setGroupProfile(null);
-  }
-}, [id, Group, groupList]);
+    }
+  }, [id, Group, groupList]);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);

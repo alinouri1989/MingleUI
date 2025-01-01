@@ -13,15 +13,16 @@ import { LuCheckCheck } from "react-icons/lu";
 import { FaEarthAfrica } from "react-icons/fa6";
 
 import './style.scss';
-import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
+import { SuccessAlert } from '../../../helpers/customAlert';
 
-function MessageBubble({ userId, content, timestamp, isSender, status, profileImage, userName, messageType, isGroupMessageBubble }) {
+function MessageBubble({ userId, content, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
+
 
 
     const handleClose = () => {
@@ -68,7 +69,7 @@ function MessageBubble({ userId, content, timestamp, isSender, status, profileIm
                     !isSender &&
 
                     <div className='image-box'>
-                        <img src={profileImage} alt="" />
+                        <img src={senderProfile?.profilePhoto} alt="" />
                     </div>
                 }
 
@@ -76,7 +77,7 @@ function MessageBubble({ userId, content, timestamp, isSender, status, profileIm
                 <div className='message-content'>
                     {!isSender &&
                         <div className='user-info'>
-                            <p>{userName}</p>
+                            <p>{senderProfile?.displayName}</p>
                         </div>
                     }
 

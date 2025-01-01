@@ -1,24 +1,18 @@
 import React from 'react'
-import { PiPhoneFill } from "react-icons/pi";
-import { HiMiniVideoCamera } from "react-icons/hi2";
 import { IoIosArrowDropleftCircle } from "react-icons/io";
-import YardimlasmaGrubu from "../../../assets/YardimlasmaGrubu.png"
 import { defaultGroupPhoto } from '../../../constants/DefaultProfilePhoto';
 function GroupTopBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
-    // Props olarak alır.
-
-    console.log("groupProfile", groupProfile);
 
 
     const participantCount = groupProfile?.participants
-    ? Object.keys(groupProfile.participants).length
-    : 0;
+        ? Object.keys(groupProfile.participants).length
+        : 0;
 
     return (
         <div className={`group-top-bar ${isSidebarOpen ? 'close' : ''}`}>
             <div className="group-info">
                 <div className="image-box">
-                    <img src={defaultGroupPhoto}/>
+                    <img src={defaultGroupPhoto} />
                     {/* groupProfile?.photoUrl */}
                 </div>
                 <div className="name-and-status-box">
