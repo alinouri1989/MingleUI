@@ -39,7 +39,7 @@ function ChatsList() {
                         ? lastMessageDateHelper(
                             Object.values(chatData.messages[chatData.messages.length - 1].status.sent)[0]
                         )
-                        : user.lastConnectionDate;
+                        : "";
 
                 // Tarih sıralama için kullanılacak
                 const lastMessageDateForSort =
@@ -47,12 +47,12 @@ function ChatsList() {
                         ? new Date(
                             Object.values(chatData.messages[chatData.messages.length - 1].status.sent)[0]
                         ).getTime()
-                        : new Date(user.lastConnectionDate).getTime();
+                        : "";
 
                 return {
                     userId,
                     image: user.profilePhoto,
-                    status: user.lastConnectionDate === null,
+                    status: user.lastConnectionDate === "0001-01-01T00:00:00",
                     name: user.displayName,
                     lastMessage,
                     lastMessageDate,

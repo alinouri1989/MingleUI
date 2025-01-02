@@ -12,7 +12,7 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile }) {
         return null;
     }
 
-    const status = recipientProfile.lastConnectionDate ? 'offline' : 'online';
+    const status = recipientProfile.lastConnectionDate == "0001-01-01T00:00:00" ? 'online' : 'offline';
     const lastConnectionDate = recipientProfile.lastConnectionDate;
 
 

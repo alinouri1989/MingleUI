@@ -80,7 +80,7 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
                                         {Object.entries(groupProfile.participants)
                                             .sort(([, memberA], [, memberB]) => memberA.role - memberB.role) // Role değerine göre sıralama
                                             .map(([id, member]) => {
-                                                const isOnline = member.lastConnectionDate == null;
+                                                const isOnline = member.lastConnectionDate == "0001-01-01T00:00:00";
 
                                                 return (
                                                     <div key={id} className="member-box">

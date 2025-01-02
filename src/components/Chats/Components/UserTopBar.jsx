@@ -13,7 +13,7 @@ function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile }) {
         return null;
     }
 
-    const status = recipientProfile.lastConnectionDate ? 'offline' : 'online';
+    const status = recipientProfile.lastConnectionDate == "0001-01-01T00:00:00" ? 'online' : 'offline';
     const lastConnectionDate = recipientProfile.lastConnectionDate;
 
     const { showModal, closeModal } = useModal();
@@ -35,7 +35,12 @@ function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile }) {
                 </div>
                 <div className="name-and-status-box">
                     <p className="user-name">{recipientProfile.displayName}</p>
-                    <span>{formatDateForLastConnectionDate(lastConnectionDate)}</span>
+
+                    {status == "online" ?
+                        <span>Çevrimiçi</span>
+                        :
+                        <span>{formatDateForLastConnectionDate(lastConnectionDate)}</span>
+                    }
                 </div>
             </div>
 

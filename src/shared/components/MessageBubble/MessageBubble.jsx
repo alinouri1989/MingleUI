@@ -22,8 +22,6 @@ function MessageBubble({ userId, userColor, content, timestamp, isSender, status
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
-    console.log(status);
-
 
     const handleClose = () => {
         setAnchorEl(null);
