@@ -26,7 +26,6 @@ function UserMessageBar({ ChatId }) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [chat?.messages]);
-  console.log("chats:", chat?.messages);
   // Mesajları tarih bazlı gruplandırma
 
   const groupedMessagesByDate = chat?.messages?.reduce((acc, message) => {

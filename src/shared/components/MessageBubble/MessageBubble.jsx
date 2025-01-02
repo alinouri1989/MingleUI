@@ -41,7 +41,7 @@ function MessageBubble({ userId, userColor, content, timestamp, isSender, status
     let statusIcon;
     let statusColor;
 
-    if (status.read && status.read[userId]) {
+    if (status.read && Object.keys(status.read).length > 0) {
         // Eğer mesaj okunduysa
         statusIcon = <LuCheckCheck />;
         statusColor = "#585CE1"; // Mavi (Okundu)

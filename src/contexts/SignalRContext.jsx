@@ -240,32 +240,56 @@ export const SignalRProvider = ({ children }) => {
         if (chatConnection && (Individual?.length > 0 || Group?.length > 0)) {
             deliverMessages();
         }
-    }, [chatConnection, Individual, Group]);
+    }, [chatConnection, Individual, Group, window.location.pathname]);
+
 
     const deliverMessages = async () => {
         try {
-            const individualPromises = Individual.flatMap(chat =>
-                chat.messages
+            // Location'dan aktif chatId al
+            const chatIdFromLocation = window.location.pathname.includes("sohbetler")
+                ? window.location.pathname.split('/')[2]
+                : null;
+
+            // Individual mesajlarını filtrele ve gönder
+            const individualPromises = Individual.flatMap(chat => {
+                return chat.messages
                     .filter(message => {
                         const isSent = message.status.sent && Object.keys(message.status.sent).includes(userId);
                         const isDelivered = message.status.delivered && Object.keys(message.status.delivered).includes(userId);
-                        // Hem sent hem de delivered içinde userId varsa atlanır
+                        // sent ve delivered için genel işlem
                         return !(isSent || isDelivered);
                     })
                     .map(message =>
                         chatConnection.invoke("DeliverMessage", "Individual", chat.id, message.id)
-                    )
-            );
+                    );
+            });
 
-            // Group mesajları filtreleme ve gönderme
+            // Aktif chatId için okuma kontrolü ve işlem
+            const readPromises = chatIdFromLocation
+                ? Individual.flatMap(chat => {
+                    if (chat.id === chatIdFromLocation) {
+                        return chat.messages
+                            .filter(message => {
+                                const isRead = message.status.read && Object.keys(message.status.read).includes(userId);
+                                const isSentByUser = message.status.sent && Object.keys(message.status.sent).includes(userId);
+                                // Eğer mesaj zaten okunmuşsa veya gönderici kullanıcıysa işleme alma
+                                return !isRead && !isSentByUser;
+                            })
+                            .map(message =>
+                                chatConnection.invoke("ReadMessage", "Individual", chat.id, message.id)
+                            );
+                    }
+                    return [];
+                })
+                : [];
+
+            // Group mesajlarını filtrele ve gönder
             const groupPromises = Group.flatMap(chat =>
                 chat.messages
                     .filter(message => {
+                        const isDelivered = message.status.delivered && Object.keys(message.status.delivered).includes(userId);
                         // Eğer delivered doluysa ve userId eşleşiyorsa bu mesajı atla
-                        return !(
-                            message.status.delivered &&
-                            Object.keys(message.status.delivered).includes(userId)
-                        );
+                        return !isDelivered;
                     })
                     .map(message =>
                         chatConnection.invoke("DeliverMessage", "Group", chat.id, message.id)
@@ -273,14 +297,13 @@ export const SignalRProvider = ({ children }) => {
             );
 
             // Tüm mesajları gönder
-            await Promise.all([...individualPromises, ...groupPromises]);
+            await Promise.all([...individualPromises, ...groupPromises, ...readPromises]);
 
-            console.log("All messages delivered successfully.");
+            console.log("All messages processed successfully.");
         } catch (err) {
-            console.error("Error delivering messages:", err);
+            console.error("Error processing messages:", err);
         }
     };
-
 
     if (loading) {
         return null;
