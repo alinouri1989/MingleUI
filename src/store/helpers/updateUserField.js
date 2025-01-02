@@ -1,9 +1,10 @@
 import { setUser } from "../Slices/auth/authSlice";
 
 export const updateUserField = (dispatch, currentUser, field, value) => {
-    if (!currentUser || currentUser.user[field] === value) return;
-    console.log(currentUser),
-        console.log("girmedi"),
+    console.log("girdi mi", currentUser);
+    if (!currentUser) return;
+
+    console.log("girmedi"),
         dispatch(
 
             setUser({

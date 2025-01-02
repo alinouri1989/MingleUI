@@ -242,11 +242,13 @@ export const SignalRProvider = ({ children }) => {
         }
     }, [chatConnection, Individual, Group, window.location.pathname]);
 
-
     const deliverMessages = async () => {
         try {
-            // Location'dan aktif chatId al
+            // Location'dan aktif chatId ve groupId al
             const chatIdFromLocation = window.location.pathname.includes("sohbetler")
+                ? window.location.pathname.split('/')[2]
+                : null;
+            const groupIdFromLocation = window.location.pathname.includes("gruplar")
                 ? window.location.pathname.split('/')[2]
                 : null;
 
@@ -256,7 +258,6 @@ export const SignalRProvider = ({ children }) => {
                     .filter(message => {
                         const isSent = message.status.sent && Object.keys(message.status.sent).includes(userId);
                         const isDelivered = message.status.delivered && Object.keys(message.status.delivered).includes(userId);
-                        // sent ve delivered için genel işlem
                         return !(isSent || isDelivered);
                     })
                     .map(message =>
@@ -264,15 +265,14 @@ export const SignalRProvider = ({ children }) => {
                     );
             });
 
-            // Aktif chatId için okuma kontrolü ve işlem
-            const readPromises = chatIdFromLocation
+            // Aktif chatId için okuma kontrolü ve işlem (Individual)
+            const individualReadPromises = chatIdFromLocation
                 ? Individual.flatMap(chat => {
                     if (chat.id === chatIdFromLocation) {
                         return chat.messages
                             .filter(message => {
                                 const isRead = message.status.read && Object.keys(message.status.read).includes(userId);
                                 const isSentByUser = message.status.sent && Object.keys(message.status.sent).includes(userId);
-                                // Eğer mesaj zaten okunmuşsa veya gönderici kullanıcıysa işleme alma
                                 return !isRead && !isSentByUser;
                             })
                             .map(message =>
@@ -287,17 +287,35 @@ export const SignalRProvider = ({ children }) => {
             const groupPromises = Group.flatMap(chat =>
                 chat.messages
                     .filter(message => {
+                        const isSent = message.status.sent && Object.keys(message.status.sent).includes(userId);
                         const isDelivered = message.status.delivered && Object.keys(message.status.delivered).includes(userId);
-                        // Eğer delivered doluysa ve userId eşleşiyorsa bu mesajı atla
-                        return !isDelivered;
+                        return !(isSent || isDelivered);
                     })
                     .map(message =>
                         chatConnection.invoke("DeliverMessage", "Group", chat.id, message.id)
                     )
             );
 
+            // Aktif groupId için okuma kontrolü ve işlem (Group)
+            const groupReadPromises = groupIdFromLocation
+                ? Group.flatMap(chat => {
+                    if (chat.id === groupIdFromLocation) {
+                        return chat.messages
+                            .filter(message => {
+                                const isRead = message.status.read && Object.keys(message.status.read).includes(userId);
+                                const isSentByUser = message.status.sent && Object.keys(message.status.sent).includes(userId);
+                                return !isRead && !isSentByUser;
+                            })
+                            .map(message =>
+                                chatConnection.invoke("ReadMessage", "Group", chat.id, message.id)
+                            );
+                    }
+                    return [];
+                })
+                : [];
+
             // Tüm mesajları gönder
-            await Promise.all([...individualPromises, ...groupPromises, ...readPromises]);
+            await Promise.all([...individualPromises, ...individualReadPromises, ...groupPromises, ...groupReadPromises]);
 
             console.log("All messages processed successfully.");
         } catch (err) {

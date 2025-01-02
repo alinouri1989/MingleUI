@@ -64,8 +64,7 @@ function MessageInputBar({ chatId }) {
         // DTO'yu oluşturma
         const sendMessageDto = {
             ContentType: contentType,
-            TextContent: message || null,
-            FileContent: selectedFile ? await selectedFile.arrayBuffer() : null,
+            Content: message || null,
         };
 
         let chatType = '';

@@ -15,6 +15,8 @@ import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
 import { useUpdateDisplayNameMutation, useUpdatePhoneNumberMutation, useUpdateBiographyMutation, useRemoveProfilePhotoMutation, useUpdateProfilePhotoMutation } from "../../../store/Slices/userSettings/userSettingsApi";
 import PreLoader from "../../../shared/components/PreLoader/PreLoader";
 import { defaultProfilePhoto } from "../../../constants/DefaultProfilePhoto";
+import { convertFileToBase64 } from "../../../store/helpers/convertFileToBase64";
+import { convertFileToByteArray } from "../../../store/helpers/convertFileToByteArray";
 
 function Account() {
 
@@ -124,22 +126,22 @@ function Account() {
 
   // Resim seçme işlemi
   const handleImageUpload = async (event) => {
-    const file = event.target.files[0];
+    const file = event.target.files[0]; // Dosyayı al
     if (file) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target.result);
-      };
-      reader.readAsDataURL(file);
-    }
+      try {
+        // Dosyayı Base64 formatına çevir
+        const base64String = await convertFileToBase64(file);
 
-    try {
-      await updateProfilePhoto(file)
-      SuccessAlert("Fotoğraf Güncellendi")
-    } catch (error) {
-      ErrorAlert("Fotoğraf Güncellenemedi")
+        await updateProfilePhoto(base64String);
+
+        SuccessAlert("Fotoğraf Güncellendi");
+      } catch (error) {
+        console.error("Error:", error);
+        ErrorAlert("Fotoğraf Güncellenemedi");
+      }
     }
   };
+
 
   return (
     <div className="account-box">
@@ -298,7 +300,7 @@ function Account() {
             </button>
           </div>
         </div>
-        
+
         <div className="biography-box">
           <div className="biograpy-edit-box">
             <p>Biyografi</p>

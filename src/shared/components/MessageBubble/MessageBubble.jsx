@@ -14,9 +14,13 @@ import { FaEarthAfrica } from "react-icons/fa6";
 
 import './style.scss';
 import { SuccessAlert } from '../../../helpers/customAlert';
+import { useSelector } from 'react-redux';
 
 function MessageBubble({ userId, userColor, content, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
 
+
+    const { Group } = useSelector((state) => state.chat);
+    const { groupList } = useSelector((state) => state.groupList);
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -41,23 +45,68 @@ function MessageBubble({ userId, userColor, content, timestamp, isSender, status
     let statusIcon;
     let statusColor;
 
-    if (status.read && Object.keys(status.read).length > 0) {
-        // Eğer mesaj okunduysa
-        statusIcon = <LuCheckCheck />;
-        statusColor = "#585CE1"; // Mavi (Okundu)
-    } else if (status.delivered && Object.keys(status.delivered).length > 0) {
-        // Eğer mesaj teslim edildiyse ve delivered doluysa
-        statusIcon = <LuCheckCheck />;
-        statusColor = "#828A96"; // Gri (Teslim Edildi)
-    } else if (status.sent && status.sent[userId]) {
-        // Eğer mesaj gönderildiyse ve delivered boşsa
-        statusIcon = <LuCheck />;
-        statusColor = "#828A96"; // Gri (Gönderildi)
+    // Aktif grup ID'sini window.location'dan al
+    const groupIdFromLocation = window.location.pathname.includes("gruplar")
+        ? window.location.pathname.split('/')[2]
+        : null;
+
+    if (!isGroupMessageBubble) {
+        // Bireysel mesajlar için
+        if (status.read && Object.keys(status.read).length > 0) {
+            // Eğer mesaj okunduysa
+            statusIcon = <LuCheckCheck />;
+            statusColor = "#585CE1"; // Mavi (Okundu)
+        } else if (status.delivered && Object.keys(status.delivered).length > 0) {
+            // Eğer mesaj teslim edildiyse
+            statusIcon = <LuCheckCheck />;
+            statusColor = "#828A96"; // Gri (Teslim Edildi)
+        } else if (status.sent && status.sent[userId]) {
+            // Eğer mesaj gönderildiyse
+            statusIcon = <LuCheck />;
+            statusColor = "#828A96"; // Gri (Gönderildi)
+        } else {
+            // Durum yoksa
+            statusIcon = <FaEarthAfrica />;
+            statusColor = "#828A96"; // Varsayılan gri
+        }
     } else {
-        // Durum yoksa (Invalid)
-        statusIcon = <FaEarthAfrica />;
-        statusColor = "#828A96"; // Varsayılan gri
+        // Grup mesajları için
+        const chatGroup = Group.find(group => group.id === groupIdFromLocation);
+        if (chatGroup) {
+            const participantKeys = chatGroup.participants;
+            const groupInfo = groupList[participantKeys];
+            const groupParticipants = groupInfo?.participants || {};
+
+            const totalParticipants = Object.keys(groupParticipants).length;
+            const readCount = Object.keys(status.read || {}).filter(userId =>
+                Object.keys(groupParticipants).includes(userId)
+            ).length;
+
+            const deliverCount = Object.keys(status.delivered || {}).filter(userId =>
+                Object.keys(groupParticipants).includes(userId)
+            ).length;
+
+            // Eğer tüm katılımcılar (mesaj gönderen hariç) okuduysa
+            if (readCount === totalParticipants - 1) {
+                statusIcon = <LuCheckCheck />;
+                statusColor = "#585CE1"; // Mavi (Okundu)
+            } else if (deliverCount === totalParticipants - 1) {
+                statusIcon = <LuCheckCheck />;
+                statusColor = "#828A96"; // Gri (Kısmen okundu)
+            } else if (status.sent && status.sent[userId]) {
+                statusIcon = <LuCheck />;
+                statusColor = "#828A96"; // Gri (Gönderildi)
+            } else {
+                statusIcon = <FaEarthAfrica />;
+                statusColor = "#828A96"; // Varsayılan gri
+            }
+        } else {
+            // Grup bulunamazsa
+            statusIcon = <FaEarthAfrica />;
+            statusColor = "#828A96"; // Varsayılan gri
+        }
     }
+
 
     return (
         <div className={"message-bubble-box"}>

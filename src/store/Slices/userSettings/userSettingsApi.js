@@ -3,6 +3,7 @@ import { getJwtFromCookie } from '../../helpers/getJwtFromCookie.js';
 import { updateUserField } from "../../helpers/updateUserField.js";
 import { setUser } from '../auth/authSlice.js';
 import { current } from '@reduxjs/toolkit';
+import { convertFileToBase64 } from '../../helpers/convertFileToBase64.js';
 
 export const userSettingsApi = createApi({
   reducerPath: 'accountSettingsApi',
@@ -27,7 +28,7 @@ export const userSettingsApi = createApi({
       async onQueryStarted(arg, { queryFulfilled, dispatch, getState }) {
         try {
           const { data } = await queryFulfilled;
-          const currentUser = getState().auth.user;
+          const currentUser = getState().auth;
           updateUserField(dispatch, currentUser, 'profilePhoto', data.profilePhoto);
         } catch (error) {
           console.error('Error removing profile photo:', error);
@@ -35,21 +36,22 @@ export const userSettingsApi = createApi({
       },
     }),
 
-    // Update Profile Photo
     updateProfilePhoto: builder.mutation({
-      query: (file) => {
-        const formDataWithHeaders = new FormData();
-        formDataWithHeaders.append('ProfilePhoto', file);
+      query: (newPhoto) => {
         return {
           url: 'User/ProfilePhoto',
           method: 'PATCH',
-          body: formDataWithHeaders,
+          body: { profilePhoto: newPhoto },
         };
       },
       async onQueryStarted(arg, { queryFulfilled, dispatch, getState }) {
         try {
           const { data } = await queryFulfilled;
-          const currentUser = getState().auth.user;
+
+          console.log("Data: ", data);
+          const currentUser = getState().auth;
+          console.log("Data profil photo url: ", data.profilePhoto);
+
           updateUserField(dispatch, currentUser, 'profilePhoto', data.profilePhoto);
         } catch (error) {
           console.error('Error updating profile photo:', error);
