@@ -7,7 +7,7 @@ import { GroupApi } from './Slices/Group/GroupApi.js';
 import chatReducer from "./Slices/chats/chatSlice.js";
 import chatListReducer from "./Slices/chats/chatListSlice.js";
 import groupListReducer from "./Slices/Group/groupListSlice.js";
-
+import callReducer from "./Slices/calls/callSlice.js";
 
 const store = configureStore({
   reducer: {
@@ -15,7 +15,8 @@ const store = configureStore({
     auth: authReducer,
     chat: chatReducer,
     chatList: chatListReducer,
-    groupList : groupListReducer,
+    groupList: groupListReducer,
+    call: callReducer,
 
     // RTK Query API reducers
     [authApi.reducerPath]: authApi.reducer,

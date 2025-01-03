@@ -9,6 +9,7 @@ import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
 import { setGroupList, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
 import { useModal } from "./ModalContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { handleIncomingCall, handleOutgoingCall } from "../store/Slices/calls/callSlice.js";
 
 // SignalR context oluşturuyoruz
 const SignalRContext = createContext();
@@ -21,14 +22,16 @@ export const useSignalR = () => {
         throw new Error("useSignalR must be used within a SignalRProvider");
     }
 
-    const { chatConnection, notificationConnection, connectionStatus, error, loading } = context;
+    const { chatConnection, notificationConnection, connectionStatus, callConnection, error, loading } = context;
 
-    return { chatConnection, notificationConnection, connectionStatus, error, loading };
+    return { chatConnection, notificationConnection, callConnection, connectionStatus, error, loading };
 };
 
 export const SignalRProvider = ({ children }) => {
     const [chatConnection, setChatConnection] = useState(null);
     const [notificationConnection, setNotificationConnection] = useState(null);
+    const [callConnection, setCallConnection] = useState(null);
+
     const [connectionStatus, setConnectionStatus] = useState("disconnected");
     const { token } = useSelector(state => state.auth);
     const { Individual, Group } = useSelector(state => state.chat);
@@ -63,25 +66,37 @@ export const SignalRProvider = ({ children }) => {
             .withAutomaticReconnect()
             .build();
 
+        const callConnection = new HubConnectionBuilder()
+            .withUrl("http://localhost:5069/CallHub", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+            .configureLogging(LogLevel.Information)
+            .withAutomaticReconnect()
+            .build();
+
         setConnectionStatus("connecting");
 
-        Promise.all([chatConnection.start(), notificationConnection.start()])
+        Promise.all([chatConnection.start(), notificationConnection.start(), callConnection.start()])
             .then(() => {
+
                 console.log("Hub bağlantıları başarılı!");
                 setConnectionStatus("connected");
                 setLoading(false);
+
+                //! ===========  CHAT CONNECTION ===========
 
                 //Initial Group / Individual Chats 
                 chatConnection.on("ReceiveInitialChats", (data) => {
                     store.dispatch(initializeChats(data));
                 });
+
                 chatConnection.on("ReceiveInitialGroupProfiles", (data) => {
-                    console.log("initial Gelen grup profilleri:", data);
                     dispatch(setGroupList(data));
                 });
 
                 chatConnection.on("ReceiveGetMessages", (data) => {
-                    console.log("Chat", data);
                     if (data.Individual) {
                         Object.entries(data.Individual).forEach(([chatId, messages]) => {
                             Object.entries(messages).forEach(([messageId, messageData]) => {
@@ -110,25 +125,16 @@ export const SignalRProvider = ({ children }) => {
                     }
                 });
 
-
                 chatConnection.on("Error", (data) => {
-                    console.log(data)
+                    console.log("HATA : ", data)
                 });
-
 
                 chatConnection.on("ReceiveInitialRecipientProfiles", (data) => {
                     dispatch(setInitialChatList(data));
                 });
 
                 chatConnection.on("ReceiveRecipientProfiles", (data) => {
-                    console.log("ReceiveRecipientProfile Kullanıcı verisi : ", data);
                     dispatch(addNewUserToChatList(data));
-                });
-                notificationConnection.on("ReceiveRecipientProfiles", (data) => {
-                    console.log("notificationConnection güncelleme verisi : ", data);
-                    dispatch(updateUserInfoToChatList(data));
-                    dispatch(updateUserInfoToGroupList(data));
-
                 });
 
                 chatConnection.on("ReceiveCreateChat", (data) => {
@@ -158,8 +164,15 @@ export const SignalRProvider = ({ children }) => {
                     }
                 });
 
+                //! =========== NOTIFICATION CONNECTION ===========
 
-                // Group Proccessing
+                notificationConnection.on("ReceiveRecipientProfiles", (data) => {
+                    console.log("notificationConnection güncelleme verisi : ", data);
+                    dispatch(updateUserInfoToChatList(data));
+                    dispatch(updateUserInfoToGroupList(data));
+
+                });
+
                 notificationConnection.on("ReceiveNewGroupProfiles", (data) => {
                     console.log("NotificationHub'dan gelen grup profilleri:", data);
 
@@ -203,13 +216,24 @@ export const SignalRProvider = ({ children }) => {
                         console.error("Grup ID alınamadı.");
                     }
                 });
-                // İlk oluşturulduğunda, yapılacak işlem
 
                 notificationConnection.on("ReceiveGroupProfiles", (data) => {
                     console.log("NotificationHub'dan gelen grup profilleri:", data);
 
+                }); // Grup profilleri güncellendiğinde, yapılacak işlem
+
+                //! =========== CALL CONNECTION ===========
+
+                // Arama bağlantısındaki dinleyiciler
+                callConnection.on('ReceiveIncomingCall', (data) => {
+                    console.log(data);
+                    handleIncomingCall(data, dispatch);
                 });
-                // Grup profilleri güncellendiğinde, yapılacak işlem
+
+                callConnection.on('ReceiveOutgoingCall', (data) => {
+                    console.log(data);
+                    handleOutgoingCall(data, dispatch);
+                });
             })
             .catch((err) => {
                 console.error("Hub bağlantı hatası:", err);
@@ -220,10 +244,12 @@ export const SignalRProvider = ({ children }) => {
 
         setChatConnection(chatConnection);
         setNotificationConnection(notificationConnection);
+        setCallConnection(callConnection);
 
         const handleBeforeUnload = () => {
             if (chatConnection) chatConnection.stop();
             if (notificationConnection) notificationConnection.stop();
+            if (callConnection) callConnection.stop();
         };
 
         window.addEventListener("beforeunload", handleBeforeUnload);
@@ -232,6 +258,7 @@ export const SignalRProvider = ({ children }) => {
         return () => {
             if (chatConnection) chatConnection.stop();
             if (notificationConnection) notificationConnection.stop();
+            if (callConnection) callConnection.stop();
             window.removeEventListener("beforeunload", handleBeforeUnload);
         };
     }, []);
@@ -241,6 +268,8 @@ export const SignalRProvider = ({ children }) => {
             deliverMessages();
         }
     }, [chatConnection, Individual, Group, window.location.pathname]);
+
+    //! ====== METHODS ======
 
     const deliverMessages = async () => {
         try {
@@ -324,15 +353,14 @@ export const SignalRProvider = ({ children }) => {
         }
     };
 
+
     if (loading) {
         return null;
     }
 
-
-    // Bağımlılıklar net tanımlandı
     return (
         <SignalRContext.Provider
-            value={{ chatConnection, notificationConnection, connectionStatus, error, loading }}
+            value={{ chatConnection, notificationConnection, callConnection, connectionStatus, error, loading }}
         >
             {children}
         </SignalRContext.Provider>

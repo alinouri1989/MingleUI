@@ -16,6 +16,7 @@ function Chats() {
   const navigate = useNavigate(); // Navigate fonksiyonu
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [recipientProfile, setRecipientProfile] = useState(null);
+  const [recipientId, setRecipientId] = useState(null);
 
   const { Individual, isChatsInitialized } = useSelector((state) => state.chat); // Chat bilgileri
   const { chatList } = useSelector((state) => state.chatList); // Kullanıcı listesi bilgileri
@@ -47,6 +48,7 @@ function Chats() {
           const recipient = chatList[recipientId];
 
           setRecipientProfile(recipient || null);
+          setRecipientId(recipientId);
         }
       }
     }
@@ -70,7 +72,8 @@ function Chats() {
             <UserTopBar
               isSidebarOpen={isSidebarOpen}
               toggleSidebar={toggleSidebar}
-              recipientProfile={recipientProfile} // Profili üst bileşene geçir
+              recipientProfile={recipientProfile}
+              recipientId={recipientId}
             />
             <UserMessageBar ChatId={id} /> {/* Örnek veriyi gruplama */}
             <MessageInputBar chatId={id} />
@@ -82,6 +85,7 @@ function Chats() {
           isSidebarOpen={isSidebarOpen}
           toggleSidebar={toggleSidebar}
           recipientProfile={recipientProfile}
+          recipientId={recipientId}
         />
       )}
     </>
