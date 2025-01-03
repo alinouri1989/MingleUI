@@ -34,7 +34,7 @@ const callSlice = createSlice({
         },
         resetCallState: (state) => {
             state.callId = null;
-            state.callType = null; // Reset callType
+            state.callType = null;
             state.callerProfile = null;
             state.isRingingIncoming = false;
             state.isRingingOutgoing = false;
@@ -46,7 +46,7 @@ const callSlice = createSlice({
 export const {
     setIsCallStarted,
     setCallId,
-    setCallType, // Yeni action
+    setCallType,
     setCallerProfile,
     setIsRingingIncoming,
     setIsRingingOutgoing,
@@ -65,11 +65,9 @@ export const handleIncomingCall = (data, dispatch) => {
     dispatch(setCallType(callType));
     dispatch(setCallerProfile(callerProfile));
     dispatch(setIsRingingIncoming(true));
-    console.log("Arama işlemleri yapıldı mı?");
 };
 
 export const handleOutgoingCall = (data, dispatch) => {
-    console.log("Girdi mi?", data);
     const { callId, callType, ...callerData } = data;
     const callerProfileKey = Object.keys(callerData)[0];
     const callerProfile = callerData[callerProfileKey];

@@ -14,12 +14,10 @@ import { HiVideoCameraSlash } from "react-icons/hi2";
 
 import "./CallModal.scss";
 
-function CallModal({ closeModal, user, isVideoCallMode }) {
+function CallModal({ closeModal, recipientId, isVideoCallMode, recipientProfile }) {
 
-    const userName = "Okan Doğan";
-    const callStatus = "Aranıyor...";
-    const callStatus2 = "00:04";
-    const userImage = "https://randomuser.me/api/portraits/men/1.jpg";
+
+    const [callStatus, setCallStatus] = useState("Aranıyor...");
 
     const [isMicrophoneOn, setMicrophoneMode] = useState(true);
     const [isSpeakerOn, setSpeakerMode] = useState(true);
@@ -156,8 +154,8 @@ function CallModal({ closeModal, user, isVideoCallMode }) {
             {/* Kullanıcı bilgisi */}
             {!isRemoteConnected &&
                 <div className={`user-and-call-time-box ${isWebcamOpen ? 'video-call-Mode' : ''}`}>
-                    <img src={userImage} alt="User" />
-                    <p>{userName}</p>
+                    <img src={recipientProfile.profilePhoto} alt="User" />
+                    <p>{recipientProfile.displayName}</p>
                     <span>{callStatus}</span>
                 </div>
             }
@@ -177,13 +175,13 @@ function CallModal({ closeModal, user, isVideoCallMode }) {
                         <div className="other-camera-box">
                             <video ref={remoteStreamRef} autoPlay></video>
                             <div className="user-info">
-                                <img src={userImage} alt="" />
-                                <p>{userName}</p>
+                                <img src={recipientProfile.profilePhoto} alt="" />
+                                <p>{recipientProfile.displayName}</p>
                             </div>
                         </div>
                     )}
                 </div>
-                {isRemoteConnected && <p className="video-call-time-status">{callStatus2}</p>}
+                {isRemoteConnected && <p className="video-call-time-status">{callStatus}</p>}
             </>
 
 

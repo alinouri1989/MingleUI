@@ -2,12 +2,12 @@ import React, { useEffect } from 'react';
 import UserImage from "../../../../assets/users/okan.png";
 import { PiPhoneFill } from "react-icons/pi";
 import { PiPhoneSlashFill } from "react-icons/pi";
+import { HiMiniVideoCamera } from "react-icons/hi2";
 
 import IncomingCallSound from "../../../../assets/sounds/MingleCallSound.mp3";
 import "./style.scss";
 
-function IncomingCall() {
-    const userName = "Okan Doğan";
+function IncomingCall({ callType, callerProfile }) {
 
     useEffect(() => {
         const audio = new Audio(IncomingCallSound);
@@ -22,13 +22,15 @@ function IncomingCall() {
 
     return (
         <div className='incoming-call-box'>
-            <img src={UserImage} alt="User Image" />
+            <img src={callerProfile.profilePhoto} alt="User Image" />
             <div className='user-info-and-call-status'>
-                <p>{userName}</p>
+                <p>{callerProfile.displayName}</p>
                 <span>Seni Arıyor...</span>
             </div>
             <div className='call-option-buttons'>
-                <button><PiPhoneFill /></button>
+                <button>
+                    {callType == 0 ? <PiPhoneFill /> : <HiMiniVideoCamera />}
+                </button>
                 <button><PiPhoneSlashFill /></button>
             </div>
         </div>

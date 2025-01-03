@@ -129,7 +129,7 @@ export const SignalRProvider = ({ children }) => {
                     console.log("HATA : ", data)
                 });
 
-                chatConnection.on("ReceiveInitialRecipientProfiles", (data) => {
+                chatConnection.on("ReceiveInitialRecipientChatProfiles", (data) => {
                     dispatch(setInitialChatList(data));
                 });
 
