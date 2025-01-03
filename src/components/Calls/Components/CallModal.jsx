@@ -1,7 +1,7 @@
+import { useSelector } from "react-redux";
 import React, { useState, useRef, useEffect } from "react";
 import MingleLogo from "../../../assets/logos/MingleLogoWithText.svg";
 import CallSound from "../../../assets/Sounds/MingleCallSound.mp3";
-
 
 import { MdScreenShare } from "react-icons/md";
 import { HiMiniVideoCamera } from "react-icons/hi2";
@@ -14,9 +14,9 @@ import { HiVideoCameraSlash } from "react-icons/hi2";
 
 import "./CallModal.scss";
 
-function CallModal({ closeModal, recipientId, isVideoCallMode, recipientProfile }) {
+function CallModal({ closeModal, recipientId, isVideoCallMode }) {
 
-
+    const { callerProfile, callId } = useSelector((state) => state.call);
     const [callStatus, setCallStatus] = useState("Aranıyor...");
 
     const [isMicrophoneOn, setMicrophoneMode] = useState(true);
@@ -154,8 +154,8 @@ function CallModal({ closeModal, recipientId, isVideoCallMode, recipientProfile 
             {/* Kullanıcı bilgisi */}
             {!isRemoteConnected &&
                 <div className={`user-and-call-time-box ${isWebcamOpen ? 'video-call-Mode' : ''}`}>
-                    <img src={recipientProfile.profilePhoto} alt="User" />
-                    <p>{recipientProfile.displayName}</p>
+                    <img src={callerProfile?.profilePhoto} alt="User" />
+                    <p>{callerProfile?.displayName}</p>
                     <span>{callStatus}</span>
                 </div>
             }
@@ -175,8 +175,8 @@ function CallModal({ closeModal, recipientId, isVideoCallMode, recipientProfile 
                         <div className="other-camera-box">
                             <video ref={remoteStreamRef} autoPlay></video>
                             <div className="user-info">
-                                <img src={recipientProfile.profilePhoto} alt="" />
-                                <p>{recipientProfile.displayName}</p>
+                                <img src={callerProfile.profilePhoto} alt="" />
+                                <p>{callerProfile.displayName}</p>
                             </div>
                         </div>
                     )}

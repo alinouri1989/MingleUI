@@ -22,18 +22,20 @@ function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientI
     const lastConnectionDate = recipientProfile.lastConnectionDate;
 
     const { showModal, closeModal } = useModal();
-    const { isCallStarted } = useSelector((state) => state.call);
+    const { isCallStarted, callId } = useSelector((state) => state.call);
 
     const handleVoiceCall = async () => {
 
     };
 
-    const handleVideoCall = async (recipientId) => {
+    const handleVideoCall = async () => {
+        console.log("Callconnection durumu", callConnection)
         if (callConnection) {
+
             try {
                 await callConnection.invoke("StartCall", recipientId, 1);
                 dispatch(setIsCallStarted(true));
-                showModal(<CallModal recipientId={recipientId} recipientProfile={recipientProfile} />);
+                showModal(<CallModal callId={callId} closeModal={closeModal} recipientId={recipientId} />);
 
             } catch (error) {
                 console.error("Error starting voice call:", error);

@@ -24,6 +24,7 @@
 
         img {
             width: 100px;
+            height: 100px;
         }
 
         .e2e-box {
@@ -42,6 +43,7 @@
 
         img {
             width: 125px;
+            height: 125px;
             border-radius: 50%;
             object-fit: cover;
             transition: all 0.7s ease;
@@ -61,6 +63,7 @@
         &.video-call-Mode {
             img {
                 width: 70px;
+                height: 70px;
             }
 
             p {
@@ -217,7 +220,7 @@
     }
 }
 
-.simulate-connection{
+.simulate-connection {
     position: fixed;
     bottom: 2px;
 }

@@ -226,12 +226,12 @@ export const SignalRProvider = ({ children }) => {
 
                 // Arama bağlantısındaki dinleyiciler
                 callConnection.on('ReceiveIncomingCall', (data) => {
-                    console.log(data);
+                    console.log("Data geldi mi", data);
                     handleIncomingCall(data, dispatch);
                 });
 
                 callConnection.on('ReceiveOutgoingCall', (data) => {
-                    console.log(data);
+                    console.log("Data geldi mi", data);
                     handleOutgoingCall(data, dispatch);
                 });
             })
