@@ -93,7 +93,7 @@ function CallModal({ closeModal, recipientId, isVideoCallMode }) {
     const handleCameraToggle = () => {
         if (!isWebcamOpen) {
             // Kamera aç
-            setIsWebcamOpen(true); // Kamera açık durumunu güncelle
+            setIsWebcamOpen(true);
             setIsVideoCall(true);
             navigator.mediaDevices
                 .getUserMedia({ video: true, audio: true })

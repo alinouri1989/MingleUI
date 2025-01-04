@@ -18,6 +18,9 @@ import { useSelector } from 'react-redux';
 
 function MessageBubble({ userId, userColor, content, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
 
+    if (content === "") {
+        return null;
+    }
 
     const { Group } = useSelector((state) => state.chat);
     const { groupList } = useSelector((state) => state.groupList);

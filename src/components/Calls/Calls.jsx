@@ -10,7 +10,7 @@ import CallModal from './Components/CallModal';
 import { useParams } from 'react-router-dom';
 
 function Calls() {
-  const { id } = useParams(); // URL'den ID'yi al
+  const { id } = useParams();
   const { showModal, closeModal } = useModal();
 
   const callStatus = "unAnsweredIncomingCall";
