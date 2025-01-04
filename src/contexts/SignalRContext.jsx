@@ -9,7 +9,7 @@ import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
 import { setGroupList, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
 import { useModal } from "./ModalContext.jsx";
 import { useNavigate } from "react-router-dom";
-import { handleIncomingCall, handleOutgoingCall } from "../store/Slices/calls/callSlice.js";
+import { handleEndCall, handleIncomingCall, handleOutgoingCall, setIsRingingIncoming } from "../store/Slices/calls/callSlice.js";
 
 // SignalR context oluşturuyoruz
 const SignalRContext = createContext();
@@ -233,6 +233,11 @@ export const SignalRProvider = ({ children }) => {
                 callConnection.on('ReceiveOutgoingCall', (data) => {
                     console.log("Data geldi mi", data);
                     handleOutgoingCall(data, dispatch);
+                });
+
+                callConnection.on('ReceiveEndCall', (data) => {
+                    console.log("Geldimi ?", data);
+                    handleEndCall(data, dispatch);
                 });
             })
             .catch((err) => {

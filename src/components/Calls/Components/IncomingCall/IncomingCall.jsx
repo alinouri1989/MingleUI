@@ -6,8 +6,14 @@ import { HiMiniVideoCamera } from "react-icons/hi2";
 
 import IncomingCallSound from "../../../../assets/sounds/MingleCallSound.mp3";
 import "./style.scss";
+import { useSignalR } from '../../../../contexts/SignalRContext';
+import { setIsRingingIncoming } from '../../../../store/Slices/calls/callSlice';
+import { useDispatch } from 'react-redux';
 
-function IncomingCall({ callType, callerProfile }) {
+function IncomingCall({ callType, callerProfile, callId }) {
+
+    const { callConnection } = useSignalR();
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const audio = new Audio(IncomingCallSound);
@@ -20,6 +26,16 @@ function IncomingCall({ callType, callerProfile }) {
         };
     }, []);
 
+    const handleDeclineCall = async () => {
+        console.log("Arama reddedildi");
+        try {
+            await callConnection.invoke("EndCall", callId, 2);
+            dispatch(setIsRingingIncoming(false));
+        } catch (error) {
+            console.log("Arama sonlandırılamadı: ", error);
+        }
+    }
+
     return (
         <div className='incoming-call-box'>
             <img src={callerProfile.profilePhoto} alt="User Image" />
@@ -31,7 +47,7 @@ function IncomingCall({ callType, callerProfile }) {
                 <button>
                     {callType == 0 ? <PiPhoneFill /> : <HiMiniVideoCamera />}
                 </button>
-                <button><PiPhoneSlashFill /></button>
+                <button onClick={() => handleDeclineCall()}><PiPhoneSlashFill /></button>
             </div>
         </div>
     );

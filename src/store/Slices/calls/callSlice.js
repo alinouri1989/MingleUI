@@ -1,12 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { useModal } from '../../../contexts/ModalContext';
+
 
 const initialState = {
     callId: null,
-    callType: null, // Yeni eklenen alan
+    callType: null,
     callerProfile: null,
     isRingingIncoming: false,
     isRingingOutgoing: false,
-    calls: null,
+    calls: [],
     isCallStarted: false,
 };
 
@@ -17,7 +19,7 @@ const callSlice = createSlice({
         setCallId: (state, action) => {
             state.callId = action.payload;
         },
-        setCallType: (state, action) => { // Yeni reducer
+        setCallType: (state, action) => {
             state.callType = action.payload;
         },
         setCallerProfile: (state, action) => {
@@ -40,6 +42,20 @@ const callSlice = createSlice({
             state.isRingingOutgoing = false;
             state.isCallStarted = false;
         },
+        setCallResult: (state, action) => {
+            console.log('3');
+            const callResult = action.payload;
+            const callId = Object.keys(callResult)[0];
+            const callData = callResult[callId];
+
+            if (state.callId === callId) {
+                console.log('4');
+                state.isRingingOutgoing = false;
+                state.isCallStarted = false;
+            }
+
+            state.calls.push({ id: callId, ...callData });
+        },
     },
 });
 
@@ -51,11 +67,11 @@ export const {
     setIsRingingIncoming,
     setIsRingingOutgoing,
     resetCallState,
+    setCallResult,
 } = callSlice.actions;
 
 export default callSlice.reducer;
 
-// handleIncomingCall fonksiyonu
 export const handleIncomingCall = (data, dispatch) => {
     const { callId, callType, ...callerData } = data;
     const callerProfileKey = Object.keys(callerData)[0];
@@ -77,4 +93,14 @@ export const handleOutgoingCall = (data, dispatch) => {
     dispatch(setCallerProfile(callerProfile));
     dispatch(setIsRingingOutgoing(true));
     dispatch(setIsCallStarted(true));
+};
+
+export const handleEndCall = (data, dispatch) => {
+    const callId = Object.keys(data)[0];
+    const callResult = { [callId]: data[callId] };
+
+    if (callId) {
+        dispatch(setCallResult(callResult));
+        dispatch(resetCallState());
+    }
 };

@@ -7,7 +7,7 @@ const ModalContext = createContext();
 export const ModalProvider = ({ children }) => {
   const [modalContent, setModalContent] = useState(null);
 
-  const { isRingingIncoming, callType, callerProfile } = useSelector((state) => state.call);
+  const { isRingingIncoming, callType, callerProfile, callId } = useSelector((state) => state.call);
 
   const showModal = (content) => {
     setModalContent(content);
@@ -27,7 +27,7 @@ export const ModalProvider = ({ children }) => {
           </div>
         </div>
       )}
-      {isRingingIncoming && <IncomingCall callType={callType} callerProfile={callerProfile} />}
+      {isRingingIncoming && <IncomingCall callType={callType} callId={callId} callerProfile={callerProfile} />}
     </ModalContext.Provider>
   );
 };

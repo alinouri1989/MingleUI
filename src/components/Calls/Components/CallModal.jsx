@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import React, { useState, useRef, useEffect } from "react";
 import MingleLogo from "../../../assets/logos/MingleLogoWithText.svg";
 import CallSound from "../../../assets/Sounds/MingleCallSound.mp3";
+import { useSignalR } from "../../../contexts/SignalRContext";
 
 import { MdScreenShare } from "react-icons/md";
 import { HiMiniVideoCamera } from "react-icons/hi2";
@@ -16,12 +17,13 @@ import "./CallModal.scss";
 
 function CallModal({ closeModal, recipientId, isVideoCallMode }) {
 
-    const { callerProfile, callId } = useSelector((state) => state.call);
+    const { callerProfile, callId, isCallStarted, isRingingOutgoing } = useSelector((state) => state.call);
     const [callStatus, setCallStatus] = useState("Aranıyor...");
 
     const [isMicrophoneOn, setMicrophoneMode] = useState(true);
     const [isSpeakerOn, setSpeakerMode] = useState(true);
 
+    const { callConnection } = useSignalR();
 
     const [isWebcamOpen, setIsWebcamOpen] = useState(false);
     const [isRemoteConnected, setRemoteConnected] = useState(false);
@@ -76,6 +78,13 @@ function CallModal({ closeModal, recipientId, isVideoCallMode }) {
         };
     }, []);
 
+    useEffect(() => {
+        if (!isCallStarted && !isRingingOutgoing) {
+            closeModal();
+            // bitiş sesi ile kapanma olayı ekle settimeout ile
+        }
+    }, [isCallStarted, isRingingOutgoing]);
+
     const handleMicrophoneMode = () => {
         setMicrophoneMode(!isMicrophoneOn);
     };
@@ -119,10 +128,12 @@ function CallModal({ closeModal, recipientId, isVideoCallMode }) {
         if (localStreamRef.current?.srcObject) {
             localStreamRef.current.srcObject.getTracks().forEach((track) => track.stop());
         }
+
+        callConnection.invoke("EndCall", callId, 3);
+
         closeModal();
     };
 
-    // Simülasyon: Karşı taraf bağlantı durumu
     const simulateRemoteConnection = () => {
         setRemoteConnected(true);
         setIsVideoCall(true);
