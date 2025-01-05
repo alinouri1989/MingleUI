@@ -30,9 +30,11 @@ function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientI
 
     const handleVideoCall = async () => {
         if (callConnection) {
+            console.log("Girmiyor mu?")
             try {
                 await callConnection.invoke("StartCall", recipientId, 1);
                 dispatch(setIsCallStarting(true));
+
                 showModal(<CallModal callId={callId} closeModal={closeModal} />);
             } catch (error) {
                 console.error("Error starting voice call:", error);

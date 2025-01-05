@@ -1,5 +1,10 @@
 @use "../../../shared/styles/main.scss" as *;
 
+.local-ref-box,
+.remote-ref-box {
+    border: 2px solid red,
+}
+
 .call-modal {
     @include flex-center(column, space-between, center);
     width: 500px;

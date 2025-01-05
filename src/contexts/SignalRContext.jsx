@@ -86,8 +86,10 @@ export const SignalRProvider = ({ children }) => {
         };
 
         peerConnection.current.ontrack = (event) => {
+            console.log("Girdi mi? YESSSS")
             setRemoteStream(event.streams[0]);
-            setIsCallStarted(true);
+            dispatch(setIsCallStarted(true));
+
         };
     }
 
@@ -322,14 +324,6 @@ export const SignalRProvider = ({ children }) => {
                         }
                     } catch (error) {
                         console.error("Remote SDP işlenirken hata:", error);
-                    }
-                });
-
-
-
-                callConnection.on("ReceiveIceCandidate", async (candidate) => {
-                    if (candidate) {
-                        await peerConnection.current.addIceCandidate(new RTCIceCandidate(candidate));
                     }
                 });
             })
