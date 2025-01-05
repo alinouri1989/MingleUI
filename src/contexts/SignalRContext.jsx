@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,22 +9,22 @@ import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
 import { setGroupList, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
 import { useModal } from "./ModalContext.jsx";
 import { useNavigate } from "react-router-dom";
-import { handleEndCall, handleIncomingCall, handleOutgoingCall, setIsRingingIncoming } from "../store/Slices/calls/callSlice.js";
-
+import { handleEndCall, handleIncomingCall, handleOutgoingCall, setIsCallStarted, setIsRingingIncoming } from "../store/Slices/calls/callSlice.js";
+import { addIceCandidate, createAndSendOffer, handleRemoteSDP, sendIceCandidate, sendSdp } from "../services/webRtcService.js";
+import { servers } from "../constants/StunTurnServers.js";
 // SignalR context oluşturuyoruz
 const SignalRContext = createContext();
 
 export const useSignalR = () => {
     const context = useContext(SignalRContext);
-    const dispatch = useDispatch(); // Redux dispatch
+    const dispatch = useDispatch();
 
     if (!context) {
         throw new Error("useSignalR must be used within a SignalRProvider");
     }
 
-    const { chatConnection, notificationConnection, connectionStatus, callConnection, error, loading } = context;
-
-    return { chatConnection, notificationConnection, callConnection, connectionStatus, error, loading };
+    const { initializePeerConnection, chatConnection, notificationConnection, setLocalStream, handleAcceptCall, setRemoteStream, peerConnection, localStream, remoteStream, connectionStatus, callConnection, error, loading } = context;
+    return { initializePeerConnection, chatConnection, notificationConnection, setLocalStream, handleAcceptCall, setRemoteStream, peerConnection, localStream, remoteStream, callConnection, connectionStatus, error, loading };
 };
 
 export const SignalRProvider = ({ children }) => {
@@ -35,11 +35,66 @@ export const SignalRProvider = ({ children }) => {
     const [connectionStatus, setConnectionStatus] = useState("disconnected");
     const { token } = useSelector(state => state.auth);
     const { Individual, Group } = useSelector(state => state.chat);
+
     const navigate = useNavigate();
     const userId = getUserIdFromToken(token);
     const [error, setError] = useState(null);
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
+    const { callId } = useSelector(state => state.call);
+
+    // const [peerConnection, setPeerConnection] = useState();
+    const [localStream, setLocalStream] = useState(null); // Yerel video akışı
+    const [remoteStream, setRemoteStream] = useState(null); // Uzak video akışı
+
+    const callIdRef = useRef(callId);
+
+    const peerConnection = useRef(null);
+
+    console.log("PEER", peerConnection.current);
+
+
+    const initializePeerConnection = async () => {
+        try {
+            // Kullanıcı kamerasını aç ve localStream'i ayarla
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            setLocalStream(stream);
+
+            // PeerConnection oluştur ve stream'i ekle
+            const pc = new RTCPeerConnection(servers);
+
+            stream.getTracks().forEach((track) => {
+                pc.addTrack(track, stream);
+            });
+
+            peerConnection.current = pc;
+
+            console.log(peerConnection);
+            console.log("PeerConnection başarıyla başlatıldı.");
+        } catch (error) {
+            console.error("Kamera veya mikrofon erişiminde hata:", error);
+            reject(error); // Hata durumunda Promise reddedilir
+        }
+    };
+
+    if (peerConnection.current) {
+        peerConnection.current.onicecandidate = (event) => {
+            if (event.candidate) {
+                console.log("ICE Candidate oluşturuldu:", event.candidate);
+                callConnection.invoke("SendIceCandidate", callIdRef.current, event.candidate);
+            }
+        };
+
+        peerConnection.current.ontrack = (event) => {
+            setRemoteStream(event.streams[0]);
+            setIsCallStarted(true);
+        };
+    }
+
+
+    useEffect(() => {
+        callIdRef.current = callId;
+    }, [callId]);
 
 
     useEffect(() => {
@@ -84,7 +139,6 @@ export const SignalRProvider = ({ children }) => {
                 console.log("Hub bağlantıları başarılı!");
                 setConnectionStatus("connected");
                 setLoading(false);
-
                 //! ===========  CHAT CONNECTION ===========
 
                 //Initial Group / Individual Chats 
@@ -224,10 +278,13 @@ export const SignalRProvider = ({ children }) => {
 
                 //! =========== CALL CONNECTION ===========
 
+
                 // Arama bağlantısındaki dinleyiciler
-                callConnection.on('ReceiveIncomingCall', (data) => {
+                callConnection.on('ReceiveIncomingCall', async (data) => {
                     console.log("Data geldi mi", data);
-                    handleIncomingCall(data, dispatch);
+                    await handleIncomingCall(data, dispatch);
+                    initializePeerConnection(); // PeerConnection'u bekle
+
                 });
 
                 callConnection.on('ReceiveOutgoingCall', (data) => {
@@ -238,6 +295,42 @@ export const SignalRProvider = ({ children }) => {
                 callConnection.on('ReceiveEndCall', (data) => {
                     console.log("Geldimi ?", data);
                     handleEndCall(data, dispatch);
+                });
+
+                callConnection.on('ReceiveIceCandidate', async (data) => {
+                    console.log("ICE Candidate alındı:", data);
+                    peerConnection.current.addIceCandidate(new RTCIceCandidate(data));
+                });
+
+                callConnection.on('ReceiveSdp', async (data) => {
+                    try {
+                        if (data.type === "offer") {
+                            await initializePeerConnection();
+
+                            console.log("Offer işlemleri başlatılıyor...");
+                            await handleRemoteSDP(data, peerConnection.current);
+                            const answer = await peerConnection.current.createAnswer();
+                            await peerConnection.current.setLocalDescription(answer);
+
+                            await sendSdp(callIdRef.current, answer, callConnection);
+                        } else if (data.type === "answer") {
+                            console.log("peerConnection burada var mı??? = ", peerConnection.current);
+
+                            await handleRemoteSDP(data, peerConnection.current); // Cevap verisini işliyoruz
+                        } else {
+                            console.error("Bilinmeyen SDP türü:", data.type);
+                        }
+                    } catch (error) {
+                        console.error("Remote SDP işlenirken hata:", error);
+                    }
+                });
+
+
+
+                callConnection.on("ReceiveIceCandidate", async (candidate) => {
+                    if (candidate) {
+                        await peerConnection.current.addIceCandidate(new RTCIceCandidate(candidate));
+                    }
                 });
             })
             .catch((err) => {
@@ -274,7 +367,23 @@ export const SignalRProvider = ({ children }) => {
         }
     }, [chatConnection, Individual, Group, window.location.pathname]);
 
+
+
+
     //! ====== METHODS ======
+
+
+    const handleAcceptCall = async () => {
+        console.log("Buraya girdi mi,", peerConnection);
+        try {
+            if (peerConnection)
+                createAndSendOffer(callIdRef.current, callConnection, peerConnection);
+            // dispatch(setIsRingingIncoming(false)); // Decline ringing state
+
+        } catch (error) {
+            console.log("Call accept failed:", error);
+        }
+    };
 
     const deliverMessages = async () => {
         try {
@@ -365,7 +474,16 @@ export const SignalRProvider = ({ children }) => {
 
     return (
         <SignalRContext.Provider
-            value={{ chatConnection, notificationConnection, callConnection, connectionStatus, error, loading }}
+            value={{
+                chatConnection, notificationConnection, callConnection, connectionStatus, error, loading,
+                setLocalStream,
+                setRemoteStream,
+                localStream,
+                remoteStream,
+                peerConnection,
+                initializePeerConnection,
+                handleAcceptCall
+            }}
         >
             {children}
         </SignalRContext.Provider>

@@ -15,23 +15,40 @@ import { HiVideoCameraSlash } from "react-icons/hi2";
 
 import "./CallModal.scss";
 
-function CallModal({ closeModal, recipientId, isVideoCallMode }) {
+function CallModal({ closeModal, isVideoCallMode }) {
+
+    const { callConnection } = useSignalR();
+    const { localStream, remoteStream } = useSignalR();
 
     const { callerProfile, callId, isCallStarted, isRingingOutgoing } = useSelector((state) => state.call);
-    const [callStatus, setCallStatus] = useState("Aranıyor...");
 
     const [isMicrophoneOn, setMicrophoneMode] = useState(true);
     const [isSpeakerOn, setSpeakerMode] = useState(true);
+    const [callStatus, setCallStatus] = useState("Aranıyor...");
 
-    const { callConnection } = useSignalR();
 
     const [isWebcamOpen, setIsWebcamOpen] = useState(false);
     const [isRemoteConnected, setRemoteConnected] = useState(false);
-
     const [isVideoCall, setIsVideoCall] = useState(false);
 
-    const localStreamRef = useRef(null);
-    const remoteStreamRef = useRef(null);
+
+    const localVideoRef = useRef(null);
+    const remoteVideoRef = useRef(null);
+
+    useEffect(() => {
+        if (localStream && localVideoRef.current) {
+            localVideoRef.current.srcObject = localStream;
+        }
+    }, [localStream]);
+
+    useEffect(() => {
+        if (remoteStream && remoteVideoRef.current) {
+            remoteVideoRef.current.srcObject = remoteStream;
+            setRemoteConnected(true);
+        }
+    }, [remoteStream]);
+
+
     const audioRef = useRef(null);
 
     useEffect(() => {
@@ -78,12 +95,28 @@ function CallModal({ closeModal, recipientId, isVideoCallMode }) {
         };
     }, []);
 
+    // useEffect(() => {
+    //     if (!isCallStarted && !isRingingOutgoing) {
+    //         closeModal();
+    //     }
+    // }, [isCallStarted, isRingingOutgoing]);
+
+
     useEffect(() => {
-        if (!isCallStarted && !isRingingOutgoing) {
-            closeModal();
-            // bitiş sesi ile kapanma olayı ekle settimeout ile
+        let timerInterval;
+        if (isCallStarted) {
+            setCallStatus(0);
+            timerInterval = setInterval(() => {
+                setCallStatus((prevTime) => prevTime + 1);
+            }, 1000);
+        } else {
+            clearInterval(timerInterval);
         }
-    }, [isCallStarted, isRingingOutgoing]);
+
+        return () => {
+            clearInterval(timerInterval);
+        };
+    }, [isCallStarted]);
 
     const handleMicrophoneMode = () => {
         setMicrophoneMode(!isMicrophoneOn);
@@ -107,7 +140,7 @@ function CallModal({ closeModal, recipientId, isVideoCallMode }) {
             navigator.mediaDevices
                 .getUserMedia({ video: true, audio: true })
                 .then((stream) => {
-                    localStreamRef.current.srcObject = stream; // Kamerayı bağla
+                    localVideoRef.current.srcObject = stream; // Kamerayı bağla
                 })
                 .catch((err) => {
                     console.error("Kamera başlatılamadı:", err);
@@ -115,10 +148,10 @@ function CallModal({ closeModal, recipientId, isVideoCallMode }) {
         } else {
             // Kamera kapat
             console.log("Girdi");
-            if (localStreamRef.current?.srcObject) {
+            if (localVideoRef.current?.srcObject) {
                 // Tüm medya akışlarını durdur
-                localStreamRef.current.srcObject.getTracks().forEach((track) => track.stop());
-                localStreamRef.current.srcObject = null; // Referansı temizle
+                localVideoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+                localVideoRef.current.srcObject = null; // Referansı temizle
             }
             setIsWebcamOpen(false); // Kamera kapalı durumunu güncelle
         }
@@ -178,13 +211,13 @@ function CallModal({ closeModal, recipientId, isVideoCallMode }) {
 
                     {isWebcamOpen &&
                         <div className={`device-camera-box ${isRemoteConnected ? 'remote-connected' : ''}`}>
-                            <video playsInline ref={localStreamRef} autoPlay muted></video>
+                            <video playsInline ref={localVideoRef} autoPlay muted></video>
                         </div>
                     }
 
                     {isRemoteConnected && (
                         <div className="other-camera-box">
-                            <video ref={remoteStreamRef} autoPlay></video>
+                            <video ref={remoteVideoRef} autoPlay></video>
                             <div className="user-info">
                                 <img src={callerProfile.profilePhoto} alt="" />
                                 <p>{callerProfile.displayName}</p>
@@ -194,7 +227,6 @@ function CallModal({ closeModal, recipientId, isVideoCallMode }) {
                 </div>
                 {isRemoteConnected && <p className="video-call-time-status">{callStatus}</p>}
             </>
-
 
 
             {/* Arama seçenekleri */}

@@ -9,6 +9,7 @@ const initialState = {
     isRingingIncoming: false,
     isRingingOutgoing: false,
     calls: [],
+    isCallStarting: false,
     isCallStarted: false,
 };
 
@@ -34,6 +35,9 @@ const callSlice = createSlice({
         setIsCallStarted: (state, action) => {
             state.isCallStarted = action.payload;
         },
+        setIsCallStarting: (state, action) => {
+            state.isCallStarting = action.payload;
+        },
         resetCallState: (state) => {
             state.callId = null;
             state.callType = null;
@@ -41,15 +45,14 @@ const callSlice = createSlice({
             state.isRingingIncoming = false;
             state.isRingingOutgoing = false;
             state.isCallStarted = false;
+            state.isCallStarting = false;
         },
         setCallResult: (state, action) => {
-            console.log('3');
             const callResult = action.payload;
             const callId = Object.keys(callResult)[0];
             const callData = callResult[callId];
 
             if (state.callId === callId) {
-                console.log('4');
                 state.isRingingOutgoing = false;
                 state.isCallStarted = false;
             }
@@ -61,6 +64,9 @@ const callSlice = createSlice({
 
 export const {
     setIsCallStarted,
+    setIsCallStarting,
+    isCallStarting,
+    isCallStarted,
     setCallId,
     setCallType,
     setCallerProfile,
@@ -72,11 +78,12 @@ export const {
 
 export default callSlice.reducer;
 
-export const handleIncomingCall = (data, dispatch) => {
+export const handleIncomingCall = async (data, dispatch) => {
     const { callId, callType, ...callerData } = data;
     const callerProfileKey = Object.keys(callerData)[0];
     const callerProfile = callerData[callerProfileKey];
 
+    console.log("Buraya girdi mi=  handleIncomingCall");
     dispatch(setCallId(callId));
     dispatch(setCallType(callType));
     dispatch(setCallerProfile(callerProfile));
@@ -92,7 +99,7 @@ export const handleOutgoingCall = (data, dispatch) => {
     dispatch(setCallType(callType));
     dispatch(setCallerProfile(callerProfile));
     dispatch(setIsRingingOutgoing(true));
-    dispatch(setIsCallStarted(true));
+    dispatch(setIsCallStarting(true));
 };
 
 export const handleEndCall = (data, dispatch) => {

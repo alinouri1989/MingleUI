@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-
+import "./layout.scss";
 const ScreenShare = () => {
   const videoRef = useRef(null);
   const [isSharing, setIsSharing] = useState(false);

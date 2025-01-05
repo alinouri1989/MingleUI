@@ -7,7 +7,7 @@ import { useModal } from '../../../contexts/ModalContext';
 import { useDispatch, useSelector } from 'react-redux';
 import { formatDateForLastConnectionDate } from '../../../helpers/dateHelper';
 import { useSignalR } from '../../../contexts/SignalRContext';
-import { setIsCallStarted } from '../../../store/Slices/calls/callSlice';
+import { setIsCallStarted, setIsCallStarting } from '../../../store/Slices/calls/callSlice';
 
 function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientId }) {
 
@@ -29,14 +29,11 @@ function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientI
     };
 
     const handleVideoCall = async () => {
-        console.log("Callconnection durumu", callConnection)
         if (callConnection) {
-
             try {
                 await callConnection.invoke("StartCall", recipientId, 1);
-                dispatch(setIsCallStarted(true));
-                showModal(<CallModal callId={callId} closeModal={closeModal} recipientId={recipientId} />);
-
+                dispatch(setIsCallStarting(true));
+                showModal(<CallModal callId={callId} closeModal={closeModal} />);
             } catch (error) {
                 console.error("Error starting voice call:", error);
             }
