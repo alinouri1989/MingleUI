@@ -12,7 +12,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { formatCallCreateDate, formatTimeHoursMinutes } from "../../../helpers/dateHelper";
+import { formatTimeHoursMinutes } from "../../../helpers/dateHelper";
 import { Navigate, useNavigate } from "react-router-dom";
 
 function UserCallCard({ callId, image, status, name, callType, callStatus, createdDate, isOutgoingCall }) {
