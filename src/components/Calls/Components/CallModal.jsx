@@ -29,19 +29,43 @@ function CallModal({ closeModal, isVideoCallMode }) {
     const [isSpeakerOn, setSpeakerMode] = useState(true);
     const [callStatus, setCallStatus] = useState("Aranıyor...");
 
-
     const busySoundRef = useRef(new Audio(BusySound));
-
 
     const localVideoRef = useRef(null);
     const remoteVideoRef = useRef(null);
+    const [temporaryStream, setTemporaryStream] = useState(null);
 
+    // Geçici webcam stream oluştur
     useEffect(() => {
-        if (localStream && localVideoRef.current) {
-            localVideoRef.current.srcObject = localStream;
-        }
-    }, [localStream]);
+        const getTemporaryStream = async () => {
+            try {
+                if (!localStream && !temporaryStream) {
+                    const tempStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                    setTemporaryStream(tempStream);
+                }
+            } catch (error) {
+                console.error('Geçici stream alınırken hata:', error);
+            }
+        };
 
+        getTemporaryStream();
+
+        // Temizlik işlemi
+        return () => {
+            if (temporaryStream) {
+                temporaryStream.getTracks().forEach((track) => track.stop());
+            }
+        };
+    }, [localStream, temporaryStream]);
+
+    // Local stream yüklendiğinde video elementine bağla
+    useEffect(() => {
+        if (localVideoRef.current) {
+            localVideoRef.current.srcObject = localStream || temporaryStream;
+        }
+    }, [localStream, temporaryStream]);
+
+    // Remote stream yüklendiğinde video elementine bağla
     useEffect(() => {
         if (remoteStream && remoteVideoRef.current) {
             remoteVideoRef.current.srcObject = remoteStream;
@@ -67,18 +91,22 @@ function CallModal({ closeModal, isVideoCallMode }) {
             audio.pause();
             audio.currentTime = 0;
         };
+
+
     }, []);
 
-    // useEffect(() => {
-    //     if (!isCallStarted && !isRingingOutgoing) {
-    //         closeModal();
-    //     }
-    // }, [isCallStarted, isRingingOutgoing]);
+    useEffect(() => {
+        if (!isCallStarted && !isRingingOutgoing) {
+            closeModal();
+            localVideoRef.current == null;
+        }
+    }, [isCallStarted, isRingingOutgoing]);
 
 
     useEffect(() => {
         let timerInterval;
         if (isCallStarted) {
+            setTemporaryStream(null);
             if (isCallStarted && audioRef.current) {
                 audioRef.current.pause();
                 audioRef.current.currentTime = 0;
@@ -93,6 +121,10 @@ function CallModal({ closeModal, isVideoCallMode }) {
         } else {
             clearInterval(timerInterval);
             setCallStatus("Aranıyor...");
+            if (isCallStarted == false && isCallStarting == false) {
+                closeModal();
+                localVideoRef.current == null;
+            }
         }
 
         return () => {
@@ -100,21 +132,21 @@ function CallModal({ closeModal, isVideoCallMode }) {
         };
     }, [isCallStarted]);
 
+
     useEffect(() => {
         let timeout;
-
         if (isCallStarting) {
             timeout = setTimeout(() => {
                 if (!isCallStarted) {
                     console.log("Buraya girmiş olması gerek.")
                     console.log("CallId", callId);
-                    callConnection.invoke("EndCall", callId, 4, callStartedDate);
                     setCallStatus("Meşgul");
                     setTimeout(() => {
+                        callConnection.invoke("EndCall", callId, 4, callStartedDate);
                         closeModal();
                     }, 4000);
                 }
-            }, 5000);
+            }, 6000);
         }
 
         return () => {
@@ -194,7 +226,7 @@ function CallModal({ closeModal, isVideoCallMode }) {
     // };
 
     return (
-        <div className={`call-modal ${(isCallStarted) ? 'video-call-Mode' : ''}`}>
+        <div className={`call-modal ${isCallStarted ? 'video-call-Mode' : ''}`}>
             {/* Logo ve şifreleme bilgisi */}
             <div className="logo-and-e2e-box">
                 <img src={MingleLogo} alt="Mingle Logo" />
@@ -209,57 +241,39 @@ function CallModal({ closeModal, isVideoCallMode }) {
                 </div>
             </div>
 
-            {/* Kullanıcı bilgisi */}
-            {/* {!isCallStarted &&
-                <div className={`user-and-call-time-box ${isWebcamOpen ? 'video-call-Mode' : ''}`}>
+            {!isCallStarted &&
+                <div className={`user-and-call-time-box ${isCallStarting ? "calling" : ""}`}>
                     <img src={callerProfile?.profilePhoto} alt="User" />
                     <p>{callerProfile?.displayName}</p>
                     <span>{callStatus}</span>
                 </div>
-            } */}
-
-            {/* Kamera Görünümü */}
-
-            <h3>Local</h3>
-            <video
-                className="local-ref-box"
-                ref={localVideoRef}
-                autoPlay
-                muted
-                style={{ width: "120px", border: "1px solid black" }}
-            />
-
-            <h2>Uzak </h2>
-            <video
-                className="remote-ref-box"
-                ref={remoteVideoRef}
-                autoPlay
-                style={{ width: "120px", border: "1px solid black" }}
-            />
+            }
             <>
-                {/* <div className={`camera-bar ${!isVideoCall ? "only-voice-call" : ""}`}>
-                    {isWebcamOpen &&
-                        <div className={`device-camera-box ${isCallStarted ? 'remote-connected' : ''}`}>
-                            <video playsInline ref={localVideoRef} autoPlay muted></video>
-                        </div>
-                    }
+                <div className="camera-bar">
+                    <div className={`device-camera-box ${isCallStarted ? 'remote-connected' : ''}`}>
+                        <video
+                            playsInline
+                            ref={localVideoRef}
+                            autoPlay
+                            muted
+                        ></video>
+                    </div>
 
                     {isCallStarted && (
                         <div className="other-camera-box">
                             <video ref={remoteVideoRef} autoPlay></video>
                             <div className="user-info">
-                                <img src={callerProfile.profilePhoto} alt="" />
-                                <p>{callerProfile.displayName}</p>
+                                <img src={callerProfile?.profilePhoto} alt="" />
+                                <p>{callerProfile?.displayName}</p>
                             </div>
                         </div>
-                    )} 
-                </div>*/}
+                    )}
+                </div>
 
-                <p className="video-call-time-status">{callStatus}</p>
+                {isCallStarted && <p className="video-call-time-status">{callStatus}</p>}
             </>
 
 
-            {/* Arama seçenekleri */}
             <div className="call-option-buttons">
                 <button>
                     <MdScreenShare />
@@ -281,17 +295,6 @@ function CallModal({ closeModal, isVideoCallMode }) {
                     <PiPhoneSlashFill />
                 </button>
             </div>
-
-            {/* {!isCallStarted && (
-                <button className="simulate-connection" onClick={simulateRemoteConnection}>
-                    Karşı Tarafı Bağla (Simülasyon)
-                </button>
-            )}
-            {isCallStarted && (
-                <button className="simulate-connection" >
-                    karşının bağlantıyı kopar
-                </button>
-            )} */}
         </div>
     );
 }

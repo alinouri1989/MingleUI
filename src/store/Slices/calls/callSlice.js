@@ -13,6 +13,7 @@ const initialState = {
     isCallStarting: false,
     isCallStarted: false,
     callStartedDate: null,
+    callRecipientList: []
 };
 
 const callSlice = createSlice({
@@ -51,6 +52,18 @@ const callSlice = createSlice({
             state.isRingingOutgoing = false;
             state.isCallStarted = false;
             state.isCallStarting = false;
+            state.callStartedDate = null;
+        },
+        setInitialCalls: (state, action) => {
+            const initialCalls = action.payload;
+
+            Object.entries(initialCalls).forEach(([callId, callData]) => {
+                const isCallIdExists = state.calls.some(call => call.id === callId);
+
+                if (!isCallIdExists) {
+                    state.calls.push({ id: callId, ...callData });
+                }
+            });
         },
         setCallResult: (state, action) => {
             const callResult = action.payload;
@@ -62,7 +75,25 @@ const callSlice = createSlice({
                 state.isCallStarted = false;
             }
 
-            state.calls.push({ id: callId, ...callData });
+            const isCallIdExists = state.calls.some(call => call.id === callId);
+
+            if (!isCallIdExists) {
+                state.calls.push({ id: callId, ...callData });
+            }
+        },
+        setCallRecipientList: (state, action) => {
+            const recipientProfiles = action.payload;
+
+            Object.entries(recipientProfiles).forEach(([recipientId, recipientData]) => {
+                const existingRecipientIndex = state.callRecipientList.findIndex(
+                    recipient => recipient.id === recipientId
+                );
+                if (existingRecipientIndex !== -1) {
+                    state.callRecipientList[existingRecipientIndex] = { id: recipientId, ...recipientData };
+                } else {
+                    state.callRecipientList.push({ id: recipientId, ...recipientData });
+                }
+            });
         },
     },
 });
@@ -80,6 +111,8 @@ export const {
     setIsRingingOutgoing,
     resetCallState,
     setCallResult,
+    setInitialCalls,
+    setCallRecipientList,
     callStartedDate
 } = callSlice.actions;
 

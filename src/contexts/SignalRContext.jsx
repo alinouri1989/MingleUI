@@ -9,8 +9,8 @@ import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
 import { setGroupList, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
 import { useModal } from "./ModalContext.jsx";
 import { useNavigate } from "react-router-dom";
-import { handleEndCall, handleIncomingCall, handleOutgoingCall, setCallStartedDate, setIsCallStarted, setIsCallStarting, setIsRingingIncoming } from "../store/Slices/calls/callSlice.js";
-import { addIceCandidate, createAndSendOffer, handleRemoteSDP, sendIceCandidate, sendSdp } from "../services/webRtcService.js";
+import { handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, setIsRingingIncoming } from "../store/Slices/calls/callSlice.js";
+import { createAndSendOffer, handleRemoteSDP, sendIceCandidate, sendSdp } from "../services/webRtcService.js";
 import { servers } from "../constants/StunTurnServers.js";
 // SignalR context oluşturuyoruz
 const SignalRContext = createContext();
@@ -43,18 +43,19 @@ export const SignalRProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const { callId } = useSelector(state => state.call);
 
-    const [localStream, setLocalStream] = useState(null); // Yerel video akışı
-    const [remoteStream, setRemoteStream] = useState(null); // Uzak video akışı
+    const [localStream, setLocalStream] = useState(null);
+    const [remoteStream, setRemoteStream] = useState(null);
 
     const callIdRef = useRef(callId);
     const peerConnection = useRef(null);
 
     const initializePeerConnection = async () => {
         try {
+            const pc = new RTCPeerConnection(servers);
+
             const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
             setLocalStream(stream);
 
-            const pc = new RTCPeerConnection(servers);
             stream.getTracks().forEach((track) => {
                 pc.addTrack(track, stream);
             });
@@ -62,7 +63,6 @@ export const SignalRProvider = ({ children }) => {
             peerConnection.current = pc;
         } catch (error) {
             console.error("Kamera veya mikrofon erişiminde hata:", error);
-            reject(error);
         }
     };
 
@@ -83,8 +83,26 @@ export const SignalRProvider = ({ children }) => {
             const currentDate = new Date().toISOString();
             dispatch(setCallStartedDate(currentDate));
         };
-    }
 
+        peerConnection.current.oniceconnectionstatechange = () => {
+            const state = peerConnection.current.iceConnectionState;
+
+            if (state === "disconnected" || state === "failed" || state === "closed") {
+                dispatch(resetCallState())
+                if (peerConnection.current) {
+                    peerConnection.current.getSenders().forEach((sender) => {
+                        if (sender.track) {
+                            sender.track.stop();
+                        }
+                    });
+                    peerConnection.current.close();
+                    peerConnection.current = null;
+                    setLocalStream(null);
+                    setRemoteStream(null);
+                }
+            }
+        };
+    }
 
     useEffect(() => {
         callIdRef.current = callId;
@@ -272,22 +290,32 @@ export const SignalRProvider = ({ children }) => {
 
                 //! =========== CALL CONNECTION ===========
 
-
                 // Arama bağlantısındaki dinleyiciler
+
+                //! ===========  CALL CONNECTION ===========
+
+
+                callConnection.on('ReceiveInitialCalls', async (data) => {
+                    dispatch(setInitialCalls(data));
+                });
+                callConnection.on('ReceiveInitialCallRecipientProfiles', async (data) => {
+                    dispatch(setCallRecipientList(data));
+                });
+
                 callConnection.on('ReceiveIncomingCall', async (data) => {
-                    console.log("Data geldi mi", data);
+
                     await handleIncomingCall(data, dispatch);
                     initializePeerConnection(); // PeerConnection'u bekle
 
                 });
 
-                callConnection.on('ReceiveOutgoingCall', (data) => {
+                callConnection.on('ReceiveOutgoingCall', async (data) => {
                     console.log("Data geldi mi", data);
                     handleOutgoingCall(data, dispatch);
                 });
 
                 callConnection.on('ReceiveEndCall', (data) => {
-                    handleEndCall(data, dispatch);
+                    handleEndCall(data.call, dispatch);
 
                     if (peerConnection.current) {
                         peerConnection.current.getSenders().forEach((sender) => {
@@ -297,6 +325,7 @@ export const SignalRProvider = ({ children }) => {
                         });
                         peerConnection.current.close();
                         peerConnection.current = null;
+                        setLocalStream(null);
                     }
                 });
 
@@ -369,7 +398,6 @@ export const SignalRProvider = ({ children }) => {
 
 
     const handleAcceptCall = async () => {
-        console.log("Buraya girdi mi,", peerConnection);
         try {
             if (peerConnection)
                 createAndSendOffer(callIdRef.current, callConnection, peerConnection);

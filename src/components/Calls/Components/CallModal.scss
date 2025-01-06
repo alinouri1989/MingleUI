@@ -7,14 +7,10 @@
 
 .call-modal {
     @include flex-center(column, space-between, center);
-    width: 500px;
-    height: 390px;
-    position: relative;
 
-    &.video-call-Mode {
-        width: 560px;
-        height: 560px;
-    }
+    width: 560px;
+    height: 560px;
+    position: relative;
 
     @include screen(768px) {
         width: 100%;
@@ -64,7 +60,7 @@
             font-size: 15px;
         }
 
-        &.video-call-Mode {
+        &.calling {
             img {
                 width: 70px;
                 height: 70px;
@@ -86,6 +82,7 @@
 
     .camera-bar {
         width: 96%;
+
         height: 100%;
         @include flex-center(row, center, center);
         position: relative;
@@ -99,6 +96,7 @@
             width: 65%;
             border-radius: 40px;
             z-index: 3;
+
             opacity: 0;
             /* Başlangıçta görünmez */
             animation: fadeIn 1.5s ease-in-out forwards;

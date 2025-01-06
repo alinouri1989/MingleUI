@@ -76,7 +76,7 @@ export const createAndSendOffer = async (callId, callConnection, peerConnection)
         await peerConnection.current.setLocalDescription(offer);
         console.log("Teklif oluşturuldu ve yerel ayarlandı:", offer);
 
-        // SignalR üzerinden gönder
+
         await sendSdp(callId, offer, callConnection);
     } catch (error) {
         console.error("Teklif oluşturulamadı:", error);

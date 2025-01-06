@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import UserImage from "../../../../assets/users/okan.png";
 import { PiPhoneFill } from "react-icons/pi";
 import { PiPhoneSlashFill } from "react-icons/pi";
@@ -20,6 +20,16 @@ function IncomingCall({ callType, callerProfile, callId }) {
     const dispatch = useDispatch();
 
     const { showModal, closeModal } = useModal();
+    const { localStream } = useSignalR();
+
+    const localVideoRef = useRef(null);
+
+
+    useEffect(() => {
+        if (localStream && localVideoRef.current) {
+            localVideoRef.current.srcObject = localStream;
+        }
+    }, [localStream]);
 
     useEffect(() => {
         const audio = new Audio(IncomingCallSound);
@@ -34,7 +44,7 @@ function IncomingCall({ callType, callerProfile, callId }) {
 
     const handleDeclineCall = async () => {
         try {
-            await callConnection.invoke("EndCall", callId, 2);
+            await callConnection.invoke("EndCall", callId, 2, null);
             dispatch(setIsRingingIncoming(false));
         } catch (error) {
             console.log("Arama sonlandırılamadı: ", error);
@@ -43,26 +53,29 @@ function IncomingCall({ callType, callerProfile, callId }) {
 
     useEffect(() => {
         if (isCallStarted) {
+            dispatch(setIsRingingIncoming(false));
             showModal(<CallModal callId={callId} closeModal={closeModal} />);
-            setIsRingingIncoming(false);
         }
     }, [isCallStarted])
 
     return (
         <div className='incoming-call-box'>
-            <img src={callerProfile.profilePhoto} alt="User Image" />
-            <div className='user-info-and-call-status'>
-                <p>{callerProfile.displayName}</p>
-                <span>Seni Arıyor...</span>
+            <div className='user-and-options'>
+                <img src={callerProfile.profilePhoto} alt="User Image" />
+                <div className='user-info-and-call-status'>
+                    <p>{callerProfile.displayName}</p>
+                    <span>Seni Arıyor...</span>
+                </div>
+                <div className='call-option-buttons'>
+                    <button onClick={() => handleAcceptCall()}>
+                        {callType === 0 ? <PiPhoneFill /> : <HiMiniVideoCamera />}
+                    </button>
+                    <button onClick={handleDeclineCall}>
+                        <PiPhoneSlashFill />
+                    </button>
+                </div>
             </div>
-            <div className='call-option-buttons'>
-                <button onClick={() => handleAcceptCall()}>
-                    {callType === 0 ? <PiPhoneFill /> : <HiMiniVideoCamera />}
-                </button>
-                <button onClick={handleDeclineCall}>
-                    <PiPhoneSlashFill />
-                </button>
-            </div>
+            <video className='local-video' playsInline ref={localVideoRef} autoPlay muted></video>
         </div>
     );
 }
