@@ -95,6 +95,29 @@ const callSlice = createSlice({
                 }
             });
         },
+        updateCallRecipientList: (state, action) => {
+            const updateData = action.payload;
+
+            // Gelen objeyi işleyerek, ID'ye göre güncelleme veya ekleme yapıyoruz
+            const recipientId = Object.keys(updateData)[0]; // ID'yi alıyoruz (örneğin: "Du70dE1dx4c8m9yHqRhNyu6gcMw2")
+            const updateValues = updateData[recipientId];
+
+            const existingRecipientIndex = state.callRecipientList.findIndex(
+                recipient => recipient.id === recipientId
+            );
+
+            if (existingRecipientIndex !== -1) {
+                state.callRecipientList[existingRecipientIndex] = {
+                    ...state.callRecipientList[existingRecipientIndex],
+                    ...updateValues,
+                };
+            } else {
+                state.callRecipientList.push({
+                    id: recipientId,
+                    ...updateValues,
+                });
+            }
+        }
     },
 });
 
@@ -113,7 +136,8 @@ export const {
     setCallResult,
     setInitialCalls,
     setCallRecipientList,
-    callStartedDate
+    callStartedDate,
+    updateCallRecipientList
 } = callSlice.actions;
 
 export default callSlice.reducer;

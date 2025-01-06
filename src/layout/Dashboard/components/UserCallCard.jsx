@@ -8,12 +8,15 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import { formatCallCreateDate } from "../../../helpers/dateHelper";
+import { Navigate, useNavigate } from "react-router-dom";
 
-function UserCallCard({ image, status, name, callStatus, lastDate }) {
+function UserCallCard({ callId, image, status, name, type, callStatus, createdDate, isOutgoingCall }) {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
+  const navigate = useNavigate();
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -27,48 +30,71 @@ function UserCallCard({ image, status, name, callStatus, lastDate }) {
     handleClose();
   };
 
+  const userStatus = status == "0001-01-01T00:00:00" ? 'online' : 'offline';
+
   const renderCallStatus = () => {
     let icon = null;
     let color = "#595959";
     let text = "";
 
     switch (callStatus) {
-      case "incomingCall":
-        icon = <VscCallIncoming className="icon" />;
-        text = "Gelen";
+      case 1:
+        if (isOutgoingCall) {
+          icon = <VscCallOutgoing className="icon" />;
+          text = "Giden";
+        } else {
+          icon = <VscCallIncoming className="icon" />;
+          text = "Gelen";
+        }
         break;
-      case "unAnsweredIncomingCall":
-        icon = <VscCallIncoming className="icon" />;
+      case 2:
+        text = "Meşgul";
+        color = "#EB6262";
+        if (isOutgoingCall) {
+          icon = <VscCallOutgoing className="icon" />;
+        } else {
+          icon = <VscCallIncoming className="icon" />;
+        }
+        break;
+      case 3:
+        text = "İptal Edildi";
+        color = "#595959";
+        break;
+      case 4:
         text = "Cevapsız";
         color = "#EB6262";
-        break;
-      case "outgoingCall":
-        icon = <VscCallOutgoing className="icon" />;
-        text = "Giden";
-        break;
-      case "unAnsweredOutgoingCall":
-        icon = <VscCallOutgoing className="icon" />;
-        text = "Cevapsız";
-        color = "#EB6262";
+        if (isOutgoingCall) {
+          icon = <VscCallOutgoing className="icon" />;
+        } else {
+          icon = <VscCallIncoming className="icon" />;
+        }
         break;
       default:
-        text = "";
+        text = "Bilinmeyen";
         break;
     }
 
     return (
-      <span className="call-status-span" style={{ color: color, display: "flex", alignItems: "center", gap: "5px" }}>
+      <span
+        className="call-status-span"
+        style={{ color: color, display: "flex", alignItems: "center", gap: "5px" }}
+      >
         {icon}
         {text}
       </span>
     );
   };
 
+  console.log("status", status);
+
+  const handleGoToCall = () => {
+    navigate(`/aramalar/${callId}`);
+  }
   return (
-    <div className="user-dashboard-card-box">
+    <div className="user-dashboard-card-box" onClick={handleGoToCall}>
       <div className="image-box">
         <img src={image} alt={`${name} profile`} />
-        <p className={`status ${status}`}></p>
+        <p className={`status ${userStatus}`}></p>
       </div>
 
       <div className="user-name-and-sub-title">
@@ -77,7 +103,7 @@ function UserCallCard({ image, status, name, callStatus, lastDate }) {
       </div>
 
       <div className="status-informations-box">
-        <span>{lastDate}</span>
+        <span>{formatCallCreateDate(createdDate)}</span>
       </div>
       <div className="option">
         <IconButton

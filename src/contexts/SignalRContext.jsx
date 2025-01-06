@@ -9,7 +9,7 @@ import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
 import { setGroupList, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
 import { useModal } from "./ModalContext.jsx";
 import { useNavigate } from "react-router-dom";
-import { handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, setIsRingingIncoming } from "../store/Slices/calls/callSlice.js";
+import { handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, setIsRingingIncoming, updateCallRecipientList } from "../store/Slices/calls/callSlice.js";
 import { createAndSendOffer, handleRemoteSDP, sendIceCandidate, sendSdp } from "../services/webRtcService.js";
 import { servers } from "../constants/StunTurnServers.js";
 // SignalR context oluşturuyoruz
@@ -236,6 +236,7 @@ export const SignalRProvider = ({ children }) => {
                     console.log("notificationConnection güncelleme verisi : ", data);
                     dispatch(updateUserInfoToChatList(data));
                     dispatch(updateUserInfoToGroupList(data));
+                    dispatch(updateCallRecipientList(data));
 
                 });
 
@@ -316,16 +317,15 @@ export const SignalRProvider = ({ children }) => {
 
                 callConnection.on('ReceiveEndCall', (data) => {
                     handleEndCall(data.call, dispatch);
+                    console.log("end call data", data);
 
-                    if (peerConnection.current) {
-                        peerConnection.current.getSenders().forEach((sender) => {
-                            if (sender.track) {
-                                sender.track.stop();
-                            }
-                        });
-                        peerConnection.current.close();
-                        peerConnection.current = null;
-                        setLocalStream(null);
+                    // 'call' dışında kalan diğer objeyi bul
+                    const otherDataKey = Object.keys(data).filter(key => key !== 'call')[0]; // İlk objeyi al
+                    const otherDataObject = data[otherDataKey]; // Diğer objeyi al
+
+                    // Redux ile güncelleme ya da ekleme işlemi
+                    if (otherDataObject) {
+                        dispatch(updateCallRecipientList(otherDataObject));
                     }
                 });
 
