@@ -13,7 +13,8 @@ const initialState = {
     isCallStarting: false,
     isCallStarted: false,
     callStartedDate: null,
-    callRecipientList: []
+    callRecipientList: [],
+    isInitialCallsReady: false
 };
 
 const callSlice = createSlice({
@@ -64,6 +65,7 @@ const callSlice = createSlice({
                     state.calls.push({ id: callId, ...callData });
                 }
             });
+            state.isInitialCallsReady = true;
         },
         setCallResult: (state, action) => {
             const callResult = action.payload;
@@ -122,6 +124,7 @@ const callSlice = createSlice({
 });
 
 export const {
+    isInitialCallsReady,
     setIsCallStarted,
     setIsCallStarting,
     isCallStarting,

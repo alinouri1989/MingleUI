@@ -65,23 +65,38 @@ export const formatDateForLastConnectionDate = (dateString) => {
   return `${day}.${month}.${year}`;
 };
 
-export function formatCallCreateDate(createdDate) {
-  const now = new Date();
-  const date = new Date(createdDate);
+export function formatTimeHoursMinutes(isoString) {
+  const date = new Date(isoString); // ISO tarihini Date objesine çevir
+  const hours = String(date.getHours()).padStart(2, '0'); // Saat bilgisi
+  const minutes = String(date.getMinutes()).padStart(2, '0'); // Dakika bilgisi
+  return `${hours}:${minutes}`; // Formatlanmış saat ve dakika
+}
 
-  // Bugün mü kontrolü
-  const isToday = now.toDateString() === date.toDateString();
+export function formatCallDuration(callDuration) {
+  // Verilen süreyi "00:00:05.9476898" formatından alıp, saat, dakika ve saniye olarak ayıralım
+  const [hours, minutes, seconds] = callDuration.split(':');
 
-  // Eğer bugünse saati döndür
-  if (isToday) {
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
-    return `${hours}:${minutes < 10 ? '0' + minutes : minutes}`;
+  // Saat, dakika ve saniyeyi sayıya çevir
+  const hoursInt = parseInt(hours);
+  const minutesInt = parseInt(minutes);
+  const secondsInt = Math.floor(parseFloat(seconds));
+
+  let formattedDuration = '';
+
+  // Eğer saat varsa, saat bilgisini ekleyelim
+  if (hoursInt > 0) {
+    formattedDuration += `${hoursInt} saat `;
   }
 
-  // Eğer dün ya da geçmiş bir tarihse, tarih formatında döndür
-  const day = date.getDate();
-  const month = date.getMonth() + 1; // JavaScript'te aylar 0'dan başlar
-  const year = date.getFullYear();
-  return `${day}.${month < 10 ? '0' + month : month}.${year}`;
+  // Dakika bilgisini ekleyelim
+  if (minutesInt > 0) {
+    formattedDuration += `${minutesInt} dakika `;
+  }
+
+  // Saniye bilgisini ekleyelim
+  if (secondsInt > 0 || formattedDuration === '') {
+    formattedDuration += `${secondsInt} saniye`;
+  }
+
+  return formattedDuration.trim(); // Gereksiz boşlukları temizle
 }

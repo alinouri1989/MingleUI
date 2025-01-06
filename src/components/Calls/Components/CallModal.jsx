@@ -18,7 +18,7 @@ import "./CallModal.scss";
 import { formatTime } from "../../../helpers/formatCallTime";
 
 
-function CallModal({ closeModal, isVideoCallMode }) {
+function CallModal({ closeModal }) {
 
     const { callConnection } = useSignalR();
     const { localStream, remoteStream } = useSignalR();

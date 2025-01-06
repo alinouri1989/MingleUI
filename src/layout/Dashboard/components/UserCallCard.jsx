@@ -1,6 +1,10 @@
 import React, { useState } from "react";
-import { VscCallOutgoing } from "react-icons/vsc";
-import { VscCallIncoming } from "react-icons/vsc";
+import { VscCallOutgoing, VscCallIncoming } from "react-icons/vsc";
+import { HiMiniVideoCamera } from "react-icons/hi2";
+import { TbVideoMinus } from "react-icons/tb";
+import { RiVideoDownloadFill } from "react-icons/ri"; // Gelen Kamera Araması
+import { RiVideoUploadFill } from "react-icons/ri"; // Giden Kamera Araması
+import { MdMissedVideoCall } from "react-icons/md"; // Cevapsız Kamera Araması
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -8,10 +12,10 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { formatCallCreateDate } from "../../../helpers/dateHelper";
+import { formatCallCreateDate, formatTimeHoursMinutes } from "../../../helpers/dateHelper";
 import { Navigate, useNavigate } from "react-router-dom";
 
-function UserCallCard({ callId, image, status, name, type, callStatus, createdDate, isOutgoingCall }) {
+function UserCallCard({ callId, image, status, name, callType, callStatus, createdDate, isOutgoingCall }) {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -30,45 +34,67 @@ function UserCallCard({ callId, image, status, name, type, callStatus, createdDa
     handleClose();
   };
 
+
   const userStatus = status == "0001-01-01T00:00:00" ? 'online' : 'offline';
 
   const renderCallStatus = () => {
     let icon = null;
-    let color = "#595959";
+    let color = "#595959"; // Default color for unknown status
     let text = "";
 
     switch (callStatus) {
       case 1:
-        if (isOutgoingCall) {
-          icon = <VscCallOutgoing className="icon" />;
-          text = "Giden";
-        } else {
-          icon = <VscCallIncoming className="icon" />;
-          text = "Gelen";
+        if (callType === 0) { // Sesli Arama (Telefon)
+          if (isOutgoingCall) {
+            icon = <VscCallOutgoing className="icon" />;
+            text = "Giden Arama";
+          } else {
+            icon = <VscCallIncoming className="icon" />;
+            text = "Gelen Arama";
+          }
+        } else if (callType === 1) { // Görüntülü Arama (Kamera)
+          if (isOutgoingCall) {
+            icon = <RiVideoUploadFill className="icon" />;
+            text = "Giden Arama";
+          } else {
+            icon = <RiVideoDownloadFill className="icon" />;
+            text = "Gelen Arama";
+          }
         }
         break;
+
       case 2:
         text = "Meşgul";
-        color = "#EB6262";
-        if (isOutgoingCall) {
-          icon = <VscCallOutgoing className="icon" />;
-        } else {
-          icon = <VscCallIncoming className="icon" />;
+        color = "#EB6262"; // Kırmızı renk
+        if (callType === 0) { // Sesli Arama
+          icon = isOutgoingCall ? <VscCallOutgoing className="icon" /> : <VscCallIncoming className="icon" />;
+        } else if (callType === 1) { // Görüntülü Arama
+          icon = isOutgoingCall ? <HiMiniVideoCamera className="icon" /> : <HiMiniVideoCamera className="icon" />;
         }
         break;
+
       case 3:
         text = "İptal Edildi";
-        color = "#595959";
+        color = "#EB6262"; // Kırmızı renk
+        icon = <TbVideoMinus className="icon" />; // İptal ikonu
         break;
+
       case 4:
-        text = "Cevapsız";
-        color = "#EB6262";
-        if (isOutgoingCall) {
-          icon = <VscCallOutgoing className="icon" />;
-        } else {
-          icon = <VscCallIncoming className="icon" />;
+        text = "Cevapsız  Arama";
+        color = "#EB6262"; // Kırmızı renk
+        if (callType === 0) { // Sesli Arama
+          icon = isOutgoingCall ? <VscCallOutgoing className="icon" /> : <VscCallIncoming className="icon" />;
+        } else if (callType === 1) { // Görüntülü Arama
+          if (isOutgoingCall) {
+            icon = <RiVideoUploadFill className="icon" />;
+            text = "Cevapsız";
+          } else {
+            icon = <RiVideoDownloadFill className="icon" />;
+            text = "Cevapsız";
+          }
         }
         break;
+
       default:
         text = "Bilinmeyen";
         break;
@@ -103,7 +129,7 @@ function UserCallCard({ callId, image, status, name, type, callStatus, createdDa
       </div>
 
       <div className="status-informations-box">
-        <span>{formatCallCreateDate(createdDate)}</span>
+        <span>{formatTimeHoursMinutes(createdDate)}</span>
       </div>
       <div className="option">
         <IconButton
