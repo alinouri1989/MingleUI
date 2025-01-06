@@ -2,6 +2,7 @@ import { useSelector } from "react-redux";
 import React, { useState, useRef, useEffect } from "react";
 import MingleLogo from "../../../assets/logos/MingleLogoWithText.svg";
 import CallSound from "../../../assets/Sounds/MingleCallSound.mp3";
+import BusySound from "../../../assets/Sounds/MingleCallBusySound.mp3";
 import { useSignalR } from "../../../contexts/SignalRContext";
 
 import { MdScreenShare } from "react-icons/md";
@@ -16,20 +17,20 @@ import { HiVideoCameraSlash } from "react-icons/hi2";
 import "./CallModal.scss";
 import { formatTime } from "../../../helpers/formatCallTime";
 
+
 function CallModal({ closeModal, isVideoCallMode }) {
 
     const { callConnection } = useSignalR();
     const { localStream, remoteStream } = useSignalR();
 
-    const { callerProfile, callId, isCallStarted, isRingingOutgoing } = useSelector((state) => state.call);
+    const { callerProfile, callId, isCallStarted, isRingingOutgoing, callStartedDate, isCallStarting } = useSelector((state) => state.call);
 
     const [isMicrophoneOn, setMicrophoneMode] = useState(true);
     const [isSpeakerOn, setSpeakerMode] = useState(true);
     const [callStatus, setCallStatus] = useState("Aranıyor...");
 
 
-    const [isWebcamOpen, setIsWebcamOpen] = useState(false);
-    const [isVideoCall, setIsVideoCall] = useState(false);
+    const busySoundRef = useRef(new Audio(BusySound));
 
 
     const localVideoRef = useRef(null);
@@ -47,34 +48,8 @@ function CallModal({ closeModal, isVideoCallMode }) {
         }
     }, [remoteStream]);
 
-
     const audioRef = useRef(null);
 
-    useEffect(() => {
-        if (isVideoCallMode) {
-            setIsWebcamOpen(!isWebcamOpen);
-            setIsVideoCall(true);
-
-            if (!isWebcamOpen) {
-                navigator.mediaDevices
-                    .getUserMedia({ video: true, audio: true })
-                    .then((stream) => {
-                        localVideoRef.current.srcObject = stream;
-                    })
-                    .catch((err) => {
-                        console.error("Kamera başlatılamadı:", err);
-                    });
-            } else {
-
-            }
-        }
-    }, []);
-
-    useEffect(() => {
-        if (!isCallStarted && !isWebcamOpen) {
-            setIsVideoCall(false);
-        }
-    }, [isCallStarted, isWebcamOpen]);
 
     useEffect(() => {
         const audio = new Audio(CallSound);
@@ -104,6 +79,11 @@ function CallModal({ closeModal, isVideoCallMode }) {
     useEffect(() => {
         let timerInterval;
         if (isCallStarted) {
+            if (isCallStarted && audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current.currentTime = 0;
+            }
+
             let elapsedTime = 0;
             timerInterval = setInterval(() => {
                 elapsedTime += 1;
@@ -120,6 +100,30 @@ function CallModal({ closeModal, isVideoCallMode }) {
         };
     }, [isCallStarted]);
 
+    useEffect(() => {
+        let timeout;
+
+        if (isCallStarting) {
+            timeout = setTimeout(() => {
+                if (!isCallStarted) {
+                    console.log("Buraya girmiş olması gerek.")
+                    console.log("CallId", callId);
+                    callConnection.invoke("EndCall", callId, 4, callStartedDate);
+                    setCallStatus("Meşgul");
+                    setTimeout(() => {
+                        closeModal();
+                    }, 4000);
+                }
+            }, 5000);
+        }
+
+        return () => {
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+        };
+    }, [isCallStarting, isCallStarted, callId]);
+
     const handleMicrophoneMode = () => {
         setMicrophoneMode(!isMicrophoneOn);
     };
@@ -134,38 +138,47 @@ function CallModal({ closeModal, isVideoCallMode }) {
         });
     };
 
-    const handleCameraToggle = () => {
-        if (!isWebcamOpen) {
-            // Kamera aç
-            setIsWebcamOpen(true);
-            setIsVideoCall(true);
-            navigator.mediaDevices
-                .getUserMedia({ video: true, audio: true })
-                .then((stream) => {
-                    localVideoRef.current.srcObject = stream; // Kamerayı bağla
-                })
-                .catch((err) => {
-                    console.error("Kamera başlatılamadı:", err);
-                });
-        } else {
-            // Kamera kapat
-            console.log("Girdi");
-            if (localVideoRef.current?.srcObject) {
-                // Tüm medya akışlarını durdur
-                localVideoRef.current.srcObject.getTracks().forEach((track) => track.stop());
-                localVideoRef.current.srcObject = null; // Referansı temizle
-            }
-            setIsWebcamOpen(false); // Kamera kapalı durumunu güncelle
-        }
-    };
+    // const handleCameraToggle = () => {
+    //     if (!isWebcamOpen) {
+    //         // Kamera aç
+    //         setIsWebcamOpen(true);
+    //         setIsVideoCall(true);
+    //         navigator.mediaDevices
+    //             .getUserMedia({ video: true, audio: true })
+    //             .then((stream) => {
+    //                 localVideoRef.current.srcObject = stream; // Kamerayı bağla
+    //             })
+    //             .catch((err) => {
+    //                 console.error("Kamera başlatılamadı:", err);
+    //             });
+    //     } else {
+    //         // Kamera kapat
+    //         console.log("Girdi");
+    //         if (localVideoRef.current?.srcObject) {
+    //             // Tüm medya akışlarını durdur
+    //             localVideoRef.current.srcObject.getTracks().forEach((track) => track.stop());
+    //             localVideoRef.current.srcObject = null; // Referansı temizle
+    //         }
+    //         setIsWebcamOpen(false); // Kamera kapalı durumunu güncelle
+    //     }
+    // };
 
     const handleCloseCall = () => {
         if (localVideoRef.current?.srcObject) {
             localVideoRef.current.srcObject.getTracks().forEach((track) => track.stop());
         }
 
-        callConnection.invoke("EndCall", callId, 3);
-
+        if (isCallStarted) {
+            callConnection.invoke("EndCall", callId, 1, callStartedDate);
+        }
+        if (isCallStarting) {
+            if (callStatus == "Meşgul") {
+                callConnection.invoke("EndCall", callId, 4, callStartedDate);
+            }
+            else {
+                callConnection.invoke("EndCall", callId, 3, callStartedDate);
+            }
+        }
         closeModal();
     };
 
@@ -181,7 +194,7 @@ function CallModal({ closeModal, isVideoCallMode }) {
     // };
 
     return (
-        <div className={`call-modal ${(isWebcamOpen || isCallStarted) ? 'video-call-Mode' : ''}`}>
+        <div className={`call-modal ${(isCallStarted) ? 'video-call-Mode' : ''}`}>
             {/* Logo ve şifreleme bilgisi */}
             <div className="logo-and-e2e-box">
                 <img src={MingleLogo} alt="Mingle Logo" />
@@ -224,8 +237,8 @@ function CallModal({ closeModal, isVideoCallMode }) {
                 style={{ width: "120px", border: "1px solid black" }}
             />
             <>
-                <div className={`camera-bar ${!isVideoCall ? "only-voice-call" : ""}`}>
-                    {/* {isWebcamOpen &&
+                {/* <div className={`camera-bar ${!isVideoCall ? "only-voice-call" : ""}`}>
+                    {isWebcamOpen &&
                         <div className={`device-camera-box ${isCallStarted ? 'remote-connected' : ''}`}>
                             <video playsInline ref={localVideoRef} autoPlay muted></video>
                         </div>
@@ -239,8 +252,8 @@ function CallModal({ closeModal, isVideoCallMode }) {
                                 <p>{callerProfile.displayName}</p>
                             </div>
                         </div>
-                    )} */}
-                </div>
+                    )} 
+                </div>*/}
 
                 <p className="video-call-time-status">{callStatus}</p>
             </>
@@ -252,9 +265,8 @@ function CallModal({ closeModal, isVideoCallMode }) {
                     <MdScreenShare />
                 </button>
 
-                <button onClick={handleCameraToggle}>
-                    {isWebcamOpen ? <HiMiniVideoCamera /> : <HiVideoCameraSlash />}
-
+                <button>
+                    <HiMiniVideoCamera />
                 </button>
 
                 <button onClick={handleSpeakerMode}>

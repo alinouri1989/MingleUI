@@ -34,7 +34,6 @@ function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientI
             try {
                 await callConnection.invoke("StartCall", recipientId, 1);
                 dispatch(setIsCallStarting(true));
-
                 showModal(<CallModal callId={callId} closeModal={closeModal} />);
             } catch (error) {
                 console.error("Error starting voice call:", error);

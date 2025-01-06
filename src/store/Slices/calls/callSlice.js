@@ -1,5 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { useModal } from '../../../contexts/ModalContext';
+import { act } from 'react';
 
 
 const initialState = {
@@ -11,6 +12,7 @@ const initialState = {
     calls: [],
     isCallStarting: false,
     isCallStarted: false,
+    callStartedDate: null,
 };
 
 const callSlice = createSlice({
@@ -37,6 +39,9 @@ const callSlice = createSlice({
         },
         setIsCallStarting: (state, action) => {
             state.isCallStarting = action.payload;
+        },
+        setCallStartedDate: (state, action) => {
+            state.callStartedDate = action.payload;
         },
         resetCallState: (state) => {
             state.callId = null;
@@ -67,6 +72,7 @@ export const {
     setIsCallStarting,
     isCallStarting,
     isCallStarted,
+    setCallStartedDate,
     setCallId,
     setCallType,
     setCallerProfile,
@@ -74,6 +80,7 @@ export const {
     setIsRingingOutgoing,
     resetCallState,
     setCallResult,
+    callStartedDate
 } = callSlice.actions;
 
 export default callSlice.reducer;
