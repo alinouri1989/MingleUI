@@ -52,6 +52,16 @@ export const authApi = createApi({
       },
     }),
 
+    resetPassword: builder.mutation({
+      query: (email) => ({
+        url: 'Auth/Password',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json', // JSON formatını belirtin
+        },
+        body: JSON.stringify({ email }), // E-posta verisini JSON formatına çevirin
+      }),
+    }),
     // Get User Profile endpoint
     getUserProfile: builder.query({
       query: () => {
@@ -101,4 +111,5 @@ export const {
   useLoginUserMutation,
   useGetUserProfileQuery,
   useLogoutUserMutation,
+  useResetPasswordMutation
 } = authApi;
