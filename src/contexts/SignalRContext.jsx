@@ -12,6 +12,8 @@ import { constraints, createAndSendOffer, handleRemoteSDP, sendSdp } from "../se
 
 import { servers } from "../constants/StunTurnServers.js";
 import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
+import { decryptMessage } from '../helpers/messageCryptoHelper.js';
+import { useLocation } from 'react-router-dom';
 
 const SignalRContext = createContext();
 
@@ -29,7 +31,7 @@ export const useSignalR = () => {
 export const SignalRProvider = ({ children }) => {
 
     const dispatch = useDispatch();
-
+    const location = useLocation();
     const [connectionStatus, setConnectionStatus] = useState("disconnected");
     const [chatConnection, setChatConnection] = useState(null);
     const [notificationConnection, setNotificationConnection] = useState(null);
@@ -164,24 +166,27 @@ export const SignalRProvider = ({ children }) => {
                     if (data.Individual) {
                         Object.entries(data.Individual).forEach(([chatId, messages]) => {
                             Object.entries(messages).forEach(([messageId, messageData]) => {
+                                const decryptedContent = decryptMessage(messageData.content, chatId);
                                 store.dispatch(
                                     addMessageToIndividual({
                                         chatId,
                                         messageId,
-                                        messageData,
+                                        messageData: { ...messageData, content: decryptedContent },
                                     })
                                 );
                             });
                         });
                     }
+
                     if (data.Group) {
                         Object.entries(data.Group).forEach(([chatId, messages]) => {
                             Object.entries(messages).forEach(([messageId, messageData]) => {
+                                const decryptedContent = decryptMessage(messageData.content, chatId);
                                 store.dispatch(
                                     addMessageToGroup({
                                         chatId,
                                         messageId,
-                                        messageData,
+                                        messageData: { ...messageData, content: decryptedContent },
                                     })
                                 );
                             });
@@ -390,9 +395,11 @@ export const SignalRProvider = ({ children }) => {
 
     useEffect(() => {
         if (chatConnection && (Individual?.length > 0 || Group?.length > 0)) {
+            console.log("GİRDİ!!");
             deliverMessages();
+            console.log(location);
         }
-    }, [chatConnection, Individual, Group, window.location.pathname]);
+    }, [chatConnection, Individual, Group, location]);
 
     //! ====== METHODS ======
 
@@ -408,10 +415,12 @@ export const SignalRProvider = ({ children }) => {
 
     const deliverMessages = async () => {
         try {
-            // Location'dan aktif chatId ve groupId al
+
+            console.log("GİRDİ Mİ?");
             const chatIdFromLocation = window.location.pathname.includes("sohbetler")
                 ? window.location.pathname.split('/')[2]
                 : null;
+            console.log(chatIdFromLocation);
             const groupIdFromLocation = window.location.pathname.includes("gruplar")
                 ? window.location.pathname.split('/')[2]
                 : null;
@@ -433,6 +442,7 @@ export const SignalRProvider = ({ children }) => {
             const individualReadPromises = chatIdFromLocation
                 ? Individual.flatMap(chat => {
                     if (chat.id === chatIdFromLocation) {
+                        console.log("GİRDİ Mİ ?");
                         return chat.messages
                             .filter(message => {
                                 const isRead = message.status.read && Object.keys(message.status.read).includes(userId);
@@ -440,13 +450,13 @@ export const SignalRProvider = ({ children }) => {
                                 return !isRead && !isSentByUser;
                             })
                             .map(message =>
+
                                 chatConnection.invoke("ReadMessage", "Individual", chat.id, message.id)
                             );
                     }
                     return [];
                 })
                 : [];
-
 
             // Group mesajlarını filtrele ve gönder
             const groupPromises = Group.flatMap(chat =>
@@ -487,7 +497,6 @@ export const SignalRProvider = ({ children }) => {
             console.error("Error processing messages:", err);
         }
     };
-
 
     if (loading) {
         return null;

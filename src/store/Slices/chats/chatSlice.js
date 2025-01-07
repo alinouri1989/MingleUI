@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { decryptMessage } from '../../../helpers/messageCryptoHelper';
 
 const initialState = {
     Individual: [],
@@ -13,29 +14,38 @@ const chatSlice = createSlice({
         initializeChats: (state, action) => {
             const { Individual, Group } = action.payload;
 
-            // Individual verisini dönüştür
+            // Individual verisini dönüştür ve içeriklerini çöz
             state.Individual = Object.keys(Individual).map(chatId => ({
                 id: chatId,
                 participants: Individual[chatId].participants,
                 archivedFor: Individual[chatId].archivedFor,
                 createdDate: Individual[chatId].createdDate,
-                messages: Object.entries(Individual[chatId].messages || {}).map(([messageId, messageData]) => ({
-                    id: messageId,
-                    ...messageData,
-                })),
+                messages: Object.entries(Individual[chatId].messages || {}).map(([messageId, messageData]) => {
+                    const decryptedContent = decryptMessage(messageData.content, chatId);
+                    return {
+                        id: messageId,
+                        ...messageData,
+                        content: decryptedContent
+                    };
+                }),
             }));
 
-            // Group verisini dönüştür (eğer gerekiyorsa)
+            // Group verisini dönüştür ve içeriklerini çöz
             state.Group = Object.keys(Group).map(chatId => ({
                 id: chatId,
                 participants: Group[chatId].participants,
                 archivedFor: Group[chatId].archivedFor,
                 createdDate: Group[chatId].createdDate,
-                messages: Object.entries(Group[chatId].messages || {}).map(([messageId, messageData]) => ({
-                    id: messageId,
-                    ...messageData,
-                })),
+                messages: Object.entries(Group[chatId].messages || {}).map(([messageId, messageData]) => {
+                    const decryptedContent = decryptMessage(messageData.content, chatId);
+                    return {
+                        id: messageId,
+                        ...messageData,
+                        content: decryptedContent,
+                    };
+                }),
             }));
+
             state.isChatsInitialized = true;
         },
 
@@ -112,8 +122,6 @@ const chatSlice = createSlice({
                     chat.messages.push({ id: messageId, ...messageData });
                 }
 
-                // Güncellenmiş mesajları kontrol etmek için
-                console.log("Güncellenmiş mesajlar:", JSON.parse(JSON.stringify(chat.messages)));
             } else {
                 // Yeni sohbet ekle
                 const newChat = {

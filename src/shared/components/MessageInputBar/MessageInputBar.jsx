@@ -8,6 +8,7 @@ import { useModal } from "../../../contexts/ModalContext";
 import ImageModal from "../ImageModal/ImageModal";
 import { useSignalR } from "../../../contexts/SignalRContext";
 import { useLocation } from "react-router-dom";
+import { encryptMessage } from "../../../helpers/messageCryptoHelper";
 
 function MessageInputBar({ chatId }) {
     const { chatConnection } = useSignalR();
@@ -75,9 +76,13 @@ function MessageInputBar({ chatId }) {
         } else if (location.pathname.includes('gruplar')) {
             chatType = 'Group'; // If "gruplar" is in the pathname, chatType = Group
         }
-
         try {
-            await chatConnection.invoke("SendMessage", chatType, chatId, sendMessageDto);
+            const encryptedMessage = encryptMessage(message, chatId);
+            await chatConnection.invoke("SendMessage", chatType, chatId, {
+                ...sendMessageDto,
+                content: encryptedMessage,
+            });
+
             setSelectedFile(null);
         } catch (error) {
             console.error("Mesaj gönderme hatası:", error);
