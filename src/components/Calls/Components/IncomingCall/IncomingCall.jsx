@@ -8,7 +8,6 @@ import IncomingCallSound from "../../../../assets/sounds/MingleCallSound.mp3";
 import { useSignalR } from '../../../../contexts/SignalRContext';
 import { setIsRingingIncoming } from '../../../../store/Slices/calls/callSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { createAndSendOffer, startLocalStream } from '../../../../services/webRtcService';
 import { useModal } from '../../../../contexts/ModalContext';
 import CallModal from '../CallModal';
 import "./style.scss";

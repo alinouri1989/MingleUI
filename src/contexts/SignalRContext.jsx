@@ -1,22 +1,22 @@
-import { createContext, useContext, useState, useEffect, useRef } from "react";
-import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
-import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
-import { useDispatch, useSelector } from "react-redux";
 import store from '../store/index.js';
-import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats } from "../store/Slices/chats/chatSlice.js";
-import { addNewUserToChatList, setInitialChatList, updateUserInfoToChatList } from "../store/Slices/chats/chatListSlice.js";
-import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
+import { useDispatch, useSelector } from "react-redux";
+import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import { createContext, useContext, useState, useEffect, useRef } from "react";
+
+import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
 import { setGroupList, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
-import { useNavigate } from "react-router-dom";
-import { handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, setIsRingingIncoming, updateCallRecipientList } from "../store/Slices/calls/callSlice.js";
-import { createAndSendOffer, handleRemoteSDP, sendSdp } from "../services/webRtcService.js";
+import { addNewUserToChatList, setInitialChatList, updateUserInfoToChatList } from "../store/Slices/chats/chatListSlice.js";
+import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats } from "../store/Slices/chats/chatSlice.js";
+import { handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, updateCallRecipientList } from "../store/Slices/calls/callSlice.js";
+import { constraints, createAndSendOffer, handleRemoteSDP, sendSdp } from "../services/webRtcService.js";
+
 import { servers } from "../constants/StunTurnServers.js";
-// SignalR context oluşturuyoruz
+import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
+
 const SignalRContext = createContext();
 
 export const useSignalR = () => {
     const context = useContext(SignalRContext);
-    const dispatch = useDispatch();
 
     if (!context) {
         throw new Error("useSignalR must be used within a SignalRProvider");
@@ -40,7 +40,6 @@ export const SignalRProvider = ({ children }) => {
     const { token } = useSelector(state => state.auth);
     const userId = getUserIdFromToken(token);
 
-
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -54,7 +53,7 @@ export const SignalRProvider = ({ children }) => {
         try {
             const pc = new RTCPeerConnection(servers);
 
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            const stream = await navigator.mediaDevices.getUserMedia(constraints);
             setLocalStream(stream);
 
             stream.getTracks().forEach((track) => {
@@ -80,7 +79,6 @@ export const SignalRProvider = ({ children }) => {
             dispatch(setIsCallStarted(true));
             dispatch(setIsCallStarting(false));
 
-            // Tarihi al ve ISO 8601 formatına dönüştür
             const currentDate = new Date().toISOString();
             dispatch(setCallStartedDate(currentDate));
         };
@@ -88,7 +86,7 @@ export const SignalRProvider = ({ children }) => {
         peerConnection.current.oniceconnectionstatechange = () => {
             const state = peerConnection.current.iceConnectionState;
 
-            if (state === "disconnected" || state === "failed" || state === "closed") {
+            if (state === "failed" || state === "closed") {
                 dispatch(resetCallState())
                 if (peerConnection.current) {
                     peerConnection.current.getSenders().forEach((sender) => {
@@ -113,7 +111,6 @@ export const SignalRProvider = ({ children }) => {
     useEffect(() => {
         const token = getJwtFromCookie();
 
-        // ChatHub bağlantısını başlat
         const chatConnection = new HubConnectionBuilder()
             .withUrl("https://localhost:7042/ChatHub", {
                 headers: {
@@ -149,9 +146,9 @@ export const SignalRProvider = ({ children }) => {
         Promise.all([chatConnection.start(), notificationConnection.start(), callConnection.start()])
             .then(() => {
 
-                console.log("Hub bağlantıları başarılı!");
                 setConnectionStatus("connected");
                 setLoading(false);
+
                 //! ===========  CHAT CONNECTION ===========
 
                 //Initial Group / Individual Chats 
@@ -190,10 +187,6 @@ export const SignalRProvider = ({ children }) => {
                             });
                         });
                     }
-                });
-
-                chatConnection.on("Error", (data) => {
-                    console.log("HATA : ", data)
                 });
 
                 chatConnection.on("ReceiveInitialRecipientChatProfiles", (data) => {
@@ -320,18 +313,27 @@ export const SignalRProvider = ({ children }) => {
                     handleEndCall(data.call, dispatch);
                     console.log("end call data", data);
 
-                    // 'call' dışında kalan diğer objeyi bul
-                    const otherDataKey = Object.keys(data).filter(key => key !== 'call')[0]; // İlk objeyi al
-                    const otherDataObject = data[otherDataKey]; // Diğer objeyi al
+                    const otherDataKey = Object.keys(data).filter(key => key !== 'call')[0];
+                    const otherDataObject = data[otherDataKey];
 
-                    // Redux ile güncelleme ya da ekleme işlemi
                     if (otherDataObject) {
                         dispatch(updateCallRecipientList(otherDataObject));
+                    }
+
+                    if (peerConnection.current) {
+                        peerConnection.current.getSenders().forEach((sender) => {
+                            if (sender.track) {
+                                sender.track.stop();
+                            }
+                        });
+                        peerConnection.current.close();
+                        peerConnection.current = null;
+                        setLocalStream(null);
+                        setRemoteStream(null);
                     }
                 });
 
                 callConnection.on('ReceiveIceCandidate', async (data) => {
-                    console.log("ICE Candidate alındı:", data);
                     peerConnection.current.addIceCandidate(new RTCIceCandidate(data));
                 });
 
@@ -349,7 +351,7 @@ export const SignalRProvider = ({ children }) => {
                         } else if (data.type === "answer") {
                             console.log("peerConnection burada var mı??? = ", peerConnection.current);
 
-                            await handleRemoteSDP(data, peerConnection.current); // Cevap verisini işliyoruz
+                            await handleRemoteSDP(data, peerConnection.current);
                         } else {
                             console.error("Bilinmeyen SDP türü:", data.type);
                         }

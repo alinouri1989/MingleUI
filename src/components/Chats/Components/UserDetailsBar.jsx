@@ -14,7 +14,6 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
     if (!recipientProfile) {
         return null;
     }
-    console.log("recipientProfile", recipientProfile)
 
     const { callConnection } = useSignalR();
     const dispatch = useDispatch();

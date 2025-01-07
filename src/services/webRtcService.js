@@ -1,34 +1,6 @@
-let localStream = null;
-let remoteStream = null;
-
-
-
-export const startLocalStream = async () => {
-    try {
-        localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        return localStream;
-    } catch (error) {
-        console.error("Yerel medya akışı başlatılamadı:", error);
-        throw error;
-    }
-};
-
-// export const createOffer = async () => {
-//     try {
-//         const offer = await peerConnection.createOffer();
-//         await peerConnection.setLocalDescription(new RTCSessionDescription(offer));
-//         console.log("Teklif oluşturuldu:", offer);
-//         return offer;
-//     } catch (error) {
-//         console.error("Teklif oluşturulamadı:", error);
-//         throw error;
-//     }
-// };
-
 export const handleRemoteSDP = async (sdp, peerConnection) => {
     try {
         await peerConnection.setRemoteDescription(new RTCSessionDescription(sdp));
-        console.log("Remote SDP ayarlandı:", sdp);
     } catch (error) {
         console.error("Remote SDP ayarlanamadı:", error);
         throw error;
@@ -43,7 +15,6 @@ export const addIceCandidate = async (candidate, peerConnection) => {
 
     try {
         await peerConnection.current.addIceCandidate(candidate);
-        console.log("ICE Candidate eklendi:", candidate);
     } catch (error) {
         console.error("ICE Candidate eklenemedi:", error);
         throw error;
@@ -53,7 +24,6 @@ export const addIceCandidate = async (candidate, peerConnection) => {
 export const sendSdp = async (callId, sdp, callConnection) => {
     try {
         await callConnection.invoke("SendSdp", callId, sdp);
-        console.log("SDP gönderildi:", sdp);
     } catch (error) {
         console.error("SDP gönderilirken hata:", error);
         throw error;
@@ -63,9 +33,7 @@ export const sendSdp = async (callId, sdp, callConnection) => {
 export const sendIceCandidate = async (callId, candidate, callConnection) => {
     try {
         await callConnection.invoke("SendIceCandidate", callId, candidate);
-        console.log("ICE Candidate gönderildi:", candidate);
     } catch (error) {
-        console.error("ICE Candidate gönderilirken hata:", error);
         throw error;
     }
 };
@@ -73,27 +41,61 @@ export const sendIceCandidate = async (callId, candidate, callConnection) => {
 export const createAndSendOffer = async (callId, callConnection, peerConnection) => {
     try {
         const offer = await peerConnection.current.createOffer();
-        await peerConnection.current.setLocalDescription(offer);
-        console.log("Teklif oluşturuldu ve yerel ayarlandı:", offer);
 
+        // SDP manipülasyonu: Opus codec'i öncelikli hale getir
+        const prioritizedOffer = prioritizeOpusCodec(offer);
 
-        await sendSdp(callId, offer, callConnection);
+        await peerConnection.current.setLocalDescription(prioritizedOffer);
+
+        // SDP'yi gönder
+        await sendSdp(callId, prioritizedOffer, callConnection);
     } catch (error) {
         console.error("Teklif oluşturulamadı:", error);
         throw error;
     }
 };
 
-// export const createAndSendAnswer = async (callId, callConnection) => {
-//     try {
-//         const answer = await peerConnection.createAnswer();
-//         await peerConnection.current.setLocalDescription(new RTCSessionDescription(answer));
-//         console.log("Cevap oluşturuldu ve yerel ayarlandı:", answer);
+export const constraints = {
+    video: {
+        width: { ideal: 1920, max: 1920 },
+        height: { ideal: 1080, max: 1080 },
+        frameRate: { ideal: 45, max: 60 },
+    },
+    audio: {
+        echoCancellation: true,
+        noiseSuppression: true,
+        autoGainControl: true, // Mikrofonun ses seviyesini otomatik optimize et
+        sampleRate: 48000,
+    },
+};
 
-//         // SignalR üzerinden gönder
-//         await sendSdp(callId, answer, callConnection);
-//     } catch (error) {
-//         console.error("Cevap oluşturulamadı:", error);
-//         throw error;
-//     }
-// };
+
+const prioritizeOpusCodec = (offer) => {
+    const sdpLines = offer.sdp.split("\n");
+    const opusPayloadType = sdpLines.find((line) => line.includes("opus/48000"))?.match(/:(\d+)/)?.[1];
+
+    if (opusPayloadType) {
+        const audioLineIndex = sdpLines.findIndex((line) => line.startsWith("m=audio"));
+        if (audioLineIndex !== -1) {
+            const audioLine = sdpLines[audioLineIndex];
+            const audioLineParts = audioLine.split(" ");
+
+            // Opus payload'u başa taşı
+            const updatedAudioLine = [
+                audioLineParts[0], // "m=audio"
+                audioLineParts[1], // port
+                audioLineParts[2], // protocol
+                opusPayloadType,   // Opus codec ID
+                ...audioLineParts.slice(3).filter((pt) => pt !== opusPayloadType),
+            ].join(" ");
+
+            sdpLines[audioLineIndex] = updatedAudioLine;
+        }
+    } else {
+        console.warn("Opus codec bulunamadı. SDP manipülasyonu yapılmadı.");
+    }
+
+    offer.sdp = sdpLines.join("\n");
+    return offer;
+};
+
