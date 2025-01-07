@@ -5,7 +5,7 @@ import { prepareGroupFormData } from '../../helpers/prepareGroupFormData';
 export const GroupApi = createApi({
   reducerPath: 'newGroupApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:5069/api/Group',
+    baseUrl: 'https://localhost:7042/api/Group',
     prepareHeaders: (headers) => {
       const token = getJwtFromCookie();
       if (token) {

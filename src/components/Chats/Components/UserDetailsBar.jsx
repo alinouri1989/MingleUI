@@ -5,13 +5,19 @@ import { HiMiniVideoCamera } from "react-icons/hi2";
 import { useModal } from '../../../contexts/ModalContext';
 import CallModal from '../../Calls/Components/CallModal';
 import { formatDateForLastConnectionDate } from '../../../helpers/dateHelper';
+import { useSignalR } from '../../../contexts/SignalRContext';
+import { setIsCallStarting } from '../../../store/Slices/calls/callSlice';
+import { useDispatch } from 'react-redux';
 
-function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile }) {
+function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientId }) {
 
     if (!recipientProfile) {
         return null;
     }
+    console.log("recipientProfile", recipientProfile)
 
+    const { callConnection } = useSignalR();
+    const dispatch = useDispatch();
     const status = recipientProfile.lastConnectionDate == "0001-01-01T00:00:00" ? 'online' : 'offline';
     const lastConnectionDate = recipientProfile.lastConnectionDate;
 
@@ -20,8 +26,17 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile }) {
     const handleVoiceCall = () => {
         showModal(<CallModal closeModal={closeModal} />);
     }
-    const handleVideoCall = () => {
-        showModal(<CallModal isVideoCallMode={true} closeModal={closeModal} />);
+
+    const handleVideoCall = async () => {
+        if (callConnection) {
+            try {
+                await callConnection.invoke("StartCall", recipientId, 1);
+                dispatch(setIsCallStarting(true));
+                showModal(<CallModal closeModal={closeModal} />);
+            } catch (error) {
+                console.error("Error starting video call:", error);
+            }
+        }
     }
 
     return (

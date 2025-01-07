@@ -7,7 +7,7 @@ import { removeJwtFromCookie } from '../../helpers/removeJwtFromCookie';
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:5069/api/',
+    baseUrl: 'https://localhost:7042/api/',
   }),
   endpoints: (builder) => ({
     // Register (SignUp) endpoint

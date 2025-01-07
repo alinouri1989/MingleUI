@@ -136,9 +136,12 @@
             @include flex-center(row, center, center);
 
             video {
+                width: 100%; // Genişliği sabitle
+                max-width: 100%; // Taşmayı engelle
+                height: auto; // Oranları koru
                 border-radius: 20px;
                 border: 4px solid var(--smooth-light-blue);
-
+                object-fit: cover; // Video içeriğini kesmeden kapsa
             }
 
             .user-info {

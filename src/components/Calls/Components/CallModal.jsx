@@ -170,31 +170,6 @@ function CallModal({ closeModal }) {
         });
     };
 
-    // const handleCameraToggle = () => {
-    //     if (!isWebcamOpen) {
-    //         // Kamera aç
-    //         setIsWebcamOpen(true);
-    //         setIsVideoCall(true);
-    //         navigator.mediaDevices
-    //             .getUserMedia({ video: true, audio: true })
-    //             .then((stream) => {
-    //                 localVideoRef.current.srcObject = stream; // Kamerayı bağla
-    //             })
-    //             .catch((err) => {
-    //                 console.error("Kamera başlatılamadı:", err);
-    //             });
-    //     } else {
-    //         // Kamera kapat
-    //         console.log("Girdi");
-    //         if (localVideoRef.current?.srcObject) {
-    //             // Tüm medya akışlarını durdur
-    //             localVideoRef.current.srcObject.getTracks().forEach((track) => track.stop());
-    //             localVideoRef.current.srcObject = null; // Referansı temizle
-    //         }
-    //         setIsWebcamOpen(false); // Kamera kapalı durumunu güncelle
-    //     }
-    // };
-
     const handleCloseCall = () => {
         if (localVideoRef.current?.srcObject) {
             localVideoRef.current.srcObject.getTracks().forEach((track) => track.stop());
@@ -214,16 +189,6 @@ function CallModal({ closeModal }) {
         closeModal();
     };
 
-    // const simulateRemoteConnection = () => {
-    //     setIsVideoCall(true);
-    //     // Karşı taraf kamerası simülasyonu
-    //     navigator.mediaDevices
-    //         .getUserMedia({ video: true })
-    //         .then((stream) => {
-    //             remoteVideoRef.current.srcObject = stream;
-    //         })
-    //         .catch((err) => console.error("Uzaktan kamera bağlanamadı:", err));
-    // };
 
     return (
         <div className={`call-modal ${isCallStarted ? 'video-call-Mode' : ''}`}>

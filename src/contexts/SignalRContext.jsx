@@ -7,10 +7,9 @@ import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndiv
 import { addNewUserToChatList, setInitialChatList, updateUserInfoToChatList } from "../store/Slices/chats/chatListSlice.js";
 import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
 import { setGroupList, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
-import { useModal } from "./ModalContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, setIsRingingIncoming, updateCallRecipientList } from "../store/Slices/calls/callSlice.js";
-import { createAndSendOffer, handleRemoteSDP, sendIceCandidate, sendSdp } from "../services/webRtcService.js";
+import { createAndSendOffer, handleRemoteSDP, sendSdp } from "../services/webRtcService.js";
 import { servers } from "../constants/StunTurnServers.js";
 // SignalR context oluşturuyoruz
 const SignalRContext = createContext();
@@ -28,20 +27,22 @@ export const useSignalR = () => {
 };
 
 export const SignalRProvider = ({ children }) => {
+
+    const dispatch = useDispatch();
+
+    const [connectionStatus, setConnectionStatus] = useState("disconnected");
     const [chatConnection, setChatConnection] = useState(null);
     const [notificationConnection, setNotificationConnection] = useState(null);
     const [callConnection, setCallConnection] = useState(null);
-
-    const [connectionStatus, setConnectionStatus] = useState("disconnected");
-    const { token } = useSelector(state => state.auth);
-    const { Individual, Group } = useSelector(state => state.chat);
-
-    const navigate = useNavigate();
-    const userId = getUserIdFromToken(token);
-    const [error, setError] = useState(null);
-    const dispatch = useDispatch();
-    const [loading, setLoading] = useState(true);
     const { callId } = useSelector(state => state.call);
+
+    const { Individual, Group } = useSelector(state => state.chat);
+    const { token } = useSelector(state => state.auth);
+    const userId = getUserIdFromToken(token);
+
+
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     const [localStream, setLocalStream] = useState(null);
     const [remoteStream, setRemoteStream] = useState(null);
@@ -114,7 +115,7 @@ export const SignalRProvider = ({ children }) => {
 
         // ChatHub bağlantısını başlat
         const chatConnection = new HubConnectionBuilder()
-            .withUrl("http://localhost:5069/ChatHub", {
+            .withUrl("https://localhost:7042/ChatHub", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -124,7 +125,7 @@ export const SignalRProvider = ({ children }) => {
             .build();
 
         const notificationConnection = new HubConnectionBuilder()
-            .withUrl("http://localhost:5069/NotificationHub", {
+            .withUrl("https://localhost:7042/NotificationHub", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -134,7 +135,7 @@ export const SignalRProvider = ({ children }) => {
             .build();
 
         const callConnection = new HubConnectionBuilder()
-            .withUrl("http://localhost:5069/CallHub", {
+            .withUrl("https://localhost:7042/CallHub", {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -391,17 +392,12 @@ export const SignalRProvider = ({ children }) => {
         }
     }, [chatConnection, Individual, Group, window.location.pathname]);
 
-
-
-
     //! ====== METHODS ======
-
 
     const handleAcceptCall = async () => {
         try {
             if (peerConnection)
                 createAndSendOffer(callIdRef.current, callConnection, peerConnection);
-            // dispatch(setIsRingingIncoming(false)); // Decline ringing state
 
         } catch (error) {
             console.log("Call accept failed:", error);

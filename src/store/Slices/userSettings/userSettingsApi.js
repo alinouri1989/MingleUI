@@ -8,7 +8,7 @@ import { convertFileToBase64 } from '../../helpers/convertFileToBase64.js';
 export const userSettingsApi = createApi({
   reducerPath: 'accountSettingsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'http://localhost:5069/api/',
+    baseUrl: 'https://localhost:7042/api/',
     prepareHeaders: (headers) => {
       const token = getJwtFromCookie();
       if (token) {
