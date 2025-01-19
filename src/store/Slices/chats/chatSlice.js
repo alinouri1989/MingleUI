@@ -21,7 +21,10 @@ const chatSlice = createSlice({
                 archivedFor: Individual[chatId].archivedFor,
                 createdDate: Individual[chatId].createdDate,
                 messages: Object.entries(Individual[chatId].messages || {}).map(([messageId, messageData]) => {
-                    const decryptedContent = decryptMessage(messageData.content, chatId);
+                    let decryptedContent = messageData.content;
+                    if (decryptedContent && decryptedContent !== "Bu mesaj silindi.") {
+                        decryptedContent = decryptMessage(messageData.content, chatId);
+                    }
                     return {
                         id: messageId,
                         ...messageData,
@@ -29,24 +32,6 @@ const chatSlice = createSlice({
                     };
                 }),
             }));
-
-            // Group verisini dönüştür ve içeriklerini çöz
-            state.Group = Object.keys(Group).map(chatId => ({
-                id: chatId,
-                participants: Group[chatId].participants,
-                archivedFor: Group[chatId].archivedFor,
-                createdDate: Group[chatId].createdDate,
-                messages: Object.entries(Group[chatId].messages || {}).map(([messageId, messageData]) => {
-                    const decryptedContent = decryptMessage(messageData.content, chatId);
-                    return {
-                        id: messageId,
-                        ...messageData,
-                        content: decryptedContent,
-                    };
-                }),
-            }));
-
-            state.isChatsInitialized = true;
         },
 
         addNewIndividualChat: (state, action) => {

@@ -163,10 +163,15 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 chatConnection.on("ReceiveGetMessages", (data) => {
+                    console.log("SİLİNEN MESAJ", data);
                     if (data.Individual) {
                         Object.entries(data.Individual).forEach(([chatId, messages]) => {
                             Object.entries(messages).forEach(([messageId, messageData]) => {
-                                const decryptedContent = decryptMessage(messageData.content, chatId);
+                                let decryptedContent = messageData.content;
+                                if (decryptedContent && decryptedContent !== "Bu mesaj silindi.") {
+                                    decryptedContent = decryptMessage(messageData.content, chatId);
+                                }
+
                                 store.dispatch(
                                     addMessageToIndividual({
                                         chatId,
@@ -415,8 +420,6 @@ export const SignalRProvider = ({ children }) => {
 
     const deliverMessages = async () => {
         try {
-
-            console.log("GİRDİ Mİ?");
             const chatIdFromLocation = window.location.pathname.includes("sohbetler")
                 ? window.location.pathname.split('/')[2]
                 : null;
@@ -425,7 +428,7 @@ export const SignalRProvider = ({ children }) => {
                 ? window.location.pathname.split('/')[2]
                 : null;
 
-            // Individual mesajlarını filtrele ve gönder
+
             const individualPromises = Individual.flatMap(chat => {
                 return chat.messages
                     .filter(message => {
@@ -442,7 +445,6 @@ export const SignalRProvider = ({ children }) => {
             const individualReadPromises = chatIdFromLocation
                 ? Individual.flatMap(chat => {
                     if (chat.id === chatIdFromLocation) {
-                        console.log("GİRDİ Mİ ?");
                         return chat.messages
                             .filter(message => {
                                 const isRead = message.status.read && Object.keys(message.status.read).includes(userId);

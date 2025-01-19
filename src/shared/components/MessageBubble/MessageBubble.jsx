@@ -15,16 +15,19 @@ import { FaEarthAfrica } from "react-icons/fa6";
 import './style.scss';
 import { SuccessAlert } from '../../../helpers/customAlert';
 import { useSelector } from 'react-redux';
+import { useSignalR } from '../../../contexts/SignalRContext';
 
-function MessageBubble({ userId, userColor, content, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
-
-    if (content === "") {
+function MessageBubble({ ChatId, userId, messageId, userColor, content, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
+    console.log("message ıd", messageId);
+    if (content == "") {
         return null;
     }
 
     const { Group } = useSelector((state) => state.chat);
     const { groupList } = useSelector((state) => state.groupList);
     const [anchorEl, setAnchorEl] = useState(null);
+    const { chatConnection } = useSignalR();
+
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -34,8 +37,21 @@ function MessageBubble({ userId, userColor, content, timestamp, isSender, status
         setAnchorEl(null);
     };
 
-    const handleDelete = () => {
-        SuccessAlert("Mesaj Silindi")
+    const handleDelete = (deletionType) => {
+        // public async Task DeleteMessage(string chatType, string chatId, string messageId, byte deletionType)
+        let chatType;
+        if (isGroupMessageBubble) {
+            chatType = "Group";
+        }
+        else {
+            chatType = "Individual";
+        }
+        try {
+            chatConnection.invoke("DeleteMessage", chatType, ChatId, messageId, deletionType);
+            SuccessAlert("Mesaj Silindi")
+        } catch (error) {
+
+        }
         handleClose();
     };
 
@@ -175,7 +191,7 @@ function MessageBubble({ userId, userColor, content, timestamp, isSender, status
                             }}
                         >
                             <MenuItem
-                                onClick={handleDelete}
+                                onClick={() => handleDelete(0)}
                                 sx={{ color: "#EB6262" }}
                             >
                                 <ListItemIcon sx={{ color: "inherit" }}>
@@ -192,7 +208,7 @@ function MessageBubble({ userId, userColor, content, timestamp, isSender, status
                             </MenuItem>
 
                             <MenuItem
-                                onClick={handleDelete}
+                                onClick={() => handleDelete(1)}
                                 sx={{ color: "#EB6262" }}
                             >
                                 <ListItemIcon sx={{ color: "inherit" }}>

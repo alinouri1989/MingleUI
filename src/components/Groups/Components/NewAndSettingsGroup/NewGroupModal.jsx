@@ -221,6 +221,7 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
     // Create New Group Logis is here.
     const handleSubmit = async () => {
         try {
+
             const response = await createGroup(formData);
 
             if (response?.error) {

@@ -66,7 +66,9 @@ function UserMessageBar({ ChatId }) {
 
               return (
                 <MessageBubble
+                  ChatId={ChatId}
                   key={msg.id}
+                  messageId={msg.id}
                   content={msg.content}
                   timestamp={formattedTimestamp} // Dönüştürülmüş zaman
                   isSender={isSender}
