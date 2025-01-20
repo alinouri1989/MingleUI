@@ -8,6 +8,8 @@ import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import { lastMessageDateHelper } from "../../../helpers/dateHelper";
 import NoChats from "../../../assets/NoChats.webp";
 import "./style.scss";
+import { useLocation } from "react-router-dom";
+import { getChatId } from "../../../store/Slices/chats/chatSlice";
 
 function ChatsList() {
     const { showModal, closeModal } = useModal();
@@ -15,24 +17,27 @@ function ChatsList() {
     const chatList = useSelector((state) => state.chatList.chatList); // Orijinal chatList
     const { token } = useSelector((state) => state.auth); // Kullanıcı token'ı
     const UserId = getUserIdFromToken(token); // Token'dan kullanıcı ID'si al
+    const [enhancedChatList, setEnhancedChatList] = useState([]); // Extract chatId from URL if present
+    const chatState = useSelector(state => state.chat);
 
-    const [enhancedChatList, setEnhancedChatList] = useState([]);
+    const location = useLocation();
 
     useEffect(() => {
         const updatedChatList = Object.entries(chatList)
-            .map(([userId, user]) => {
+            .map(([receiverId, user]) => {
                 const chatData = Individual.find(
                     (chat) =>
-                        chat.participants.includes(userId) &&
+                        chat.participants.includes(receiverId) &&
                         chat.participants.includes(UserId)
                 );
+
+                const chatId = getChatId(chatState, UserId, receiverId);
 
                 if (!chatData || !chatData.messages || chatData.messages.length === 0) {
                     return null;
                 }
 
-                const lastMessage = chatData?.messages[chatData?.messages.length - 1].content
-
+                const lastMessage = chatData?.messages[chatData?.messages.length - 1].content;
 
                 const lastMessageDate =
                     chatData.messages.length > 0
@@ -41,7 +46,6 @@ function ChatsList() {
                         )
                         : "";
 
-                // Tarih sıralama için kullanılacak
                 const lastMessageDateForSort =
                     chatData.messages.length > 0
                         ? new Date(
@@ -51,22 +55,33 @@ function ChatsList() {
 
                 const isArchive = chatData.archivedFor?.hasOwnProperty(UserId);
 
+                // URL'deki chatId'yi kontrol et
+                const isActiveChat = location.pathname.includes(chatId);
+
+                const unReadMessage = !isActiveChat && chatData.messages.filter((message) => {
+                    return (
+                        !Object.keys(message.status.sent).includes(UserId) &&
+                        !message.status.read?.[UserId]
+                    );
+                }).length;
+
                 return {
-                    userId,
+                    receiverId,
                     image: user.profilePhoto,
                     status: user.lastConnectionDate === "0001-01-01T00:00:00",
                     name: user.displayName,
                     lastMessage,
                     lastMessageDate,
                     lastMessageDateForSort,
-                    isArchive
+                    isArchive,
+                    unReadMessage
                 };
             })
             .filter((chat) => chat !== null)
             .sort((a, b) => b.lastMessageDateForSort - a.lastMessageDateForSort);
 
-        setEnhancedChatList(updatedChatList);
-    }, [chatList, Individual, UserId]);
+        setEnhancedChatList(updatedChatList); // Yeni chat listesine set et
+    }, [chatList, Individual, UserId, chatState]);
 
 
     const handleNewChat = () => {
@@ -88,14 +103,15 @@ function ChatsList() {
                 {nonArchivedChats.length > 0 ? (
                     nonArchivedChats.map((chat) => (
                         <UserChatCard
-                            key={chat.userId}
-                            receiverId={chat.userId}
+                            key={chat.receiverId}
+                            receiverId={chat.receiverId}
                             image={chat.image}
                             status={chat.status}
                             name={chat.name}
                             lastMessage={chat.lastMessage}
                             lastMessageDate={chat.lastMessageDate}
                             isArchive={chat.isArchive}
+                            unReadMessage={chat.unReadMessage}
                         />
                     ))
                 ) : (

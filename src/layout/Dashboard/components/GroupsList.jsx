@@ -6,17 +6,19 @@ import { useSelector } from "react-redux";
 import "./style.scss";
 import GroupChatCard from "./GroupChatCard";
 import { lastMessageDateHelper } from "../../../helpers/dateHelper";
+import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 
 function GroupsList() {
+  const { token } = useSelector((state) => state.auth)
+  const userId = getUserIdFromToken(token);
   const { showModal, closeModal } = useModal();
   const { groupList } = useSelector((state) => state.groupList); // Fetch groupList from Redux store
   const { Group } = useSelector((state) => state.chat); // Fetch chat data from Redux store
+  const location = window.location; // Access the current location.pathname
 
   const handleNewGroup = () => {
     showModal(<NewGroupModal closeModal={closeModal} />); // Show modal to create new group
   };
-
-  console.log("Group List:", groupList);
 
   return (
     <div className="group-list-box">
@@ -46,6 +48,16 @@ function GroupsList() {
               )
               : "";
 
+          const currentGroupIdInPath = location.pathname.includes(groupId);
+
+          const unReadMessage = !currentGroupIdInPath && chatGroup?.messages.filter((message) => {
+            return (
+              !Object.keys(message.status.sent).includes(userId) &&
+              !message.status.read?.[userId]
+            );
+          }).length;
+
+
           return (
             <GroupChatCard
               key={groupId}
@@ -54,6 +66,7 @@ function GroupsList() {
               groupPhotoUrl={group.photoUrl}
               lastMessage={lastMessage}
               lastMessageDate={lastMessageDate}
+              unReadMessage={unReadMessage}
             />
           );
         })}
