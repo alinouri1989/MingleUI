@@ -7,11 +7,11 @@ import { useModal } from "../../contexts/ModalContext.jsx";
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserIdFromToken } from '../../helpers/getUserIdFromToken.js';
-import "./style.scss";
 import CallModal from './Components/CallModal';
 import { formatCallDuration, formatDateToTR, formatTimeHoursMinutes } from '../../helpers/dateHelper.js';
 import { useSignalR } from '../../contexts/SignalRContext.jsx';
 import { setIsCallStarting } from '../../store/Slices/calls/callSlice.js';
+import "./style.scss";
 
 function Calls() {
   const { id } = useParams(); // Params'tan id'yi al
