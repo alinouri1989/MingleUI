@@ -11,15 +11,23 @@ import ListItemText from "@mui/material/ListItemText";
 import { getChatId } from "../../../store/Slices/chats/chatSlice";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useSignalR } from "../../../contexts/SignalRContext";
+import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
 
-function UserChatCard({ userId, image, status, name, lastMessageDate, lastMessage, lastDate, unReadMessage, isArchive }) {
+function UserChatCard({ receiverId, image, status, name, lastMessageDate, lastMessage, lastDate, unReadMessage, isArchive }) {
+
   const [anchorEl, setAnchorEl] = useState(null);
+  const { chatConnection } = useSignalR();
   const open = Boolean(anchorEl);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+
   const { token } = useSelector(state => state.auth);
   const chatState = useSelector(state => state.chat);
+
+  const chatId = getChatId(chatState, getUserIdFromToken(token), receiverId);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -29,20 +37,34 @@ function UserChatCard({ userId, image, status, name, lastMessageDate, lastMessag
     setAnchorEl(null);
   };
 
-  const handleArchive = () => {
-    console.log("Arşive eklendi");
+  const handleAddArchive = async () => {
+    try {
+      await chatConnection.invoke("ArchiveChat", chatId);
+      SuccessAlert("Arşive Eklendi");
+      if (location.pathname.includes(chatId)) {
+        navigate("/sohbetler");
+      }
+    } catch {
+      ErrorAlert("Arşive Eklenemedi");
+    }
     handleClose();
   };
 
-  const handleRemoveFromArchive = () => {
-    console.log("Arşivden çıkarıldı");
+  const handleRemoveFromArchive = async () => {
+    try {
+      await chatConnection.invoke("UnarchiveChat", chatId);
+      SuccessAlert("Arşivden Çıkarıldı");
+      if (location.pathname.includes(chatId)) {
+        navigate("/arsivler");
+      }
+    } catch {
+      ErrorAlert("Arşivden Çıkarılamadı");
+    }
     handleClose();
   };
 
   const handleGoChat = () => {
-    // Use `chatState` from Redux store and call `getChatId` with `authId` and `userId`
-    const chatId = getChatId(chatState, getUserIdFromToken(token), userId);
-    navigate(`/sohbetler/${chatId}`);
+    isArchive ? navigate(`/arsivler/${chatId}`) : navigate(`/sohbetler/${chatId}`)
   };
 
   return (
@@ -132,7 +154,7 @@ function UserChatCard({ userId, image, status, name, lastMessageDate, lastMessag
             </MenuItem>
           ) : (
             <MenuItem
-              onClick={handleArchive}
+              onClick={handleAddArchive}
               sx={{ color: "#585CE1" }}
             >
               <ListItemIcon>

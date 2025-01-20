@@ -49,6 +49,8 @@ function ChatsList() {
                         ).getTime()
                         : "";
 
+                const isArchive = chatData.archivedFor?.hasOwnProperty(UserId);
+
                 return {
                     userId,
                     image: user.profilePhoto,
@@ -56,12 +58,12 @@ function ChatsList() {
                     name: user.displayName,
                     lastMessage,
                     lastMessageDate,
-                    lastMessageDateForSort, // Sadece sıralama için
-                    isArchive: user.isArchive,
+                    lastMessageDateForSort,
+                    isArchive
                 };
             })
             .filter((chat) => chat !== null)
-            .sort((a, b) => b.lastMessageDateForSort - a.lastMessageDateForSort); // Tarihe göre sıralama
+            .sort((a, b) => b.lastMessageDateForSort - a.lastMessageDateForSort);
 
         setEnhancedChatList(updatedChatList);
     }, [chatList, Individual, UserId]);
@@ -70,6 +72,9 @@ function ChatsList() {
     const handleNewChat = () => {
         showModal(<NewChatModal closeModal={closeModal} />);
     };
+
+    const nonArchivedChats = enhancedChatList.filter((chat) => !chat.isArchive);
+
 
     return (
         <div className="chat-list-box">
@@ -80,11 +85,11 @@ function ChatsList() {
                 </button>
             </div>
             <div className="user-list">
-                {enhancedChatList.length > 0 ? (
-                    enhancedChatList.map((chat) => (
+                {nonArchivedChats.length > 0 ? (
+                    nonArchivedChats.map((chat) => (
                         <UserChatCard
                             key={chat.userId}
-                            userId={chat.userId}
+                            receiverId={chat.userId}
                             image={chat.image}
                             status={chat.status}
                             name={chat.name}

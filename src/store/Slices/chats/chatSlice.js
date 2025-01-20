@@ -13,8 +13,6 @@ const chatSlice = createSlice({
     reducers: {
         initializeChats: (state, action) => {
             const { Individual, Group } = action.payload;
-
-            // Individual verisini dönüştür ve içeriklerini çöz
             state.Individual = Object.keys(Individual).map(chatId => ({
                 id: chatId,
                 participants: Individual[chatId].participants,
@@ -164,6 +162,35 @@ const chatSlice = createSlice({
             return chat ? chat.messages : [];
         },
 
+        addArchive: (state, action) => {
+            const { Individual } = action.payload;
+            const chatId = Object.keys(Individual)[0];
+            const archiveData = Individual[chatId];
+
+            const chatIndex = state.Individual.findIndex(chat => chat.id === chatId);
+            if (chatIndex !== -1) {
+                state.Individual[chatIndex].archivedFor = {
+                    ...state.Individual[chatIndex].archivedFor,
+                    ...archiveData
+                };
+            }
+        },
+        removeArchive: (state, action) => {
+            console.log("çalıştımı removearchive", action.payload);
+
+            const individual = action.payload.Individual; // Gelen verideki Individual objesini al
+            for (let chatId in individual) {  // Individual içindeki her bir chatId'yi kontrol et
+                if (individual.hasOwnProperty(chatId)) {  // Eğer chatId'nin kendisi varsa
+                    const chatIndex = state.Individual.findIndex(chat => chat.id === chatId);
+
+                    if (chatIndex !== -1) {
+                        // İlgili chatId'yi bulduk, archivedFor alanını boş yap
+                        state.Individual[chatIndex].archivedFor = {};
+                    }
+                }
+            }
+        },
+
         removeIndividualChat: (state, action) => {
             state.Individual = state.Individual.filter(chat => chat.id !== action.payload);
         },
@@ -197,6 +224,7 @@ export const {
     removeIndividualChat,
     removeGroupChat,
     resetChats,
+    addArchive, removeArchive
 } = chatSlice.actions;
 
 export default chatSlice.reducer;

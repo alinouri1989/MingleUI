@@ -71,8 +71,8 @@ function MessageInputBar({ chatId }) {
         let chatType = '';
 
         // Check the pathname and determine the chat type
-        if (location.pathname.includes('sohbetler')) {
-            chatType = 'Individual'; // If "sohbetler" is in the pathname, chatType = Individual
+        if (location.pathname.includes('sohbetler') || location.pathname.includes('arsivler')) {
+            chatType = 'Individual'; // If "sohbetler" or "arsivler" is in the pathname, chatType = Individual
         } else if (location.pathname.includes('gruplar')) {
             chatType = 'Group'; // If "gruplar" is in the pathname, chatType = Group
         }

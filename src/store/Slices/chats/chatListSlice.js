@@ -27,8 +27,8 @@ const chatListSlice = createSlice({
             }
         },
         updateUserInfoToChatList: (state, action) => {
-            const chatId = Object.keys(action.payload)[0]; // Gelen payload'dan chatId
-            const updates = action.payload[chatId]; // Güncellenmesi gereken alanlar
+            const chatId = Object.keys(action.payload)[0];
+            const updates = action.payload[chatId];
 
             if (state.chatList[chatId]) {
                 Object.entries(updates).forEach(([key, value]) => {

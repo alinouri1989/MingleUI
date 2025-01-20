@@ -38,7 +38,7 @@ function AppRoutes() {
                         <Route path="sohbetler" element={<Chats />} />
                         <Route path="sohbetler/:id" element={<Chats />} />
                         <Route path="arsivler" element={<Archives />} />
-                        <Route path="arsivler/:id" element={<Archives />} />
+                        <Route path="arsivler/:id" element={<Chats />} />
                         <Route path="gruplar" element={<Groups />} />
                         <Route path="gruplar/:id" element={<Groups />} />
                         <Route path="aramalar" element={<Calls />} />

@@ -6,7 +6,7 @@ import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
 import { setGroupList, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
 import { addNewUserToChatList, setInitialChatList, updateUserInfoToChatList } from "../store/Slices/chats/chatListSlice.js";
-import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats } from "../store/Slices/chats/chatSlice.js";
+import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats, addArchive, removeArchive } from "../store/Slices/chats/chatSlice.js";
 import { handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, updateCallRecipientList } from "../store/Slices/calls/callSlice.js";
 import { constraints, createAndSendOffer, handleRemoteSDP, sendSdp } from "../services/webRtcService.js";
 
@@ -163,7 +163,6 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 chatConnection.on("ReceiveGetMessages", (data) => {
-                    console.log("SİLİNEN MESAJ", data);
                     if (data.Individual) {
                         Object.entries(data.Individual).forEach(([chatId, messages]) => {
                             Object.entries(messages).forEach(([messageId, messageData]) => {
@@ -232,6 +231,16 @@ export const SignalRProvider = ({ children }) => {
                     } else {
                         console.error("Bilinmeyen chat türü:", data);
                     }
+                });
+
+                chatConnection.on("ReceiveArchiveChat", (data) => {
+                    console.log("UNARCHIVED GELEN DATA", data)
+                    dispatch(addArchive(data));
+                });
+
+                chatConnection.on("ReceiveUnarchiveChat", (data) => {
+                    console.log("girdiiiiiiiiiiii");
+                    dispatch(removeArchive(data));
                 });
 
                 //! =========== NOTIFICATION CONNECTION ===========
@@ -408,7 +417,6 @@ export const SignalRProvider = ({ children }) => {
 
     useEffect(() => {
         if (chatConnection && (Individual?.length > 0 || Group?.length > 0)) {
-            console.log("GİRDİ!!");
             deliverMessages();
             console.log(location);
         }
@@ -428,10 +436,9 @@ export const SignalRProvider = ({ children }) => {
 
     const deliverMessages = async () => {
         try {
-            const chatIdFromLocation = window.location.pathname.includes("sohbetler")
+            const chatIdFromLocation = window.location.pathname.includes("sohbetler") || window.location.pathname.includes("arsivler")
                 ? window.location.pathname.split('/')[2]
                 : null;
-            console.log(chatIdFromLocation);
             const groupIdFromLocation = window.location.pathname.includes("gruplar")
                 ? window.location.pathname.split('/')[2]
                 : null;

@@ -168,13 +168,13 @@
 
 // Dashboard Lists Styles
 
-.chat-list-box {
+.chat-list-box,
+.archive-list-box {
     display: flex;
     flex-direction: column;
     height: 100%;
 
     .user-list {
-
         .no-active-chats {
             @include flex-center(column, center, center);
 
