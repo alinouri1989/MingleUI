@@ -99,6 +99,7 @@ const callSlice = createSlice({
         },
         updateCallRecipientList: (state, action) => {
             const updateData = action.payload;
+            console.log("updateCallRecipientList için gelen veri ===", updateData);
 
             // Gelen objeyi işleyerek, ID'ye göre güncelleme veya ekleme yapıyoruz
             const recipientId = Object.keys(updateData)[0]; // ID'yi alıyoruz (örneğin: "Du70dE1dx4c8m9yHqRhNyu6gcMw2")

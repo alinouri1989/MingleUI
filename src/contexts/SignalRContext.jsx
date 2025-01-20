@@ -240,6 +240,7 @@ export const SignalRProvider = ({ children }) => {
                     console.log("notificationConnection güncelleme verisi : ", data);
                     dispatch(updateUserInfoToChatList(data));
                     dispatch(updateUserInfoToGroupList(data));
+                    console.log("updateCallRecipientList için ReceiveRecipientProfiles'den giden veri ===", data);
                     dispatch(updateCallRecipientList(data));
 
                 });
@@ -321,13 +322,20 @@ export const SignalRProvider = ({ children }) => {
 
                 callConnection.on('ReceiveEndCall', (data) => {
                     handleEndCall(data.call, dispatch);
-                    console.log("end call data", data);
+                    const otherDataKey = Object.keys(data).find(key => key !== 'call');
+                    if (otherDataKey) {
+                        const otherDataObject = data[otherDataKey];
 
-                    const otherDataKey = Object.keys(data).filter(key => key !== 'call')[0];
-                    const otherDataObject = data[otherDataKey];
+                        if (otherDataObject) {
+                            const formattedData = {
+                                [otherDataKey]: {
+                                    id: otherDataKey,
+                                    ...otherDataObject
+                                }
+                            };
 
-                    if (otherDataObject) {
-                        dispatch(updateCallRecipientList(otherDataObject));
+                            dispatch(updateCallRecipientList(formattedData));
+                        }
                     }
 
                     if (peerConnection.current) {
