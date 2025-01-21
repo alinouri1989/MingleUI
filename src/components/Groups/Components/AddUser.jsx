@@ -42,9 +42,9 @@ function AddUser({ closeUserModal, setFormData, formData }) {
                 participants: {
                     ...prevState.participants,
                     [userId]: {
-                        DisplayName: selectedUser[1].displayName,
-                        Role: 1,
-                        ProfilePhoto: selectedUser[1].profilePhoto,
+                        displayName: selectedUser[1].displayName,
+                        role: 1,
+                        profilePhoto: selectedUser[1].profilePhoto,
                     }
                 }
             }));

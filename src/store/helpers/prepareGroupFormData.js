@@ -27,7 +27,7 @@ export const prepareGroupFormData = (formData, isEdit) => {
   if (formData.participants) {
     const formattedParticipants = {};
     Object.entries(formData.participants).forEach(([userId, user]) => {
-      formattedParticipants[userId] = Number(user.Role);
+      formattedParticipants[userId] = Number(user.role);
     });
 
     form.append('Participants', JSON.stringify(formattedParticipants));

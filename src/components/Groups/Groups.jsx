@@ -91,6 +91,7 @@ function GroupChats() {
       </div>
       {id && (
         <GroupDetailsBar
+          groupId={id}
           isSidebarOpen={isSidebarOpen}
           toggleSidebar={toggleSidebar}
           groupProfile={groupProfile} // Sidebar için grup profil bilgisi

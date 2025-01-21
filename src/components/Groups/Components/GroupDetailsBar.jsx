@@ -13,16 +13,21 @@ import { jwtDecode } from 'jwt-decode';
 import { formatDateToTR } from '../../../helpers/dateHelper';
 import { defaultGroupPhoto } from '../../../constants/DefaultProfilePhoto';
 
-function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
+function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }) {
     const { showModal, closeModal } = useModal();
 
-    const [groupId, setGroupID] = useState(null);
-
     const { token } = useSelector((state) => state.auth);
+    const { Group } = useSelector((state) => state.chat);
     const decodedToken = token ? jwtDecode(token) : null;
     const userId = decodedToken?.sub;
 
+    const selectedGroup = Group.find((group) => group.id === groupId);
 
+    // Eğer grup bulunduysa, participants içinden ilk öğeyi editGroupId'ye atıyoruz
+    let editGroupId = null;
+    if (selectedGroup && selectedGroup.participants && selectedGroup.participants.length > 0) {
+        editGroupId = selectedGroup.participants[0]; // İlk participant'ı alıyoruz
+    }
 
     const isAdmin = userId &&
         groupProfile?.participants?.[userId] &&
@@ -31,7 +36,7 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
 
     // Grup ayarlarını aç
     const handleGroupSettings = () => {
-        showModal(<NewGroupModal closeModal={closeModal} isGroupSettings={true} groupProfile={groupProfile} groupId={groupId} userId={userId} />);
+        showModal(<NewGroupModal closeModal={closeModal} isGroupSettings={true} groupProfile={groupProfile} groupId={editGroupId} userId={userId} />);
     };
 
     return (

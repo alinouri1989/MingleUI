@@ -190,12 +190,12 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
         }
     };
 
-    const handleRoleChange = (userId, newRole) => {
+    const handleroleChange = (userId, newrole) => {
         const updatedParticipants = {
             ...formData.participants,
             [userId]: {
                 ...formData.participants[userId],
-                Role: Number(newRole)
+                role: Number(newrole)
             }
         };
 
@@ -430,9 +430,9 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
                                     if (a === userId) return -1;
                                     if (b === userId) return 1;
 
-                                    // Sonrasında Role değeri 0 olanları önce sıralar (Yönetici)
-                                    if (userA.Role === 0 && userB.Role !== 0) return -1;
-                                    if (userA.Role !== 0 && userB.Role === 0) return 1;
+                                    // Sonrasında role değeri 0 olanları önce sıralar (Yönetici)
+                                    if (userA.role === 0 && userB.role !== 0) return -1;
+                                    if (userA.role !== 0 && userB.role === 0) return 1;
 
                                     // Diğerleri için sıralama yapmaz
                                     return 0;
@@ -444,15 +444,15 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
                                     return (
                                         <div className="user-box" key={participantId}>
                                             <div className="user-info">
-                                                <img src={user.ProfilePhoto} alt={user.DisplayName} />
+                                                <img src={user.profilePhoto} alt={user.displayName} />
                                                 <div className="username-and-role-box">
-                                                    <p>{user.DisplayName}</p>
+                                                    <p>{user.displayName}</p>
                                                     {isCurrentUser ? (
                                                         <p style={{ color: "#585CE1", fontSize: "14px" }}>Yönetici</p>
                                                     ) : (
                                                         <select
-                                                            defaultValue={user.Role}
-                                                            onChange={(e) => handleRoleChange(participantId, e.target.value)}
+                                                            defaultValue={user.role}
+                                                            onChange={(e) => handleroleChange(participantId, e.target.value)}
                                                         >
                                                             <option value={1}>Üye</option>
                                                             <option value={0}>Yönetici</option>
