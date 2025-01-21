@@ -31,7 +31,7 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
 
     // Grup ayarlarını aç
     const handleGroupSettings = () => {
-        showModal(<NewGroupModal closeModal={closeModal} isGroupSettings={true} groupInformation={groupProfile} groupId={groupId} userId={userId} />);
+        showModal(<NewGroupModal closeModal={closeModal} isGroupSettings={true} groupProfile={groupProfile} groupId={groupId} userId={userId} />);
     };
 
     return (
@@ -44,10 +44,8 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
                             onClick={toggleSidebar}
                         />
                         {isAdmin &&
-                            <button className='group-setting-btn'>
-                                <IoMdSettings
-                                    onClick={handleGroupSettings}
-                                />
+                            <button onClick={handleGroupSettings} className='group-setting-btn'>
+                                <IoMdSettings />
                             </button>
                         }
                     </div>

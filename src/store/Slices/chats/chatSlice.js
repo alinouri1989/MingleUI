@@ -13,23 +13,9 @@ const chatSlice = createSlice({
     reducers: {
         initializeChats: (state, action) => {
             const { Individual, Group } = action.payload;
-            state.Individual = Object.keys(Individual).map(chatId => ({
-                id: chatId,
-                participants: Individual[chatId].participants,
-                archivedFor: Individual[chatId].archivedFor,
-                createdDate: Individual[chatId].createdDate,
-                messages: Object.entries(Individual[chatId].messages || {}).map(([messageId, messageData]) => {
-                    let decryptedContent = messageData.content;
-                    if (decryptedContent && decryptedContent !== "Bu mesaj silindi.") {
-                        decryptedContent = decryptMessage(messageData.content, chatId);
-                    }
-                    return {
-                        id: messageId,
-                        ...messageData,
-                        content: decryptedContent
-                    };
-                }),
-            }));
+
+            state.Individual = transformChats(Individual, "individual");
+            state.Group = transformChats(Group, "group");
         },
 
         addNewIndividualChat: (state, action) => {
@@ -213,6 +199,25 @@ export const getChatId = (state, authId, receiveId) => {
     );
     return chat ? chat.id : null;  // Eğer chat bulunamazsa null döndür
 };
+
+const transformChats = (chats, chatType) =>
+    Object.keys(chats).map(chatId => ({
+        id: chatId,
+        participants: chats[chatId].participants,
+        archivedFor: chats[chatId].archivedFor,
+        createdDate: chats[chatId].createdDate,
+        messages: Object.entries(chats[chatId].messages || {}).map(([messageId, messageData]) => {
+            let decryptedContent = messageData.content;
+            if (decryptedContent && decryptedContent !== "Bu mesaj silindi.") {
+                decryptedContent = decryptMessage(messageData.content, chatId);
+            }
+            return {
+                id: messageId,
+                ...messageData,
+                content: decryptedContent,
+            };
+        }),
+    }));
 
 export const {
     initializeChats,

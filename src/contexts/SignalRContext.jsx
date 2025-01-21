@@ -155,6 +155,7 @@ export const SignalRProvider = ({ children }) => {
 
                 //Initial Group / Individual Chats 
                 chatConnection.on("ReceiveInitialChats", (data) => {
+                    console.log("GELEN chats DATA:", data)
                     store.dispatch(initializeChats(data));
                 });
 

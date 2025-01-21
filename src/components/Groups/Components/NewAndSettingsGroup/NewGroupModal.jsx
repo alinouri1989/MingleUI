@@ -35,6 +35,9 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
     const [editGroup, { isLoading: editLoading }] = useEditGroupMutation();
     const [leaveGroup, { isLoading: leaveLoading }] = useLeaveGroupMutation();
 
+    console.log("grup ayarları mı?", isGroupSettings);
+    console.log("group profilleri", groupProfile)
+
     const { chatConnection } = useSignalR();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -60,10 +63,6 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
     const [isShowProfileImage, setIsShowProfileImage] = useState(false);
     const [isSaveDisabled, setSaveDisabled] = useState(true);
 
-    // Mock Variables
-
-    const adminRole = "Yönetici";
-    const isAdmin = true;
 
     const groupImageDefault = defaultGroupPhoto;
 
