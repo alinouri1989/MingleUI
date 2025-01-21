@@ -61,12 +61,13 @@ function GroupsList() {
           return (
             <GroupChatCard
               key={groupId}
-              groupId={chatGroup?.id || groupId} // Use the chat group ID if available
+              groupId={chatGroup?.id}
               groupName={group.name}
               groupPhotoUrl={group.photoUrl}
               lastMessage={lastMessage}
               lastMessageDate={lastMessageDate}
               unReadMessage={unReadMessage}
+              groupListId={groupId}
             />
           );
         })}

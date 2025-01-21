@@ -11,12 +11,14 @@ import { defaultGroupPhoto } from "../../../constants/DefaultProfilePhoto.js";
 import "./style.scss";
 import { useNavigate } from "react-router-dom";
 
-function GroupChatCard({ groupId, groupName, groupPhotoUrl, lastMessage, lastMessageDate, unReadMessage }) {
+function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMessage, lastMessageDate, unReadMessage }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
     const [leaveGroup, { isLoading: leaveLoading }] = useLeaveGroupMutation();
 
+
+    console.log("groupId BİLGİN", groupListId);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -27,8 +29,8 @@ function GroupChatCard({ groupId, groupName, groupPhotoUrl, lastMessage, lastMes
 
     const handleLeaveGroup = async () => {
         try {
-            await leaveGroup(groupId).unwrap();
-            // SuccessAlert("Gruptan Çıktın") // Implement or replace with actual alert logic
+            await leaveGroup(groupListId).unwrap();
+            SuccessAlert("Gruptan Çıktın") // Implement or replace with actual alert logic
             closeModal(); // closeModal logic needs to be passed or managed outside the component
         } catch (error) {
             // ErrorAlert("Bir hata meydana geldi") // Implement or replace with actual error handling
