@@ -31,8 +31,23 @@ const groupListSlice = createSlice({
         });
       });
     },
+    updateGroupInformations(state, action) {
+      const newData = action.payload;
+
+      Object.keys(newData).forEach((groupId) => {
+        if (state.groupList[groupId]) {
+          state.groupList[groupId] = {
+            ...state.groupList[groupId],
+            ...newData[groupId],
+          };
+        } else {
+          state.groupList[groupId] = newData[groupId];
+        }
+      });
+    },
   },
 });
 
-export const { setGroupList, updateUserInfoToGroupList } = groupListSlice.actions;
+export const { setGroupList, updateUserInfoToGroupList, updateGroupInformations } =
+  groupListSlice.actions;
 export default groupListSlice.reducer;

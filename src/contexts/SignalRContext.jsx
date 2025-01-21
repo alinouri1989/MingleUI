@@ -4,7 +4,7 @@ import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { createContext, useContext, useState, useEffect, useRef } from "react";
 
 import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
-import { setGroupList, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
+import { setGroupList, updateGroupInformations, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
 import { addNewUserToChatList, setInitialChatList, updateUserInfoToChatList } from "../store/Slices/chats/chatListSlice.js";
 import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats, addArchive, removeArchive } from "../store/Slices/chats/chatSlice.js";
 import { handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, updateCallRecipientList } from "../store/Slices/calls/callSlice.js";
@@ -300,9 +300,9 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 notificationConnection.on("ReceiveGroupProfiles", (data) => {
-                    console.log("NotificationHub'dan gelen grup profilleri:", data);
+                    dispatch(updateGroupInformations(data))
 
-                }); // Grup profilleri güncellendiğinde, yapılacak işlem
+                });
 
                 //! =========== CALL CONNECTION ===========
 
