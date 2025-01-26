@@ -87,16 +87,25 @@ function Calls() {
   const formattedDuration = callDuration ? `Arama Süresi: ${formatCallDuration(callDuration)}` : "Cevaplanmadı";
 
   // Handlers
-  const handleVoiceCall = () => {
-    showModal(<CallModal isVideoCallMode={false} closeModal={closeModal} />);
-  }
+  const handleVoiceCall = async () => {
+    if (callConnection) {
+      try {
+        await callConnection.invoke("StartCall", recipientId, 0);
+        dispatch(setIsCallStarting(true));
+        showModal(<CallModal callId={callId} closeModal={closeModal} isCameraCall={false} />);
+      } catch (error) {
+        console.error("Error starting voice call:", error);
+      }
+    }
+  };
+
 
   const handleVideoCall = async () => {
     if (callConnection) {
       try {
         await callConnection.invoke("StartCall", otherParticipantId, 1);
         dispatch(setIsCallStarting(true));
-        showModal(<CallModal closeModal={closeModal} />);
+        showModal(<CallModal closeModal={closeModal} isCameraCall={true} />);
       } catch (error) {
         console.error("Error starting video call:", error);
       }

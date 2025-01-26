@@ -22,16 +22,25 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
 
 
     const { showModal, closeModal } = useModal();
-    const handleVoiceCall = () => {
-        showModal(<CallModal closeModal={closeModal} />);
-    }
+
+    const handleVoiceCall = async () => {
+        if (callConnection) {
+            try {
+                await callConnection.invoke("StartCall", recipientId, 0);
+                dispatch(setIsCallStarting(true));
+                showModal(<CallModal callId={callId} closeModal={closeModal} isCameraCall={false} />);
+            } catch (error) {
+                console.error("Error starting voice call:", error);
+            }
+        }
+    };
 
     const handleVideoCall = async () => {
         if (callConnection) {
             try {
                 await callConnection.invoke("StartCall", recipientId, 1);
                 dispatch(setIsCallStarting(true));
-                showModal(<CallModal closeModal={closeModal} />);
+                showModal(<CallModal closeModal={closeModal} isCameraCall={true} />);
             } catch (error) {
                 console.error("Error starting video call:", error);
             }
