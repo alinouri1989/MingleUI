@@ -8,7 +8,7 @@ import { setGroupList, updateGroupInformations, updateUserInfoToGroupList } from
 import { addNewUserToChatList, setInitialChatList, updateUserInfoToChatList } from "../store/Slices/chats/chatListSlice.js";
 import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats, addArchive, removeArchive } from "../store/Slices/chats/chatSlice.js";
 import { handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, updateCallRecipientList } from "../store/Slices/calls/callSlice.js";
-import { constraints, createAndSendOffer, handleRemoteSDP, sendSdp } from "../services/webRtcService.js";
+import { createAndSendOffer, handleRemoteSDP, sendSdp } from "../services/webRtcService.js";
 
 import { servers } from "../constants/StunTurnServers.js";
 import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
@@ -51,13 +51,26 @@ export const SignalRProvider = ({ children }) => {
     const callIdRef = useRef(callId);
     const peerConnection = useRef(null);
 
-    const initializePeerConnection = async () => {
+    const initializePeerConnection = async (callType) => {
         try {
             const pc = new RTCPeerConnection(servers);
 
+            const constraints = {
+                audio: {
+                    echoCancellation: true,
+                    noiseSuppression: true,
+                    autoGainControl: true,
+                    sampleRate: 48000,
+                },
+                video: callType === 1 ? {
+                    width: { ideal: 1920, max: 1920 },
+                    height: { ideal: 1080, max: 1080 },
+                    frameRate: { ideal: 45, max: 60 },
+                } : false,
+            };
+
             const stream = await navigator.mediaDevices.getUserMedia(constraints);
             setLocalStream(stream);
-
             stream.getTracks().forEach((track) => {
                 pc.addTrack(track, stream);
             });
@@ -67,6 +80,7 @@ export const SignalRProvider = ({ children }) => {
             console.error("Kamera veya mikrofon erişiminde hata:", error);
         }
     };
+
 
     if (peerConnection.current) {
         peerConnection.current.onicecandidate = (event) => {
@@ -319,14 +333,12 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 callConnection.on('ReceiveIncomingCall', async (data) => {
-
+                    const callType = data.callType;
                     await handleIncomingCall(data, dispatch);
-                    initializePeerConnection(); // PeerConnection'u bekle
-
+                    initializePeerConnection(callType);
                 });
 
                 callConnection.on('ReceiveOutgoingCall', async (data) => {
-                    console.log("Data geldi mi", data);
                     handleOutgoingCall(data, dispatch);
                 });
 
@@ -368,7 +380,7 @@ export const SignalRProvider = ({ children }) => {
                 callConnection.on('ReceiveSdp', async (data) => {
                     try {
                         if (data.type === "offer") {
-                            await initializePeerConnection();
+                            await initializePeerConnection(data.callType || 0);
 
                             console.log("Offer işlemleri başlatılıyor...");
                             await handleRemoteSDP(data, peerConnection.current);
@@ -377,8 +389,6 @@ export const SignalRProvider = ({ children }) => {
 
                             await sendSdp(callIdRef.current, answer, callConnection);
                         } else if (data.type === "answer") {
-                            console.log("peerConnection burada var mı??? = ", peerConnection.current);
-
                             await handleRemoteSDP(data, peerConnection.current);
                         } else {
                             console.error("Bilinmeyen SDP türü:", data.type);

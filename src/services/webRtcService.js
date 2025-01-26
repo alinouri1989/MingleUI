@@ -55,20 +55,6 @@ export const createAndSendOffer = async (callId, callConnection, peerConnection)
     }
 };
 
-export const constraints = {
-    video: {
-        width: { ideal: 1920, max: 1920 },
-        height: { ideal: 1080, max: 1080 },
-        frameRate: { ideal: 45, max: 60 },
-    },
-    audio: {
-        echoCancellation: true,
-        noiseSuppression: true,
-        autoGainControl: true, // Mikrofonun ses seviyesini otomatik optimize et
-        sampleRate: 48000,
-    },
-};
-
 
 const prioritizeOpusCodec = (offer) => {
     const sdpLines = offer.sdp.split("\n");

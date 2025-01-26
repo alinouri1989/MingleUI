@@ -18,7 +18,7 @@ import "./CallModal.scss";
 import { formatTime } from "../../../helpers/formatCallTime";
 
 
-function CallModal({ closeModal }) {
+function CallModal({ closeModal, isCameraCall }) {
 
     const { callConnection } = useSignalR();
     const { localStream, remoteStream } = useSignalR();
@@ -35,11 +35,10 @@ function CallModal({ closeModal }) {
     const remoteVideoRef = useRef(null);
     const [temporaryStream, setTemporaryStream] = useState(null);
 
-    // Geçici webcam stream oluştur
     useEffect(() => {
         const getTemporaryStream = async () => {
             try {
-                if (!localStream && !temporaryStream) {
+                if (isCameraCall && !localStream && !temporaryStream) {  // isCameraCall true ise geçici webcam oluştur
                     const tempStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
                     setTemporaryStream(tempStream);
                 }
@@ -56,16 +55,16 @@ function CallModal({ closeModal }) {
                 temporaryStream.getTracks().forEach((track) => track.stop());
             }
         };
-    }, [localStream, temporaryStream]);
+    }, [localStream, temporaryStream, isCameraCall]);
 
-    // Local stream yüklendiğinde video elementine bağla
+
     useEffect(() => {
         if (localVideoRef.current) {
             localVideoRef.current.srcObject = localStream || temporaryStream;
         }
     }, [localStream, temporaryStream]);
 
-    // Remote stream yüklendiğinde video elementine bağla
+
     useEffect(() => {
         if (remoteStream && remoteVideoRef.current) {
             remoteVideoRef.current.srcObject = remoteStream;
@@ -91,8 +90,6 @@ function CallModal({ closeModal }) {
             audio.pause();
             audio.currentTime = 0;
         };
-
-
     }, []);
 
     useEffect(() => {
@@ -206,22 +203,26 @@ function CallModal({ closeModal }) {
                 </div>
             </div>
 
-            {!isCallStarted &&
-                <div className={`user-and-call-time-box ${isCallStarting ? "calling" : ""}`}>
+            {(!isCallStarted || (isCallStarted && !isCameraCall)) && (
+                <div
+                    className={`user-and-call-time-box ${isCameraCall ? "cameraCall" : ""}`}
+                >
                     <img src={callerProfile?.profilePhoto} alt="User" />
                     <p>{callerProfile?.displayName}</p>
                     <span>{callStatus}</span>
                 </div>
-            }
+            )}
             <>
-                <div className="camera-bar">
+                <div className={`camera-bar ${!isCameraCall ? 'only-voice-call' : ''}`}>
                     <div className={`device-camera-box ${isCallStarted ? 'remote-connected' : ''}`}>
-                        <video
-                            playsInline
-                            ref={localVideoRef}
-                            autoPlay
-                            muted
-                        ></video>
+                        {isCameraCall &&
+                            <video
+                                playsInline
+                                ref={localVideoRef}
+                                autoPlay
+                                muted
+                            ></video>
+                        }
                     </div>
 
                     {isCallStarted && (
@@ -235,7 +236,7 @@ function CallModal({ closeModal }) {
                     )}
                 </div>
 
-                {isCallStarted && <p className="video-call-time-status">{callStatus}</p>}
+                {isCallStarted && isCameraCall && <p className="video-call-time-status">{callStatus}</p>}
             </>
 
 

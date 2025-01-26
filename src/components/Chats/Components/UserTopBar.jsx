@@ -25,16 +25,23 @@ function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientI
     const { isCallStarted, callId } = useSelector((state) => state.call);
 
     const handleVoiceCall = async () => {
-
+        if (callConnection) {
+            try {
+                await callConnection.invoke("StartCall", recipientId, 0);
+                dispatch(setIsCallStarting(true));
+                showModal(<CallModal callId={callId} closeModal={closeModal} isCameraCall={false} />);
+            } catch (error) {
+                console.error("Error starting voice call:", error);
+            }
+        }
     };
 
     const handleVideoCall = async () => {
         if (callConnection) {
-            console.log("Girmiyor mu?")
             try {
                 await callConnection.invoke("StartCall", recipientId, 1);
                 dispatch(setIsCallStarting(true));
-                showModal(<CallModal callId={callId} closeModal={closeModal} />);
+                showModal(<CallModal callId={callId} closeModal={closeModal} isCameraCall={true} />);
             } catch (error) {
                 console.error("Error starting voice call:", error);
             }

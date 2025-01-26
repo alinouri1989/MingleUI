@@ -23,7 +23,6 @@ function IncomingCall({ callType, callerProfile, callId }) {
 
     const localVideoRef = useRef(null);
 
-
     useEffect(() => {
         if (localStream && localVideoRef.current) {
             localVideoRef.current.srcObject = localStream;
@@ -55,7 +54,7 @@ function IncomingCall({ callType, callerProfile, callId }) {
             dispatch(setIsRingingIncoming(false));
             showModal(<CallModal callId={callId} closeModal={closeModal} />);
         }
-    }, [isCallStarted])
+    }, [isCallStarted]);
 
     return (
         <div className='incoming-call-box'>
@@ -74,7 +73,11 @@ function IncomingCall({ callType, callerProfile, callId }) {
                     </button>
                 </div>
             </div>
-            <video className='local-video' playsInline ref={localVideoRef} autoPlay muted></video>
+
+            {/* Video sadece callType 1 olduğunda render edilecek */}
+            {callType === 1 && (
+                <video className='local-video' playsInline ref={localVideoRef} autoPlay muted></video>
+            )}
         </div>
     );
 }

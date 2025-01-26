@@ -33,18 +33,52 @@ const groupListSlice = createSlice({
     },
     updateGroupInformations(state, action) {
       const newData = action.payload;
+      console.log("NEW DATA", newData);
 
       Object.keys(newData).forEach((groupId) => {
-        if (state.groupList[groupId]) {
+        const newGroupData = newData[groupId];
+        const oldGroupData = state.groupList[groupId];
+
+        if (oldGroupData) {
+          // Eski ve yeni `participants` karşılaştır
+          const oldParticipants = oldGroupData.participants || {};
+          const newParticipants = newGroupData.participants || {};
+
+          // Yeni `participants` içinde olup eski veride `isGroupMember: false` olanları kontrol et
+          Object.keys(newParticipants).forEach((userId) => {
+            if (oldParticipants[userId] && oldParticipants[userId].isGroupMember === false) {
+              // Kullanıcı tekrar grup üyesi olduysa, `isGroupMember: true` yap
+              newParticipants[userId] = {
+                ...oldParticipants[userId],
+                ...newParticipants[userId],
+                isGroupMember: true,
+              };
+            }
+          });
+
+          // Eski `participants` içinde olup, yeni gelen `participants` içinde olmayan kullanıcıları bul
+          Object.keys(oldParticipants).forEach((userId) => {
+            if (!newParticipants[userId]) {
+              // Kullanıcı çıkarılmış, bilgisine `isGroupMember: false` ekle
+              newParticipants[userId] = {
+                ...oldParticipants[userId],
+                isGroupMember: false,
+              };
+            }
+          });
+
+          // Güncellenmiş grubu birleştir
           state.groupList[groupId] = {
-            ...state.groupList[groupId],
-            ...newData[groupId],
+            ...oldGroupData,
+            ...newGroupData,
+            participants: newParticipants, // Yeni ve güncellenmiş `participants`
           };
         } else {
-          state.groupList[groupId] = newData[groupId];
+          // Grup mevcut değilse yeni grubu ekle
+          state.groupList[groupId] = newGroupData;
         }
       });
-    },
+    }
   },
 });
 
