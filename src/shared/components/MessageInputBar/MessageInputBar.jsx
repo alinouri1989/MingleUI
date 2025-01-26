@@ -43,7 +43,7 @@ function MessageInputBar({ chatId }) {
             const file = e.target.files[0];
             setSelectedFile(file);
 
-            showModal(<ImageModal closeModal={closeModal} image={URL.createObjectURL(file)} />);
+            showModal(<ImageModal closeModal={closeModal} image={file} chatId={chatId} />);
         }
     };
 
@@ -59,7 +59,7 @@ function MessageInputBar({ chatId }) {
         if (message) {
             contentType = 0; // Text
         } else if (selectedFile) {
-            contentType = 4; // File
+            contentType = 1; // File
         }
 
         // DTO'yu oluşturma

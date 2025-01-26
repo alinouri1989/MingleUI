@@ -14,7 +14,7 @@ import { setIsCallStarting } from '../../store/Slices/calls/callSlice.js';
 import "./style.scss";
 
 function Calls() {
-  const { id } = useParams(); // Params'tan id'yi al
+  const { id } = useParams();
   const { showModal, closeModal } = useModal();
   const { callConnection } = useSignalR();
   const { token } = useSelector(state => state.auth); // Token'ı al
