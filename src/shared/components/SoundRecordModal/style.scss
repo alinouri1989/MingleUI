@@ -1,0 +1,295 @@
+@use "../../../shared/styles/main.scss" as *;
+
+.sound-record-box {
+    .sound-record-content {
+        width: 400px;
+        @include flex-center(column, center, center);
+
+        .title-box {
+            width: 100%;
+            @include flex-center(row, flex-start, center);
+            color: var(--blue);
+            gap: 5px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--smooth-blue);
+
+            svg {
+                font-size: 25px;
+            }
+
+            p {
+                font-size: 16px;
+                font-weight: bold;
+            }
+        }
+
+        .sound-waves-box {
+            height: 90px;
+            margin-top: 15px;
+            width: 100%;
+            @include flex-center(row, center, center);
+            gap: 7px;
+
+            .wave {
+                border-radius: 16px;
+                width: 13px;
+
+                background-color: var(--smooth-blue); // Dalga rengi mavi
+                height: 50px; // Başlangıç yüksekliği
+                transition: all 0.3s ease-in-out;
+
+                &.animate {
+                    animation: waveAnimation 1s ease-in-out infinite;
+                    background-color: var(--blue);
+                }
+
+                &.first {
+                    animation: waveFirst 1.2s ease-in-out infinite;
+                }
+
+                &.second {
+                    animation: waveSecond 1.8s ease-in-out infinite;
+                }
+
+                &.last {
+                    animation: waveLast 1.2s ease-in-out infinite;
+                }
+            }
+        }
+
+        .record-time {
+            margin: 10px;
+            color: var(--text-dark-gray);
+        }
+
+        .options-box {
+            width: 100%;
+            @include flex-center(row, center, center);
+
+            .record-button {
+                padding: 5px 10px;
+                border-radius: 7px;
+                background-color: var(--blue);
+                color: var(--text-white);
+                font-size: 15px;
+            }
+        }
+
+        .audio-player-wrapper {
+            padding: 15px;
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            box-shadow: none;
+        }
+    }
+}
+
+
+
+/* Genel ayarlamalar */
+
+/* Butonlar ve Progress Çubuğu için Renk */
+$rhap_theme-color: var(--blue) !default; // Mavi renk
+$rhap_bar-color: var(--smooth-blue) !default; // Gri progress bar
+$rhap_progress-color: var(--blue); // İlerleme çubuğu mavi
+
+/* Progress Bar ve İlerleme */
+
+.audio-player-wrapper {
+    box-shadow: none;
+
+}
+
+.audio-player-wrapper .rhap_container {
+    box-shadow: none;
+    background-color: var(--smooth-light-blue);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.rhap_progress-bar {
+    box-sizing: border-box;
+    position: relative;
+    z-index: 0;
+    width: 100%;
+    height: 5px;
+    background-color: $rhap_bar-color;
+    /* Gri Progress Bar */
+    border-radius: 2px;
+}
+
+.rhap_progress-filled {
+    height: 100%;
+    position: absolute;
+    z-index: 2;
+    background-color: $rhap_progress-color;
+    /* İlerleme çubuğu mavi */
+    border-radius: 2px;
+}
+
+/* Buton Renkleri */
+
+.rhap_play-pause-button {
+    font-size: 40px;
+    width: 40px;
+    height: 40px;
+    color: $rhap_theme-color;
+    /* Play/Pause butonları mavi */
+    transition: background-color 0.3s ease;
+    background-color: transparent;
+    /* Şeffaf arka plan */
+}
+
+.rhap_main-controls-button {
+    margin: 0 3px;
+    color: $rhap_theme-color;
+    /* Diğer butonlar mavi */
+    font-size: 35px;
+    width: 35px;
+    height: 35px;
+}
+
+/* İleri Sarma ve Geri Sarma Butonları */
+.rhap_rewind-button,
+.rhap_forward-button {
+    font-size: 26px;
+    width: 26px;
+    height: 26px;
+    color: $rhap_theme-color;
+    /* İleri/Geri sarma butonları mavi */
+    margin-right: 6px;
+}
+
+/* Kontrol Butonları */
+.rhap_controls-section {
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Ses ve Diğer Butonlar */
+
+.rhap_volume-button {
+    flex: 0 0 26px;
+    font-size: 26px;
+    width: 26px;
+    height: 26px;
+    color: $rhap_theme-color;
+    /* Ses butonları mavi */
+    margin-right: 6px;
+}
+
+.rhap_volume-bar {
+    box-sizing: border-box;
+    position: relative;
+    width: 100%;
+    height: 4px;
+    background: $rhap_bar-color;
+    /* Ses çubuğu gri */
+    border-radius: 2px;
+}
+
+.rhap_volume-indicator {
+    box-sizing: border-box;
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    margin-left: -6px;
+    left: 0;
+    top: -4px;
+    background: $rhap_theme-color;
+    /* Ses kaydırıcısı mavi */
+    opacity: 0.9;
+    border-radius: 50px;
+    box-shadow: rgba($rhap_theme-color, .5) 0 0 3px;
+    cursor: pointer;
+
+    &:hover {
+        opacity: 1;
+        /* Hover efekti ile daha belirgin */
+    }
+}
+
+/* Genel Butonlar için şeffaf arka plan ve geçiş */
+.rhap_button-clear {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+
+    &:hover {
+        opacity: .9;
+        transition-duration: .2s;
+    }
+
+    &:active {
+        opacity: .95;
+    }
+
+    &:focus:not(:focus-visible) {
+        outline: 0;
+    }
+}
+
+/* Progress Indicator (Yuvarlak) */
+.rhap_progress-indicator {
+    box-sizing: border-box;
+    position: absolute;
+    z-index: 3;
+    width: 20px;
+    height: 20px;
+    margin-left: -10px;
+    /* Yatay konum ayarı */
+    top: -8px;
+    /* Dikey konum ayarı */
+    background: $rhap_theme-color;
+    /* Yuvarlağın rengi mavi */
+    border-radius: 50%;
+
+    /* Hafif gölge efekti */
+    cursor: pointer;
+    /* Kullanıcı tıklayabilir ve sürükleyebilir */
+
+}
+
+
+@keyframes waveFirst {
+
+    0%,
+    100% {
+        height: 25px;
+
+    }
+
+    50% {
+        height: 50px;
+    }
+}
+
+@keyframes waveSecond {
+
+    0%,
+    100% {
+
+        height: 25px; // Sabit yükseklik
+    }
+
+    50% {
+        height: 50px; // Sabit
+    }
+}
+
+@keyframes waveLast {
+
+    0%,
+    100% {
+        height: 20px;
+    }
+
+    50% {
+        height: 50px;
+    }
+}

@@ -28,7 +28,100 @@
                 background-color: #E7E7E7;
                 border-radius: 50%;
                 color: var(--text-dark-gray);
-                @include transition();
+                transition: all 0.3s;
+
+                &:active {
+                    transform: scale(0.6);
+                    /* Tıklama sırasında küçültme */
+                }
+
+            }
+
+            .file-menu {
+                @include flex-center(column, center, center);
+                background-color: rgba(255, 255, 255, 0.945);
+                backdrop-filter: blur(10px);
+                padding: 8px 7px;
+                gap: 15px;
+                z-index: 999;
+                position: absolute;
+                margin-bottom: 276px;
+                border-radius: 12px;
+                box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+                /* Animasyonun uygulanması */
+                animation: slide-up 0.3s ease-out forwards;
+
+                button {
+                    @include flex-center(row, center, center);
+                    width: 36px;
+                    height: 36px;
+                    border-radius: 50%;
+                    font-size: 20px;
+                    background: none;
+                    transition: background-color 0.3s, transform 3s;
+                    transition: all 0.3s;
+
+                    &:hover {
+                        scale: 1.5;
+                    }
+
+
+                    &:first-child {
+                        color: rgb(8, 162, 131);
+                        border: 2px solid rgb(8, 162, 131);
+
+                        &:hover {
+                            background-color: rgb(8, 162, 131);
+                            color: white;
+
+                            svg {
+                                animation: shake-scale 2s infinite;
+                            }
+                        }
+                    }
+
+                    &:nth-child(2) {
+                        color: var(--blue);
+                        border: 2px solid var(--blue);
+
+                        &:hover {
+                            background-color: var(--blue);
+                            color: white;
+
+                            svg {
+                                animation: shake-scale 2s infinite;
+                            }
+                        }
+                    }
+
+                    &:nth-child(3) {
+                        color: var(--smooth-red);
+                        border: 2px solid var(--smooth-red);
+
+                        &:hover {
+                            background-color: var(--smooth-red);
+                            color: white;
+
+                            svg {
+                                animation: shake-scale 2s infinite;
+                            }
+                        }
+                    }
+
+                    &:last-child {
+                        color: rgb(245, 164, 44);
+                        border: 2px solid rgb(245, 164, 44);
+
+                        &:hover {
+                            background-color: rgb(245, 164, 44);
+                            color: white;
+
+                            svg {
+                                animation: shake-scale 2s infinite;
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -55,6 +148,7 @@
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 border-radius: 8px;
             }
+
             .add-emoji-button {
                 width: 30px;
                 height: 30px;
@@ -77,5 +171,43 @@
                 }
             }
         }
+    }
+}
+
+
+/* Animasyon tanımı */
+@keyframes slide-up {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+        /* 30px aşağıda başlıyor */
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+        /* Son pozisyona geliyor */
+    }
+}
+
+@keyframes shake-scale {
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+
+    25% {
+        transform: scale(1.1) rotate(-15deg);
+    }
+
+    50% {
+        transform: scale(1.1) rotate(15deg);
+    }
+
+    75% {
+        transform: scale(1.1) rotate(-15deg);
+    }
+
+    100% {
+        transform: scale(1) rotate(0deg);
     }
 }

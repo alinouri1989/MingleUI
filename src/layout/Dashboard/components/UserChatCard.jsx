@@ -6,6 +6,7 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ArchiveIcon from "@mui/icons-material/Archive";
 import UnarchiveIcon from "@mui/icons-material/Unarchive";
+import { LuImage } from "react-icons/lu";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { getChatId } from "../../../store/Slices/chats/chatSlice";
@@ -15,7 +16,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useSignalR } from "../../../contexts/SignalRContext";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
 
-function UserChatCard({ receiverId, image, status, name, lastMessageDate, lastMessage, lastDate, unReadMessage, isArchive }) {
+function UserChatCard({ receiverId, image, status, name, lastMessageDate, lastMessageType, lastMessage, lastDate, unReadMessage, isArchive }) {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const { chatConnection } = useSignalR();
@@ -77,7 +78,13 @@ function UserChatCard({ receiverId, image, status, name, lastMessageDate, lastMe
 
       <div className="user-name-and-sub-title">
         <p>{name}</p>
-        <span>{lastMessage}</span>
+        {lastMessageType === 1
+          ? <div className="last-message-image">
+            <LuImage />
+            <span>Fotoğraf</span>
+          </div>
+          : <span>{lastMessage}</span>
+        }
       </div>
 
       <div className="status-informations-box">

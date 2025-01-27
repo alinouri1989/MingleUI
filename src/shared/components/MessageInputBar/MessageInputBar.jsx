@@ -2,6 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { HiPlus } from "react-icons/hi";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
 import EmojiPicker from "emoji-picker-react";
+import { LuFileUp } from "react-icons/lu";
+import { LuImage } from "react-icons/lu";
+import { BiSolidMicrophone } from "react-icons/bi";
+import { LuFileVideo } from "react-icons/lu";
+import { TbVideoPlus } from "react-icons/tb";
 
 import "./style.scss";
 import { useModal } from "../../../contexts/ModalContext";
@@ -9,11 +14,13 @@ import ImageModal from "../ImageModal/ImageModal";
 import { useSignalR } from "../../../contexts/SignalRContext";
 import { useLocation } from "react-router-dom";
 import { encryptMessage } from "../../../helpers/messageCryptoHelper";
+import SoundRecordModal from "../SoundRecordModal/SoundRecordModal";
 
 function MessageInputBar({ chatId }) {
     const { chatConnection } = useSignalR();
 
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [isShowFileMenu, setShowFileMenu] = useState(false);
     const { showModal, closeModal } = useModal();
     const [message, setMessage] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
@@ -21,6 +28,30 @@ function MessageInputBar({ chatId }) {
     const fileInputRef = useRef(null);
     const location = useLocation();
 
+
+    const fileMenuRef = useRef(null); // File menu'yu referansla takip etmek için
+    const addFileButtonRef = useRef(null);
+
+    useEffect(() => {
+        function handleClickOutside(event) {
+            // Eğer tıklanan eleman fileMenuRef veya buttonRef içinde değilse menüyü kapat
+            if (
+                fileMenuRef.current &&
+                !fileMenuRef.current.contains(event.target) &&
+                addFileButtonRef.current &&
+                !addFileButtonRef.current.contains(event.target)
+            ) {
+                setShowFileMenu(false);
+            }
+        }
+
+        // Document'a tıklama dinleyicisi ekle
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+            // Component unmount olduğunda dinleyiciyi temizle
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     const handleEmojiClick = (emojiData) => {
         setMessage((prev) => prev + emojiData.emoji);
@@ -34,9 +65,13 @@ function MessageInputBar({ chatId }) {
         setMessage(e.target.value);
     };
 
-    const handleFileSelect = () => {
+    const handleImageSelect = () => {
         fileInputRef.current.click();
     };
+
+    const handleSoundRecord = () => {
+        showModal(<SoundRecordModal closeModal={closeModal} chatId={chatId} />);
+    }
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
@@ -117,10 +152,19 @@ function MessageInputBar({ chatId }) {
     return (
         <div className="message-input-bar">
             <div className="input-box">
-                <div className="add-file-box">
-                    <button className="add-file-button" onClick={handleFileSelect}>
+                <div className="add-file-box" >
+                    <button ref={addFileButtonRef} className="add-file-button" onClick={() => setShowFileMenu(!isShowFileMenu)}>
                         <HiPlus />
                     </button>
+
+                    {isShowFileMenu &&
+                        <div className="file-menu" ref={fileMenuRef}>
+                            <button><LuFileUp /></button>
+                            <button onClick={handleImageSelect}><LuImage /></button>
+                            <button onClick={handleSoundRecord}><BiSolidMicrophone /></button>
+                            <button><LuFileVideo /></button>
+                        </div>
+                    }
 
                     <input
                         type="file"

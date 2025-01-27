@@ -38,6 +38,7 @@ function ArchivesList() {
                 }
 
                 const lastMessage = chatData?.messages[chatData?.messages.length - 1].content
+                const lastMessageType = chatData?.messages[chatData?.messages.length - 1].type;
 
                 const lastMessageDate =
                     chatData.messages.length > 0
@@ -74,6 +75,7 @@ function ArchivesList() {
                     name: user.displayName,
                     lastMessage,
                     lastMessageDate,
+                    lastMessageType,
                     lastMessageDateForSort,
                     isArchive,
                     unReadMessage
@@ -100,6 +102,7 @@ function ArchivesList() {
                             status={chat.status}
                             name={chat.name}
                             lastMessage={chat.lastMessage}
+                            lastMessageType={chat.lastMessageType}
                             lastMessageDate={chat.lastMessageDate}
                             isArchive={chat.isArchive}
                             unReadMessage={chat.unReadMessage}

@@ -102,17 +102,27 @@
         width: 125px;
         gap: 2px;
 
+        .last-message-image {
+            @include flex-center(row, center);
+            gap: 5px;
+            color: var(--blue);
+
+            svg {
+                font-size: 24px;
+            }
+
+            span {
+                color: var(--blue);
+            }
+        }
+
         p {
             font-weight: 700;
             font-size: 14px;
             white-space: nowrap;
-            /* Metni tek satırda tutar */
             overflow: hidden;
-            /* Taşan metni gizler */
             text-overflow: ellipsis;
-            /* Taşan metnin yerine "..." koyar */
             width: 100%;
-            /* Div'in genişliği kadar uzatır */
             display: block;
         }
 

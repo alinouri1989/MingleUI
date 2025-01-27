@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import { MdClose } from 'react-icons/md';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
@@ -26,6 +27,7 @@ function MessageBubble({ ChatId, userId, messageId, userColor, content, timestam
     const { groupList } = useSelector((state) => state.groupList);
     const [anchorEl, setAnchorEl] = useState(null);
     const { chatConnection } = useSignalR();
+    const [isShowImage, setIsShowImage] = useState(false);
 
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -125,7 +127,6 @@ function MessageBubble({ ChatId, userId, messageId, userColor, content, timestam
         }
     }
 
-
     return (
         <div className={"message-bubble-box"}>
 
@@ -138,7 +139,6 @@ function MessageBubble({ ChatId, userId, messageId, userColor, content, timestam
                     </div>
                 }
 
-
                 <div className={`message-content ${messageType === 0 ? 'text' : 'image'}`}>
                     {!isSender &&
                         <div className='user-info' style={{ color: userColor }}>
@@ -148,7 +148,9 @@ function MessageBubble({ ChatId, userId, messageId, userColor, content, timestam
 
                     {messageType === 0
                         ? <p>{content}</p>
-                        : <img className='image' src={content} alt="" />
+                        : <div onClick={() => setIsShowImage(true)} >
+                            <img src={content} alt="" />
+                        </div>
                     }
                 </div>
 
@@ -251,6 +253,15 @@ function MessageBubble({ ChatId, userId, messageId, userColor, content, timestam
                     {statusIcon}
                 </div>
             )}
+
+            {isShowImage &&
+                <div className="full-size-image-box">
+                    <img src={content} alt="selected-image" />
+                    <button onClick={() => setIsShowImage(false)}>
+                        <MdClose />
+                    </button>
+                </div>
+            }
         </div>
     );
 }

@@ -7,6 +7,7 @@ import UserChatCard from "./UserChatCard";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import { lastMessageDateHelper } from "../../../helpers/dateHelper";
 import NoChats from "../../../assets/NoChats.webp";
+
 import "./style.scss";
 import { useLocation } from "react-router-dom";
 import { getChatId } from "../../../store/Slices/chats/chatSlice";
@@ -16,8 +17,8 @@ function ChatsList() {
     const { Individual } = useSelector((state) => state.chat); // Chat bilgileri
     const chatList = useSelector((state) => state.chatList.chatList); // Orijinal chatList
     const { token } = useSelector((state) => state.auth); // Kullanıcı token'ı
-    const UserId = getUserIdFromToken(token); // Token'dan kullanıcı ID'si al
-    const [enhancedChatList, setEnhancedChatList] = useState([]); // Extract chatId from URL if present
+    const UserId = getUserIdFromToken(token);
+    const [enhancedChatList, setEnhancedChatList] = useState([]);
     const chatState = useSelector(state => state.chat);
 
     const location = useLocation();
@@ -38,6 +39,7 @@ function ChatsList() {
                 }
 
                 const lastMessage = chatData?.messages[chatData?.messages.length - 1].content;
+                const lastMessageType = chatData?.messages[chatData?.messages.length - 1].type;
 
                 const lastMessageDate =
                     chatData.messages.length > 0
@@ -71,6 +73,7 @@ function ChatsList() {
                     status: user.lastConnectionDate === "0001-01-01T00:00:00",
                     name: user.displayName,
                     lastMessage,
+                    lastMessageType,
                     lastMessageDate,
                     lastMessageDateForSort,
                     isArchive,
@@ -109,6 +112,7 @@ function ChatsList() {
                             status={chat.status}
                             name={chat.name}
                             lastMessage={chat.lastMessage}
+                            lastMessageType={chat.lastMessageType}
                             lastMessageDate={chat.lastMessageDate}
                             isArchive={chat.isArchive}
                             unReadMessage={chat.unReadMessage}
