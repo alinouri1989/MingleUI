@@ -208,7 +208,7 @@ const transformChats = (chats, chatType) =>
         createdDate: chats[chatId].createdDate,
         messages: Object.entries(chats[chatId].messages || {}).map(([messageId, messageData]) => {
             let decryptedContent = messageData.content;
-            if (decryptedContent && decryptedContent !== "Bu mesaj silindi.") {
+            if (messageData.type === 0 && decryptedContent && decryptedContent !== "Bu mesaj silindi.") {
                 decryptedContent = decryptMessage(messageData.content, chatId);
             }
             return {

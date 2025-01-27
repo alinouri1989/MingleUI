@@ -1,17 +1,16 @@
 import CloseModalButton from "../../../contexts/components/CloseModalButton";
 import { FaImages } from "react-icons/fa6";
-
-
+import { useState } from "react"; // useState importu
 import "./style.scss";
 import { useLocation } from "react-router-dom";
-import { encryptMessage } from "../../../helpers/messageCryptoHelper";
 import { useSignalR } from "../../../contexts/SignalRContext";
+import PreLoader from "../PreLoader/PreLoader";
+
 
 function ImageModal({ image, closeModal, chatId }) {
-
-
     const { chatConnection } = useSignalR();
     const location = useLocation();
+    const [isLoading, setIsLoading] = useState(false); // isLoading durumu
 
     const handleSendImage = async () => {
         let chatType = '';
@@ -22,21 +21,26 @@ function ImageModal({ image, closeModal, chatId }) {
         }
 
         try {
+            setIsLoading(true); // Yükleme durumunu başlat
+
             // Base64 olarak görüntüyü dönüştür
             const reader = new FileReader();
             reader.readAsDataURL(image); // `image` bir File nesnesi olmalı
             reader.onloadend = async () => {
                 const base64Image = reader.result;
-
-                const encryptedMessage = encryptMessage(base64Image, chatId);
+                const base64String = base64Image.split(',')[1];
 
                 await chatConnection.invoke("SendMessage", chatType, chatId, {
                     ContentType: 1,
-                    content: encryptedMessage,
+                    content: base64String,
                 });
+
+                setIsLoading(false); // Yükleme işlemi tamamlandı, isLoading'i false yap
+                closeModal();
             };
         } catch (error) {
             console.error("Resim gönderme hatası:", error);
+            setIsLoading(false); // Hata durumunda da isLoading'i false yap
         }
     };
 
@@ -49,8 +53,10 @@ function ImageModal({ image, closeModal, chatId }) {
             </div>
             <img src={URL.createObjectURL(image)} alt="Uploaded preview" />
             <button onClick={handleSendImage} className="send-image-btn">Gönder</button>
+
+            {isLoading && <PreLoader />} {/* Yükleme durumu göster */}
         </div>
-    )
+    );
 }
 
-export default ImageModal
+export default ImageModal;

@@ -7,7 +7,6 @@
 
 .call-modal {
     @include flex-center(column, space-between, center);
-
     width: 560px;
     height: 560px;
     position: relative;
@@ -198,11 +197,10 @@
                 background: var(--smooth-red);
                 color: var(--text-white);
             }
+        }
 
-            &:first-child {
-                color: #C8C9F7;
-            }
-
+        .disabled {
+            color: #C8C9F7;
         }
     }
 }

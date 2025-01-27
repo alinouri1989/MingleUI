@@ -6,7 +6,9 @@ import BusySound from "../../../assets/Sounds/MingleCallBusySound.mp3";
 import { useSignalR } from "../../../contexts/SignalRContext";
 
 import { MdScreenShare } from "react-icons/md";
-import { HiMiniVideoCamera } from "react-icons/hi2";
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import { LuUserPlus } from "react-icons/lu";
+
 import { HiMiniSpeakerWave } from "react-icons/hi2";
 import { HiMiniSpeakerXMark } from "react-icons/hi2";
 import { TbMicrophoneFilled } from "react-icons/tb";
@@ -38,7 +40,7 @@ function CallModal({ closeModal, isCameraCall }) {
     useEffect(() => {
         const getTemporaryStream = async () => {
             try {
-                if (isCameraCall && !localStream && !temporaryStream) {  // isCameraCall true ise geçici webcam oluştur
+                if (isCameraCall && !localStream && !temporaryStream) {
                     const tempStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
                     setTemporaryStream(tempStream);
                 }
@@ -241,12 +243,12 @@ function CallModal({ closeModal, isCameraCall }) {
 
 
             <div className="call-option-buttons">
-                <button>
+                <button className="disabled">
                     <MdScreenShare />
                 </button>
 
-                <button>
-                    <HiMiniVideoCamera />
+                <button className="disabled">
+                    <PersonAddAlt1Icon />
                 </button>
 
                 <button onClick={handleSpeakerMode}>

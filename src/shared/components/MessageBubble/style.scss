@@ -18,6 +18,7 @@
         /* Animasyonu uygula */
 
 
+
         .image-box {
             img {
                 width: 42px;
@@ -62,13 +63,24 @@
             @include flex-center(column, center, flex-start);
             box-shadow: rgba(42, 42, 42, 0.205) 0px 2px 8px 0px;
 
+            &.image {
+                padding: 3px 7px;
+                background-color: rgba(207, 207, 207, 0.133);
+            }
+
             .user-info {
                 width: 100%;
                 @include flex-center(row, flex-start, center);
                 padding: 0px 0px 2px 0px;
 
-                p {
+                .sender-profile-name {
                     font-weight: bold;
+
+                    &.image {
+                        width: 100%;
+                        margin-left: 10px;
+                        margin-bottom: -2px;
+                    }
                 }
 
             }

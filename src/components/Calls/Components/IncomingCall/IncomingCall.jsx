@@ -52,7 +52,7 @@ function IncomingCall({ callType, callerProfile, callId }) {
     useEffect(() => {
         if (isCallStarted) {
             dispatch(setIsRingingIncoming(false));
-            showModal(<CallModal callId={callId} closeModal={closeModal} />);
+            showModal(<CallModal callId={callId} closeModal={closeModal} isCameraCall={callType == 1 ? true : false} />);
         }
     }, [isCallStarted]);
 

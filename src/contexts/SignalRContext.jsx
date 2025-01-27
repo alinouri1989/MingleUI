@@ -182,7 +182,7 @@ export const SignalRProvider = ({ children }) => {
                         Object.entries(data.Individual).forEach(([chatId, messages]) => {
                             Object.entries(messages).forEach(([messageId, messageData]) => {
                                 let decryptedContent = messageData.content;
-                                if (decryptedContent && decryptedContent !== "Bu mesaj silindi.") {
+                                if (messageData.type === 0 && decryptedContent && decryptedContent !== "Bu mesaj silindi.") {
                                     decryptedContent = decryptMessage(messageData.content, chatId);
                                 }
 
@@ -200,7 +200,13 @@ export const SignalRProvider = ({ children }) => {
                     if (data.Group) {
                         Object.entries(data.Group).forEach(([chatId, messages]) => {
                             Object.entries(messages).forEach(([messageId, messageData]) => {
-                                const decryptedContent = decryptMessage(messageData.content, chatId);
+                                let decryptedContent = messageData.content;
+
+                                // Aynı if koşulu burada uygulanıyor
+                                if (messageData.type === 0 && decryptedContent && decryptedContent !== "Bu mesaj silindi.") {
+                                    decryptedContent = decryptMessage(messageData.content, chatId);
+                                }
+
                                 store.dispatch(
                                     addMessageToGroup({
                                         chatId,
@@ -344,6 +350,7 @@ export const SignalRProvider = ({ children }) => {
 
                 callConnection.on('ReceiveEndCall', (data) => {
                     handleEndCall(data.call, dispatch);
+
                     const otherDataKey = Object.keys(data).find(key => key !== 'call');
                     if (otherDataKey) {
                         const otherDataObject = data[otherDataKey];
@@ -363,13 +370,11 @@ export const SignalRProvider = ({ children }) => {
                     if (peerConnection.current) {
                         peerConnection.current.getSenders().forEach((sender) => {
                             if (sender.track) {
-                                sender.track.stop();
+                                sender.track.stop(); // WebRTC medya akışlarını durdur
                             }
                         });
                         peerConnection.current.close();
                         peerConnection.current = null;
-                        setLocalStream(null);
-                        setRemoteStream(null);
                     }
                 });
 
@@ -380,7 +385,10 @@ export const SignalRProvider = ({ children }) => {
                 callConnection.on('ReceiveSdp', async (data) => {
                     try {
                         if (data.type === "offer") {
-                            await initializePeerConnection(data.callType || 0);
+                            await initializePeerConnection(1);
+
+                            // if (data.sdp.type === "offer") {
+                            //     await initializePeerConnection(data.callType);
 
                             console.log("Offer işlemleri başlatılıyor...");
                             await handleRemoteSDP(data, peerConnection.current);
@@ -486,7 +494,7 @@ export const SignalRProvider = ({ children }) => {
                 })
                 : [];
 
-            // Group mesajlarını filtrele ve gönder
+
             const groupPromises = Group.flatMap(chat =>
                 chat.messages
                     .filter(message => {
@@ -499,7 +507,6 @@ export const SignalRProvider = ({ children }) => {
                     )
             );
 
-            // Aktif groupId için okuma kontrolü ve işlem (Group)
             const groupReadPromises = groupIdFromLocation
                 ? Group.flatMap(chat => {
                     if (chat.id === groupIdFromLocation) {

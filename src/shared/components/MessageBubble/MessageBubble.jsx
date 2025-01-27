@@ -18,7 +18,6 @@ import { useSelector } from 'react-redux';
 import { useSignalR } from '../../../contexts/SignalRContext';
 
 function MessageBubble({ ChatId, userId, messageId, userColor, content, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
-    console.log("message ıd", messageId);
     if (content == "") {
         return null;
     }
@@ -140,10 +139,10 @@ function MessageBubble({ ChatId, userId, messageId, userColor, content, timestam
                 }
 
 
-                <div className='message-content'>
+                <div className={`message-content ${messageType === 0 ? 'text' : 'image'}`}>
                     {!isSender &&
                         <div className='user-info' style={{ color: userColor }}>
-                            <p>{senderProfile?.displayName}</p>
+                            <p className={`sender-profile-name ${messageType === 0 ? 'text' : 'image'}`}>{senderProfile?.displayName}</p>
                         </div>
                     }
 
