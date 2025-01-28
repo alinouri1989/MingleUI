@@ -20,6 +20,7 @@ function GroupsList() {
     showModal(<NewGroupModal closeModal={closeModal} />); // Show modal to create new group
   };
 
+
   return (
     <div className="group-list-box">
       <SearchInput placeholder={"Gruplarda aratın"} />
@@ -35,10 +36,14 @@ function GroupsList() {
 
           // Get the last message from the chat group, if available
           let lastMessage = "";
+          let lastMessageType = "";
           if (chatGroup && chatGroup?.messages?.length > 0) {
             const lastMessageIndex = chatGroup.messages.length - 1;
             lastMessage = chatGroup.messages[lastMessageIndex].content;
+            lastMessageType = chatGroup.messages[lastMessageIndex].type;
           }
+
+
 
 
           const lastMessageDate =
@@ -65,6 +70,7 @@ function GroupsList() {
               groupName={group.name}
               groupPhotoUrl={group.photoUrl}
               lastMessage={lastMessage}
+              lastMessageType={lastMessageType}
               lastMessageDate={lastMessageDate}
               unReadMessage={unReadMessage}
               groupListId={groupId}

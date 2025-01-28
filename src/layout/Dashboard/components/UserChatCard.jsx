@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSignalR } from "../../../contexts/SignalRContext";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
+import LastMessage from "../../../shared/components/LastMessage/LastMessage";
 
 function UserChatCard({ receiverId, image, status, name, lastMessageDate, lastMessageType, lastMessage, lastDate, unReadMessage, isArchive }) {
 
@@ -70,41 +71,6 @@ function UserChatCard({ receiverId, image, status, name, lastMessageDate, lastMe
     isArchive ? navigate(`/arsivler/${chatId}`) : navigate(`/sohbetler/${chatId}`)
   };
 
-
-  const renderMessageContent = () => {
-    switch (lastMessageType) {
-      case 0:
-        return <span>{lastMessage}</span>;
-      case 1:
-        return (
-          <div className="last-message-image">
-            <LuImage />
-            <span>Fotoğraf</span>
-          </div>
-        );
-      case 2:
-        return (
-          <div className="last-message-video">
-            <span>Video</span>
-          </div>
-        );
-      case 3:
-        return (
-          <div className="last-message-audio">
-            <BiSolidMicrophone />
-            <span>Ses</span>
-          </div>
-        );
-      case 4:
-        return (
-          <div className="last-message-file">
-            <span>File</span>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
   return (
     <div className="user-dashboard-card-box" onClick={() => handleGoChat()}>
 
@@ -115,7 +81,7 @@ function UserChatCard({ receiverId, image, status, name, lastMessageDate, lastMe
 
       <div className="user-name-and-sub-title">
         <p>{name}</p>
-        {renderMessageContent()}
+        <LastMessage lastMessageType={lastMessageType} content={lastMessage} />
       </div>
 
       <div className="status-informations-box">

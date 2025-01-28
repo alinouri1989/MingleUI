@@ -10,8 +10,9 @@ import ListItemText from "@mui/material/ListItemText";
 import { defaultGroupPhoto } from "../../../constants/DefaultProfilePhoto.js";
 import "./style.scss";
 import { useNavigate } from "react-router-dom";
+import LastMessage from "../../../shared/components/LastMessage/LastMessage.jsx";
 
-function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMessage, lastMessageDate, unReadMessage }) {
+function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMessage, lastMessageType, lastMessageDate, unReadMessage }) {
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
     const navigate = useNavigate();
@@ -50,7 +51,7 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
 
             <div className="grup-name-and-sub-title">
                 <p>{groupName}</p>
-                <span>{lastMessage || "Henüz mesaj yok"}</span>
+                <LastMessage lastMessageType={lastMessageType} content={lastMessage} />
             </div>
 
             <div className="status-informations-box">
