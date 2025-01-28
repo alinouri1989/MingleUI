@@ -82,6 +82,35 @@
             margin: 20px auto;
             box-shadow: none;
         }
+
+        .send-and-cancel-buttons-box {
+            @include flex-center(row, center, center);
+            gap: 22px;
+
+            button {
+                color: var(--blue);
+                width: 90px;
+                border-radius: 8px;
+                height: 35px;
+                font-size: 15px;
+                transition: all 0.3s ease-in-out;
+
+                &:first-child {
+                    background-color: var(--smooth-red);
+                    color: var(--text-white);
+                }
+
+                &:last-child {
+                    background-color: var(--blue);
+                    color: var(--text-white);
+                }
+
+                &:hover {
+                    filter: brightness(90%);
+                    /* Renkleri %85 oranında koyulaştırır */
+                }
+            }
+        }
     }
 }
 

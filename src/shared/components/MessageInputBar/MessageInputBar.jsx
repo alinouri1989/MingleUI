@@ -6,7 +6,6 @@ import { LuFileUp } from "react-icons/lu";
 import { LuImage } from "react-icons/lu";
 import { BiSolidMicrophone } from "react-icons/bi";
 import { LuFileVideo } from "react-icons/lu";
-import { TbVideoPlus } from "react-icons/tb";
 
 import "./style.scss";
 import { useModal } from "../../../contexts/ModalContext";

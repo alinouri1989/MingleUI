@@ -23,7 +23,6 @@ function ImageModal({ image, closeModal, chatId }) {
         try {
             setIsLoading(true); // Yükleme durumunu başlat
 
-            // Base64 olarak görüntüyü dönüştür
             const reader = new FileReader();
             reader.readAsDataURL(image); // `image` bir File nesnesi olmalı
             reader.onloadend = async () => {
@@ -35,12 +34,12 @@ function ImageModal({ image, closeModal, chatId }) {
                     content: base64String,
                 });
 
-                setIsLoading(false); // Yükleme işlemi tamamlandı, isLoading'i false yap
+                setIsLoading(false);
                 closeModal();
             };
         } catch (error) {
             console.error("Resim gönderme hatası:", error);
-            setIsLoading(false); // Hata durumunda da isLoading'i false yap
+            setIsLoading(false);
         }
     };
 

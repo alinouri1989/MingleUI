@@ -4,11 +4,13 @@ import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { BiSolidMicrophone } from "react-icons/bi";
 import ArchiveIcon from "@mui/icons-material/Archive";
 import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import { LuImage } from "react-icons/lu";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+
 import { getChatId } from "../../../store/Slices/chats/chatSlice";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import { useDispatch, useSelector } from "react-redux";
@@ -68,6 +70,41 @@ function UserChatCard({ receiverId, image, status, name, lastMessageDate, lastMe
     isArchive ? navigate(`/arsivler/${chatId}`) : navigate(`/sohbetler/${chatId}`)
   };
 
+
+  const renderMessageContent = () => {
+    switch (lastMessageType) {
+      case 0:
+        return <span>{lastMessage}</span>;
+      case 1:
+        return (
+          <div className="last-message-image">
+            <LuImage />
+            <span>Fotoğraf</span>
+          </div>
+        );
+      case 2:
+        return (
+          <div className="last-message-video">
+            <span>Video</span>
+          </div>
+        );
+      case 3:
+        return (
+          <div className="last-message-audio">
+            <BiSolidMicrophone />
+            <span>Ses</span>
+          </div>
+        );
+      case 4:
+        return (
+          <div className="last-message-file">
+            <span>File</span>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
   return (
     <div className="user-dashboard-card-box" onClick={() => handleGoChat()}>
 
@@ -78,13 +115,7 @@ function UserChatCard({ receiverId, image, status, name, lastMessageDate, lastMe
 
       <div className="user-name-and-sub-title">
         <p>{name}</p>
-        {lastMessageType === 1
-          ? <div className="last-message-image">
-            <LuImage />
-            <span>Fotoğraf</span>
-          </div>
-          : <span>{lastMessage}</span>
-        }
+        {renderMessageContent()}
       </div>
 
       <div className="status-informations-box">

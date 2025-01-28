@@ -12,11 +12,11 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import { LuCheck } from "react-icons/lu";
 import { LuCheckCheck } from "react-icons/lu";
 import { FaEarthAfrica } from "react-icons/fa6";
-
 import './style.scss';
 import { SuccessAlert } from '../../../helpers/customAlert';
 import { useSelector } from 'react-redux';
 import { useSignalR } from '../../../contexts/SignalRContext';
+import { AudioMessage } from './components/AudioMessage';
 
 function MessageBubble({ ChatId, userId, messageId, userColor, content, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
     if (content == "") {
@@ -127,6 +127,40 @@ function MessageBubble({ ChatId, userId, messageId, userColor, content, timestam
         }
     }
 
+
+    // 
+
+
+
+    const TextMessage = ({ content }) => <p>{content}</p>;
+
+    const ImageMessage = ({ content, setIsShowImage }) => (
+        <div onClick={() => setIsShowImage(true)}>
+            <img src={content} alt="" />
+        </div>
+    );
+
+    const UserInfo = ({ displayName, userColor, messageType }) => (
+        <div className='user-info' style={{ color: userColor }}>
+            <p className={`sender-profile-name ${messageType === 0 ? 'text' : 'other'}`}>
+                {displayName}
+            </p>
+        </div>
+    );
+
+    const renderMessageContent = (messageType, content, setIsShowImage) => {
+        switch (messageType) {
+            case 0:
+                return <TextMessage content={content} />;
+            case 1:
+                return <ImageMessage content={content} setIsShowImage={setIsShowImage} />;
+            case 3:
+                return <AudioMessage content={content} />;
+            default:
+                return <p>Unsupported message type</p>;
+        }
+    };
+
     return (
         <div className={"message-bubble-box"}>
 
@@ -138,21 +172,24 @@ function MessageBubble({ ChatId, userId, messageId, userColor, content, timestam
                         <img src={senderProfile?.profilePhoto} alt="" />
                     </div>
                 }
+                <div
+                    className={`message-content 
+                    ${messageType === 0 ? 'text' :
+                            messageType === 3 && isGroupMessageBubble && isSender ? 'audio-group-sender' :
+                                messageType === 3 && isGroupMessageBubble ? 'audio-group' :
+                                    messageType === 3 ? 'audio' : 'image'}`}
+                >
+                    {!isSender && (
+                        <UserInfo
+                            displayName={senderProfile?.displayName}
+                            userColor={userColor}
+                            messageType={messageType}
+                        />
+                    )}
 
-                <div className={`message-content ${messageType === 0 ? 'text' : 'image'}`}>
-                    {!isSender &&
-                        <div className='user-info' style={{ color: userColor }}>
-                            <p className={`sender-profile-name ${messageType === 0 ? 'text' : 'image'}`}>{senderProfile?.displayName}</p>
-                        </div>
-                    }
-
-                    {messageType === 0
-                        ? <p>{content}</p>
-                        : <div onClick={() => setIsShowImage(true)} >
-                            <img src={content} alt="" />
-                        </div>
-                    }
+                    {renderMessageContent(messageType, content, setIsShowImage)}
                 </div>
+
 
                 <div className='message-hour'>
                     {timestamp}
