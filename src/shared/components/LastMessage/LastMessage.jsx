@@ -1,5 +1,7 @@
 import { LuImage } from 'react-icons/lu'; // Fotoğraf simgesi
 import { BiSolidMicrophone } from 'react-icons/bi'; // Mikrofon simgesi
+import { LuFileVideo } from "react-icons/lu";
+import { FaFileAlt } from "react-icons/fa";
 
 const LastMessage = ({ lastMessageType, content }) => {
     const renderContent = () => {
@@ -16,6 +18,7 @@ const LastMessage = ({ lastMessageType, content }) => {
             case 2:
                 return (
                     <div className="last-message-video">
+                        <LuFileVideo />
                         <span>Video</span>
                     </div>
                 );
@@ -29,7 +32,8 @@ const LastMessage = ({ lastMessageType, content }) => {
             case 4:
                 return (
                     <div className="last-message-file">
-                        <span>File</span>
+                        <FaFileAlt />
+                        <span>Dosya</span>
                     </div>
                 );
             default:

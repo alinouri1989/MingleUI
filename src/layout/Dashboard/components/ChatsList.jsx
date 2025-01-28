@@ -57,7 +57,6 @@ function ChatsList() {
 
                 const isArchive = chatData.archivedFor?.hasOwnProperty(UserId);
 
-                // URL'deki chatId'yi kontrol et
                 const isActiveChat = location.pathname.includes(chatId);
 
                 const unReadMessage = !isActiveChat && chatData.messages.filter((message) => {
@@ -83,7 +82,7 @@ function ChatsList() {
             .filter((chat) => chat !== null)
             .sort((a, b) => b.lastMessageDateForSort - a.lastMessageDateForSort);
 
-        setEnhancedChatList(updatedChatList); // Yeni chat listesine set et
+        setEnhancedChatList(updatedChatList);
     }, [chatList, Individual, UserId, chatState]);
 
 

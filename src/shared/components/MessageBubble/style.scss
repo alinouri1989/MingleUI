@@ -57,7 +57,8 @@
             justify-content: center;
             align-items: center;
             border-radius: 14px;
-            background: var(--user-message-box-color);
+            background-color: rgba(255, 255, 255, 0.682);
+            backdrop-filter: blur(4px);
             color: var(--user-message-text-color);
             font-size: 14px;
             @include flex-center(column, center, flex-start);
@@ -69,16 +70,18 @@
                 background-color: rgba(207, 207, 207, 0.133);
             }
 
-            &.audio {
+            &.audio,
+            &.video,
+            &.file {
                 padding: 0px;
             }
 
-            &.audio-group {
-                padding: 10px;
+            &.group {
+                padding: 7px;
             }
 
-            &.audio-group-sender {
-                padding: 0;
+            &.group-sender {
+                padding: 0px;
             }
 
             .user-info {
@@ -88,11 +91,15 @@
 
                 .sender-profile-name {
                     font-weight: bold;
+                    width: 100%;
 
                     &.other {
-                        width: 100%;
                         margin-left: 10px;
-                        margin-bottom: -2px;
+                    }
+
+                    &.image {
+                        margin-left: 10px;
+                        margin-bottom: -4px;
                     }
                 }
 
@@ -104,6 +111,62 @@
                 margin-top: 5px;
                 margin-bottom: 5px;
                 cursor: pointer;
+            }
+
+            .file-message-container {
+                @include flex-center(row, space-between, center);
+                background-color: var(--text-white);
+                border-radius: 10px;
+                width: 200px;
+                padding: 5px;
+                gap: 5px;
+
+                .file-info-box {
+                    @include flex-center(row, flex-start, center);
+                    gap: 5px;
+
+
+                    svg {
+                        width: 35px;
+                        color: rgb(8, 162, 131);
+                    }
+
+
+                    .file-info {
+                        @include flex-center(column, flex-start, flex-start);
+                        font-size: 14px;
+                        font-weight: 700;
+                        color: var(--text-input-gray);
+
+
+                        span {
+                            font-size: 15px;
+                            color: rgb(8, 162, 131);
+                            ;
+                        }
+
+                        p {
+                            font-size: 12px;
+                        }
+                    }
+                }
+
+                .download-file-button {
+                    width: 30px;
+                    height: 30px;
+                    background-color: rgb(8, 162, 131);
+                    color: white;
+                    border-radius: 50%;
+                    @include flex-center(row, center, center);
+                    margin-right: 10px;
+                    font-size: 18px;
+                    cursor: pointer;
+                    transition: all 0.1s ease-in-out;
+
+                    &:active {
+                        scale: 0.8;
+                    }
+                }
             }
         }
 

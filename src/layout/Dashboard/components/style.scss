@@ -116,6 +116,20 @@
             }
         }
 
+        .last-message-video {
+            @include flex-center(row, center);
+            gap: 5px;
+            color: rgb(245, 164, 44);
+
+            svg {
+                font-size: 24px;
+            }
+
+            span {
+                color: rgb(245, 164, 44);
+            }
+        }
+
         .last-message-audio {
             @include flex-center(row, center);
             gap: 5px;
@@ -127,6 +141,20 @@
 
             span {
                 color: var(--smooth-red);
+            }
+        }
+
+        .last-message-file {
+            @include flex-center(row, center);
+            gap: 5px;
+            color: rgb(8, 162, 131);
+
+            svg {
+                font-size: 24px;
+            }
+
+            span {
+                color: rgb(8, 162, 131);
             }
         }
 
@@ -145,13 +173,9 @@
             font-weight: 700;
             color: var(--user-message-text-color);
             white-space: nowrap;
-            /* Metni tek satırda tutar */
             overflow: hidden;
-            /* Taşan metni gizler */
             text-overflow: ellipsis;
-            /* Taşan metnin yerine "..." koyar */
             width: 100%;
-            /* Div'in genişliği kadar uzatır */
             display: block;
         }
     }

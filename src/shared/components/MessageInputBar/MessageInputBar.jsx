@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useSignalR } from "../../../contexts/SignalRContext";
 import { HiPlus } from "react-icons/hi";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
 import EmojiPicker from "emoji-picker-react";
@@ -7,27 +8,31 @@ import { LuImage } from "react-icons/lu";
 import { BiSolidMicrophone } from "react-icons/bi";
 import { LuFileVideo } from "react-icons/lu";
 
-import "./style.scss";
 import { useModal } from "../../../contexts/ModalContext";
 import ImageModal from "../ImageModal/ImageModal";
-import { useSignalR } from "../../../contexts/SignalRContext";
 import { useLocation } from "react-router-dom";
 import { encryptMessage } from "../../../helpers/messageCryptoHelper";
 import SoundRecordModal from "../SoundRecordModal/SoundRecordModal";
+import "./style.scss";
+import { convertFileToBase64 } from "../../../store/helpers/convertFileToBase64";
+import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
+import PreLoader from "../PreLoader/PreLoader";
 
 function MessageInputBar({ chatId }) {
     const { chatConnection } = useSignalR();
-
+    const [isLoading, setIsLoading] = useState(false);
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [isShowFileMenu, setShowFileMenu] = useState(false);
     const { showModal, closeModal } = useModal();
     const [message, setMessage] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
     const emojiPickerRef = useRef(null);
-    const fileInputRef = useRef(null);
     const location = useLocation();
 
 
+    const fileImageInputRef = useRef(null);
+    const fileVideoInputRef = useRef(null);
+    const fileInputRef = useRef(null);
     const fileMenuRef = useRef(null); // File menu'yu referansla takip etmek için
     const addFileButtonRef = useRef(null);
 
@@ -52,6 +57,32 @@ function MessageInputBar({ chatId }) {
         };
     }, []);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+                setShowEmojiPicker(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                handleSendMessage();
+            }
+        };
+        document.addEventListener("keydown", handleKeyDown);
+        return () => {
+            document.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [message, selectedFile]);
+
+
     const handleEmojiClick = (emojiData) => {
         setMessage((prev) => prev + emojiData.emoji);
     };
@@ -64,20 +95,91 @@ function MessageInputBar({ chatId }) {
         setMessage(e.target.value);
     };
 
-    const handleImageSelect = () => {
+
+    const handleFileSelect = () => {
         fileInputRef.current.click();
     };
+
+    const handleImageSelect = () => {
+        fileImageInputRef.current.click();
+    };
+
+    const handleVideoSelect = () => {
+        fileVideoInputRef.current.click();
+    }
 
     const handleSoundRecord = () => {
         showModal(<SoundRecordModal closeModal={closeModal} chatId={chatId} />);
     }
 
-    const handleFileChange = (e) => {
+    const handleVideoFileChange = async (e) => {
+        const file = e.target.files[0];
+        let chatType = '';
+        if (location.pathname.includes('sohbetler') || location.pathname.includes('arsivler')) {
+            chatType = 'Individual';
+        } else if (location.pathname.includes('gruplar')) {
+            chatType = 'Group';
+        }
+
+        if (file) {
+            try {
+                setIsLoading(true);
+                const base64String = await convertFileToBase64(file);
+                // Videoyu göndermek için chatConnection.invoke çağrısı
+                await chatConnection.invoke("SendMessage", chatType, chatId, {
+                    ContentType: 2,
+                    content: base64String,
+                });
+
+                setIsLoading(false);
+                SuccessAlert("Video gönderildi");
+            } catch {
+                ErrorAlert("Video gönderilemedi");
+            }
+        } else {
+            ErrorAlert("Dosya seçilmedi");
+        }
+    };
+
+    const handleImageFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             setSelectedFile(file);
 
             showModal(<ImageModal closeModal={closeModal} image={file} chatId={chatId} />);
+        }
+    };
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        let chatType = '';
+
+        // Chat türünü belirle
+        if (location.pathname.includes('sohbetler') || location.pathname.includes('arsivler')) {
+            chatType = 'Individual';
+        } else if (location.pathname.includes('gruplar')) {
+            chatType = 'Group';
+        }
+
+        if (file) {
+            try {
+                setIsLoading(true);
+                // Dosyayı base64'e dönüştür
+                const base64String = await convertFileToBase64(file);
+                // Dosyayı göndermek için chatConnection.invoke çağrısı
+                await chatConnection.invoke("SendMessage", chatType, chatId, {
+                    ContentType: 4, // 4: Belge, ses veya farklı türdeki dosya
+                    content: base64String,
+                });
+
+                setIsLoading(false);
+                SuccessAlert("Dosya gönderildi");
+            } catch {
+                setIsLoading(false);
+                ErrorAlert("Dosya gönderilemedi");
+            }
+        } else {
+            ErrorAlert("Dosya seçilmedi");
         }
     };
 
@@ -123,31 +225,6 @@ function MessageInputBar({ chatId }) {
         }
     };
 
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
-                setShowEmojiPicker(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
-    useEffect(() => {
-        const handleKeyDown = (event) => {
-            if (event.key === "Enter" && !event.shiftKey) {
-                event.preventDefault();
-                handleSendMessage();
-            }
-        };
-        document.addEventListener("keydown", handleKeyDown);
-        return () => {
-            document.removeEventListener("keydown", handleKeyDown);
-        };
-    }, [message, selectedFile]);
-
     return (
         <div className="message-input-bar">
             <div className="input-box">
@@ -158,20 +235,36 @@ function MessageInputBar({ chatId }) {
 
                     {isShowFileMenu &&
                         <div className="file-menu" ref={fileMenuRef}>
-                            <button><LuFileUp /></button>
+                            <button onClick={handleFileSelect}><LuFileUp /></button>
                             <button onClick={handleImageSelect}><LuImage /></button>
                             <button onClick={handleSoundRecord}><BiSolidMicrophone /></button>
-                            <button><LuFileVideo /></button>
+                            <button onClick={handleVideoSelect}><LuFileVideo /></button>
                         </div>
                     }
 
                     <input
                         type="file"
                         accept="image/png"
+                        ref={fileImageInputRef}
+                        style={{ display: "none" }}
+                        onChange={handleImageFileChange}
+                    />
+
+                    <input
+                        type="file"
+                        accept="video/*"
+                        ref={fileVideoInputRef}
+                        style={{ display: "none" }}
+                        onChange={handleVideoFileChange}
+                    />
+                    <input
+                        type="file"
+                        accept=".doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.zip,.rar,.7z,.txt,.mp3,.wav,.ogg"
                         ref={fileInputRef}
                         style={{ display: "none" }}
                         onChange={handleFileChange}
                     />
+
                 </div>
 
                 <input
@@ -202,6 +295,7 @@ function MessageInputBar({ chatId }) {
                     </button>
                 </div>
             </div>
+            {isLoading && <PreLoader />}
         </div>
     );
 }
