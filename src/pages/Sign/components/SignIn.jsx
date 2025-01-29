@@ -8,6 +8,10 @@ import { useLoginUserMutation } from '../../../store/Slices/auth/authApi.js';
 import { SuccessAlert } from '../../../helpers/customAlert';
 import PreLoader from "../../../shared/components/PreLoader/PreLoader.jsx";
 
+
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider, facebookProvider } from '../../../services/firebaseConfig.js';
+
 function SignIn() {
 
   const [loginUser, { isLoading }] = useLoginUserMutation();
@@ -38,6 +42,31 @@ function SignIn() {
     }
   };
 
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+      const token = await user.getIdToken();
+      // Backend Tarafına Access Token Gönderimi için "token" hazır.  
+
+    } catch (error) {
+      console.error('Google ile giriş başarısız oldu:', error.message);
+    }
+  };
+
+  const handleFacebookSignIn = async () => {
+    try {
+      const result = await signInWithPopup(auth, facebookProvider);
+      const user = result.user;
+      const token = await user.getIdToken();
+      console.log("Facebook Kullanıcısı:", token);
+
+    } catch (error) {
+      console.error("Facebook ile giriş başarısız:", error.message);
+    }
+  };
+
   return (
     <div className='sign-in-general-container'>
       <img src={Logo} alt="" />
@@ -47,8 +76,8 @@ function SignIn() {
       </div>
 
       <div className='method-buttons'>
-        <button><FcGoogle className='icon' /><span>Google</span></button>
-        <button><FaFacebook className='icon' /><span>Facebook</span></button>
+        <button onClick={handleGoogleSignIn}><FcGoogle className='icon' /><span>Google</span></button>
+        <button onClick={handleFacebookSignIn}><FaFacebook className='icon' /><span>Facebook</span></button>
       </div>
 
 

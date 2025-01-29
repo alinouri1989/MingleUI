@@ -93,6 +93,7 @@ function ChatsList() {
     const nonArchivedChats = enhancedChatList.filter((chat) => !chat.isArchive);
 
 
+
     return (
         <div className="chat-list-box">
             <SearchInput placeholder={"Sohbetlerinizde aratın..."} />
