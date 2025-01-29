@@ -28,7 +28,7 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
             try {
                 await callConnection.invoke("StartCall", recipientId, 0);
                 dispatch(setIsCallStarting(true));
-                showModal(<CallModal callId={callId} closeModal={closeModal} isCameraCall={false} />);
+                showModal(<CallModal closeModal={closeModal} isCameraCall={false} />);
             } catch (error) {
                 console.error("Error starting voice call:", error);
             }

@@ -25,7 +25,7 @@ h2,
 h3,
 h4,
 h5,
-h6{
+h6 {
   user-select: none;
 }
 
@@ -37,10 +37,10 @@ svg {
   display: block;
   max-width: 100%;
   height: auto;
- 
+
 }
 
-img{
+img {
   pointer-events: none;
 }
 
@@ -121,7 +121,7 @@ textarea {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg,  #585CE1, #585CE1);
+  background: linear-gradient(180deg, #585CE1, #585CE1);
   border-radius: 6px;
   cursor: pointer;
 }

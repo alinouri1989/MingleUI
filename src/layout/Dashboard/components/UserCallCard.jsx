@@ -14,6 +14,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { formatTimeHoursMinutes } from "../../../helpers/dateHelper";
 import { Navigate, useNavigate } from "react-router-dom";
+import { PiPhoneFill } from "react-icons/pi";
 
 function UserCallCard({ callId, image, status, name, callType, callStatus, createdDate, isOutgoingCall }) {
 
@@ -76,7 +77,7 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
       case 3:
         text = "İptal Edildi";
         color = "#EB6262"; // Kırmızı renk
-        icon = <TbVideoMinus className="icon" />; // İptal ikonu
+        icon = callType === 1 ? <TbVideoMinus className="icon" /> : <PiPhoneFill />; // İptal ikonu
         break;
 
       case 4:

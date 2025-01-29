@@ -12,12 +12,14 @@ import { formatCallDuration, formatDateToTR, formatTimeHoursMinutes } from '../.
 import { useSignalR } from '../../contexts/SignalRContext.jsx';
 import { setIsCallStarting } from '../../store/Slices/calls/callSlice.js';
 import "./style.scss";
+import { getChatId } from '../../store/Slices/chats/chatSlice.js';
 
 function Calls() {
   const { id } = useParams();
   const { showModal, closeModal } = useModal();
   const { callConnection } = useSignalR();
   const { token } = useSelector(state => state.auth); // Token'ı al
+  const state = useSelector(state => state.chat); // Token'ı al
   const userId = getUserIdFromToken(token); // Token'dan userId'yi al
 
   const { calls, callRecipientList, isInitialCallsReady } = useSelector(state => state.call);
@@ -51,7 +53,7 @@ function Calls() {
   let icon = type === 0 ? <PiPhoneFill className="icon" /> : <HiMiniVideoCamera className="icon" />;
 
   // Giden ve Gelen Arama Kontrolü
-  const isOutgoingCall = participants?.[0] === userId; // İlk participant, userId ise giden çağrı
+  const isOutgoingCall = participants?.[0] === userId;
 
   switch (status) {
     case 1:
@@ -68,6 +70,7 @@ function Calls() {
       break;
     case 3:
       callStatusText = "İptal Edildi";
+      icon = type === 0 ? <PiPhoneFill className="icon" /> : <HiMiniVideoCamera className="icon" />;
       break;
     case 4:
       if (isOutgoingCall) {
@@ -112,6 +115,11 @@ function Calls() {
     }
   }
 
+  const handleGoIndividualChat = () => {
+    const chatId = getChatId(state, userId, otherParticipantId);
+    navigate(`/sohbetler/${chatId}`);
+  }
+
   return (
     <div className="calls-general-box">
       {id &&
@@ -124,7 +132,7 @@ function Calls() {
                 <p>{displayName}</p>
               </div>
               <div className="call-options">
-                <button><IoChatbubbleEllipses /></button>
+                <button onClick={handleGoIndividualChat}><IoChatbubbleEllipses /></button>
                 <button onClick={handleVoiceCall}><PiPhoneFill /></button>
                 <button onClick={handleVideoCall}><HiMiniVideoCamera /></button>
               </div>
