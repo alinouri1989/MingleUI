@@ -60,6 +60,7 @@ function UserMessageBar({ ChatId }) {
               // Gönderen kullanıcıyı bul
               const senderId = Object.keys(msg.status.sent)[0];
               const isSender = senderId === userId;
+              const isDeleted = msg.deletedFor?.hasOwnProperty(userId) ?? false;
 
               // Mesajın gönderim zamanını dönüştür
               const formattedTimestamp = convertToLocalTime(msg.status.sent[senderId]);
@@ -75,6 +76,7 @@ function UserMessageBar({ ChatId }) {
                   status={msg.status}
                   messageType={msg.type}
                   userId={userId}
+                  isDeleted={isDeleted}
                 />
               );
             })}

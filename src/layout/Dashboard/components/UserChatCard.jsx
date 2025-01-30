@@ -19,7 +19,7 @@ import { useSignalR } from "../../../contexts/SignalRContext";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
 import LastMessage from "../../../shared/components/LastMessage/LastMessage";
 
-function UserChatCard({ receiverId, image, status, name, lastMessageDate, lastMessageType, lastMessage, lastDate, unReadMessage, isArchive }) {
+function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageDate, lastMessageType, lastMessage, lastDate, unReadMessage, isArchive }) {
 
   const [anchorEl, setAnchorEl] = useState(null);
   const { chatConnection } = useSignalR();
@@ -67,6 +67,19 @@ function UserChatCard({ receiverId, image, status, name, lastMessageDate, lastMe
     handleClose();
   };
 
+  const handleClearChat = async () => {
+    try {
+      await chatConnection.invoke("ClearChat", "Individual", chatId);
+      SuccessAlert("Sohbet Silindi");
+      if (location.pathname.includes(chatId)) {
+        navigate("/sohbetler");
+      }
+    } catch {
+      ErrorAlert("Sohebt Silinemedi");
+    }
+    handleClose();
+  }
+
   const handleGoChat = () => {
     isArchive ? navigate(`/arsivler/${chatId}`) : navigate(`/sohbetler/${chatId}`)
   };
@@ -86,7 +99,7 @@ function UserChatCard({ receiverId, image, status, name, lastMessageDate, lastMe
 
       <div className="status-informations-box">
         <span>{lastMessageDate}</span>
-        {unReadMessage > 0 && <p>{unReadMessage}</p>}
+        {unReadMessage > 0 && <p>{isDeleted ? "" : unReadMessage}</p>}
       </div>
 
       <div className="option">
@@ -123,7 +136,7 @@ function UserChatCard({ receiverId, image, status, name, lastMessageDate, lastMe
         >
           <MenuItem
             onClick={() => {
-              handleClose();
+              handleClearChat();
             }}
             sx={{ color: "#EB6262" }}
           >

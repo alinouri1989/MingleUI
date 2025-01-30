@@ -6,7 +6,7 @@ import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
 import { setGroupList, updateGroupInformations, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
 import { addNewUserToChatList, setInitialChatList, updateUserInfoToChatList } from "../store/Slices/chats/chatListSlice.js";
-import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats, addArchive, removeArchive } from "../store/Slices/chats/chatSlice.js";
+import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats, addArchive, removeArchive, removeIndividualChat } from "../store/Slices/chats/chatSlice.js";
 import { handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, updateCallRecipientList } from "../store/Slices/calls/callSlice.js";
 import { createAndSendOffer, handleRemoteSDP, sendSdp } from "../services/webRtcService.js";
 
@@ -255,13 +255,18 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 chatConnection.on("ReceiveArchiveChat", (data) => {
-                    console.log("UNARCHIVED GELEN DATA", data)
+
                     dispatch(addArchive(data));
                 });
 
                 chatConnection.on("ReceiveUnarchiveChat", (data) => {
-                    console.log("girdiiiiiiiiiiii");
+
                     dispatch(removeArchive(data));
+                });
+                chatConnection.on("ReceiveClearChat", (data) => {
+
+                    console.log("RECEIVE CLEAR CHAT", data);
+                    dispatch(removeIndividualChat(data));
                 });
 
                 //! =========== NOTIFICATION CONNECTION ===========
@@ -270,7 +275,6 @@ export const SignalRProvider = ({ children }) => {
                     console.log("notificationConnection güncelleme verisi : ", data);
                     dispatch(updateUserInfoToChatList(data));
                     dispatch(updateUserInfoToGroupList(data));
-                    console.log("updateCallRecipientList için ReceiveRecipientProfiles'den giden veri ===", data);
                     dispatch(updateCallRecipientList(data));
 
                 });
@@ -464,7 +468,7 @@ export const SignalRProvider = ({ children }) => {
 
 
             const individualPromises = Individual.flatMap(chat => {
-                return chat.messages
+                return chat?.messages
                     .filter(message => {
                         const isSent = message.status.sent && Object.keys(message.status.sent).includes(userId);
                         const isDelivered = message.status.delivered && Object.keys(message.status.delivered).includes(userId);

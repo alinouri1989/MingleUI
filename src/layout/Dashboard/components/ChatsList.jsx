@@ -38,7 +38,18 @@ function ChatsList() {
                     return null;
                 }
 
+                // Eğer tüm mesajlar UserId için silinmişse, return etme
+                const allMessagesDeleted = chatData?.messages.every(
+                    (message) => message.deletedFor && Object.keys(message.deletedFor).length > 0 && message.deletedFor.hasOwnProperty(UserId)
+                );
+                if (allMessagesDeleted) {
+                    return null;
+                }
+
                 const lastMessage = chatData?.messages[chatData?.messages.length - 1].content;
+
+                const lastMessageForDeleted = chatData?.messages[chatData?.messages.length - 1];
+                const isDeleted = lastMessageForDeleted?.deletedFor?.hasOwnProperty(UserId) ?? false;
                 const lastMessageType = chatData?.messages[chatData?.messages.length - 1].type;
 
                 const lastMessageDate =
@@ -76,6 +87,7 @@ function ChatsList() {
                     lastMessageDate,
                     lastMessageDateForSort,
                     isArchive,
+                    isDeleted,
                     unReadMessage
                 };
             })
@@ -116,6 +128,7 @@ function ChatsList() {
                             lastMessageDate={chat.lastMessageDate}
                             isArchive={chat.isArchive}
                             unReadMessage={chat.unReadMessage}
+                            isDeleted={chat.isDeleted}
                         />
                     ))
                 ) : (

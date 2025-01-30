@@ -68,20 +68,24 @@
             &.image {
                 padding: 3px 7px;
                 background-color: rgba(207, 207, 207, 0.133);
+                max-width: 380px;
             }
 
             &.audio,
             &.video,
             &.file {
                 padding: 0px;
+                max-width: 500px;
             }
 
             &.group {
                 padding: 7px;
+                max-width: 500px;
             }
 
             &.group-sender {
                 padding: 0px;
+                max-width: 500px;
             }
 
             .user-info {
@@ -208,7 +212,8 @@
 
 
         img {
-            height: 80%;
+            max-width: 80%;
+            max-height: 85%;
             border-radius: 13px;
             transform: translateY(50px); // Başlangıç pozisyonu (50px aşağıda)
             opacity: 0; // Başlangıçta görünmez

@@ -21,8 +21,8 @@ import { useSelector } from 'react-redux';
 import { useSignalR } from '../../../contexts/SignalRContext';
 import { AudioMessage } from './components/AudioMessage';
 
-function MessageBubble({ ChatId, userId, messageId, userColor, content, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
-    if (content == "") {
+function MessageBubble({ ChatId, userId, messageId, userColor, content, isDeleted, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
+    if (content == "" || isDeleted) {
         return null;
     }
 

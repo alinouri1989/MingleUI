@@ -178,9 +178,20 @@ const chatSlice = createSlice({
         },
 
         removeIndividualChat: (state, action) => {
-            state.Individual = state.Individual.filter(chat => chat.id !== action.payload);
-        },
+            const chatId = Object.keys(action.payload.Individual)[0]; // Gelen objeden chatId'yi al
+            let updatedChatData = action.payload.Individual[chatId]; // Güncellenmiş sohbet verisi
 
+            // Eğer updatedChatData.messages bir obje ise, onu diziye dönüştür
+            if (updatedChatData.messages && !Array.isArray(updatedChatData.messages)) {
+                updatedChatData.messages = Object.values(updatedChatData.messages);
+            }
+
+            //! Eğer messages doğrudan geldiğinde dizi olarak gelirse  üstteki if bloğu çalışmayacak
+
+            state.Individual = state.Individual.map(chat =>
+                chat.id === chatId ? { ...chat, ...updatedChatData } : chat
+            );
+        },
         removeGroupChat: (state, action) => {
             state.Group = state.Group.filter(chat => chat.id !== action.payload);
         },
