@@ -15,6 +15,7 @@ import { useSignalR } from "../../../../contexts/SignalRContext.jsx";
 import "./style.scss";
 import { addNewIndividualChat } from "../../../../store/Slices/chats/chatSlice.js";
 import { useDispatch } from "react-redux";
+import { isPending } from "@reduxjs/toolkit";
 
 function NewChatModal() {
   const navigate = useNavigate();

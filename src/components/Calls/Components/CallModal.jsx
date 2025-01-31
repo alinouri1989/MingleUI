@@ -156,17 +156,28 @@ function CallModal({ closeModal, isCameraCall }) {
     }, [isCallStarting, isCallStarted, callId]);
 
     const handleMicrophoneMode = () => {
-        setMicrophoneMode(!isMicrophoneOn);
+        if (localStream) {
+            localStream.getAudioTracks().forEach(track => {
+                track.enabled = !isMicrophoneOn;
+            });
+            setMicrophoneMode(!isMicrophoneOn);
+        } else {
+            console.warn("Local stream mevcut değil!");
+        }
     };
 
     const handleSpeakerMode = () => {
-        setSpeakerMode((prevMode) => {
-            const newMode = !prevMode;
-            if (audioRef.current) {
-                audioRef.current.volume = newMode ? 1 : 0;
-            }
-            return newMode;
-        });
+        if (remoteStream) {
+            remoteStream.getAudioTracks().forEach(track => {
+                track.enabled = !isSpeakerOn;
+            });
+        }
+
+        if (audioRef.current) {
+            audioRef.current.volume = isSpeakerOn ? 0 : 1;
+        }
+
+        setSpeakerMode(!isSpeakerOn);
     };
 
     const handleCloseCall = () => {

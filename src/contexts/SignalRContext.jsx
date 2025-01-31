@@ -389,10 +389,10 @@ export const SignalRProvider = ({ children }) => {
                 callConnection.on('ReceiveSdp', async (data) => {
                     try {
                         if (data.type === "offer") {
-                            await initializePeerConnection(1);
+                            await initializePeerConnection(0);
 
-                            // if (data.sdp.type === "offer") {
-                            //     await initializePeerConnection(data.callType);
+                            //! if (data.sdp.type === "offer") {
+                            //!     await initializePeerConnection(data.callType);
 
                             console.log("Offer işlemleri başlatılıyor...");
                             await handleRemoteSDP(data, peerConnection.current);
