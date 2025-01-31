@@ -19,6 +19,9 @@ export const prepareGroupFormData = (formData, isEdit) => {
     else {
       form.append('Photo', formData.photoUrl);
     }
+    if (formData.photoUrl == null) {
+      form.append('PhotoUrl', "");
+    }
 
   } else {
     form.append('Photo', formData.photo);

@@ -251,10 +251,13 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
         }
     };
 
-    //For Settings
     const handleSaveChanges = async () => {
         try {
             const formDataCopy = { ...formData };
+
+            if ((!formDataCopy.photo && !formDataCopy.photoUrl) || (formDataCopy.photoUrl === null && formDataCopy.photo === null)) {
+                formDataCopy.photoUrl = defaultGroupPhoto;
+            }
 
             if (formDataCopy.photoUrl && formDataCopy.photoUrl instanceof File) {
                 const reader = new FileReader();
