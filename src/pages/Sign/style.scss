@@ -192,7 +192,7 @@ form {
                 margin: 7px;
                 border-radius: 50%;
                 @include transition();
-             
+
             }
 
             .react-datepicker__day--selected {
@@ -257,7 +257,7 @@ form {
     h1 {
         text-align: center;
         font-size: 25px;
-        border-bottom: 2px solid rgb(239, 239, 239);
+        border-bottom: 2px solid var(--smooth-light-blue);
         padding-bottom: 10px;
     }
 

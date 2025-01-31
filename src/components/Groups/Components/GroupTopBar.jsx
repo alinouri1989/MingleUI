@@ -12,8 +12,8 @@ function GroupTopBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
         <div className={`group-top-bar ${isSidebarOpen ? 'close' : ''}`}>
             <div className="group-info">
                 <div className="image-box">
-                    <img src={defaultGroupPhoto} />
-                    {/* groupProfile?.photoUrl */}
+                    <img src={groupProfile?.photoUrl} />
+
                 </div>
                 <div className="name-and-status-box">
                     <p className="grup-name">{groupProfile?.name}</p>

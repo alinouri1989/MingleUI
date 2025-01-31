@@ -60,7 +60,7 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }
                         {groupProfile ? (
                             <>
                                 <div className='group-info-box'>
-                                    <img src={defaultGroupPhoto} alt={`profile`} />
+                                    <img src={groupProfile?.photoUrl} alt={`profile`} />
                                     <p>{groupProfile.name}</p>
                                 </div>
 

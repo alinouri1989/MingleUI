@@ -35,9 +35,6 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
     const [editGroup, { isLoading: editLoading }] = useEditGroupMutation();
     const [leaveGroup, { isLoading: leaveLoading }] = useLeaveGroupMutation();
 
-    console.log("grup ayarları mı?", isGroupSettings);
-    console.log("group profilleri", groupProfile)
-
     const { chatConnection } = useSignalR();
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -95,7 +92,6 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
         const isSameData = JSON.stringify(formData) === JSON.stringify(initialData);
         setSaveDisabled(isSameData);
     }, [formData]);
-
 
 
     useEffect(() => {
@@ -168,10 +164,7 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
     // Create
 
     const handleRemoveUser = (userId) => {
-        // formData'daki participants nesnesinin anahtarlarını alıyoruz
         const participantKeys = Object.keys(formData.participants);
-
-        // userId'ye sahip kullanıcıyı buluyoruz
         const userToRemove = participantKeys.find((key) => key === userId);
 
         if (userToRemove) {
@@ -185,7 +178,7 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
                 participants: updatedParticipants
             }));
 
-            const removedUserName = formData.participants[userToRemove].DisplayName;
+            const removedUserName = formData.participants[userToRemove].displayName;
             SuccessAlert(`${removedUserName} gruptan çıkarıldı.`, 1500);
         }
     };
@@ -220,20 +213,39 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
     // Create New Group Logis is here.
     const handleSubmit = async () => {
         try {
+            const formDataCopy = { ...formData }; // formData'nın kopyasını alıyoruz
 
-            const response = await createGroup(formData);
+            if (formDataCopy.photo) {
+                const reader = new FileReader();
+                reader.readAsDataURL(formDataCopy.photo);
+                reader.onload = async () => {
+                    const base64String = reader.result.split(',')[1];
+                    formDataCopy.photoUrl = null;
+                    formDataCopy.photo = base64String;
+                    const response = await createGroup(formDataCopy);
 
-            if (response?.error) {
-                const errorMessage = response.error?.data?.message || "Bir hata oluştu, lütfen tekrar deneyin.";
-                ErrorAlert(errorMessage);
-                return; // Hata durumunda işlemi sonlandır
+                    if (response?.error) {
+                        const errorMessage = response.error?.data?.message || "Bir hata oluştu, lütfen tekrar deneyin.";
+                        ErrorAlert(errorMessage);
+                        return;
+                    }
+
+                    SuccessAlert("Grup Oluşturuldu");
+                    closeModal();
+                };
+            } else {
+                const response = await createGroup(formDataCopy);
+
+                if (response?.error) {
+                    const errorMessage = response.error?.data?.message || "Bir hata oluştu, lütfen tekrar deneyin.";
+                    ErrorAlert(errorMessage);
+                    return;
+                }
+
+                SuccessAlert("Grup Oluşturuldu");
+                closeModal();
             }
-
-            // Eğer hata yoksa başarı mesajını göster
-            SuccessAlert("Grup Oluşturuldu");
-            closeModal();
         } catch (error) {
-            // Backend'den hata dönerse buraya düşer
             const errorMessage = error?.data?.message || "Bir hata oluştu, lütfen tekrar deneyin.";
             ErrorAlert(errorMessage);
         }
@@ -242,14 +254,32 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
     //For Settings
     const handleSaveChanges = async () => {
         try {
-            await editGroup({ groupId, formData }).unwrap();
-            SuccessAlert("Değişiklikler kayıt edildi");
-            closeModal();
+            const formDataCopy = { ...formData };
+
+            if (formDataCopy.photoUrl && formDataCopy.photoUrl instanceof File) {
+                const reader = new FileReader();
+
+                reader.onload = () => {
+                    const base64String = reader.result.split(',')[1];
+                    formDataCopy.photoUrl = base64String;
+
+                    editGroup({ groupId, formData: formDataCopy }).unwrap();
+                    SuccessAlert("Değişiklikler kayıt edildi");
+                    closeModal();
+                };
+
+                reader.readAsDataURL(formDataCopy.photoUrl);
+            } else {
+                await editGroup({ groupId, formData: formDataCopy }).unwrap();
+                SuccessAlert("Değişiklikler kayıt edildi");
+                closeModal();
+            }
         } catch (error) {
             console.log(error);
-            ErrorAlert("Bir hata meydana geldi")
+            ErrorAlert("Bir hata meydana geldi");
         }
     };
+
 
     return (
         <div className="new-group-modal">

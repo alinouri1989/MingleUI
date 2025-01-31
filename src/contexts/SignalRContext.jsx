@@ -173,6 +173,10 @@ export const SignalRProvider = ({ children }) => {
                     store.dispatch(initializeChats(data));
                 });
 
+                chatConnection.on("ReceiveInitialRecipientChatProfiles", (data) => {
+                    dispatch(setInitialChatList(data));
+                });
+
                 chatConnection.on("ReceiveInitialGroupProfiles", (data) => {
                     dispatch(setGroupList(data));
                 });
@@ -217,10 +221,6 @@ export const SignalRProvider = ({ children }) => {
                             });
                         });
                     }
-                });
-
-                chatConnection.on("ReceiveInitialRecipientChatProfiles", (data) => {
-                    dispatch(setInitialChatList(data));
                 });
 
                 chatConnection.on("ReceiveRecipientProfiles", (data) => {

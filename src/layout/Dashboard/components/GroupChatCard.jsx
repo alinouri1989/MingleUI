@@ -45,8 +45,7 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
     return (
         <div key={groupId} onClick={handleGoGroupChat} className="group-dashboard-card-box">
             <div className="image-box">
-                <img src={defaultGroupPhoto} alt={`${groupName} profile`} />
-                {/* Şimdilik Default olan */}
+                <img src={groupPhotoUrl} alt={`${groupName} profile`} />
             </div>
 
             <div className="grup-name-and-sub-title">
