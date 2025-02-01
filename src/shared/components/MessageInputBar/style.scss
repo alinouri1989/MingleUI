@@ -127,16 +127,31 @@
 
         input {
             height: 100%;
-            width: 100%;
+            width: 90%;
             font-size: 14px;
             color: var(--text-dark-gray);
         }
 
-        .emoji-and-send-buttons {
+        .ai-emoji-send-buttons {
             @include flex-center(row, center, center);
-            gap: 14px;
-            width: 100px;
+            gap: 10px;
+            width: 150px;
             height: 100%;
+            position: relative;
+
+            .ai-button {
+                padding-left: 12px;
+                width: 40px;
+                height: 40px;
+                font-size: 28px;
+                color: var(--blue);
+                background-color: transparent;
+                @include transition();
+
+                &:hover {
+                    color: var(--hoverBlue);
+                }
+            }
 
             .emoji-picker {
                 position: absolute;

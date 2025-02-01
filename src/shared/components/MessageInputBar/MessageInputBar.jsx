@@ -7,6 +7,8 @@ import { LuFileUp } from "react-icons/lu";
 import { LuImage } from "react-icons/lu";
 import { BiSolidMicrophone } from "react-icons/bi";
 import { LuFileVideo } from "react-icons/lu";
+import { SiGooglegemini } from "react-icons/si";
+
 
 import { useModal } from "../../../contexts/ModalContext";
 import ImageModal from "../ImageModal/ImageModal";
@@ -17,23 +19,29 @@ import "./style.scss";
 import { convertFileToBase64 } from "../../../store/helpers/convertFileToBase64";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
 import PreLoader from "../PreLoader/PreLoader";
+import { AIModal } from "../AIModal/AIModal";
 
 function MessageInputBar({ chatId }) {
+    const location = useLocation();
     const { chatConnection } = useSignalR();
     const [isLoading, setIsLoading] = useState(false);
+
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [isShowFileMenu, setShowFileMenu] = useState(false);
+    const emojiPickerRef = useRef(null);
+
+    const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+    const AIButtonRef = useRef(null);
+
     const { showModal, closeModal } = useModal();
     const [message, setMessage] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
-    const emojiPickerRef = useRef(null);
-    const location = useLocation();
 
 
     const fileImageInputRef = useRef(null);
     const fileVideoInputRef = useRef(null);
     const fileInputRef = useRef(null);
-    const fileMenuRef = useRef(null); // File menu'yu referansla takip etmek için
+    const fileMenuRef = useRef(null);
     const addFileButtonRef = useRef(null);
 
     useEffect(() => {
@@ -94,7 +102,6 @@ function MessageInputBar({ chatId }) {
     const handleInputChange = (e) => {
         setMessage(e.target.value);
     };
-
 
     const handleFileSelect = () => {
         fileInputRef.current.click();
@@ -274,10 +281,17 @@ function MessageInputBar({ chatId }) {
                     onChange={handleInputChange}
                 />
 
-                <div className="emoji-and-send-buttons">
+                <div className="ai-emoji-send-buttons">
+                    <AIModal isOpen={isAIModalOpen} onClose={() => setIsAIModalOpen(false)} buttonRef={AIButtonRef} />
+
+                    <button ref={AIButtonRef} onClick={() => setIsAIModalOpen(!isAIModalOpen)} className="ai-button">
+                        <SiGooglegemini />
+                    </button>
+
                     <button className="add-emoji-button" onClick={toggleEmojiPicker}>
                         <MdOutlineEmojiEmotions />
                     </button>
+
                     {showEmojiPicker && (
                         <div ref={emojiPickerRef} className="emoji-picker">
                             <EmojiPicker onEmojiClick={handleEmojiClick} />
