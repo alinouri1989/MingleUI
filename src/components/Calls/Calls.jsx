@@ -8,28 +8,28 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserIdFromToken } from '../../helpers/getUserIdFromToken.js';
 import CallModal from './Components/CallModal';
-import { formatCallDuration, formatDateToTR, formatTimeHoursMinutes } from '../../helpers/dateHelper.js';
+import { formatDateToTR } from '../../helpers/dateHelper.js';
 import { useSignalR } from '../../contexts/SignalRContext.jsx';
 import { setIsCallStarting } from '../../store/Slices/calls/callSlice.js';
 import "./style.scss";
 import { getChatId } from '../../store/Slices/chats/chatSlice.js';
+import CallStatus from '../../shared/components/CallStatus/CallStatus.jsx';
 
 function Calls() {
   const { id } = useParams();
   const { showModal, closeModal } = useModal();
   const { callConnection } = useSignalR();
-  const { token } = useSelector(state => state.auth); // Token'ı al
-  const state = useSelector(state => state.chat); // Token'ı al
-  const userId = getUserIdFromToken(token); // Token'dan userId'yi al
+  const { token } = useSelector(state => state.auth);
+  const state = useSelector(state => state.chat);
+  const userId = getUserIdFromToken(token);
 
   const { calls, callRecipientList, isInitialCallsReady } = useSelector(state => state.call);
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // id'ye göre çağrı bilgilerini al
   const currentCall = calls.find(call => call.id === id);
 
-  // Eğer isInitialCallsReady true ise ve currentCall yoksa yönlendirme yap
   useEffect(() => {
     if (isInitialCallsReady && !currentCall) {
       navigate("/aramalar");
@@ -46,50 +46,8 @@ function Calls() {
   const otherParticipantId = participants?.find(participant => participant !== userId);
   const participantInfo = callRecipientList?.find(recipient => recipient.id === otherParticipantId);
 
-  const { displayName, profilePhoto, lastConnectionDate } = participantInfo || {};
+  const { displayName, profilePhoto } = participantInfo || {};
 
-  let callStatusText = "";
-  let callStatusColor = "#828A96";
-  let icon = type === 0 ? <PiPhoneFill className="icon" /> : <HiMiniVideoCamera className="icon" />;
-
-  // Giden ve Gelen Arama Kontrolü
-  const isOutgoingCall = participants?.[0] === userId;
-
-  switch (status) {
-    case 1:
-      if (isOutgoingCall) {
-        callStatusText = type === 1 ? "Giden video arama" : "Giden sesli arama";
-      } else {
-        callStatusText = type === 1 ? "Gelen video arama" : "Gelen sesli arama";
-      }
-      icon = type === 0 ? <PiPhoneFill className="icon" /> : <HiMiniVideoCamera className="icon" />;
-      break;
-    case 2:
-      callStatusText = "Meşgul";
-      callStatusColor = "#EB6262";
-      break;
-    case 3:
-      callStatusText = "İptal Edildi";
-      icon = type === 0 ? <PiPhoneFill className="icon" /> : <HiMiniVideoCamera className="icon" />;
-      break;
-    case 4:
-      if (isOutgoingCall) {
-        callStatusText = "Giden cevapsız arama";
-      } else {
-        callStatusText = "Gelen cevapsız arama";
-      }
-      callStatusColor = "#EB6262";
-      icon = type === 0 ? <PiPhoneFill className="icon" /> : <HiMiniVideoCamera className="icon" />;
-      break;
-    default:
-      callStatusText = "Bilinmiyor";
-      break;
-  }
-
-  // Formatlama
-  const formattedDuration = callDuration ? `Arama Süresi: ${formatCallDuration(callDuration)}` : "Cevaplanmadı";
-
-  // Handlers
   const handleVoiceCall = async () => {
     if (callConnection) {
       try {
@@ -101,7 +59,6 @@ function Calls() {
       }
     }
   };
-
 
   const handleVideoCall = async () => {
     if (callConnection) {
@@ -117,8 +74,11 @@ function Calls() {
 
   const handleGoIndividualChat = () => {
     const chatId = getChatId(state, userId, otherParticipantId);
-    navigate(`/sohbetler/${chatId}`);
-  }
+    const chatData = Object.values(state.Individual).find(chat => chat.id === chatId);
+    const isArchived = chatData.archivedFor?.hasOwnProperty(userId);
+    const destination = isArchived ? `/arsivler/${chatId}` : `/sohbetler/${chatId}`;
+    navigate(destination);
+  };
 
   return (
     <div className="calls-general-box">
@@ -139,13 +99,7 @@ function Calls() {
             </div>
             <div className="call-details">
               <span>{formatDateToTR(createdDate)}</span>
-              <div className="status-box">
-                <div className="call-status-box" style={{ color: callStatusColor }}>
-                  {icon}
-                  <p>{callStatusText} {formatTimeHoursMinutes(createdDate)}</p>
-                </div>
-                <p>{formattedDuration}</p>
-              </div>
+              <CallStatus status={status} type={type} userId={userId} participants={participants} callDuration={callDuration} createdDate={createdDate} />
             </div>
           </div>
         </div>

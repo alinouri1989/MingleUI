@@ -10,27 +10,40 @@ import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
 
 function GroupsList() {
-  const { token } = useSelector((state) => state.auth)
+  const { token } = useSelector((state) => state.auth);
   const userId = getUserIdFromToken(token);
   const { showModal, closeModal } = useModal();
   const { groupList } = useSelector((state) => state.groupList); // Fetch groupList from Redux store
   const { Group } = useSelector((state) => state.chat); // Fetch chat data from Redux store
   const location = window.location; // Access the current location.pathname
 
+  // Add useState for search functionality
+  const [searchGroup, setSearchGroup] = useState("");
+
   const handleNewGroup = () => {
     showModal(<NewGroupModal closeModal={closeModal} />); // Show modal to create new group
   };
 
+  // Filter groupList based on searchGroup value
+  const filteredGroupList = groupList
+    ? Object.entries(groupList).filter(([groupId, group]) =>
+      group.name.toLowerCase().includes(searchGroup.toLowerCase())
+    )
+    : [];
 
   return (
     <div className="group-list-box">
-      <SearchInput placeholder={"Gruplarda aratın"} />
+      <SearchInput
+        placeholder={"Gruplarda aratın"}
+        value={searchGroup}
+        onChange={setSearchGroup}
+      />
       <div>
         <button onClick={handleNewGroup} className="create-buttons">Yeni Grup Oluştur</button>
       </div>
       <div className="user-list">
-        {groupList && Object.keys(groupList).length > 0 ? (
-          Object.entries(groupList).map(([groupId, group]) => {
+        {filteredGroupList.length > 0 ? (
+          filteredGroupList.map(([groupId, group]) => {
             const chatGroup = Group.find((groupChat) =>
               groupChat.participants.includes(groupId)
             );
@@ -74,12 +87,11 @@ function GroupsList() {
             );
           })
         ) : (
-          <NoActiveData text={"Aktif grup bulunmamaktadır."} />
+          <NoActiveData text={searchGroup ? "Eşleşen grup bulunamadı" : "Aktif grup bulunmamaktadır."} />
         )}
       </div>
     </div>
   );
-
 }
 
 export default GroupsList;

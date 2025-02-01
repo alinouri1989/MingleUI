@@ -18,6 +18,7 @@ function ArchivesList() {
     const UserId = getUserIdFromToken(token); // Token'dan kullanıcı ID'si al
     const location = useLocation();
     const chatState = useSelector(state => state.chat);
+    const [searchUser, setSearchUser] = useState("");
 
     const [enhancedChatList, setEnhancedChatList] = useState([]);
 
@@ -38,6 +39,9 @@ function ArchivesList() {
                 }
 
                 const lastMessage = chatData?.messages[chatData?.messages.length - 1].content
+                const lastMessageForDeleted = chatData?.messages[chatData?.messages.length - 1].content
+                const isDeleted = lastMessageForDeleted?.deletedFor?.hasOwnProperty(UserId) ?? false;
+
                 const lastMessageType = chatData?.messages[chatData?.messages.length - 1].type;
 
                 const lastMessageDate =
@@ -78,6 +82,7 @@ function ArchivesList() {
                     lastMessageType,
                     lastMessageDateForSort,
                     isArchive,
+                    isDeleted,
                     unReadMessage
                 };
             })
@@ -88,13 +93,16 @@ function ArchivesList() {
     }, [chatList, Individual, UserId]);
 
     const archivedChats = enhancedChatList.filter((chat) => chat.isArchive);
+    const filteredChats = archivedChats.filter(chat =>
+        chat.name.toLowerCase().includes(searchUser.toLowerCase())
+    );
 
     return (
         <div className="archive-list-box">
-            <SearchInput placeholder={"Arşivlenmiş sohbetlerde ara"} />
+            <SearchInput value={searchUser} onChange={setSearchUser} placeholder={"Arşivlenmiş sohbetlerde ara"} />
             <div className="user-list">
-                {archivedChats.length > 0 ? (
-                    archivedChats.map((chat) => (
+                {filteredChats.length > 0 ? (
+                    filteredChats.map((chat) => (
                         <UserChatCard
                             key={chat.receiverId}
                             receiverId={chat.receiverId}
@@ -106,10 +114,11 @@ function ArchivesList() {
                             lastMessageDate={chat.lastMessageDate}
                             isArchive={chat.isArchive}
                             unReadMessage={chat.unReadMessage}
+                            isDeleted={chat.isDeleted}
                         />
                     ))
                 ) : (
-                    <NoActiveData text={"Arşivlenmiş sohbetiniz bulunmamaktadır."} />
+                    <NoActiveData text={searchUser ? "Eşleşen kullanıcı bulunamadı" : "Arşivlenmiş sohbetiniz bulunmamaktadır."} />
                 )}
             </div>
         </div>

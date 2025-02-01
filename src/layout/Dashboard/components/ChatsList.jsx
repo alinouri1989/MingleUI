@@ -14,12 +14,14 @@ import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
 
 function ChatsList() {
     const { showModal, closeModal } = useModal();
-    const { Individual } = useSelector((state) => state.chat); // Chat bilgileri
-    const chatList = useSelector((state) => state.chatList.chatList); // Orijinal chatList
-    const { token } = useSelector((state) => state.auth); // Kullanıcı token'ı
+    const { Individual } = useSelector((state) => state.chat);
+    const chatList = useSelector((state) => state.chatList.chatList);
+    const { token } = useSelector((state) => state.auth);
     const UserId = getUserIdFromToken(token);
     const [enhancedChatList, setEnhancedChatList] = useState([]);
     const chatState = useSelector(state => state.chat);
+
+    const [searchUser, setSearchUser] = useState("");
 
     const location = useLocation();
 
@@ -103,20 +105,25 @@ function ChatsList() {
     };
 
     const nonArchivedChats = enhancedChatList.filter((chat) => !chat.isArchive);
-
-
+    const filteredChats = nonArchivedChats.filter(chat =>
+        chat.name.toLowerCase().includes(searchUser.toLowerCase())
+    );
 
     return (
         <div className="chat-list-box">
-            <SearchInput placeholder={"Sohbetlerinizde aratın..."} />
+            <SearchInput
+                value={searchUser}
+                onChange={setSearchUser}
+                placeholder={"Sohbetlerinizde aratın..."}
+            />
             <div>
                 <button onClick={handleNewChat} className="create-buttons">
                     Yeni Sohbet
                 </button>
             </div>
             <div className="user-list">
-                {nonArchivedChats.length > 0 ? (
-                    nonArchivedChats.map((chat) => (
+                {filteredChats.length > 0 ? (
+                    filteredChats.map((chat) => (
                         <UserChatCard
                             key={chat.receiverId}
                             receiverId={chat.receiverId}
@@ -132,7 +139,7 @@ function ChatsList() {
                         />
                     ))
                 ) : (
-                    <NoActiveData text={"Aktif sohbet bulunmamaktadır."} />
+                    <NoActiveData text={searchUser ? "Eşleşen kullanıcı bulunamadı" : "Aktif sohbet bulunamadı"} />
                 )}
             </div>
         </div>

@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import { VscCallOutgoing, VscCallIncoming } from "react-icons/vsc";
-import { HiMiniVideoCamera } from "react-icons/hi2";
-import { TbVideoMinus } from "react-icons/tb";
-import { RiVideoDownloadFill } from "react-icons/ri"; // Gelen Kamera Araması
-import { RiVideoUploadFill } from "react-icons/ri"; // Giden Kamera Araması
-import { MdMissedVideoCall } from "react-icons/md"; // Cevapsız Kamera Araması
+
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -13,8 +8,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { formatTimeHoursMinutes } from "../../../helpers/dateHelper";
-import { Navigate, useNavigate } from "react-router-dom";
-import { PiPhoneFill } from "react-icons/pi";
+import { useNavigate } from "react-router-dom";
+import CallCardCallStatus from "../../../shared/components/CallStatus/CallCardCallStatus";
+
 
 function UserCallCard({ callId, image, status, name, callType, callStatus, createdDate, isOutgoingCall }) {
 
@@ -35,84 +31,7 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
     handleClose();
   };
 
-
   const userStatus = status == "0001-01-01T00:00:00" ? 'online' : 'offline';
-
-  const renderCallStatus = () => {
-    let icon = null;
-    let color = "#595959"; // Default color for unknown status
-    let text = "";
-
-    switch (callStatus) {
-      case 1:
-        if (callType === 0) { // Sesli Arama (Telefon)
-          if (isOutgoingCall) {
-            icon = <VscCallOutgoing className="icon" />;
-            text = "Giden Arama";
-          } else {
-            icon = <VscCallIncoming className="icon" />;
-            text = "Gelen Arama";
-          }
-        } else if (callType === 1) { // Görüntülü Arama (Kamera)
-          if (isOutgoingCall) {
-            icon = <RiVideoUploadFill className="icon" />;
-            text = "Giden Arama";
-          } else {
-            icon = <RiVideoDownloadFill className="icon" />;
-            text = "Gelen Arama";
-          }
-        }
-        break;
-
-      case 2:
-        text = "Meşgul";
-        color = "#EB6262"; // Kırmızı renk
-        if (callType === 0) { // Sesli Arama
-          icon = isOutgoingCall ? <VscCallOutgoing className="icon" /> : <VscCallIncoming className="icon" />;
-        } else if (callType === 1) { // Görüntülü Arama
-          icon = isOutgoingCall ? <HiMiniVideoCamera className="icon" /> : <HiMiniVideoCamera className="icon" />;
-        }
-        break;
-
-      case 3:
-        text = "İptal Edildi";
-        color = "#EB6262"; // Kırmızı renk
-        icon = callType === 1 ? <TbVideoMinus className="icon" /> : <PiPhoneFill />; // İptal ikonu
-        break;
-
-      case 4:
-        text = "Cevapsız  Arama";
-        color = "#EB6262"; // Kırmızı renk
-        if (callType === 0) { // Sesli Arama
-          icon = isOutgoingCall ? <VscCallOutgoing className="icon" /> : <VscCallIncoming className="icon" />;
-        } else if (callType === 1) { // Görüntülü Arama
-          if (isOutgoingCall) {
-            icon = <RiVideoUploadFill className="icon" />;
-            text = "Cevapsız";
-          } else {
-            icon = <RiVideoDownloadFill className="icon" />;
-            text = "Cevapsız";
-          }
-        }
-        break;
-
-      default:
-        text = "Bilinmeyen";
-        break;
-    }
-
-    return (
-      <span
-        className="call-status-span"
-        style={{ color: color, display: "flex", alignItems: "center", gap: "5px" }}
-      >
-        {icon}
-        {text}
-      </span>
-    );
-  };
-
-  console.log("status", status);
 
   const handleGoToCall = () => {
     navigate(`/aramalar/${callId}`);
@@ -126,7 +45,7 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
 
       <div className="user-name-and-sub-title">
         <p>{name}</p>
-        {renderCallStatus()}
+        <CallCardCallStatus callStatus={callStatus} callType={callType} isOutgoingCall={isOutgoingCall} />
       </div>
 
       <div className="status-informations-box">
