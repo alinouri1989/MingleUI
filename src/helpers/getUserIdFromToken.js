@@ -7,5 +7,5 @@ export const getUserIdFromToken = (token) => {
         return userId;
 
     }
-    return null;  // Token yoksa null döndür
+    return null;
 };

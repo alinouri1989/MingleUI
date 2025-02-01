@@ -1,17 +1,10 @@
-import React, { useState, useEffect } from 'react';
 import { IoIosArrowDroprightCircle } from "react-icons/io";
-import { PiPhoneFill } from "react-icons/pi";
-import { HiMiniVideoCamera } from "react-icons/hi2";
 import { IoMdSettings } from "react-icons/io";
-import YardimlasmaGrubu from "../../../assets/YardimlasmaGrubu.png";
 import { useModal } from '../../../contexts/ModalContext';
 import NewGroupModal from './NewAndSettingsGroup/NewGroupModal';
-import { useGetGroupProfileQuery } from '../../../store/Slices/Group/GroupApi';
-import PreLoader from '../../../shared/components/PreLoader/PreLoader';
 import { useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 import { formatDateToTR } from '../../../helpers/dateHelper';
-import { defaultGroupPhoto } from '../../../constants/DefaultProfilePhoto';
 
 function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }) {
     const { showModal, closeModal } = useModal();

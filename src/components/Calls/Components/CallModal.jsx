@@ -31,8 +31,7 @@ function CallModal({ closeModal, isCameraCall }) {
     const [isSpeakerOn, setSpeakerMode] = useState(true);
     const [callStatus, setCallStatus] = useState("Aranıyor...");
 
-    const busySoundRef = useRef(new Audio(BusySound));
-
+    const audioRef = useRef(null);
     const localVideoRef = useRef(null);
     const remoteVideoRef = useRef(null);
     const [temporaryStream, setTemporaryStream] = useState(null);
@@ -64,16 +63,19 @@ function CallModal({ closeModal, isCameraCall }) {
         if (localVideoRef.current) {
             localVideoRef.current.srcObject = localStream || temporaryStream;
         }
-    }, [localStream, temporaryStream]);
-
-
-    useEffect(() => {
-        if (remoteStream && remoteVideoRef.current) {
+        if (remoteVideoRef.current) {
             remoteVideoRef.current.srcObject = remoteStream;
         }
-    }, [remoteStream]);
+    }, [localStream, temporaryStream, remoteStream]);
 
-    const audioRef = useRef(null);
+    useEffect(() => {
+        if (localStream) {
+            localStream.getAudioTracks().forEach(track => {
+                track.enabled = isMicrophoneOn;
+            });
+        }
+    }, [localStream, isMicrophoneOn]);
+
 
 
     useEffect(() => {
@@ -137,7 +139,6 @@ function CallModal({ closeModal, isCameraCall }) {
         if (isCallStarting) {
             timeout = setTimeout(() => {
                 if (!isCallStarted) {
-                    console.log("Buraya girmiş olması gerek.")
                     console.log("CallId", callId);
                     setCallStatus("Meşgul");
                     setTimeout(() => {
@@ -156,14 +157,16 @@ function CallModal({ closeModal, isCameraCall }) {
     }, [isCallStarting, isCallStarted, callId]);
 
     const handleMicrophoneMode = () => {
-        if (localStream) {
-            localStream.getAudioTracks().forEach(track => {
-                track.enabled = !isMicrophoneOn;
-            });
-            setMicrophoneMode(!isMicrophoneOn);
-        } else {
-            console.warn("Local stream mevcut değil!");
-        }
+        setMicrophoneMode((prev) => {
+            if (localStream) {
+                localStream.getAudioTracks().forEach(track => {
+                    track.enabled = !prev;
+                });
+            } else {
+                console.warn("Local stream mevcut değil!");
+            }
+            return !prev;
+        });
     };
 
     const handleSpeakerMode = () => {

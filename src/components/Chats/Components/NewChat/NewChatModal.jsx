@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useModal } from "../../../../contexts/ModalContext.jsx";
 import { useNavigate } from 'react-router-dom';
@@ -12,18 +13,19 @@ import { AiFillInfoCircle } from "react-icons/ai";
 import { useSearchUsersQuery } from "../../../../store/Slices/searchUsers/searchUserApi.js";
 import { useDebounce } from "../../../../hooks/useDebounce.jsx";
 import { useSignalR } from "../../../../contexts/SignalRContext.jsx";
+import { getUserIdFromToken } from "../../../../helpers/getUserIdFromToken.js";
 import "./style.scss";
-import { addNewIndividualChat } from "../../../../store/Slices/chats/chatSlice.js";
-import { useDispatch } from "react-redux";
-import { isPending } from "@reduxjs/toolkit";
 
 function NewChatModal() {
+
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const { closeModal } = useModal();
   const { chatConnection, connectionStatus } = useSignalR();
   const [inputValue, setInputValue] = useState("");
   const debouncedSearchQuery = useDebounce(inputValue, 300);
+
+  const { token } = useSelector(state => state.auth);
+  const userId = getUserIdFromToken(token);
 
   const { data, error, isFetching } = useSearchUsersQuery(debouncedSearchQuery, {
     skip: !debouncedSearchQuery,
@@ -31,17 +33,18 @@ function NewChatModal() {
 
   const users = error ? [] : data ? Object.entries(data) : [];
 
-
   useEffect(() => {
     const handleReceiveCreateChat = (response) => {
-      console.log("ReceiveCreateChat yanıtı:", response);
-
       const individualData = response?.Individual;
+
       if (individualData) {
         const chatId = Object.keys(individualData)[0];
         if (chatId) {
-          console.log("Yeni sohbet oluşturuldu, Chat ID:", chatId);
-          navigate(`/sohbetler/${chatId}`);
+          const chatData = individualData[chatId];
+          const isArchived = chatData.archivedFor?.hasOwnProperty(userId);
+
+          const destination = isArchived ? `/arsivler/${chatId}` : `/sohbetler/${chatId}`;
+          navigate(destination);
           closeModal();
         } else {
           console.error("Chat ID alınamadı:", response);
@@ -55,7 +58,6 @@ function NewChatModal() {
       chatConnection.on("ReceiveCreateChat", handleReceiveCreateChat);
     }
 
-    // Cleanup - Event listener'ı kaldırma
     return () => {
       if (chatConnection) {
         chatConnection.off("ReceiveCreateChat", handleReceiveCreateChat);

@@ -6,11 +6,11 @@ import SearchInput from "./SearchInput";
 import UserChatCard from "./UserChatCard";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import { lastMessageDateHelper } from "../../../helpers/dateHelper";
-import NoChats from "../../../assets/NoChats.webp";
 
 import "./style.scss";
 import { useLocation } from "react-router-dom";
 import { getChatId } from "../../../store/Slices/chats/chatSlice";
+import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
 
 function ChatsList() {
     const { showModal, closeModal } = useModal();
@@ -132,10 +132,7 @@ function ChatsList() {
                         />
                     ))
                 ) : (
-                    <div className="no-active-chats">
-                        <img src={NoChats} alt="" />
-                        <p>Aktif sohbet bulunmuyor...</p>
-                    </div>
+                    <NoActiveData text={"Aktif sohbet bulunmamaktadır."} />
                 )}
             </div>
         </div>

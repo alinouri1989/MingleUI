@@ -3,6 +3,7 @@ import SearchInput from "./SearchInput";
 import "./style.scss";
 import UserCallCard from "./UserCallCard";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
+import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
 
 function CallsList() {
   const { token } = useSelector(state => state.auth);
@@ -41,19 +42,22 @@ function CallsList() {
     <div className="call-list-box">
       <SearchInput placeholder={"Aratın veya yeni arama başlatın"} />
       <div className="user-list">
-        {sortedCalls.map(callInfo => (
-          <UserCallCard
-            key={callInfo.id}
-            callId={callInfo.id}
-            image={callInfo.image}
-            status={callInfo.status}
-            callType={callInfo.callType}
-            name={callInfo.name}
-            callStatus={callInfo.callStatus}
-            createdDate={callInfo.createdDate}
-            isOutgoingCall={callInfo.isOutgoingCall}
-          />
-        ))}
+        {sortedCalls.length > 0 ?
+          sortedCalls.map(callInfo => (
+            <UserCallCard
+              key={callInfo.id}
+              callId={callInfo.id}
+              image={callInfo.image}
+              status={callInfo.status}
+              callType={callInfo.callType}
+              name={callInfo.name}
+              callStatus={callInfo.callStatus}
+              createdDate={callInfo.createdDate}
+              isOutgoingCall={callInfo.isOutgoingCall}
+            />
+          ))
+          : <NoActiveData text={"Arama geçmişiniz bulunmamaktadır."} />
+        }
       </div>
     </div>
   );

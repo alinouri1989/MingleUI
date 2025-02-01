@@ -3,11 +3,11 @@ import UserChatCard from "./UserChatCard";
 import { useSelector } from "react-redux";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import { lastMessageDateHelper } from "../../../helpers/dateHelper";
-import NoChats from "../../../assets/NoChats.webp";
 import SearchInput from "./SearchInput";
 import "./style.scss";
 import { useLocation } from "react-router-dom";
 import { getChatId } from "../../../store/Slices/chats/chatSlice";
+import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
 
 
 function ArchivesList() {
@@ -109,10 +109,7 @@ function ArchivesList() {
                         />
                     ))
                 ) : (
-                    <div className="no-active-chats">
-                        <img src={NoChats} alt="" />
-                        <p>Aktif sohbet bulunmuyor...</p>
-                    </div>
+                    <NoActiveData text={"Arşivlenmiş sohbetiniz bulunmamaktadır."} />
                 )}
             </div>
         </div>
