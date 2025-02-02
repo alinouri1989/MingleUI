@@ -4,18 +4,18 @@ import { useSelector } from "react-redux";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import { lastMessageDateHelper } from "../../../helpers/dateHelper";
 import SearchInput from "./SearchInput";
-import "./style.scss";
 import { useLocation } from "react-router-dom";
 import { getChatId } from "../../../store/Slices/chats/chatSlice";
 import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
+import "./style.scss";
 
 
 function ArchivesList() {
 
     const { Individual } = useSelector((state) => state.chat);
-    const chatList = useSelector((state) => state.chatList.chatList); // Orijinal chatList
-    const { token } = useSelector((state) => state.auth); // Kullanıcı token'ı
-    const UserId = getUserIdFromToken(token); // Token'dan kullanıcı ID'si al
+    const chatList = useSelector((state) => state.chatList.chatList);
+    const { token } = useSelector((state) => state.auth);
+    const UserId = getUserIdFromToken(token);
     const location = useLocation();
     const chatState = useSelector(state => state.chat);
     const [searchUser, setSearchUser] = useState("");
