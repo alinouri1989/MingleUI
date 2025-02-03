@@ -55,12 +55,19 @@
     @include transition();
     border-radius: 17px;
 
-
     &:first-child {
         margin-top: 0px;
     }
 
     &:hover {
+        background-color: var(--user-message-box-color);
+    }
+
+    &.active-chat {
+        background-color: var(--user-message-box-color);
+    }
+
+    &.active-call {
         background-color: var(--user-message-box-color);
     }
 

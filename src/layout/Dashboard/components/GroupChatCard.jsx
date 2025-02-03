@@ -42,8 +42,10 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
         navigate(`/gruplar/${groupId}`);
     }
 
+    const isActiveChat = location.pathname.includes(groupId);
+
     return (
-        <div key={groupId} onClick={handleGoGroupChat} className="group-dashboard-card-box">
+        <div key={groupId} onClick={handleGoGroupChat} className={`group-dashboard-card-box ${isActiveChat ? "active-chat" : ""}`}>
             <div className="image-box">
                 <img src={groupPhotoUrl} alt={`${groupName} profile`} />
             </div>

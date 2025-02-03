@@ -8,7 +8,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { formatTimeHoursMinutes } from "../../../helpers/dateHelper";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import CallCardCallStatus from "../../../shared/components/CallStatus/CallCardCallStatus";
 
 
@@ -18,6 +18,8 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
   const open = Boolean(anchorEl);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -36,8 +38,11 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
   const handleGoToCall = () => {
     navigate(`/aramalar/${callId}`);
   }
+
+  const isActiveCall = location.pathname.includes(callId);
+
   return (
-    <div className="user-dashboard-card-box" onClick={handleGoToCall}>
+    <div className={`user-dashboard-card-box ${isActiveCall ? "active-call" : ""}`} onClick={handleGoToCall}>
       <div className="image-box">
         <img src={image} alt={`${name} profile`} />
         <p className={`status ${userStatus}`}></p>

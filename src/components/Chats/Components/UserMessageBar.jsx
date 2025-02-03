@@ -32,6 +32,10 @@ function UserMessageBar({ ChatId }) {
     const sentDate = Object.values(message.status.sent)[0];
     const date = sentDate ? sentDate.split("T")[0] : "Geçersiz Tarih";
 
+    const formattedDate = date !== "Geçersiz Tarih"
+      ? date.split("-").reverse().join(".")
+      : date;
+
     const today = new Date().toISOString().split("T")[0];
     const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
 
@@ -41,7 +45,7 @@ function UserMessageBar({ ChatId }) {
     } else if (date === yesterday) {
       groupLabel = "Dün";
     } else {
-      groupLabel = date;
+      groupLabel = formattedDate;
     }
 
     if (!acc[groupLabel]) acc[groupLabel] = [];
@@ -49,6 +53,7 @@ function UserMessageBar({ ChatId }) {
 
     return acc;
   }, {}) || {};
+
 
   return (
     <div className="user-message-bar " style={{ backgroundImage }}>

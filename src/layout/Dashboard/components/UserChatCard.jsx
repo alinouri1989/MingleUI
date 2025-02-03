@@ -84,9 +84,10 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
     isArchive ? navigate(`/arsivler/${chatId}`) : navigate(`/sohbetler/${chatId}`)
   };
 
-  return (
-    <div className="user-dashboard-card-box" onClick={() => handleGoChat()}>
+  const isActiveChat = location.pathname.includes(chatId);
 
+  return (
+    <div className={`user-dashboard-card-box ${isActiveChat ? "active-chat" : ""}`} onClick={() => handleGoChat()}>
       <div className="image-box">
         <img src={image} alt={`${name} profile`} />
         <p className={`status ${status ? "online" : "offline"}`}></p>

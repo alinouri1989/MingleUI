@@ -5,6 +5,8 @@ import MingleAI from "../../../assets/logos/MingleAI.png";
 import ImageGeneratorBanner from "../../../assets/images/AIModal/ImageGeneratorBanner.png";
 import TextGeneratorBanner from "../../../assets/images/AIModal/TextGeneratorBanner.png";
 
+import { SuccessAlert } from "../../../helpers/customAlert"
+
 import ExamplePhoto from "../../../assets/ExamplePhoto.png"
 import "./style.scss";
 
@@ -24,6 +26,7 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
     const modalRef = useRef(null);
 
     const [isTextGeneratorMode, setIsTextGeneratorMode] = useState(true);
+    const [prompt, setPrompt] = useState("");
 
     // Konumu hesaplayan fonksiyon
     const updatePosition = () => {
@@ -40,8 +43,8 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
 
     useEffect(() => {
         if (isOpen) {
-            updatePosition(); // İlk açıldığında konumu hesapla
-            setIsContent(false); // Modal açıldığında içeriği gizle
+            updatePosition();
+            setIsContent(false);
 
             // 1.5 saniye sonra içeriği göster
             const timer = setTimeout(() => {
@@ -67,9 +70,22 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
             modalRef.current &&
             !modalRef.current.contains(event.target) && // Modal dışında bir yere tıklandı mı?
             buttonRef.current &&
-            !buttonRef.current.contains(event.target) // Butona tıklanmadı mı?
+            !buttonRef.current.contains(event.target) && // Açma butonuna tıklanmadı mı?
+            !event.target.closest(".send-prompt-btn") // Gönder butonuna tıklanmadı mı?
         ) {
             onClose(); // Modalı kapat
+        }
+    };
+
+    const handleSendPrompt = () => {
+        SuccessAlert("Loading...");
+        setPrompt("");
+        setIsContent(false);
+    }
+
+    const handleKeyDown = (event) => {
+        if (event.key === "Enter") {
+            handleSendPrompt();
         }
     };
 
@@ -115,11 +131,11 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                             </div>
 
                             <div className="result-box">
-                                {/* <div className="banner">
+                                <div className="banner">
                                     <img src={isTextGeneratorMode ? TextGeneratorBanner : ImageGeneratorBanner} alt="" />
-                                </div> */}
+                                </div>
 
-                                {isTextGeneratorMode ?
+                                {/* {isTextGeneratorMode ?
                                     <div className="text-generator-result">
                                         <p>Lorem ipsum, dolor sit amet consectetur adipisicing eli. Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim nihil nam, deserunt deleniti asperiores ex impedit assumenda. Quae doloribus quos deleniti praesentium quam, omnis ratione expedita pariatur repellat non numquam at itaque vitae suscipit maxime nisi. Laborum, iste rem? Necessitatibus repellat dolore ea impedit nostrum reprehenderit. Dignissimos, nulla? Officiis consequatur debitis deleniti animi. Nulla nisi harum earum pariatur vitae sapiente quo sequi ipsum ex, quidem non quasi a error quisquam voluptas dolorem laboriosam magni nostrum odit id, similique autem debitis consequuntur? Consequuntur minus harum esse in, totam voluptate placeat consequatur aliquid labore? Doloremque nam nemo quasi aspernatur adipisci quas nobis!</p>
                                     </div> :
@@ -127,15 +143,23 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                     <div className="image-generator-result">
                                         <img src={ExamplePhoto} alt="result-image" />
                                     </div>
-                                }
+                                } */}
                             </div>
 
                             <div className="options-box">
-                                {/* <div className="input-box">
-                                    <input placeholder="Bir istemde bulunun" type="text" />
-                                    <button onClick={() => handleSendPrompt()}><HiArrowSmUp /></button>
-                                </div> */}
-                                <div className="result-options-box">
+                                <div className="input-box">
+                                    <input
+                                        placeholder="Bir istemde bulunun"
+                                        type="text"
+                                        onKeyDown={handleKeyDown}
+                                        value={prompt}
+                                        onChange={(e) => setPrompt(e.target.value)}
+                                    />
+                                    <button className="send-prompt-btn" onClick={handleSendPrompt}>
+                                        <HiArrowSmUp />
+                                    </button>
+                                </div>
+                                {/* <div className="result-options-box">
                                     <div className="buttons">
                                         <button><MdDelete /></button>
                                         <button><MdRefresh /></button>
@@ -148,7 +172,7 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                     <button className="send-message-btn">
                                         Gönder
                                     </button>
-                                </div>
+                                </div> */}
                             </div>
                         </motion.div>
                     )
