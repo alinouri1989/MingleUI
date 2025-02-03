@@ -146,7 +146,7 @@ function CallModal({ closeModal, isCameraCall }) {
                         closeModal();
                     }, 4000);
                 }
-            }, 6000);
+            }, 20000);
         }
 
         return () => {
