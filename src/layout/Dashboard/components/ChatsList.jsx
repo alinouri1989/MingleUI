@@ -121,27 +121,30 @@ function ChatsList() {
                     Yeni Sohbet
                 </button>
             </div>
-            <div className="user-list">
-                {filteredChats.length > 0 ? (
-                    filteredChats.map((chat) => (
-                        <UserChatCard
-                            key={chat.receiverId}
-                            receiverId={chat.receiverId}
-                            image={chat.image}
-                            status={chat.status}
-                            name={chat.name}
-                            lastMessage={chat.lastMessage}
-                            lastMessageType={chat.lastMessageType}
-                            lastMessageDate={chat.lastMessageDate}
-                            isArchive={chat.isArchive}
-                            unReadMessage={chat.unReadMessage}
-                            isDeleted={chat.isDeleted}
-                        />
-                    ))
-                ) : (
-                    <NoActiveData text={searchUser ? "Eşleşen kullanıcı bulunamadı" : "Aktif sohbet bulunamadı"} />
-                )}
+            <div className="list-flex">
+                <div className="user-list">
+                    {filteredChats.length > 0 ? (
+                        filteredChats.map((chat) => (
+                            <UserChatCard
+                                key={chat.receiverId}
+                                receiverId={chat.receiverId}
+                                image={chat.image}
+                                status={chat.status}
+                                name={chat.name}
+                                lastMessage={chat.lastMessage}
+                                lastMessageType={chat.lastMessageType}
+                                lastMessageDate={chat.lastMessageDate}
+                                isArchive={chat.isArchive}
+                                unReadMessage={chat.unReadMessage}
+                                isDeleted={chat.isDeleted}
+                            />
+                        ))
+                    ) : (
+                        <NoActiveData text={searchUser ? "Eşleşen kullanıcı bulunamadı" : "Aktif sohbet bulunamadı"} />
+                    )}
+                </div>
             </div>
+
         </div>
     );
 }

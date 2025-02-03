@@ -67,7 +67,7 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
         name: isGroupSettings ? groupProfile?.name : "",
         description: isGroupSettings ? groupProfile?.description : "",
         photoUrl: isGroupSettings ? groupProfile?.photoUrl : null,
-        photo: isGroupSettings ? groupProfile?.photo : null,
+        photo: isGroupSettings ? groupProfile?.photo : "",
         participants: isGroupSettings ? groupProfile?.participants : null
     };
 

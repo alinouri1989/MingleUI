@@ -100,26 +100,28 @@ function ArchivesList() {
     return (
         <div className="archive-list-box">
             <SearchInput value={searchUser} onChange={setSearchUser} placeholder={"Arşivlenmiş sohbetlerde ara"} />
-            <div className="user-list">
-                {filteredChats.length > 0 ? (
-                    filteredChats.map((chat) => (
-                        <UserChatCard
-                            key={chat.receiverId}
-                            receiverId={chat.receiverId}
-                            image={chat.image}
-                            status={chat.status}
-                            name={chat.name}
-                            lastMessage={chat.lastMessage}
-                            lastMessageType={chat.lastMessageType}
-                            lastMessageDate={chat.lastMessageDate}
-                            isArchive={chat.isArchive}
-                            unReadMessage={chat.unReadMessage}
-                            isDeleted={chat.isDeleted}
-                        />
-                    ))
-                ) : (
-                    <NoActiveData text={searchUser ? "Eşleşen kullanıcı bulunamadı" : "Arşivlenmiş sohbetiniz bulunmamaktadır."} />
-                )}
+            <div className="list-flex">
+                <div className="user-list">
+                    {filteredChats.length > 0 ? (
+                        filteredChats.map((chat) => (
+                            <UserChatCard
+                                key={chat.receiverId}
+                                receiverId={chat.receiverId}
+                                image={chat.image}
+                                status={chat.status}
+                                name={chat.name}
+                                lastMessage={chat.lastMessage}
+                                lastMessageType={chat.lastMessageType}
+                                lastMessageDate={chat.lastMessageDate}
+                                isArchive={chat.isArchive}
+                                unReadMessage={chat.unReadMessage}
+                                isDeleted={chat.isDeleted}
+                            />
+                        ))
+                    ) : (
+                        <NoActiveData text={searchUser ? "Eşleşen kullanıcı bulunamadı" : "Arşivlenmiş sohbetiniz bulunmamaktadır."} />
+                    )}
+                </div>
             </div>
         </div>
     )

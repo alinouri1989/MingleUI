@@ -38,57 +38,57 @@ function GroupsList() {
         value={searchGroup}
         onChange={setSearchGroup}
       />
-      <div>
-        <button onClick={handleNewGroup} className="create-buttons">Yeni Grup Oluştur</button>
-      </div>
-      <div className="user-list">
-        {filteredGroupList.length > 0 ? (
-          filteredGroupList.map(([groupId, group]) => {
-            const chatGroup = Group.find((groupChat) =>
-              groupChat.participants.includes(groupId)
-            );
-
-            let lastMessage = "";
-            let lastMessageType = "";
-            if (chatGroup && chatGroup?.messages?.length > 0) {
-              const lastMessageIndex = chatGroup.messages.length - 1;
-              lastMessage = chatGroup.messages[lastMessageIndex].content;
-              lastMessageType = chatGroup.messages[lastMessageIndex].type;
-            }
-
-            const lastMessageDate =
-              chatGroup?.messages?.length > 0
-                ? lastMessageDateHelper(
-                  Object.values(chatGroup.messages[chatGroup.messages.length - 1].status.sent)[0]
-                )
-                : "";
-
-            const currentGroupIdInPath = location.pathname.includes(groupId);
-
-            const unReadMessage = !currentGroupIdInPath && chatGroup?.messages.filter((message) => {
-              return (
-                !Object.keys(message.status.sent).includes(userId) &&
-                !message.status.read?.[userId]
+      <button onClick={handleNewGroup} className="create-buttons">Yeni Grup Oluştur</button>
+      <div className="list-flex">
+        <div className="user-list">
+          {filteredGroupList.length > 0 ? (
+            filteredGroupList.map(([groupId, group]) => {
+              const chatGroup = Group.find((groupChat) =>
+                groupChat.participants.includes(groupId)
               );
-            }).length;
 
-            return (
-              <GroupChatCard
-                key={groupId}
-                groupId={chatGroup?.id}
-                groupName={group.name}
-                groupPhotoUrl={group.photoUrl}
-                lastMessage={lastMessage}
-                lastMessageType={lastMessageType}
-                lastMessageDate={lastMessageDate}
-                unReadMessage={unReadMessage}
-                groupListId={groupId}
-              />
-            );
-          })
-        ) : (
-          <NoActiveData text={searchGroup ? "Eşleşen grup bulunamadı" : "Aktif grup bulunmamaktadır."} />
-        )}
+              let lastMessage = "";
+              let lastMessageType = "";
+              if (chatGroup && chatGroup?.messages?.length > 0) {
+                const lastMessageIndex = chatGroup.messages.length - 1;
+                lastMessage = chatGroup.messages[lastMessageIndex].content;
+                lastMessageType = chatGroup.messages[lastMessageIndex].type;
+              }
+
+              const lastMessageDate =
+                chatGroup?.messages?.length > 0
+                  ? lastMessageDateHelper(
+                    Object.values(chatGroup.messages[chatGroup.messages.length - 1].status.sent)[0]
+                  )
+                  : "";
+
+              const currentGroupIdInPath = location.pathname.includes(groupId);
+
+              const unReadMessage = !currentGroupIdInPath && chatGroup?.messages.filter((message) => {
+                return (
+                  !Object.keys(message.status.sent).includes(userId) &&
+                  !message.status.read?.[userId]
+                );
+              }).length;
+
+              return (
+                <GroupChatCard
+                  key={groupId}
+                  groupId={chatGroup?.id}
+                  groupName={group.name}
+                  groupPhotoUrl={group.photoUrl}
+                  lastMessage={lastMessage}
+                  lastMessageType={lastMessageType}
+                  lastMessageDate={lastMessageDate}
+                  unReadMessage={unReadMessage}
+                  groupListId={groupId}
+                />
+              );
+            })
+          ) : (
+            <NoActiveData text={searchGroup ? "Eşleşen grup bulunamadı" : "Aktif grup bulunmamaktadır."} />
+          )}
+        </div>
       </div>
     </div>
   );

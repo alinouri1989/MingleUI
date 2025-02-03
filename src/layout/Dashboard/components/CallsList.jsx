@@ -47,24 +47,26 @@ function CallsList() {
         value={searchTerm}
         onChange={setSearchTerm}
       />
-      <div className="user-list">
-        {filteredCalls.length > 0 ? (
-          filteredCalls.map(callInfo => (
-            <UserCallCard
-              key={callInfo.id}
-              callId={callInfo.id}
-              image={callInfo.image}
-              status={callInfo.status}
-              callType={callInfo.callType}
-              name={callInfo.name}
-              callStatus={callInfo.callStatus}
-              createdDate={callInfo.createdDate}
-              isOutgoingCall={callInfo.isOutgoingCall}
-            />
-          ))
-        ) : (
-          <NoActiveData text={searchTerm ? "Eşleşen arama bulunamadı" : "Arama geçmişiniz bulunmamaktadır."} />
-        )}
+      <div className="list-flex">
+        <div className="user-list">
+          {filteredCalls.length > 0 ? (
+            filteredCalls.map(callInfo => (
+              <UserCallCard
+                key={callInfo.id}
+                callId={callInfo.id}
+                image={callInfo.image}
+                status={callInfo.status}
+                callType={callInfo.callType}
+                name={callInfo.name}
+                callStatus={callInfo.callStatus}
+                createdDate={callInfo.createdDate}
+                isOutgoingCall={callInfo.isOutgoingCall}
+              />
+            ))
+          ) : (
+            <NoActiveData text={searchTerm ? "Eşleşen arama bulunamadı" : "Arama geçmişiniz bulunmamaktadır."} />
+          )}
+        </div>
       </div>
     </div>
   );

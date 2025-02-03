@@ -221,24 +221,37 @@
 }
 
 
-// Dashboard Lists Styles
-
-.chat-list-box,
-.archive-list-box {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
 
 .call-list-box,
-.archive-list-box {
-    .user-list {
-        margin-top: 16px;
+.archive-list-box,
+.group-list-box {
+    @include flex-center(column, center, center);
+    height: 100%;
+    overflow: hidden;
+    width: 100%;
+
+    .list-flex {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+
+        .user-list {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-right: 5px;
+        }
     }
 }
 
-.group-list-box {}
 
-.user-list {
-    scrollbar-width: none;
+.call-list-box,
+.archive-list-box {
+    .list-flex {
+        margin-top: 16px;
+    }
 }
