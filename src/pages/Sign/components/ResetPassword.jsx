@@ -17,7 +17,7 @@ function ResetPassword() {
     e.preventDefault(); // Sayfanın yenilenmesini önleyin
     try {
       console.log("email", email);
-      await resetPassword(email).unwrap(); // Email'i obje olarak gönderin ve unwrap kullanın
+      await resetPassword(email).unwrap();
       navigate('/login'); // Başarılı işlem sonrası yönlendirme
     } catch (err) {
       console.error("Password reset failed", err);

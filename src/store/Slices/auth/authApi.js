@@ -57,9 +57,9 @@ export const authApi = createApi({
         url: 'Auth/Password',
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json', // JSON formatını belirtin
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email }), // E-posta verisini JSON formatına çevirin
+        body: JSON.stringify(email),
       }),
     }),
     // Get User Profile endpoint
