@@ -1,40 +1,33 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import CloseModalButton from "../../../contexts/components/CloseModalButton";
-import { LuCheck } from "react-icons/lu";
 import { LuCheckCheck } from "react-icons/lu";
-import "./style.scss";
 import { formatDateForMessageInfo } from "../../../helpers/dateHelper";
+import CloseModalButton from "../../../contexts/components/CloseModalButton";
+import "./style.scss";
 
 function MessageInfo({ closeModal, chatId, messageId }) {
 
     const { Group } = useSelector(state => state.chat);
     const { groupList } = useSelector(state => state.groupList);
 
-    // İlgili sohbeti bul
     const chat = Group.find(group => group.id === chatId);
     if (!chat) return <div>Chat not found</div>;
 
-    // Mesajı bul
     const message = chat.messages.find(msg => msg.id === messageId);
     if (!message) return <div>Message not found</div>;
 
-    // Katılımcıları al
     const participants = chat.participants;
-    const group = groupList[participants[0]]; // İlk katılımcının grubu
+    const group = groupList[participants[0]];
     if (!group) return <div>Group not found</div>;
 
-    // Teslim edilen ve okunan kullanıcıları ayıkla
     const deliveredUsers = Object.keys(message.status.delivered || {}).filter(userId => !message.status.read[userId]);
     const readUsers = Object.keys(message.status.read || {});
 
-    // Kullanıcı bilgilerini al
     const getUserInfo = (userId) => group.participants[userId] || null;
 
     return (
         <div className="message-info-modal">
             <CloseModalButton closeModal={closeModal} />
-
             {readUsers.length > 0 && (
                 <div className="message-info-section">
                     <div className="title-box">
