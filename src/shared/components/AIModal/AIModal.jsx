@@ -131,11 +131,11 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                             </div>
 
                             <div className="result-box">
-                                <div className="banner">
+                                {/* <div className="banner">
                                     <img src={isTextGeneratorMode ? TextGeneratorBanner : ImageGeneratorBanner} alt="" />
-                                </div>
+                                </div> */}
 
-                                {/* {isTextGeneratorMode ?
+                                {isTextGeneratorMode ?
                                     <div className="text-generator-result">
                                         <p>Lorem ipsum, dolor sit amet consectetur adipisicing eli. Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim nihil nam, deserunt deleniti asperiores ex impedit assumenda. Quae doloribus quos deleniti praesentium quam, omnis ratione expedita pariatur repellat non numquam at itaque vitae suscipit maxime nisi. Laborum, iste rem? Necessitatibus repellat dolore ea impedit nostrum reprehenderit. Dignissimos, nulla? Officiis consequatur debitis deleniti animi. Nulla nisi harum earum pariatur vitae sapiente quo sequi ipsum ex, quidem non quasi a error quisquam voluptas dolorem laboriosam magni nostrum odit id, similique autem debitis consequuntur? Consequuntur minus harum esse in, totam voluptate placeat consequatur aliquid labore? Doloremque nam nemo quasi aspernatur adipisci quas nobis!</p>
                                     </div> :
@@ -143,11 +143,11 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                     <div className="image-generator-result">
                                         <img src={ExamplePhoto} alt="result-image" />
                                     </div>
-                                } */}
+                                }
                             </div>
 
                             <div className="options-box">
-                                <div className="input-box">
+                                {/* <div className="input-box">
                                     <input
                                         placeholder="Bir istemde bulunun"
                                         type="text"
@@ -158,8 +158,8 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                     <button className="send-prompt-btn" onClick={handleSendPrompt}>
                                         <HiArrowSmUp />
                                     </button>
-                                </div>
-                                {/* <div className="result-options-box">
+                                </div> */}
+                                <div className="result-options-box">
                                     <div className="buttons">
                                         <button><MdDelete /></button>
                                         <button><MdRefresh /></button>
@@ -172,7 +172,7 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                     <button className="send-message-btn">
                                         Gönder
                                     </button>
-                                </div> */}
+                                </div>
                             </div>
                         </motion.div>
                     )

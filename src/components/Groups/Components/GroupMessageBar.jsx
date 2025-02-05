@@ -72,10 +72,10 @@ function GroupMessageBar({ groupId }) {
                             const userId = Object.keys(msg.status.sent || {})[0];
 
                             // GroupChat içindeki groupId'yi al
-                            const groupId = GroupChat?.participants?.[0];
+                            const groupListId = GroupChat?.participants?.[0];
 
                             // GroupList'ten ilgili grubu bul
-                            const group = groupList[groupId];
+                            const group = groupList[groupListId];
 
                             // Katılımcılar arasında userId'ye göre kullanıcıyı buluyoruz
                             const senderProfile = group?.participants?.[userId];
@@ -91,6 +91,8 @@ function GroupMessageBar({ groupId }) {
                             return (
                                 <MessageBubble
                                     key={msg.id}
+                                    chatId={groupId}
+                                    messageId={msg.id}
                                     userId={currentUserId}
                                     content={msg.content}
                                     timestamp={formattedTimestamp}

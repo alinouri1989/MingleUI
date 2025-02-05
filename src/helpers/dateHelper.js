@@ -100,3 +100,8 @@ export function formatCallDuration(callDuration) {
 
   return formattedDuration.trim(); // Gereksiz boşlukları temizle
 }
+
+export const formatDateForMessageInfo = (dateString) => {
+  const date = new Date(dateString);
+  return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}, ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+};

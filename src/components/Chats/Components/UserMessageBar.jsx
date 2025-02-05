@@ -72,7 +72,7 @@ function UserMessageBar({ ChatId }) {
 
               return (
                 <MessageBubble
-                  ChatId={ChatId}
+                  chatId={ChatId}
                   key={msg.id}
                   messageId={msg.id}
                   content={msg.content}

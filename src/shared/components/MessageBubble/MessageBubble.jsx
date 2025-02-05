@@ -7,6 +7,7 @@ import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { FaFileAlt } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
+import InfoIcon from '@mui/icons-material/Info';
 
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -20,8 +21,10 @@ import { SuccessAlert } from '../../../helpers/customAlert';
 import { useSelector } from 'react-redux';
 import { useSignalR } from '../../../contexts/SignalRContext';
 import { AudioMessage } from './components/AudioMessage';
+import { useModal } from '../../../contexts/ModalContext';
+import MessageInfo from '../MessageInfo/MessageInfo';
 
-function MessageBubble({ ChatId, userId, messageId, userColor, content, isDeleted, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
+function MessageBubble({ chatId, userId, messageId, userColor, content, isDeleted, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
     if (content == "" || isDeleted) {
         return null;
     }
@@ -31,6 +34,7 @@ function MessageBubble({ ChatId, userId, messageId, userColor, content, isDelete
     const [anchorEl, setAnchorEl] = useState(null);
     const { chatConnection } = useSignalR();
     const [isShowImage, setIsShowImage] = useState(false);
+    const { showModal, closeModal } = useModal();
 
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -51,7 +55,7 @@ function MessageBubble({ ChatId, userId, messageId, userColor, content, isDelete
             chatType = "Individual";
         }
         try {
-            chatConnection.invoke("DeleteMessage", chatType, ChatId, messageId, deletionType);
+            chatConnection.invoke("DeleteMessage", chatType, chatId, messageId, deletionType);
             SuccessAlert("Mesaj Silindi")
         } catch (error) {
 
@@ -64,6 +68,15 @@ function MessageBubble({ ChatId, userId, messageId, userColor, content, isDelete
         SuccessAlert("Mesaj Kopyalandı")
         handleClose();
     };
+
+    const handleMessageInfo = () => {
+        showModal(<MessageInfo chatId={chatId} messageId={messageId} closeModal={closeModal} />)
+        handleClose();
+    }
+
+
+
+
 
     let statusIcon;
     let statusColor;
@@ -188,6 +201,7 @@ function MessageBubble({ ChatId, userId, messageId, userColor, content, isDelete
             }
         }, [content]);
 
+
         return (
             <div className="file-message-container">
                 <div className='file-info-box'>
@@ -308,7 +322,7 @@ function MessageBubble({ ChatId, userId, messageId, userColor, content, isDelete
                             slotProps={{
                                 paper: {
                                     style: {
-                                        maxHeight: 48 * 3,
+
                                         width: "18ch",
                                         borderRadius: "8px",
                                         border: "4px solid #CFD5F2",
@@ -362,6 +376,26 @@ function MessageBubble({ ChatId, userId, messageId, userColor, content, isDelete
                                     </ListItemIcon>
                                     <ListItemText
                                         primary="Kopyala"
+                                        primaryTypographyProps={{
+                                            fontFamily: "Montserrat",
+                                            fontWeight: "700",
+                                            fontSize: "14px",
+                                        }}
+                                    />
+                                </MenuItem>
+                            }
+
+
+                            {isGroupMessageBubble &&
+                                <MenuItem
+                                    onClick={handleMessageInfo}
+                                    sx={{ color: "#585CE1" }}
+                                >
+                                    <ListItemIcon fontSize={"small"} sx={{ color: "inherit" }}>
+                                        <InfoIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="Bilgi"
                                         primaryTypographyProps={{
                                             fontFamily: "Montserrat",
                                             fontWeight: "700",

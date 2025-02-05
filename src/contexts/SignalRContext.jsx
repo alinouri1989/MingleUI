@@ -280,8 +280,6 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 notificationConnection.on("ReceiveNewGroupProfiles", (data) => {
-                    console.log("NotificationHub'dan gelen grup profilleri:", data);
-
                     dispatch(setGroupList(data));
                     // Gelen data'nın key'ini almak için Object.keys() kullanılıyor
                     const groupId = Object.keys(data)[0];

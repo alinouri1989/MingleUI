@@ -11,7 +11,6 @@ function App() {
           <Toaster position="top-center" />
           <AppRoutes />
         </ModalProvider>
-
       </DataLoader>
     </>
   );

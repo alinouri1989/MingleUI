@@ -33,7 +33,6 @@ const groupListSlice = createSlice({
     },
     updateGroupInformations(state, action) {
       const newData = action.payload;
-      console.log("NEW DATA", newData);
 
       Object.keys(newData).forEach((groupId) => {
         const newGroupData = newData[groupId];
