@@ -1,23 +1,29 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import Logo from "../../../assets/logos/MingleLogoWithText.svg";
+
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { IoEye, IoEyeOff } from "react-icons/io5";
-import { Link } from 'react-router-dom';
-import { useLoginUserMutation } from '../../../store/Slices/auth/authApi.js';
-import { SuccessAlert } from '../../../helpers/customAlert';
-import PreLoader from "../../../shared/components/PreLoader/PreLoader.jsx";
 
+import PreLoader from "../../../shared/components/PreLoader/PreLoader.jsx";
+import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
 
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider, facebookProvider } from '../../../services/firebaseConfig.js';
+import { useSignInWithEmailMutation, useSignInGoogleMutation, useSignInFacebookMutation } from '../../../store/Slices/auth/authApi.js';
+
 
 function SignIn() {
 
-  const [loginUser, { isLoading }] = useLoginUserMutation();
+  const [SignInWithEmail, { isLoading: isEmailLoading }] = useSignInWithEmailMutation();
+  const [SignInGoogle, { isLoading: isGoogleLoading }] = useSignInGoogleMutation();
+  const [SignInFacebook, { isLoading: isFacebookLoading }] = useSignInFacebookMutation();
+
+  const isLoading = isEmailLoading || isGoogleLoading || isFacebookLoading;
+
   const [showPassword, setShowPassword] = useState(false);
 
-  // formData içinde email ve password
   const [formData, setFormData] = useState({
     Email: "",
     Password: "",
@@ -31,39 +37,41 @@ function SignIn() {
     });
   };
 
-  const handleSignIn = async (e) => {
+  const handleSignInWithEmail = async (e) => {
     e.preventDefault();
     try {
-      await loginUser(formData).unwrap();
+      await SignInWithEmail(formData).unwrap();
       SuccessAlert("Giriş Yapıldı");
     } catch (error) {
-      console.error('Login failed:', error);
-      alert('Login failed, please try again.');
+      ErrorAlert("Giriş Başarısız");
     }
   };
 
-
-  const handleGoogleSignIn = async () => {
+  const handleSignInWithGoogle = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
       const user = result.user;
       const token = await user.getIdToken();
-      // Backend Tarafına Access Token Gönderimi için "token" hazır.  
+      await SignInGoogle(token).unwrap();
+      SuccessAlert("Giriş Yapıldı");
 
     } catch (error) {
       console.error('Google ile giriş başarısız oldu:', error.message);
+      ErrorAlert("Giriş Başarısız");
     }
   };
 
-  const handleFacebookSignIn = async () => {
+  const handleSignInWithFacebook = async () => {
     try {
       const result = await signInWithPopup(auth, facebookProvider);
       const user = result.user;
       const token = await user.getIdToken();
-      console.log("Facebook Kullanıcısı:", token);
+      await SignInFacebook(token).unwrap();
+      SuccessAlert("Giriş Yapıldı");
 
     } catch (error) {
-      console.error("Facebook ile giriş başarısız:", error.message);
+      console.error('Facebook ile giriş başarısız oldu:', error.message);
+      ErrorAlert("Giriş Başarısız");
     }
   };
 
@@ -76,10 +84,9 @@ function SignIn() {
       </div>
 
       <div className='method-buttons'>
-        <button onClick={handleGoogleSignIn}><FcGoogle className='icon' /><span>Google</span></button>
-        <button onClick={handleFacebookSignIn}><FaFacebook className='icon' /><span>Facebook</span></button>
+        <button onClick={handleSignInWithGoogle}><FcGoogle className='icon' /><span>Google</span></button>
+        <button onClick={handleSignInWithFacebook}><FaFacebook className='icon' /><span>Facebook</span></button>
       </div>
-
 
       <div className='divider-container'>
         <span></span>
@@ -126,7 +133,7 @@ function SignIn() {
           <Link to="/sifre-yenile">Şifremi Unuttum</Link>
         </div>
 
-        <button onClick={(e) => handleSignIn(e)} className='sign-buttons'>Giriş</button>
+        <button onClick={(e) => handleSignInWithEmail(e)} className='sign-buttons'>Giriş</button>
         <p className='change-sign-method-text'>
           Bir hesabın yok mu?
           <Link to="/uye-ol">Hesap Oluştur</Link>

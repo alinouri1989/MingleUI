@@ -19,36 +19,39 @@ export const authApi = createApi({
       }),
     }),
 
-    // Login (SignIn) endpoint
-    loginUser: builder.mutation({
+    SignInWithEmail: builder.mutation({
       query: (formData) => ({
-        url: 'Auth/SignIn',
-        method: 'POST',
+        url: "Auth/SignInEmail",
+        method: "POST",
         body: formData,
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-        try {
-          const { data } = await queryFulfilled; // Backend responsunu al
-          if (data?.token) {
-            // JWT'yi cookie'ye 2 gün ömürlü olacak şekilde kaydet
-            const now = new Date();
-            const expireDate = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000); // 2 gün
-            document.cookie = `jwt=${data.token}; expires=${expireDate.toUTCString()}; path=/; secure; samesite=strict`;
+        await handleAuthResponse(queryFulfilled, dispatch);
+      },
+    }),
 
-            // Kullanıcı bilgilerini çekmek için getUserProfile çağrısı
-            const userProfile = await dispatch(authApi.endpoints.getUserProfile.initiate()).unwrap();
+    SignInGoogle: builder.mutation({
+      query: (token) => ({
+        url: "Auth/SignInGoogle",
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(token),
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        await handleAuthResponse(queryFulfilled, dispatch);
+      },
+    }),
 
-            // Kullanıcı bilgilerini ve token'ı Redux store'a kaydet
-            dispatch(
-              setUser({
-                user: userProfile,
-                token: data.token,
-              })
-            );
-          }
-        } catch (error) {
-          console.error('Login failed:', error);
-        }
+    SignInFacebook: builder.mutation({
+      query: (token) => ({
+        url: "Auth/SignInFacebook",
+        method: "POST",
+        body: token,
+      }),
+      async onQueryStarted(arg, { queryFulfilled, dispatch }) {
+        await handleAuthResponse(queryFulfilled, dispatch);
       },
     }),
 
@@ -62,7 +65,7 @@ export const authApi = createApi({
         body: JSON.stringify(email),
       }),
     }),
-    // Get User Profile endpoint
+
     getUserProfile: builder.query({
       query: () => {
         const token = getJwtFromCookie();
@@ -76,7 +79,6 @@ export const authApi = createApi({
       },
     }),
 
-    // Logout endpoint
     logoutUser: builder.mutation({
       query: () => {
         const token = getJwtFromCookie();
@@ -106,9 +108,27 @@ export const authApi = createApi({
   }),
 });
 
+const handleAuthResponse = async (queryFulfilled, dispatch) => {
+  try {
+    const { data } = await queryFulfilled;
+    if (data?.token) {
+      const now = new Date();
+      const expireDate = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000); // 2 gün
+      document.cookie = `jwt=${data.token}; expires=${expireDate.toUTCString()}; path=/; secure; samesite=strict`;
+
+      const userProfile = await dispatch(authApi.endpoints.getUserProfile.initiate()).unwrap();
+      dispatch(setUser({ user: userProfile, token: data.token }));
+    }
+  } catch (error) {
+    console.error("Login failed:", error);
+  }
+};
+
 export const {
   useRegisterUserMutation,
-  useLoginUserMutation,
+  useSignInWithEmailMutation,
+  useSignInGoogleMutation,
+  useSignInFacebookMutation,
   useGetUserProfileQuery,
   useLogoutUserMutation,
   useResetPasswordMutation

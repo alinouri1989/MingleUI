@@ -10,10 +10,13 @@ import ListItemText from "@mui/material/ListItemText";
 import { formatTimeHoursMinutes } from "../../../helpers/dateHelper";
 import { useLocation, useNavigate } from "react-router-dom";
 import CallCardCallStatus from "../../../shared/components/CallStatus/CallCardCallStatus";
+import { useSignalR } from "../../../contexts/SignalRContext";
+import { SuccessAlert, ErrorAlert } from "../../../helpers/customAlert";
 
 
 function UserCallCard({ callId, image, status, name, callType, callStatus, createdDate, isOutgoingCall }) {
 
+  const { callConnection } = useSignalR();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -28,9 +31,14 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
     setAnchorEl(null);
   };
 
-  const handleDelete = () => {
-    console.log("Arama kaydı silindi");
+  const handleDelete = async () => {
     handleClose();
+    try {
+      await callConnection.invoke("DeleteCall", callId);
+      SuccessAlert("Arama Kaydı Silindi");
+    } catch {
+      ErrorAlert("Arama Kaydı Silinemedi");
+    }
   };
 
   const userStatus = status == "0001-01-01T00:00:00" ? 'online' : 'offline';

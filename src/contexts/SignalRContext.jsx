@@ -7,7 +7,7 @@ import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
 import { setGroupList, updateGroupInformations, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
 import { addNewUserToChatList, setInitialChatList, updateUserInfoToChatList } from "../store/Slices/chats/chatListSlice.js";
 import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats, addArchive, removeArchive, removeIndividualChat } from "../store/Slices/chats/chatSlice.js";
-import { handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, updateCallRecipientList } from "../store/Slices/calls/callSlice.js";
+import { deleteCallHistory, handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, updateCallRecipientList } from "../store/Slices/calls/callSlice.js";
 import { createAndSendOffer, handleRemoteSDP, sendSdp } from "../services/webRtcService.js";
 
 import { servers } from "../constants/StunTurnServers.js";
@@ -326,12 +326,7 @@ export const SignalRProvider = ({ children }) => {
 
                 });
 
-                //! =========== CALL CONNECTION ===========
-
-                // Arama bağlantısındaki dinleyiciler
-
                 //! ===========  CALL CONNECTION ===========
-
 
                 callConnection.on('ReceiveInitialCalls', async (data) => {
                     dispatch(setInitialCalls(data));
@@ -378,6 +373,11 @@ export const SignalRProvider = ({ children }) => {
                         peerConnection.current.close();
                         peerConnection.current = null;
                     }
+                });
+
+                callConnection.on('ReceiveDeleteCall', (data) => {
+                    console.log("dinlemede sorun var mı=", data);
+                    dispatch(deleteCallHistory(data));
                 });
 
                 callConnection.on('ReceiveIceCandidate', async (data) => {
