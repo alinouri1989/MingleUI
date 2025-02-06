@@ -66,8 +66,6 @@ const chatSlice = createSlice({
                 participants: chatData.participants,
                 archivedFor: chatData.archivedFor || {},
                 createdDate: chatData.createdDate,
-                groupName: chatData.groupName || "Unnamed Group",
-                admin: chatData.admin || null,
                 messages: Object.entries(chatData.messages || {}).map(([messageId, messageData]) => ({
                     id: messageId,
                     ...messageData,
@@ -178,22 +176,17 @@ const chatSlice = createSlice({
         },
 
         removeIndividualChat: (state, action) => {
-            const chatId = Object.keys(action.payload.Individual)[0]; // Gelen objeden chatId'yi al
-            let updatedChatData = action.payload.Individual[chatId]; // Güncellenmiş sohbet verisi
+            const chatId = Object.keys(action.payload.Individual)[0];
 
-            // Eğer updatedChatData.messages bir obje ise, onu diziye dönüştür
-            if (updatedChatData.messages && !Array.isArray(updatedChatData.messages)) {
-                updatedChatData.messages = Object.values(updatedChatData.messages);
+            const chatIndex = state.Individual.findIndex(chat => chat.id === chatId);
+
+            if (chatIndex !== -1) {
+                state.Individual[chatIndex].messages = [];
             }
-
-            //! Eğer messages doğrudan geldiğinde dizi olarak gelirse  üstteki if bloğu çalışmayacak
-
-            state.Individual = state.Individual.map(chat =>
-                chat.id === chatId ? { ...chat, ...updatedChatData } : chat
-            );
         },
+
         removeGroupChat: (state, action) => {
-            state.Group = state.Group.filter(chat => chat.id !== action.payload);
+            state.Group = state.Group.filter(group => !group.participants.includes(action.payload));
         },
 
         resetChats: (state) => {

@@ -1,19 +1,16 @@
 import React from 'react'
 import { IoIosArrowDropleftCircle } from "react-icons/io";
-import { defaultGroupPhoto } from '../../../constants/DefaultProfilePhoto';
+
 function GroupTopBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
-
-
     const participantCount = groupProfile?.participants
-        ? Object.keys(groupProfile.participants).length
+        ? Object.values(groupProfile.participants).filter(member => member.role !== 2).length
         : 0;
 
     return (
         <div className={`group-top-bar ${isSidebarOpen ? 'close' : ''}`}>
             <div className="group-info">
                 <div className="image-box">
-                    <img src={groupProfile?.photoUrl} />
-
+                    <img src={groupProfile?.photoUrl} alt="Group" />
                 </div>
                 <div className="name-and-status-box">
                     <p className="grup-name">{groupProfile?.name}</p>
@@ -28,7 +25,7 @@ function GroupTopBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
                 />
             </div>
         </div>
-    )
+    );
 }
 
-export default GroupTopBar
+export default GroupTopBar;

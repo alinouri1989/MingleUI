@@ -4,16 +4,16 @@ import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { createContext, useContext, useState, useEffect, useRef } from "react";
 
 import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
-import { setGroupList, updateGroupInformations, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
+import { removeGroupList, setGroupList, updateGroupInformations, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
 import { addNewUserToChatList, setInitialChatList, updateUserInfoToChatList } from "../store/Slices/chats/chatListSlice.js";
-import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats, addArchive, removeArchive, removeIndividualChat } from "../store/Slices/chats/chatSlice.js";
+import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats, addArchive, removeArchive, removeIndividualChat, removeGroupChat } from "../store/Slices/chats/chatSlice.js";
 import { deleteCallHistory, handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, updateCallRecipientList } from "../store/Slices/calls/callSlice.js";
 import { createAndSendOffer, handleRemoteSDP, sendSdp } from "../services/webRtcService.js";
 
 import { servers } from "../constants/StunTurnServers.js";
 import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
 import { decryptMessage } from '../helpers/messageCryptoHelper.js';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const SignalRContext = createContext();
 
@@ -37,6 +37,7 @@ export const SignalRProvider = ({ children }) => {
     const [notificationConnection, setNotificationConnection] = useState(null);
     const [callConnection, setCallConnection] = useState(null);
     const { callId } = useSelector(state => state.call);
+    const navigate = useNavigate();
 
     const { Individual, Group } = useSelector(state => state.chat);
     const { token } = useSelector(state => state.auth);
@@ -228,10 +229,10 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 chatConnection.on("ReceiveCreateChat", (data) => {
-                    console.log("Yeni grup chat oluşturuldu:", data);
                     if (data.Individual) {
                         const individualData = data.Individual;
                         const chatId = Object.keys(individualData)[0];
+
                         if (chatId) {
                             const chatData = individualData[chatId];
                             dispatch(addNewIndividualChat({ chatId, chatData }));
@@ -239,12 +240,31 @@ export const SignalRProvider = ({ children }) => {
                             console.error("Chat ID alınamadı:", data);
                         }
                     } else if (data.Group) {
-                        console.log("Buraya giriyor mu");
                         const groupData = data.Group;
                         const groupId = Object.keys(groupData)[0];
 
                         if (groupId) {
                             const groupChatData = groupData[groupId];
+
+                            if (groupChatData.messages && Object.keys(groupChatData.messages).length > 0) {
+                                groupChatData.messages = Object.entries(groupChatData.messages)
+                                    .map(([messageId, msg]) => {
+                                        let decryptedContent = msg.content;
+                                        if (msg.type === 0 && decryptedContent && decryptedContent !== "Bu mesaj silindi.") {
+                                            decryptedContent = decryptMessage(msg.content, groupId);
+                                        }
+                                        return {
+                                            id: messageId,
+                                            ...msg,
+                                            content: decryptedContent,
+                                            sentDate: new Date(msg.status.sent?.[Object.keys(msg.status.sent)[0]]) // Sent tarihini alıyoruz (görünmeyecek)
+                                        };
+                                    })
+                                    // Sent tarihine göre sıralama yap
+                                    .sort((a, b) => a.sentDate - b.sentDate)
+                                    .map(({ sentDate, ...msg }) => msg);
+                            }
+
                             dispatch(addNewGroupChat({ chatId: groupId, chatData: groupChatData }));
                         } else {
                             console.error("Group ID alınamadı:", data);
@@ -255,17 +275,13 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 chatConnection.on("ReceiveArchiveChat", (data) => {
-
                     dispatch(addArchive(data));
                 });
 
                 chatConnection.on("ReceiveUnarchiveChat", (data) => {
-
                     dispatch(removeArchive(data));
                 });
                 chatConnection.on("ReceiveClearChat", (data) => {
-
-                    console.log("RECEIVE CLEAR CHAT", data);
                     dispatch(removeIndividualChat(data));
                 });
 
@@ -281,6 +297,7 @@ export const SignalRProvider = ({ children }) => {
 
                 notificationConnection.on("ReceiveNewGroupProfiles", (data) => {
                     dispatch(setGroupList(data));
+                    console.log("İLK GROUP PROFİE", data);
                     // Gelen data'nın key'ini almak için Object.keys() kullanılıyor
                     const groupId = Object.keys(data)[0];
                     console.log("Group ID:", groupId);
@@ -322,9 +339,32 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 notificationConnection.on("ReceiveGroupProfiles", (data) => {
-                    dispatch(updateGroupInformations(data))
+                    const groupId = Object.keys(data)[0];  // Gelen veriden grupId'yi alıyoruz
+                    const groupData = data[groupId];  // Gelen data içindeki grup bilgilerini alıyoruz
 
+                    // participants içindeki userId'ye bakarak rolünü kontrol et
+                    const userParticipant = groupData.participants[userId];
+                    console.log("userParticipant", userParticipant);
+
+                    // Eğer rolü 2 ise (atılmışsa) işlemi sonlandırıyoruz
+                    if (userParticipant && userParticipant.role === 2) {
+                        dispatch(removeGroupChat(groupId));
+                        dispatch(removeGroupList(groupId));
+                        navigate("/gruplar");
+                        return;
+                    }
+
+                    // Eğer currentGroupList içinde bu grup varsa, veriyi güncelliyoruz
+                    const currentGroupList = store.getState().groupList;
+                    if (Object.hasOwn(currentGroupList.groupList, groupId)) {
+                        dispatch(updateGroupInformations(data));  // Veriyi güncelliyoruz
+                    } else {
+                        dispatch(updateGroupInformations(data));  // Veriyi güncelliyoruz
+                        chatConnection.invoke("CreateChat", "Group", groupId); // Yeni sohbet oluşturuluyor
+                    }
                 });
+
+
 
                 //! ===========  CALL CONNECTION ===========
 
@@ -376,7 +416,6 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 callConnection.on('ReceiveDeleteCall', (data) => {
-                    console.log("dinlemede sorun var mı=", data);
                     dispatch(deleteCallHistory(data));
                 });
 

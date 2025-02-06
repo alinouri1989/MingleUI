@@ -34,8 +34,7 @@ function AddUser({ closeUserModal, setFormData, formData }) {
         const selectedUser = users.find(([id, user]) => id === userId);
 
         if (!formData.participants || !formData.participants[userId]) {
-            // Yeni kullanıcıyı participants'a ekliyoruz
-
+            // Kullanıcı daha önce eklenmemişse yeni olarak ekliyoruz
             console.log(selectedUser);
             setFormData((prevState) => ({
                 ...prevState,
@@ -43,17 +42,34 @@ function AddUser({ closeUserModal, setFormData, formData }) {
                     ...prevState.participants,
                     [userId]: {
                         displayName: selectedUser[1].displayName,
-                        role: 1,
+                        role: 1, // Yeni kullanıcıyı rolü 1 olarak ekliyoruz
                         profilePhoto: selectedUser[1].profilePhoto,
                     }
                 }
             }));
 
-            // Başarılı ekleme mesajı
             SuccessAlert("Kullanıcı Eklendi", 1000);
         } else {
-            // Eğer kullanıcı zaten eklenmişse bir şey yapmıyoruz
-            ErrorAlert("Bu kullanıcı eklendi.", 1500);
+            // Kullanıcı zaten var
+            const currentRole = formData.participants[userId].role;
+
+            if (currentRole === 2) {
+                const updatedParticipants = { ...formData.participants };
+                updatedParticipants[userId] = {
+                    ...updatedParticipants[userId],
+                    role: 1
+                };
+
+                setFormData((prevState) => ({
+                    ...prevState,
+                    participants: updatedParticipants
+                }));
+
+                SuccessAlert("Kullanıcı eklendi.", 1000);
+            } else if (currentRole === 1 || currentRole === 0) {
+                // Eğer rolü zaten 1 ya da 0 ise, kullanıcı zaten ekli
+                ErrorAlert("Bu kullanıcı zaten eklendi.", 1500);
+            }
         }
     };
 
@@ -96,11 +112,11 @@ function AddUser({ closeUserModal, setFormData, formData }) {
                                 <TiThList className="icon" />
                                 <p>{users.length} kullanıcı listeleniyor</p>
                             </div>
-
                             <div className="users-box">
                                 {users.map(([userId, user]) => {
                                     // formData'dan participants içinde userId kontrolü yapıyoruz
                                     const isAlreadyAdded = formData.participants && formData.participants[userId];
+                                    const userRole = isAlreadyAdded ? formData.participants[userId].role : null;
 
                                     return (
                                         <div key={userId} className="user-box" onClick={() => handleAddSelectedUser(userId)}>
@@ -112,8 +128,14 @@ function AddUser({ closeUserModal, setFormData, formData }) {
                                             <div className='add-user-box'>
                                                 {isAlreadyAdded ? (
                                                     <>
-                                                        <HiCheckCircle className='icon' />
-                                                        <p>Eklendi</p>
+                                                        {userRole === 2 ? (
+                                                            null
+                                                        ) : (
+                                                            <>
+                                                                <HiCheckCircle className='icon' />
+                                                                <p>Eklendi</p>
+                                                            </>
+                                                        )}
                                                     </>
                                                 ) : (
                                                     <>
@@ -126,6 +148,7 @@ function AddUser({ closeUserModal, setFormData, formData }) {
                                     );
                                 })}
                             </div>
+
                         </div>
                     )}
                 </div>

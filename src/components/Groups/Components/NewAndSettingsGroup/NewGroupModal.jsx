@@ -168,9 +168,14 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
         const userToRemove = participantKeys.find((key) => key === userId);
 
         if (userToRemove) {
-            // formData'dan bu kullanıcıyı çıkarıyoruz
+            // formData'dan kullanıcıyı çıkarma işlemi için yeni bir kopya oluşturuyoruz
             const updatedParticipants = { ...formData.participants };
-            delete updatedParticipants[userToRemove];
+
+            // Kullanıcının rolünü 2 yapıyoruz (gruptan çıkarma)
+            const updatedUser = { ...updatedParticipants[userToRemove], role: 2 };
+
+            // Kullanıcının rolünü güncelledik, şimdi objenin kopyasını güncelliyoruz
+            updatedParticipants[userToRemove] = updatedUser;
 
             // State'i güncelliyoruz
             setFormData((prevFormData) => ({
@@ -470,6 +475,7 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
                                     // Diğerleri için sıralama yapmaz
                                     return 0;
                                 })
+                                .filter((participantId) => formData.participants[participantId].role !== 2)
                                 .map((participantId) => {
                                     const user = formData.participants[participantId];
                                     const isCurrentUser = participantId === userId;
@@ -508,6 +514,7 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
                                     );
                                 })}
                     </div>
+
 
 
                     <div className="option-buttons">

@@ -70,12 +70,14 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }
 
                                 <div className="group-members-box">
                                     <h2>
-                                        Grup Üyeleri - {Object.keys(groupProfile.participants).length}
+                                        Grup Üyeleri - {Object.values(groupProfile.participants).filter(member => member.role !== 2).length}
                                     </h2>
                                     <div className="members-list">
                                         {Object.entries(groupProfile.participants)
                                             .sort(([, memberA], [, memberB]) => memberA.role - memberB.role) // Role değerine göre sıralama
                                             .map(([id, member]) => {
+                                                if (member.role === 2) return null;
+
                                                 const isOnline = member.lastConnectionDate == "0001-01-01T00:00:00";
 
                                                 return (
@@ -97,6 +99,7 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }
                                                 );
                                             })}
                                     </div>
+
                                 </div>
                             </>
                         ) : (

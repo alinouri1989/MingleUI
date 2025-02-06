@@ -39,34 +39,26 @@ const groupListSlice = createSlice({
         const oldGroupData = state.groupList[groupId];
 
         if (oldGroupData) {
-          // Eski ve yeni `participants` karşılaştır
           const oldParticipants = oldGroupData.participants || {};
           const newParticipants = newGroupData.participants || {};
 
-          // Yeni `participants` içinde olup eski veride `isGroupMember: false` olanları kontrol et
           Object.keys(newParticipants).forEach((userId) => {
-            if (oldParticipants[userId] && oldParticipants[userId].isGroupMember === false) {
-              // Kullanıcı tekrar grup üyesi olduysa, `isGroupMember: true` yap
+            if (oldParticipants[userId]) {
               newParticipants[userId] = {
                 ...oldParticipants[userId],
                 ...newParticipants[userId],
-                isGroupMember: true,
               };
             }
           });
 
-          // Eski `participants` içinde olup, yeni gelen `participants` içinde olmayan kullanıcıları bul
           Object.keys(oldParticipants).forEach((userId) => {
             if (!newParticipants[userId]) {
-              // Kullanıcı çıkarılmış, bilgisine `isGroupMember: false` ekle
               newParticipants[userId] = {
                 ...oldParticipants[userId],
-                isGroupMember: false,
               };
             }
           });
 
-          // Güncellenmiş grubu birleştir
           state.groupList[groupId] = {
             ...oldGroupData,
             ...newGroupData,
@@ -77,10 +69,14 @@ const groupListSlice = createSlice({
           state.groupList[groupId] = newGroupData;
         }
       });
+    },
+    removeGroupList(state, action) {
+      const groupId = action.payload;
+      delete state.groupList[groupId];
     }
   },
 });
 
-export const { setGroupList, updateUserInfoToGroupList, updateGroupInformations } =
+export const { setGroupList, updateUserInfoToGroupList, updateGroupInformations, removeGroupList } =
   groupListSlice.actions;
 export default groupListSlice.reducer;

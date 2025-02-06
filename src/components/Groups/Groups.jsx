@@ -94,7 +94,7 @@ function GroupChats() {
           groupId={id}
           isSidebarOpen={isSidebarOpen}
           toggleSidebar={toggleSidebar}
-          groupProfile={groupProfile} // Sidebar için grup profil bilgisi
+          groupProfile={groupProfile}
         />
       )}
     </>
