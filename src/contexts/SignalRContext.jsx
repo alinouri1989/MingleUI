@@ -364,8 +364,6 @@ export const SignalRProvider = ({ children }) => {
                     }
                 });
 
-
-
                 //! ===========  CALL CONNECTION ===========
 
                 callConnection.on('ReceiveInitialCalls', async (data) => {
@@ -376,6 +374,7 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 callConnection.on('ReceiveIncomingCall', async (data) => {
+                    console.log("ReceiveIncomingCall", data);
                     const callType = data.callType;
                     await handleIncomingCall(data, dispatch);
                     initializePeerConnection(callType);
@@ -424,23 +423,21 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 callConnection.on('ReceiveSdp', async (data) => {
+                    console.log("ReceiveSdp YANITI", data);
                     try {
-                        if (data.type === "offer") {
-                            await initializePeerConnection(0);
-
-                            //! if (data.sdp.type === "offer") {
-                            //!     await initializePeerConnection(data.callType);
+                        if (data.sdp.type === "offer") {
+                            await initializePeerConnection(data.callType);
 
                             console.log("Offer işlemleri başlatılıyor...");
-                            await handleRemoteSDP(data, peerConnection.current);
+                            await handleRemoteSDP(data.sdp, peerConnection.current);
                             const answer = await peerConnection.current.createAnswer();
                             await peerConnection.current.setLocalDescription(answer);
 
                             await sendSdp(callIdRef.current, answer, callConnection);
-                        } else if (data.type === "answer") {
-                            await handleRemoteSDP(data, peerConnection.current);
+                        } else if (data.sdp.type === "answer") {
+                            await handleRemoteSDP(data.sdp, peerConnection.current);
                         } else {
-                            console.error("Bilinmeyen SDP türü:", data.type);
+                            console.error("Bilinmeyen SDP türü:", data.sdp.type);
                         }
                     } catch (error) {
                         console.error("Remote SDP işlenirken hata:", error);
