@@ -375,6 +375,12 @@ form {
             color: var(--blue);
         }
     }
+
+    .error-message {
+        color: var(--mingle-red);
+        font-size: 13px;
+        margin: -10px 0px;
+    }
 }
 
 .sign-in-general-container {
@@ -479,7 +485,7 @@ form {
     .cancel-btn {
         width: 100%;
         margin-top: 12px;
-        background-color: var(--smooth-blue);
+        background-color: var(--smooth-light-blue);
         color: var(--blue);
         padding: 8px 0px;
         border-radius: 8px;

@@ -119,9 +119,7 @@ const handleAuthResponse = async (queryFulfilled, dispatch) => {
       const userProfile = await dispatch(authApi.endpoints.getUserProfile.initiate()).unwrap();
       dispatch(setUser({ user: userProfile, token: data.token }));
     }
-  } catch (error) {
-    console.error("Login failed:", error);
-  }
+  } catch { }
 };
 
 export const {
