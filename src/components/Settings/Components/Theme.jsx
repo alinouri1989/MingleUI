@@ -9,7 +9,6 @@ import { applyTheme } from "../../../helpers/applyTheme";
 
 const Theme = () => {
 
-  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const [changeChatBackground, { isLoading: chatBackgroundLoading }] = useChangeChatBackgroundMutation();
   const [changeTheme, { isLoading: themeLoading }] = useChangeThemeMutation();
@@ -26,7 +25,7 @@ const Theme = () => {
 
     try {
       await changeTheme(themeReverseMapping[newTheme]);
-      
+
       if (newTheme === "DefaultSystemMode" || newTheme === "Light") {
         applyTheme("Light");
       } else if (newTheme === "Dark") {
@@ -51,7 +50,6 @@ const Theme = () => {
 
   return (
     <div className="theme-box">
-      {/* Tema Ayarları */}
       <div className="theme-select">
         <h3>Tema</h3>
         <select

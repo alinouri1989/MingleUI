@@ -395,30 +395,22 @@
                         margin-bottom: 3px;
                     }
 
-
                     .biography-span,
                     textarea {
                         color: var(--text-input-gray);
                         font-size: 14px;
                         width: 100%;
                         word-break: break-word;
-                        overflow-wrap: break-word;
-                        white-space: normal;
-                        line-height: 30px;
+                        line-height: 1.5;
                     }
-
 
                     textarea {
                         resize: none;
-                        height: 100px;
-                    }
-
-
-                    input {
-                        @include flex-center(row, flex-start, flex-start);
-                        height: 200px;
-                        border: 2px solid red;
-                        /* Allow the input to expand based on content */
+                        min-height: 20px;
+                        max-height: 200px;
+                        overflow-y: auto;
+                        padding: 2px;
+                        box-sizing: border-box;
                     }
                 }
 
@@ -498,6 +490,12 @@
             }
         }
     }
+}
+
+.error-messages {
+    color: var(--mingle-red);
+    font-size: 13.5px;
+    margin: -10px 0px;
 }
 
 @keyframes fadeIn {

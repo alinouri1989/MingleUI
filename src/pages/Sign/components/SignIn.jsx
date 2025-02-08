@@ -51,7 +51,6 @@ function SignIn() {
       const user = result.user;
       const token = await user.getIdToken();
       await SignInGoogle(token).unwrap();
-      SuccessAlert("Giriş Yapıldı");
 
     } catch (error) {
       console.error('Google ile giriş başarısız oldu:', error.message);

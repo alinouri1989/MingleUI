@@ -13,8 +13,6 @@ export const ModalProvider = ({ children }) => {
     setModalContent(content);
   };
 
-  console.log(callerProfile);
-
   const closeModal = () => {
     setModalContent(null);
   };

@@ -86,7 +86,6 @@ export const SignalRProvider = ({ children }) => {
     if (peerConnection.current) {
         peerConnection.current.onicecandidate = (event) => {
             if (event.candidate) {
-                console.log("ICE Candidate oluşturuldu:", event.candidate);
                 callConnection.invoke("SendIceCandidate", callIdRef.current, event.candidate);
             }
         };
@@ -170,7 +169,6 @@ export const SignalRProvider = ({ children }) => {
 
                 //Initial Group / Individual Chats 
                 chatConnection.on("ReceiveInitialChats", (data) => {
-                    console.log("GELEN chats DATA:", data)
                     store.dispatch(initializeChats(data));
                 });
 
@@ -288,7 +286,6 @@ export const SignalRProvider = ({ children }) => {
                 //! =========== NOTIFICATION CONNECTION ===========
 
                 notificationConnection.on("ReceiveRecipientProfiles", (data) => {
-                    console.log("notificationConnection güncelleme verisi : ", data);
                     dispatch(updateUserInfoToChatList(data));
                     dispatch(updateUserInfoToGroupList(data));
                     dispatch(updateCallRecipientList(data));
@@ -297,36 +294,20 @@ export const SignalRProvider = ({ children }) => {
 
                 notificationConnection.on("ReceiveNewGroupProfiles", (data) => {
                     dispatch(setGroupList(data));
-                    console.log("İLK GROUP PROFİE", data);
                     // Gelen data'nın key'ini almak için Object.keys() kullanılıyor
                     const groupId = Object.keys(data)[0];
-                    console.log("Group ID:", groupId);
 
                     if (groupId) {
                         // ChatConnection'un bağlı olduğundan emin olarak işlem yapıyoruz
                         if (chatConnection.state === "Connected") {
                             chatConnection.invoke("CreateChat", "Group", groupId)
-                                .then(() => {
-                                    console.log(`Grup başarıyla gönderildi: ${groupId}`);
-                                })
-                                .catch((err) => {
-                                    console.error("Grup gönderimi sırasında hata:", err);
-                                });
                         } else {
                             console.error("ChatConnection şu anda bağlı değil, işlem gerçekleştirilemedi.");
                             // Bağlantı durumunu beklemek için event-based bir çözüm eklenebilir
                             chatConnection.onclose(() => {
-                                console.log("ChatConnection yeniden bağlanıyor...");
                                 chatConnection.start()
                                     .then(() => {
-                                        console.log("ChatConnection yeniden bağlandı.");
                                         chatConnection.invoke("CreateChat", "Group", groupId)
-                                            .then(() => {
-                                                console.log(`Grup başarıyla gönderildi: ${groupId}`);
-                                            })
-                                            .catch((err) => {
-                                                console.error("Grup gönderimi sırasında hata:", err);
-                                            });
                                     })
                                     .catch((err) => {
                                         console.error("ChatConnection yeniden bağlanırken hata oluştu:", err);
@@ -344,7 +325,6 @@ export const SignalRProvider = ({ children }) => {
 
                     // participants içindeki userId'ye bakarak rolünü kontrol et
                     const userParticipant = groupData.participants[userId];
-                    console.log("userParticipant", userParticipant);
 
                     // Eğer rolü 2 ise (atılmışsa) işlemi sonlandırıyoruz
                     if (userParticipant && userParticipant.role === 2) {
@@ -374,7 +354,6 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 callConnection.on('ReceiveIncomingCall', async (data) => {
-                    console.log("ReceiveIncomingCall", data);
                     const callType = data.callType;
                     await handleIncomingCall(data, dispatch);
                     initializePeerConnection(callType);
@@ -423,12 +402,10 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 callConnection.on('ReceiveSdp', async (data) => {
-                    console.log("ReceiveSdp YANITI", data);
                     try {
                         if (data.sdp.type === "offer") {
                             await initializePeerConnection(data.callType);
 
-                            console.log("Offer işlemleri başlatılıyor...");
                             await handleRemoteSDP(data.sdp, peerConnection.current);
                             const answer = await peerConnection.current.createAnswer();
                             await peerConnection.current.setLocalDescription(answer);
@@ -436,12 +413,8 @@ export const SignalRProvider = ({ children }) => {
                             await sendSdp(callIdRef.current, answer, callConnection);
                         } else if (data.sdp.type === "answer") {
                             await handleRemoteSDP(data.sdp, peerConnection.current);
-                        } else {
-                            console.error("Bilinmeyen SDP türü:", data.sdp.type);
                         }
-                    } catch (error) {
-                        console.error("Remote SDP işlenirken hata:", error);
-                    }
+                    } catch { }
                 });
             })
             .catch((err) => {
@@ -475,7 +448,6 @@ export const SignalRProvider = ({ children }) => {
     useEffect(() => {
         if (chatConnection && (Individual?.length > 0 || Group?.length > 0)) {
             deliverMessages();
-            console.log(location);
         }
     }, [chatConnection, Individual, Group, location]);
 
@@ -486,9 +458,7 @@ export const SignalRProvider = ({ children }) => {
             if (peerConnection)
                 createAndSendOffer(callIdRef.current, callConnection, peerConnection);
 
-        } catch (error) {
-            console.log("Call accept failed:", error);
-        }
+        } catch { }
     };
 
     const deliverMessages = async () => {
@@ -565,10 +535,7 @@ export const SignalRProvider = ({ children }) => {
             // Tüm mesajları gönder
             await Promise.all([...individualPromises, ...individualReadPromises, ...groupPromises, ...groupReadPromises]);
 
-            console.log("All messages processed successfully.");
-        } catch (err) {
-            console.error("Error processing messages:", err);
-        }
+        } catch { }
     };
 
     if (loading) {

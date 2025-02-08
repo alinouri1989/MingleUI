@@ -18,21 +18,21 @@ import { defaultProfilePhoto } from "../../../constants/DefaultProfilePhoto";
 import { convertFileToBase64 } from "../../../store/helpers/convertFileToBase64";
 import { convertFileToByteArray } from "../../../store/helpers/convertFileToByteArray";
 
+
+import { useForm, Controller } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { biographySchema, displayNameSchema, phoneNumberSchema } from "../../../schemas/AccountSchemas";
+
 function Account() {
 
   const { user } = useSelector(state => state.auth);
 
-  const [username, setUserName] = useState(user?.displayName || "");
-  const [phone, setPhoneName] = useState(user?.phoneNumber || "Belirtilmedi");
-  const [biography, setBiography] = useState(user?.biography || "");
   const [selectedImage, setSelectedImage] = useState(user?.profilePhoto || "");
-
   const [isEditingUsername, setIsEditingUsername] = useState(false);
   const [isEditingPhone, setIsEditingPhone] = useState(false);
   const [isEditingBiography, setIsEditingBiography] = useState(false);
-
   const [isShowProfileImage, setIsShowProfileImage] = useState(false);
-
 
   const [updateDisplayName, { isLoading: isLoadingDisplayName }] = useUpdateDisplayNameMutation();
   const [updateBiography, { isLoading: isLoadingBiography }] = useUpdateBiographyMutation();
@@ -47,6 +47,22 @@ function Account() {
     isLoadingProfilePhoto ||
     isLoadingRemovePhoto;
 
+  const { register: registerDisplayName, handleSubmit: handleDisplayNameSubmit, formState: { errors: displayNameErrors } } = useForm({
+    resolver: zodResolver(displayNameSchema),
+    defaultValues: { displayName: user?.displayName },
+  });
+
+  const { register: registerPhone, handleSubmit: handlePhoneSubmit, formState: { errors: phoneNumberErrors } } = useForm({
+    resolver: zodResolver(phoneNumberSchema),
+    defaultValues: { phoneNumber: user?.phoneNumber || "Belirtilmedi" },
+  });
+
+  const { register: registerBio, handleSubmit: handleBioSubmit, formState: { errors: bioErrors } } = useForm({
+    resolver: zodResolver(biographySchema),
+    defaultValues: { bio: user?.biography || "" },
+  });
+
+
   // User Image Edit States
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -59,41 +75,41 @@ function Account() {
     setAnchorEl(null);
   };
 
-
   //! User Informations Edit Handlers
 
-  const handleUsernameChange = async () => {
-    setIsEditingUsername(!isEditingUsername);
+  const onSubmitForDisplayName = async (data) => {
+    setIsEditingUsername(!isEditingUsername);  // Toggle out of edit mode
 
-    if (user.displayName != username) {
+    if (user.displayName !== data.displayName) {
       try {
-        await updateDisplayName(username);
-        SuccessAlert("Ad Soyad Değiştirildi")
+        await updateDisplayName(data.displayName);  // Use data from form submission
+        SuccessAlert("Ad Soyad Değiştirildi");
       } catch (error) {
         ErrorAlert("İsim Değiştirilemedi");
       }
     }
+    else { }
   };
 
-  const handlePhoneChange = async () => {
+  const onSubmitForPhoneNumber = async (data) => {
     setIsEditingPhone(!isEditingPhone);
 
-    if (user.phoneNumber != phone) {
+    if (user.phoneNumber != data.phoneNumber) {
       try {
-        await updatePhoneNumber(phone);
+        await updatePhoneNumber(data.phoneNumber);
         SuccessAlert("Telefon Numarası Güncellendi")
       } catch (error) {
-        ErrorAlert("Güncelleme Başarısız");
+        ErrorAlert("Telefon Numarası Güncellenemedi");
       }
     }
   };
 
-  const handleBiographyChange = async () => {
+  const onSubmitForBio = async (data) => {
     setIsEditingBiography(!isEditingBiography);
 
-    if (user.biography != biography) {
+    if (user.biography != data.bio) {
       try {
-        await updateBiography(biography);
+        await updateBiography(data.bio);
         SuccessAlert("Biyografi Güncellendi")
       } catch (error) {
         ErrorAlert("Biyografi Güncellenemedi");
@@ -124,24 +140,24 @@ function Account() {
     }
   };
 
-  // Resim seçme işlemi
   const handleImageUpload = async (event) => {
-    const file = event.target.files[0]; // Dosyayı al
-    if (file) {
-      try {
-        // Dosyayı Base64 formatına çevir
-        const base64String = await convertFileToBase64(file);
+    const file = event.target.files[0];
+    if (!file) return;
 
-        await updateProfilePhoto(base64String);
+    const validExtensions = ["image/png", "image/jpeg", "image/jpg"];
 
-        SuccessAlert("Fotoğraf Güncellendi");
-      } catch (error) {
-        console.error("Error:", error);
-        ErrorAlert("Fotoğraf Güncellenemedi");
-      }
+    if (!validExtensions.includes(file.type)) {
+      return ErrorAlert("Bir resim dosyası seçiniz");
+    }
+
+    try {
+      const base64String = await convertFileToBase64(file);
+      await updateProfilePhoto(base64String);
+      SuccessAlert("Fotoğraf Güncellendi");
+    } catch (error) {
+      ErrorAlert("Fotoğraf Güncellenemedi");
     }
   };
-
 
   return (
     <div className="account-box">
@@ -259,71 +275,140 @@ function Account() {
         />
       </div>
 
-      <div className="name-box">
-        {isEditingUsername ? (
-          <input
-            onChange={(e) => setUserName(e.target.value)}
-            value={username}
-            type="text"
-            placeholder="Ad soyad giriniz..."
-            autoFocus
-          />
-        ) : (
-          <p>{username}</p>
-        )}
-        <button className="edit-btn" onClick={handleUsernameChange}>
-          {isEditingUsername ? <FaCheck /> : <TbEdit />}
-        </button>
-      </div>
-
-      <div className="email-and-phone-box">
-        <div className="email-box">
-          <p>Email</p>
-          <span>{user?.email}</span>
-        </div>
-        <div className="phone-box">
-          <p>Telefon</p>
-          <div className="phone-edit-box">
-            {isEditingPhone ? (
-              <input
-                onChange={(e) => setPhoneName(e.target.value)}
-                value={phone}
-                type="text"
-                placeholder="Telefon numarası giriniz..."
-                autoFocus
-              />
-            ) : (
-              <p>{phone}</p>
-            )}
-            <button className="edit-btn" onClick={handlePhoneChange}>
-              {isEditingPhone ? <FaCheck /> : <TbEdit />}
-            </button>
-          </div>
-        </div>
-
-        <div className="biography-box">
-          <div className="biograpy-edit-box">
-            <p>Biyografi</p>
-            <button className="edit-btn" onClick={handleBiographyChange}>
-              {isEditingBiography ? <FaCheck /> : <TbEdit />}
-            </button>
-          </div>
-
-          {!isEditingBiography &&
-            <span className="biography-span">{biography}</span>
-          }
-
-          {isEditingBiography && (
-            <textarea
-              onChange={(e) => setBiography(e.target.value)}
-              value={biography}
+      <form onSubmit={handleDisplayNameSubmit(onSubmitForDisplayName)}>
+        <div className="name-box">
+          {isEditingUsername ? (
+            <input
+              {...registerDisplayName("displayName")}
               type="text"
-              placeholder="Biyografi giriniz..."
+              placeholder="Ad soyad giriniz..."
               autoFocus
             />
+          ) : (
+            <p>{user.displayName}</p>
+          )}
+
+          {/* Düzenleme Butonu (Sadece Toggle İşlemi Yapacak) */}
+          {!isEditingUsername && (
+            <button
+              className="edit-btn"
+              type="button"
+              onClick={() => setIsEditingUsername(true)}
+            >
+              <TbEdit />
+            </button>
+          )}
+
+          {/* Kaydet Butonu (Formu Gönderecek) */}
+          {isEditingUsername && (
+            <button className="edit-btn" type="submit">
+              <FaCheck />
+            </button>
           )}
         </div>
-      </div>
+      </form>
+
+      {displayNameErrors.displayName && (
+        <span className="error-messages">{displayNameErrors.displayName.message}</span>
+      )}
+
+      <form>
+        <div className="email-and-phone-box">
+          {/* E-posta */}
+          <div className="email-box">
+            <p>Email</p>
+            <span>{user?.email}</span>
+          </div>
+
+          {/* Telefon Numarası */}
+          <div className="phone-box">
+            <p>Telefon</p>
+            <div className="phone-edit-box">
+              {isEditingPhone ? (
+                <input
+                  {...registerPhone("phoneNumber")}
+                  type="text"
+                  placeholder="Telefon numarası giriniz..."
+                  autoFocus
+                />
+              ) : (
+                <p>{user?.phoneNumber || "Belirtilmedi"}</p>
+              )}
+
+              {/* Düzenleme Butonu */}
+              {!isEditingPhone && (
+                <button
+                  className="edit-btn"
+                  type="button"
+                  onClick={() => setIsEditingPhone(true)}
+                >
+                  <TbEdit />
+                </button>
+              )}
+
+              {/* Kaydetme Butonu */}
+              {isEditingPhone && (
+                <button
+                  className="edit-btn"
+                  type="submit"
+                  onClick={handlePhoneSubmit(onSubmitForPhoneNumber)}
+                >
+                  <FaCheck />
+                </button>
+              )}
+            </div>
+            {phoneNumberErrors.phoneNumber && (
+              <span className="error-messages">{phoneNumberErrors.phoneNumber.message}</span>
+            )}
+          </div>
+
+          {/* Biyografi */}
+          <div className="biography-box">
+            <div className="biograpy-edit-box">
+              <p>Biyografi</p>
+
+              {/* Düzenleme Butonu */}
+              {!isEditingBiography && (
+                <button
+                  className="edit-btn"
+                  type="button"
+                  onClick={() => setIsEditingBiography(true)}
+                >
+                  <TbEdit />
+                </button>
+              )}
+
+              {/* Kaydetme Butonu */}
+              {isEditingBiography && (
+                <button
+                  className="edit-btn"
+                  type="submit"
+                  onClick={handleBioSubmit(onSubmitForBio)}
+                >
+                  <FaCheck />
+                </button>
+              )}
+            </div>
+
+            {/* Metin veya Düzenleme Alanı */}
+            {!isEditingBiography ? (
+              <span className="biography-span">{user?.biography}</span>
+            ) : (
+              <textarea
+                {...registerBio("bio")}
+                type="text"
+                placeholder="Biyografi giriniz..."
+                autoFocus
+              />
+            )}
+
+          </div>
+          {bioErrors.bio && (
+            <span className="error-messages">{bioErrors.bio.message}</span>
+          )}
+        </div>
+      </form>
+
       {isLoading && <PreLoader />}
     </div >
   );
