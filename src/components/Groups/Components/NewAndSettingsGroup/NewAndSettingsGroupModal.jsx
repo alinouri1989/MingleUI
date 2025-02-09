@@ -28,24 +28,83 @@ import PreLoader from "../../../../shared/components/PreLoader/PreLoader.jsx";
 import "./style.scss";
 import { useSignalR } from "../../../../contexts/SignalRContext.jsx";
 import { useNavigate } from "react-router-dom";
+import { addNewGroupChat } from "../../../../store/Slices/chats/chatSlice.js";
 
-function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, userId }) {
+function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, userId }) {
+
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const { user } = useSelector(state => state.auth);
+    const { chatConnection } = useSignalR();
 
     const [createGroup, { isLoading: createLoading }] = useCreateGroupMutation();
     const [editGroup, { isLoading: editLoading }] = useEditGroupMutation();
     const [leaveGroup, { isLoading: leaveLoading }] = useLeaveGroupMutation();
 
-    const { chatConnection } = useSignalR();
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-
     const isLoading = editLoading || createLoading || leaveLoading;
 
-    const { user } = useSelector(state => state.auth);
-
+    const groupImageDefault = defaultGroupPhoto;
     const [isAddUserModal, setAddUserModal] = useState(false);
 
-    // User Image Edit States
+    const [isShowProfileImage, setIsShowProfileImage] = useState(false);
+    const [isSaveDisabled, setSaveDisabled] = useState(true);
+
+    const initialData = {
+        name: isGroupSettings ? groupProfile?.name : "",
+        description: isGroupSettings ? groupProfile?.description : "",
+        photoUrl: isGroupSettings ? groupProfile?.photoUrl : null,
+        photo: isGroupSettings ? groupProfile?.photo : "",
+        participants: isGroupSettings ? groupProfile?.participants : null
+    };
+
+    const [formData, setFormData] = useState(initialData);
+    const [isSubmitReady, setIsSubmitReady] = useState(false);
+
+
+    // --------------------------------------------------------------
+
+    useEffect(() => {
+        const isSameData = JSON.stringify(formData) === JSON.stringify(initialData);
+        const isNameTooShort = formData.name.length < 2;
+        setSaveDisabled(isSameData || isNameTooShort);
+        checkIfReadyToSubmit();
+    }, [formData]);
+
+    useEffect(() => {
+        if (formData.photo instanceof File) {
+            const objectURL = URL.createObjectURL(formData.photo);
+            return () => URL.revokeObjectURL(objectURL);
+        }
+    }, [formData.photo]);
+
+
+    useEffect(() => {
+        const handleReceiveCreateChat = (response) => {
+            const groupData = response?.Group;
+            if (groupData) {
+                const groupId = Object.keys(groupData)[0];
+                if (groupId) {
+                    const chatData = groupData[groupId];
+                    dispatch(addNewGroupChat({ groupId, chatData }));
+                    closeModal();
+                }
+            }
+        };
+
+        if (chatConnection) {
+            chatConnection.on("ReceiveCreateChat", handleReceiveCreateChat);
+        }
+
+        return () => {
+            if (chatConnection) {
+                chatConnection.off("ReceiveCreateChat", handleReceiveCreateChat);
+            }
+        };
+    }, [chatConnection, dispatch, navigate]);
+
+    // --------------------------------------------------------------
+
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
 
@@ -57,21 +116,7 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
         setAnchorEl(null);
     };
 
-    const [isShowProfileImage, setIsShowProfileImage] = useState(false);
-    const [isSaveDisabled, setSaveDisabled] = useState(true);
-
-
-    const groupImageDefault = defaultGroupPhoto;
-
-    const initialData = {
-        name: isGroupSettings ? groupProfile?.name : "",
-        description: isGroupSettings ? groupProfile?.description : "",
-        photoUrl: isGroupSettings ? groupProfile?.photoUrl : null,
-        photo: isGroupSettings ? groupProfile?.photo : "",
-        participants: isGroupSettings ? groupProfile?.participants : null
-    };
-
-    const [formData, setFormData] = useState(initialData);
+    // ----------------------------HELPERS----------------------------------
 
     const getPhotoURL = (photo) => {
         if (photo instanceof File) {
@@ -81,54 +126,16 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
         return photo || groupImageDefault;
     };
 
-    useEffect(() => {
-        if (formData.photo instanceof File) {
-            const objectURL = URL.createObjectURL(formData.photo);
-            return () => URL.revokeObjectURL(objectURL);
-        }
-    }, [formData.photo]);
+    const checkIfReadyToSubmit = () => {
+        const { name, participants } = formData;
+        const isNameTooShort = name.length < 2;
+        const filteredParticipants = participants && Object.values(participants).filter(participant => participant.role !== 2);
+        const hasValidParticipants = filteredParticipants && filteredParticipants.length > 0;
+        setIsSubmitReady(!(isNameTooShort || !hasValidParticipants));
+    };
 
-    useEffect(() => {
-        const isSameData = JSON.stringify(formData) === JSON.stringify(initialData);
-        setSaveDisabled(isSameData);
-    }, [formData]);
+    // ----------------------------MANIPULATE FORM STATES----------------------------------
 
-
-    useEffect(() => {
-        const handleReceiveCreateChat = (response) => {
-            console.log("Group Chat Create yanıtı:", response);
-
-            const groupData = response?.Group;
-            if (groupData) {
-                const groupId = Object.keys(groupData)[0];
-                if (groupId) {
-                    const chatData = groupData[groupId];
-                    console.log("Yeni grup sohbeti oluşturuldu, Group ID:", groupId);
-
-                    dispatch(addNewGroupChat({ groupId, chatData }));
-                    closeModal();
-                } else {
-                    console.error("Group Chat ID alınamadı:", response);
-                }
-            } else {
-                console.error("Group bilgisi bulunamadı:", response);
-            }
-        };
-
-        if (chatConnection) {
-            chatConnection.on("ReceiveCreateChat", handleReceiveCreateChat);
-        }
-
-        // Cleanup - Event listener'ı kaldırma
-        return () => {
-            if (chatConnection) {
-                chatConnection.off("ReceiveCreateChat", handleReceiveCreateChat);
-            }
-        };
-    }, [chatConnection, dispatch, navigate]);
-
-
-    // Handlers for input changes
     const handleGroupNameChange = (e) => setFormData((prev) => ({ ...prev, name: e.target.value }));
 
     const handleGroupDescriptionChange = (e) => setFormData((prev) => ({ ...prev, description: e.target.value }));
@@ -136,6 +143,14 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
     const handleGroupImageEdit = (e) => {
         const file = e.target.files[0];
         if (file) {
+            const fileType = file.type;
+            const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+
+            if (!validImageTypes.includes(fileType)) {
+                ErrorAlert("Bir resim dosyası seçiniz.");
+                return;
+            }
+
             setFormData((prev) => ({
                 ...prev,
                 photoUrl: isGroupSettings ? file : prev.photoUrl,
@@ -143,8 +158,6 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
             }));
         }
     };
-
-    // ==== Edit Methods ====
 
     const handleChangeGroupImage = () => {
         handleClose();
@@ -160,8 +173,6 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
         handleClose();
         setFormData((prev) => ({ ...prev, photo: null, photoUrl: null }));
     };
-
-    // Create
 
     const handleRemoveUser = (userId) => {
         const participantKeys = Object.keys(formData.participants);
@@ -205,20 +216,19 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
         SuccessAlert(`Rol Değiştirildi`);
     };
 
-    const handleLeaveGroup = async () => {
-        try {
-            await leaveGroup(groupId).unwrap();
-            SuccessAlert("Gruptan Çıktın")
-            closeModal();
-        } catch (error) {
-            ErrorAlert("Bir hata meydana geldi");
-        }
-    }
+    // ----------------------------SUBMITS----------------------------------
 
-    // Create New Group Logis is here.
     const handleSubmit = async () => {
         try {
-            const formDataCopy = { ...formData }; // formData'nın kopyasını alıyoruz
+            const formDataCopy = { ...formData };
+
+            if (formDataCopy.participants) {
+                formDataCopy.participants = Object.fromEntries(
+                    Object.entries(formDataCopy.participants).filter(
+                        ([_, participant]) => participant.role !== 2
+                    )
+                );
+            }
 
             if (formDataCopy.photo) {
                 const reader = new FileReader();
@@ -230,8 +240,6 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
                     const response = await createGroup(formDataCopy);
 
                     if (response?.error) {
-                        const errorMessage = response.error?.data?.message || "Bir hata oluştu, lütfen tekrar deneyin.";
-                        ErrorAlert(errorMessage);
                         return;
                     }
 
@@ -240,13 +248,9 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
                 };
             } else {
                 const response = await createGroup(formDataCopy);
-
                 if (response?.error) {
-                    const errorMessage = response.error?.data?.message || "Bir hata oluştu, lütfen tekrar deneyin.";
-                    ErrorAlert(errorMessage);
                     return;
                 }
-
                 SuccessAlert("Grup Oluşturuldu");
                 closeModal();
             }
@@ -288,6 +292,17 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
         }
     };
 
+    const handleLeaveGroup = async () => {
+        try {
+            await leaveGroup(groupId).unwrap();
+            SuccessAlert("Gruptan Çıktın")
+            closeModal();
+        } catch (error) {
+            ErrorAlert("Bir hata meydana geldi");
+        }
+    }
+
+    // ----------------------------JSX----------------------------------
 
     return (
         <div className="new-group-modal">
@@ -515,8 +530,6 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
                                 })}
                     </div>
 
-
-
                     <div className="option-buttons">
                         <button onClick={() => setAddUserModal(true)}>
                             <HiUserAdd className="icon" />
@@ -531,7 +544,12 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
                                 Kaydet
                             </button>
                         ) : (
-                            <button onClick={handleSubmit}>Grubu Oluştur</button>
+                            <button
+                                onClick={handleSubmit}
+                                disabled={!isSubmitReady}
+                                style={{ opacity: isSubmitReady ? 1 : 0.8 }}>
+                                Grubu Oluştur
+                            </button>
                         )}
                     </div>
                 </div>
@@ -548,4 +566,4 @@ function NewGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, use
     );
 }
 
-export default NewGroupModal;
+export default NewAndSettingsGroupModal;
