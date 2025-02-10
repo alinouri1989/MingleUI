@@ -12,15 +12,12 @@ import "../layout.scss";
 function GroupChats() {
   const { id } = useParams(); // URL'den ID'yi al
   const navigate = useNavigate(); // Navigate fonksiyonu
-  console.log("Params", id);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [groupProfile, setGroupProfile] = useState(null);
 
   // Group bilgileri ve chatList Redux'tan alınır
-  const { Group, isChatsInitialized } = useSelector((state) => state.chat); // Group bilgileri
-  const { groupList } = useSelector((state) => state.groupList); // Group list bilgileri
-
-  // // Group sohbeti var mı kontrolü ve yönlendirme
+  const { Group, isChatsInitialized } = useSelector((state) => state.chat);
+  const { groupList } = useSelector((state) => state.groupList);
   useEffect(() => {
     if (isChatsInitialized && id) {
       const groupExists = Group.some((group) => group.id === id);
