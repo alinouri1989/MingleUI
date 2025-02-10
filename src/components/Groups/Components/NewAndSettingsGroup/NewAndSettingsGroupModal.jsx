@@ -298,7 +298,7 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
             SuccessAlert("Gruptan Çıktın")
             closeModal();
         } catch (error) {
-            ErrorAlert("Bir hata meydana geldi");
+            ErrorAlert("Bir hata meydana geldi", error);
         }
     }
 

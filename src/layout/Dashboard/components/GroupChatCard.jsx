@@ -11,6 +11,8 @@ import { defaultGroupPhoto } from "../../../constants/DefaultProfilePhoto.js";
 import "./style.scss";
 import { useNavigate } from "react-router-dom";
 import LastMessage from "../../../shared/components/LastMessage/LastMessage.jsx";
+import { ErrorAlert } from "../../../helpers/customAlert.js";
+import CloseModalButton from "../../../contexts/components/CloseModalButton.jsx";
 
 function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMessage, lastMessageType, lastMessageDate, unReadMessage }) {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -18,8 +20,6 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
     const navigate = useNavigate();
     const [leaveGroup, { isLoading: leaveLoading }] = useLeaveGroupMutation();
 
-
-    console.log("groupId BİLGİN", groupListId);
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -32,9 +32,9 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
         try {
             await leaveGroup(groupListId).unwrap();
             SuccessAlert("Gruptan Çıktın") // Implement or replace with actual alert logic
-            closeModal(); // closeModal logic needs to be passed or managed outside the component
+            CloseModalButton(); // closeModal logic needs to be passed or managed outside the component
         } catch (error) {
-            // ErrorAlert("Bir hata meydana geldi") // Implement or replace with actual error handling
+            ErrorAlert("Bir hata meydana geldi", error); // Implement or replace with actual error handling
         }
     };
 

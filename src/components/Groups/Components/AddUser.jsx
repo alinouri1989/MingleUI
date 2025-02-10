@@ -5,73 +5,92 @@ import star from "../../../assets/svg/star.svg";
 import { BiSearchAlt } from "react-icons/bi";
 import { TiThList } from "react-icons/ti";
 import { AiFillInfoCircle } from "react-icons/ai";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-
-import Okan from "../../../assets/users/okan.png";
-import "../../Chats/Components/NewChat/style.scss";
+import { useState, useEffect } from "react";
 import { useDebounce } from '../../../hooks/useDebounce';
-import { useSearchUsersQuery } from '../../../store/Slices/searchUsers/searchUserApi';
+import { useSignalR } from '../../../contexts/SignalRContext';
 import PreLoader from '../../../shared/components/PreLoader/PreLoader';
 import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
+import "../../Chats/Components/NewChat/style.scss";
+import Okan from "../../../assets/users/okan.png";
 
 function AddUser({ closeUserModal, setFormData, formData }) {
-
-
     const [inputValue, setInputValue] = useState("");
     const debouncedSearchQuery = useDebounce(inputValue, 300);
-    const { data, error, isFetching } = useSearchUsersQuery(debouncedSearchQuery, {
-        skip: !debouncedSearchQuery,
-    });
+    const { notificationConnection } = useSignalR();
+    const [users, setUsers] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    const users = error ? [] : data ? Object.entries(data) : [];
+    useEffect(() => {
+        if (!notificationConnection || !debouncedSearchQuery) return;
+
+        setLoading(true);
+        setError(null);
+
+        const handleReceiveSearchUsers = (response) => {
+            if (!response || response.query !== debouncedSearchQuery) return;
+
+            const formattedUsers = Object.entries(response.data || {}).map(([id, user]) => ({
+                userId: id,
+                ...user,
+            }));
+
+            if (formattedUsers.length === 0) {
+                setError("Böyle bir kullanıcı bulunamadı.");
+            }
+
+            setUsers(formattedUsers);
+            setLoading(false);
+        };
+
+        notificationConnection.off("ReceiveSearchUsers");
+        notificationConnection.on("ReceiveSearchUsers", handleReceiveSearchUsers);
+        notificationConnection.invoke("SearchUsers", debouncedSearchQuery).catch((err) => {
+            setError(err.message);
+            setLoading(false);
+        });
+
+        return () => {
+            notificationConnection.off("ReceiveSearchUsers", handleReceiveSearchUsers);
+        };
+    }, [debouncedSearchQuery, notificationConnection]);
 
     const handleInputChange = (e) => {
         setInputValue(e.target.value);
     };
 
     const handleAddSelectedUser = (userId) => {
-        const selectedUser = users.find(([id, user]) => id === userId);
-
+        const selectedUser = users.find(user => user.userId === userId);
+        if (!selectedUser) return;
         if (!formData.participants || !formData.participants[userId]) {
-            // Kullanıcı daha önce eklenmemişse yeni olarak ekliyoruz
-            console.log(selectedUser);
-            setFormData((prevState) => ({
+            setFormData(prevState => ({
                 ...prevState,
                 participants: {
                     ...prevState.participants,
                     [userId]: {
-                        displayName: selectedUser[1].displayName,
-                        role: 1, // Yeni kullanıcıyı rolü 1 olarak ekliyoruz
-                        profilePhoto: selectedUser[1].profilePhoto,
+                        displayName: selectedUser.displayName,
+                        role: 1,
+                        profilePhoto: selectedUser.profilePhoto
                     }
                 }
             }));
-
             SuccessAlert("Kullanıcı Eklendi", 1000);
         } else {
-            // Kullanıcı zaten var
             const currentRole = formData.participants[userId].role;
-
             if (currentRole === 2) {
                 const updatedParticipants = { ...formData.participants };
-                updatedParticipants[userId] = {
-                    ...updatedParticipants[userId],
-                    role: 1
-                };
-
-                setFormData((prevState) => ({
+                updatedParticipants[userId] = { ...updatedParticipants[userId], role: 1 };
+                setFormData(prevState => ({
                     ...prevState,
                     participants: updatedParticipants
                 }));
-
                 SuccessAlert("Kullanıcı eklendi.", 1000);
             } else if (currentRole === 1 || currentRole === 0) {
-                // Eğer rolü zaten 1 ya da 0 ise, kullanıcı zaten ekli
                 ErrorAlert("Bu kullanıcı zaten eklendi.", 1500);
             }
         }
     };
+
 
     return (
         <div className='add-user-modal'>
@@ -93,33 +112,25 @@ function AddUser({ closeUserModal, setFormData, formData }) {
                             />
                         </div>
                     </div>
-
-                    {/* Yükleniyor durumu */}
-                    {isFetching && <PreLoader />}
-
-                    {/* Sonuç bulunamadığında hata mesajı */}
-                    {users.length === 0 && error && !isFetching && (
+                    {loading && <PreLoader />}
+                    {error && !loading && (
                         <div className="no-result-box active">
                             <AiFillInfoCircle className="icon" />
-                            <p>{error?.data?.message || "Böyle bir kullanıcı bulunamadı"}</p>
+                            <p>{error}</p>
                         </div>
                     )}
-
-                    {/* Kullanıcıları listeleme */}
-                    {!isFetching && users.length > 0 && (
+                    {!loading && users.length > 0 && (
                         <div className="user-list-box active">
                             <div className="result-number-box">
                                 <TiThList className="icon" />
                                 <p>{users.length} kullanıcı listeleniyor</p>
                             </div>
                             <div className="users-box">
-                                {users.map(([userId, user]) => {
-                                    // formData'dan participants içinde userId kontrolü yapıyoruz
-                                    const isAlreadyAdded = formData.participants && formData.participants[userId];
-                                    const userRole = isAlreadyAdded ? formData.participants[userId].role : null;
-
+                                {users.map(user => {
+                                    const isAlreadyAdded = formData.participants && formData.participants[user.userId];
+                                    const userRole = isAlreadyAdded ? formData.participants[user.userId].role : null;
                                     return (
-                                        <div key={userId} className="user-box" onClick={() => handleAddSelectedUser(userId)}>
+                                        <div key={user.userId} className="user-box" onClick={() => handleAddSelectedUser(user.userId)}>
                                             <img src={user.profilePhoto || Okan} alt={user.displayName} />
                                             <div className="user-info">
                                                 <p>{user.displayName}</p>
@@ -127,16 +138,12 @@ function AddUser({ closeUserModal, setFormData, formData }) {
                                             </div>
                                             <div className='add-user-box'>
                                                 {isAlreadyAdded ? (
-                                                    <>
-                                                        {userRole === 2 ? (
-                                                            null
-                                                        ) : (
-                                                            <>
-                                                                <HiCheckCircle className='icon' />
-                                                                <p>Eklendi</p>
-                                                            </>
-                                                        )}
-                                                    </>
+                                                    userRole === 2 ? null : (
+                                                        <>
+                                                            <HiCheckCircle className='icon' />
+                                                            <p>Eklendi</p>
+                                                        </>
+                                                    )
                                                 ) : (
                                                     <>
                                                         <HiUserAdd className='icon' />
@@ -148,7 +155,6 @@ function AddUser({ closeUserModal, setFormData, formData }) {
                                     );
                                 })}
                             </div>
-
                         </div>
                     )}
                 </div>
