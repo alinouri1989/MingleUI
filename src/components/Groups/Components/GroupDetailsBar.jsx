@@ -1,7 +1,7 @@
 import { IoIosArrowDroprightCircle } from "react-icons/io";
 import { IoMdSettings } from "react-icons/io";
 import { useModal } from '../../../contexts/ModalContext';
-import NewGroupModal from './NewAndSettingsGroup/NewGroupModal';
+import NewGroupModal from './NewAndSettingsGroup/NewAndSettingsGroupModal';
 import { useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 import { formatDateToTR } from '../../../helpers/dateHelper';

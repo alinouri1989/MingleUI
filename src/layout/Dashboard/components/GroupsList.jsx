@@ -1,6 +1,6 @@
 import { useState } from "react";
 import SearchInput from "./SearchInput";
-import NewGroupModal from "../../../components/Groups/Components/NewAndSettingsGroup/NewGroupModal";
+import NewGroupModal from "../../../components/Groups/Components/NewAndSettingsGroup/NewAndSettingsGroupModal";
 import { useModal } from "../../../contexts/ModalContext";
 import { useSelector } from "react-redux";
 import "./style.scss";

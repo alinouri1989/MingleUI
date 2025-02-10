@@ -1,42 +1,81 @@
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useModal } from "../../../../contexts/ModalContext.jsx";
-import { useNavigate } from 'react-router-dom';
-
-
+import { useNavigate } from "react-router-dom";
 import CloseButton from "../../../../contexts/components/CloseModalButton.jsx";
 import PreLoader from "../../../../shared/components/PreLoader/PreLoader.jsx";
 import star from "../../../../assets/svg/star.svg";
 import { BiSearchAlt } from "react-icons/bi";
 import { TiThList } from "react-icons/ti";
 import { AiFillInfoCircle } from "react-icons/ai";
-import { useSearchUsersQuery } from "../../../../store/Slices/searchUsers/searchUserApi.js";
 import { useDebounce } from "../../../../hooks/useDebounce.jsx";
 import { useSignalR } from "../../../../contexts/SignalRContext.jsx";
 import { getUserIdFromToken } from "../../../../helpers/getUserIdFromToken.js";
 import "./style.scss";
 
 function NewChatModal() {
-
   const navigate = useNavigate();
   const { closeModal } = useModal();
-  const { chatConnection, connectionStatus } = useSignalR();
+  const { notificationConnection, chatConnection, connectionStatus } = useSignalR();
   const [inputValue, setInputValue] = useState("");
   const debouncedSearchQuery = useDebounce(inputValue, 300);
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const { token } = useSelector(state => state.auth);
+  const { token } = useSelector((state) => state.auth);
   const userId = getUserIdFromToken(token);
 
-  const { data, error, isFetching } = useSearchUsersQuery(debouncedSearchQuery, {
-    skip: !debouncedSearchQuery,
-  });
+  useEffect(() => {
+    if (!notificationConnection || !debouncedSearchQuery) return;
 
-  const users = error ? [] : data ? Object.entries(data) : [];
+    setLoading(true);
+    setError(null);
+
+    const handleReceiveSearchUsers = (response) => {
+      if (!response || response.query !== debouncedSearchQuery) return;
+
+      const formattedUsers = Object.entries(response.data || {}).map(([id, user]) => ({
+        userId: id,
+        ...user,
+      }));
+
+      if (formattedUsers.length === 0) {
+        setError("Böyle bir kullanıcı bulunamadı.");
+      }
+
+      setUsers(formattedUsers);
+      setLoading(false);
+    };
+
+    const handleError = (err) => {
+      setError(err.message);
+      setUsers([]);
+      setLoading(false);
+    };
+
+    notificationConnection.off("ReceiveSearchUsers");
+    notificationConnection.off("Error");
+
+    notificationConnection.on("ReceiveSearchUsers", handleReceiveSearchUsers);
+    notificationConnection.on("Error", handleError);
+
+    notificationConnection
+      .invoke("SearchUsers", debouncedSearchQuery)
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
+
+    return () => {
+      notificationConnection.off("ReceiveSearchUsers", handleReceiveSearchUsers);
+      notificationConnection.off("Error", handleError);
+    };
+  }, [debouncedSearchQuery, notificationConnection]);
 
   useEffect(() => {
     const handleReceiveCreateChat = (response) => {
       const individualData = response?.Individual;
-
       if (individualData) {
         const chatId = Object.keys(individualData)[0];
         if (chatId) {
@@ -72,16 +111,10 @@ function NewChatModal() {
     }
 
     try {
-      const chatType = "Individual";
-      await chatConnection.invoke("CreateChat", chatType, userId);
-      console.log("CreateChat talebi gönderildi.");
+      await chatConnection.invoke("CreateChat", "Individual", userId);
     } catch (err) {
       console.error("CreateChat isteği sırasında hata:", err);
     }
-  };
-
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value);
   };
 
   return (
@@ -98,47 +131,43 @@ function NewChatModal() {
             type="text"
             placeholder="Kullanıcı adı veya email ile aratın..."
             value={inputValue}
-            onChange={handleInputChange}
+            onChange={(e) => setInputValue(e.target.value)}
           />
         </div>
       </div>
 
-      {/* Yükleme Durumu */}
-      {isFetching && <PreLoader />}
+      {loading && <PreLoader />}
 
-      {users.length === 0 && error && !isFetching && (
+      {error && !loading && (
         <div className="no-result-box active">
           <AiFillInfoCircle className="icon" />
-          <p>{error?.data?.message || "Böyle bir kullanıcı bulunamadı"}</p>
+          <p>{error}</p>
         </div>
       )}
 
-      {/* Kullanıcı Listesi */}
-      {!isFetching && users.length > 0 && (
+      {!loading && users.length > 0 && (
         <div className="user-list-box active">
           <div className="result-number-box">
             <TiThList className="icon" />
             <p>{users.length} kullanıcı listeleniyor</p>
           </div>
 
-          {users &&
-            <div className="users-box">
-              {users.map(([userId, user]) => (
-                <div
-                  key={userId}
-                  className="user-box"
-                  onClick={() => handleGoToChat(userId)}
-                  style={{ cursor: "pointer" }}
-                >
-                  <img src={user.profilePhoto} alt={user.displayName} />
-                  <div className="user-info">
-                    <p>{user.displayName}</p>
-                    <span>{user.email}</span>
-                  </div>
+          <div className="users-box">
+            {users.map((user) => (
+              <div
+                key={user.userId}
+                className="user-box"
+                onClick={() => handleGoToChat(user.userId)}
+                style={{ cursor: "pointer" }}
+              >
+                <img src={user.profilePhoto} alt={user.displayName} />
+                <div className="user-info">
+                  <p>{user.displayName}</p>
+                  <span>{user.email}</span>
                 </div>
-              ))}
-            </div>
-          }
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
