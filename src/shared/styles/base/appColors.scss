@@ -1,4 +1,5 @@
 :root {
+  --generalBackgroundColor: #ffffff;
   --blue: #585CE1;
   --hoverBlue: #4a4ed8;
   --smooth-blue: #CFD5F2;
@@ -22,22 +23,20 @@
 }
 
 [data-theme='dark'] {
-  --blue: #717ee4;
-  --hoverBlue: #2F469C;
-  --smooth-blue: #1b1b1b;
-  --smooth-blue-hover: #2636ac;
-  --smooth-light-blue: #1f2eb5;
+  --generalBackgroundColor: #1f1f1f;
 
-  --smooth-red: #B04141;
+  --smooth-blue: #161616;
+  --smooth-blue-hover: #222430;
+  --smooth-light-blue: #262832;
 
-  --text-black: #E0E0E0;
+  --text-black: #f1f1f1;
   --text-dark-gray: #A5A5A5;
   --text-input-gray: #B0B0B0;
   --text-white: rgb(33, 33, 33);
 
   --smooth-white-color: #1A1A1A;
-  --smooth-border-color: #3E3E3E;
-  --user-message-box-color: #2C2C2C;
+  --smooth-border-color: #2d2d2d;
+  --user-message-box-color: #232323;
   --user-message-text-color: #D6D6D6;
 
   --overlay-background: #1f1f1f7f;

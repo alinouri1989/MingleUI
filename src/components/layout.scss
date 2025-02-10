@@ -1,13 +1,5 @@
 @use "../shared/styles/main.scss" as *;
 
-.deneme-stream {
-    position: fixed;
-    top: 0;
-    left: 0;
-    background-color: gray;
-    padding: 50px;
-    z-index: 99999999999999;
-}
 
 .chat-general-box,
 .group-general-box,
@@ -76,7 +68,7 @@
 
                 .user-name,
                 .grup-name {
-                    columns: var(--text-black);
+                    color: var(--text-black);
                     font-weight: 800;
                     font-size: 15px;
 
@@ -109,7 +101,7 @@
                     border-radius: 15px;
 
                     &:hover {
-                        background-color: var(--smooth-blue);
+                        background-color: var(--smooth-blue-hover);
                     }
                 }
             }
@@ -221,7 +213,7 @@
 
         .status {
             width: max-content;
-            background-color: rgb(241, 241, 241);
+            background-color: var(--user-message-box-color);
             padding: 5px 10px;
             border-radius: 30px;
             margin-top: 15px;
@@ -251,6 +243,7 @@
             p {
                 font-weight: 700;
                 font-size: 15px;
+                color: var(--text-black);
             }
 
             span {
@@ -302,7 +295,7 @@
                     @include flex-center(row, center, center);
                     width: 60px;
                     height: 60px;
-                    background-color: var(--smooth-blue);
+                    background-color: var(--smooth-blue-hover);
                     color: var(--blue);
                     font-size: 28px;
                     border-radius: 50%;

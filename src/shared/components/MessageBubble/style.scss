@@ -39,7 +39,7 @@
                 @include flex-center(column, center, center);
                 order: 2;
                 background: var(--blue);
-                color: var(--text-white);
+                color: white;
             }
 
             .message-hour {
