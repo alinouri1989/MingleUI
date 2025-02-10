@@ -26,6 +26,14 @@ const Theme = () => {
     try {
       await changeTheme(themeReverseMapping[newTheme]);
 
+      if (newTheme === "Dark") {
+        await changeChatBackground("color9");
+      }
+
+      if (newTheme === "Light" || newTheme === "DefaultSystemMode") {
+        await changeChatBackground("color1");
+      }
+
       if (newTheme === "DefaultSystemMode" || newTheme === "Light") {
         applyTheme("Light");
       } else if (newTheme === "Dark") {
@@ -39,8 +47,12 @@ const Theme = () => {
   };
 
 
+
   const handleSelectedChatBackgroundColor = async (colorId) => {
     try {
+      if (user.userSettings.chatBackground === colorId) {
+        return;
+      }
       await changeChatBackground(colorId);
       SuccessAlert("Duvar kağıdı değiştirildi");
     } catch (error) {
@@ -65,19 +77,26 @@ const Theme = () => {
       <div className="wallpaper">
         <label>Sohbet Duvar Kağıdı</label>
         <div className="grid">
-          {ChatBackgroundColorsThemes.map((gradient) => (
+          {user?.userSettings?.theme === "Dark" ? (
             <div
-              key={gradient.id}
-              className={`gradient-box ${user?.userSettings?.chatBackground === gradient.id ? "selected" : ""
-                }`}
-              onClick={() => handleSelectedChatBackgroundColor(gradient.id)}
-              style={{
-                background: gradient.backgroundImage,
-              }}
+              className={`gradient-box selected`}
+              style={{ backgroundColor: "#161616" }}
             ></div>
-          ))}
+          ) : (
+            ChatBackgroundColorsThemes.map((gradient) => (
+              <div
+                key={gradient.id}
+                className={`gradient-box ${user?.userSettings?.chatBackground === gradient.id ? "selected" : ""}`}
+                onClick={() => handleSelectedChatBackgroundColor(gradient.id)}
+                style={{
+                  background: gradient.backgroundImage,
+                }}
+              ></div>
+            ))
+          )}
         </div>
       </div>
+
       {isLoading && <PreLoader />}
     </div>
   );

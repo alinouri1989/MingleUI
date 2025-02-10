@@ -16,14 +16,14 @@
 
   --smooth-white-color: #F9F9F9;
   --smooth-border-color: #EAEAEA;
-  --user-message-box-color: #F0F0F0;
+  --user-message-box-color: #f9f9f9c5;
   --user-message-text-color: #595959;
 
   --overlay-background: #4545453f;
 }
 
 [data-theme='dark'] {
-  --generalBackgroundColor: #1f1f1f;
+  --generalBackgroundColor: #141414;
 
   --smooth-blue: #161616;
   --smooth-blue-hover: #222430;
@@ -34,9 +34,9 @@
   --text-input-gray: #B0B0B0;
   --text-white: rgb(33, 33, 33);
 
-  --smooth-white-color: #1A1A1A;
-  --smooth-border-color: #2d2d2d;
-  --user-message-box-color: #232323;
+  --smooth-white-color: #161616;
+  --smooth-border-color: #1b1b1b;
+  --user-message-box-color: #1c1c1c;
   --user-message-text-color: #D6D6D6;
 
   --overlay-background: #1f1f1f7f;

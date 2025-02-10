@@ -20,10 +20,12 @@ import { convertFileToBase64 } from "../../../store/helpers/convertFileToBase64"
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
 import PreLoader from "../PreLoader/PreLoader";
 import { AIModal } from "../AIModal/AIModal";
+import { useSelector } from "react-redux";
 
 function MessageInputBar({ chatId }) {
     const location = useLocation();
     const { chatConnection } = useSignalR();
+    const { user } = useSelector(state => state.auth);
     const [isLoading, setIsLoading] = useState(false);
 
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -294,7 +296,7 @@ function MessageInputBar({ chatId }) {
 
                     {showEmojiPicker && (
                         <div ref={emojiPickerRef} className="emoji-picker">
-                            <EmojiPicker onEmojiClick={handleEmojiClick} />
+                            <EmojiPicker theme={user?.userSettings?.theme === "Dark" ? "dark" : "light"} onEmojiClick={handleEmojiClick} />
                         </div>
                     )}
                     <button onClick={handleSendMessage} className="send-message-button">

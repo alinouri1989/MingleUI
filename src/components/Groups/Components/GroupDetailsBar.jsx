@@ -90,7 +90,7 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }
                                                             <p className={`user-status ${isOnline ? "online" : "offline"}`}></p>
                                                         </div>
                                                         <div className="user-info">
-                                                            <p>{member.displayName}</p>
+                                                            <p className="user-display-name">{member.displayName}</p>
                                                             <span className={member.role === 0 ? "admin" : ""}>
                                                                 {member.role === 0 ? "Yönetici" : "Üye"}
                                                             </span>

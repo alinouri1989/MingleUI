@@ -25,7 +25,7 @@
                 width: 31px;
                 height: 31px;
                 font-size: 20px;
-                background-color: #E7E7E7;
+                background-color: var(--smooth-border-color);
                 border-radius: 50%;
                 color: var(--text-dark-gray);
                 transition: all 0.3s;
@@ -39,7 +39,7 @@
 
             .file-menu {
                 @include flex-center(column, center, center);
-                background-color: rgba(255, 255, 255, 0.945);
+                background-color: var(--user-message-box-color);
                 backdrop-filter: blur(10px);
                 padding: 8px 7px;
                 gap: 15px;
@@ -47,7 +47,6 @@
                 position: absolute;
                 margin-bottom: 276px;
                 border-radius: 12px;
-                box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
                 /* Animasyonun uygulanması */
                 animation: slide-up 0.3s ease-out forwards;
 
