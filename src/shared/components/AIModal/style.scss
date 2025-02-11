@@ -1,9 +1,9 @@
 @use "../../../shared/styles/main.scss" as *;
 
 .ai-modal {
-    background: white;
+    background: var(--generalBackgroundColor);
     border-radius: 26px;
-    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    box-shadow: rgba(94, 94, 94, 0.078) 0px 7px 29px 0px;
     text-align: center;
     min-width: 250px;
     padding: 10px;
@@ -11,7 +11,7 @@
     height: 450px;
     font-family: Arial, sans-serif;
     border: 4px solid;
-    border-color: #585de151;
+    border-color: var(--smooth-blue-hover);
 
     .intro-box {
         height: 100%;
@@ -70,7 +70,7 @@
 
             .text-generate-btn,
             .image-generate-btn {
-                padding: 8px 12px;
+                padding: 8px 13px;
                 gap: 5px;
                 border-radius: 8px;
                 background-color: var(--smooth-light-blue);
@@ -83,7 +83,7 @@
                 }
 
                 &.active {
-                    border: 2px solid var(--smooth-blue);
+                    border: 3px solid #585de154;
                 }
             }
 
@@ -130,6 +130,7 @@
                 p {
                     text-align: justify;
                     font-size: 13px;
+                    color: var(--text-black);
                 }
             }
 
@@ -217,7 +218,7 @@
 
                 .send-message-btn {
                     background-color: var(--blue);
-                    color: var(--text-white);
+                    color: white;
                     width: 150px;
                     height: 85%;
                     border-radius: 30px;

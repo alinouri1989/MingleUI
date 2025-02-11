@@ -12,6 +12,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import CallCardCallStatus from "../../../shared/components/CallStatus/CallCardCallStatus";
 import { useSignalR } from "../../../contexts/SignalRContext";
 import { SuccessAlert, ErrorAlert } from "../../../helpers/customAlert";
+import { useSelector } from "react-redux";
 
 
 function UserCallCard({ callId, image, status, name, callType, callStatus, createdDate, isOutgoingCall }) {
@@ -19,6 +20,8 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
   const { callConnection } = useSignalR();
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const { user } = useSelector(state => state.auth);
+  const isDarkMode = user?.userSettings?.theme == "Dark";
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -72,9 +75,13 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
           aria-expanded={open ? "true" : undefined}
           aria-haspopup="true"
           onClick={handleClick}
+          sx={{
+            color: isDarkMode ? "#616161" : "#828A96",
+          }}
         >
           <MoreVertIcon />
         </IconButton>
+
         <Menu
           id="long-menu"
           anchorEl={anchorEl}
@@ -89,8 +96,10 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
                 maxHeight: 48 * 2,
                 width: "16ch",
                 borderRadius: "8px",
-                border: "4px solid #CFD5F2",
+                border: `4px solid ${isDarkMode ? "#222430" : "#CFD5F2"}`,
                 fontWeight: "bold",
+                backgroundColor: isDarkMode ? "#18191A" : "#FFFFFF",
+                color: isDarkMode ? "#E4E6EB" : "#000000",
                 boxShadow: "none"
               },
             },

@@ -158,6 +158,10 @@
                 font-weight: 700;
             }
 
+            .user-display-name {
+                color: var(--text-black);
+            }
+
             .group-admin img,
             .other-users img {
                 width: 60px;
@@ -190,6 +194,7 @@
                     color: var(--text-dark-gray);
                     font-size: 14px;
                     margin-left: -3px;
+                    background-color: var(--generalBackgroundColor);
                 }
 
             }
@@ -210,9 +215,9 @@
                 gap: 7px;
                 color: var(--smooth-red);
                 background-color: transparent;
-                padding:4px;
+                padding: 4px;
                 border-radius: 7px;
-                background-color: rgb(251, 229, 229);
+                background-color: var(--smooth-light-red);
 
                 .icon {
                     font-size: 24px;
@@ -251,7 +256,7 @@
 
                 &:last-child {
                     background-color: var(--blue);
-                    color: var(--text-white);
+                    color: white;
 
                 }
 
@@ -291,8 +296,8 @@
             padding: 20px;
             position: relative;
             border-radius: 17px;
-            border: 4px solid var(--Light-Soft-Mingle-Blue, #E8EBFD);
-            background: var(--White, #FFF);
+            border: 4px solid var(--smooth-blue-hover);
+            background-color: var(--smooth-white-color);
             max-height: 600px;
             z-index: 55500;
 
@@ -308,7 +313,7 @@
             .title-and-input-bar {
                 .title-box {
                     @include flex-center(row, flex-start, center);
-                    border-bottom: 2px solid var(--smooth-light-blue);
+                    border-bottom: 2px solid var(--smooth-blue-hover);
                     gap: 10px;
                     padding-bottom: 15px;
 

@@ -1,12 +1,15 @@
 import LaptopImage from "../../assets/images/Home/MingleLaptop.png";
+import LaptopImageDark from "../../assets/images/Home/MingleLaptopDark.png";
+import { useSelector } from "react-redux";
 import "./style.scss";
 
 
 function Home() {
+  const { user } = useSelector(state => state.auth);
   return (
     <div className='home-general-box'>
       <div className="laptop-banner-box">
-        <img src={LaptopImage} alt="Mingle" />
+        <img src={user?.userSettings?.theme == "Dark" ? LaptopImageDark : LaptopImage} alt="Mingle" />
       </div>
       <div className="informations-box">
         <h2>Windows için Mingle’ı indirin</h2>

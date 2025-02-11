@@ -14,9 +14,8 @@ function Archives() {
   return (
     <>
       <div className='archive-general-box'>
-        {id && <WelcomeScreen text={"Kişisel arşivleriniz uçtan uca şifrelidir"} />}
+        {!id && <WelcomeScreen text={"Kişisel arşivleriniz uçtan uca şifrelidir"} />}
       </div>
-
     </>
 
   )

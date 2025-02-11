@@ -24,7 +24,6 @@ const chatSlice = createSlice({
             // Eğer chatId zaten mevcutsa, yeni sohbeti eklemeyin
             const chatExists = state.Individual.some(chat => chat.id === chatId);
             if (chatExists) {
-                console.log("Bu sohbet zaten mevcut:", chatId);
                 return;
             }
 
@@ -40,24 +39,20 @@ const chatSlice = createSlice({
                 })),
             };
 
-            // Yeni sohbeti Individual listesine ekle
+
             state.Individual.push(newChat);
 
-            // Eklenen sohbeti loglamak için
-            console.log("Yeni sohbet eklendi:", newChat);
         },
 
         addNewGroupChat: (state, action) => {
             const { chatId, chatData } = action.payload;
 
             if (!chatData || !chatData.participants) {
-                console.error("Geçersiz chatData yapısı:", chatData);
                 return;
             }
 
             const groupExists = state.Group.some(groupChat => groupChat.id === chatId);
             if (groupExists) {
-                console.log("Bu grup sohbeti zaten mevcut:", chatId);
                 return;
             }
 
@@ -107,7 +102,6 @@ const chatSlice = createSlice({
                 state.Individual.push(newChat);
 
                 // Yeni eklenen sohbeti kontrol etmek için
-                console.log("Yeni sohbet eklendi:", JSON.parse(JSON.stringify(newChat)));
             }
         },
 
@@ -160,7 +154,6 @@ const chatSlice = createSlice({
             }
         },
         removeArchive: (state, action) => {
-            console.log("çalıştımı removearchive", action.payload);
 
             const individual = action.payload.Individual; // Gelen verideki Individual objesini al
             for (let chatId in individual) {  // Individual içindeki her bir chatId'yi kontrol et

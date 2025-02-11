@@ -7,7 +7,7 @@ import { PiPhoneFill } from "react-icons/pi";
 
 const CallCardCallStatus = ({ callStatus, callType, isOutgoingCall }) => {
     let icon = null;
-    let color = "#595959";
+    let color = "#828A96";
     let text = "";
 
     switch (callStatus) {

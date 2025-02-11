@@ -22,6 +22,8 @@ import LastMessage from "../../../shared/components/LastMessage/LastMessage";
 function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageDate, lastMessageType, lastMessage, lastDate, unReadMessage, isArchive }) {
 
   const [anchorEl, setAnchorEl] = useState(null);
+  const { user } = useSelector(state => state.auth);
+  const isDarkMode = user.userSettings.theme == "Dark";
   const { chatConnection } = useSignalR();
   const open = Boolean(anchorEl);
   const dispatch = useDispatch();
@@ -111,6 +113,9 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
           aria-expanded={open ? "true" : undefined}
           aria-haspopup="true"
           onClick={handleClick}
+          sx={{
+            color: isDarkMode ? "#616161" : "#828A96",
+          }}
         >
           <MoreVertIcon />
         </IconButton>
@@ -128,8 +133,10 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
                 maxHeight: 48 * 2,
                 width: "16ch",
                 borderRadius: "8px",
-                border: "4px solid #CFD5F2",
+                border: `4px solid ${isDarkMode ? "#222430" : "#CFD5F2"}`,
                 fontWeight: "bold",
+                backgroundColor: isDarkMode ? "#18191A" : "#FFFFFF",
+                color: isDarkMode ? "#E4E6EB" : "#000000",
                 boxShadow: "none"
               },
             },

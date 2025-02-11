@@ -14,7 +14,7 @@ import "./style.scss";
 
 
 function IncomingCall({ callType, callerProfile, callId }) {
-    const { callConnection, initializePeerConnection, peerConnection, handleAcceptCall } = useSignalR();
+    const { callConnection, handleAcceptCall } = useSignalR();
     const { isCallStarted } = useSelector(state => state.call);
     const dispatch = useDispatch();
 

@@ -8,24 +8,27 @@
 
   --mingle-red: #f94c4c;
   --smooth-red: #EB6262;
+  --smooth-light-red: #fbe5e5;
 
-  --text-black: #202020;
+  --text-black: #303030;
   --text-dark-gray: #4E4E4E;
   --text-input-gray: #828A96;
   --text-white: rgb(252, 252, 252);
 
   --smooth-white-color: #F9F9F9;
   --smooth-border-color: #EAEAEA;
-  --user-message-box-color: #f9f9f9c5;
-  --user-message-text-color: #595959;
+  --user-message-box-color: #fcfcfcc0;
 
+  --cardHover: #efefef;
+  --user-message-text-color: #595959;
   --overlay-background: #4545453f;
 }
 
 [data-theme='dark'] {
   --generalBackgroundColor: #141414;
+  --overlay-background: #1f1f1f7f;
 
-  --smooth-blue: #161616;
+  --smooth-blue: #181818;
   --smooth-blue-hover: #222430;
   --smooth-light-blue: #262832;
 
@@ -37,7 +40,7 @@
   --smooth-white-color: #161616;
   --smooth-border-color: #1b1b1b;
   --user-message-box-color: #1c1c1c;
+  --cardHover: #1c1c1c;
   --user-message-text-color: #D6D6D6;
-
-  --overlay-background: #1f1f1f7f;
+  --smooth-light-red: #1b1b1b;
 }

@@ -31,10 +31,13 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
 
     const { Group } = useSelector((state) => state.chat);
     const { groupList } = useSelector((state) => state.groupList);
+    const { user } = useSelector(state => state.auth);
     const [anchorEl, setAnchorEl] = useState(null);
     const { chatConnection } = useSignalR();
     const [isShowImage, setIsShowImage] = useState(false);
     const { showModal, closeModal } = useModal();
+
+    const isDarkMode = user?.userSettings?.theme == "Dark";
 
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -308,9 +311,13 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
                             aria-expanded={open ? "true" : undefined}
                             aria-haspopup="true"
                             onClick={handleClick}
+                            sx={{
+                                color: isDarkMode ? "#616161" : "#707070",
+                            }}
                         >
                             <MoreHorizIcon />
                         </IconButton>
+
                         <Menu
                             id="long-menu"
                             anchorEl={anchorEl}
@@ -322,11 +329,12 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
                             slotProps={{
                                 paper: {
                                     style: {
-
                                         width: "18ch",
                                         borderRadius: "8px",
-                                        border: "4px solid #CFD5F2",
+                                        border: `4px solid ${isDarkMode ? "#222430" : "#CFD5F2"}`,
                                         fontWeight: "bold",
+                                        backgroundColor: isDarkMode ? "#18191A" : "#FFFFFF",
+                                        color: isDarkMode ? "#E4E6EB" : "#000000",
                                         boxShadow: "none",
                                     },
                                 },
@@ -409,13 +417,16 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
                 )}
             </div>
 
-            {isSender && (
-                <div className='status-box' style={{ color: statusColor }}>
-                    {statusIcon}
-                </div>
-            )}
+            {
+                isSender && (
+                    <div className='status-box' style={{ color: statusColor }}>
+                        {statusIcon}
+                    </div>
+                )
+            }
 
-            {isShowImage &&
+            {
+                isShowImage &&
                 <div className="full-size-image-box">
                     <img src={content} alt="selected-image" />
                     <button onClick={() => setIsShowImage(false)}>
@@ -423,7 +434,7 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
                     </button>
                 </div>
             }
-        </div>
+        </div >
     );
 }
 

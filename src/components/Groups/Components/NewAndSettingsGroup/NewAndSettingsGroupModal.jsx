@@ -35,8 +35,9 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { user } = useSelector(state => state.auth);
     const { chatConnection } = useSignalR();
+    const { user } = useSelector(state => state.auth);
+    const isDarkMode = user?.userSettings?.theme == "Dark";
 
     const [createGroup, { isLoading: createLoading }] = useCreateGroupMutation();
     const [editGroup, { isLoading: editLoading }] = useEditGroupMutation();
@@ -340,9 +341,13 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                                 aria-expanded={open ? "true" : undefined}
                                 aria-haspopup="true"
                                 onClick={handleClick}
+                                sx={{
+                                    color: isDarkMode ? "#B0B0B0" : "inherit",
+                                }}
                             >
                                 <TbEdit />
                             </IconButton>
+
                             <Menu
                                 className="menu-box"
                                 id="long-menu"
@@ -358,8 +363,10 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                                             maxHeight: 48 * 3,
                                             width: "18ch",
                                             borderRadius: "8px",
-                                            border: "4px solid #CFD5F2",
+                                            border: `4px solid ${isDarkMode ? "#222430" : "#CFD5F2"}`,
                                             fontWeight: "bold",
+                                            backgroundColor: isDarkMode ? "#18191A" : "#FFFFFF",
+                                            color: isDarkMode ? "red" : "#000000",
                                             boxShadow: "none",
                                             marginLeft: "36px",
                                             marginTop: "-27px"
@@ -367,6 +374,7 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                                     },
                                 }}
                             >
+
 
                                 <MenuItem
                                     onClick={handleShowGroupImage}
@@ -466,7 +474,7 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                         <div className="group-admin">
                             <img src={user.profilePhoto} alt="Admin Profile Image" />
                             <div className="admin-info">
-                                <p>{user.displayName}</p>
+                                <p className="user-display-name">{user.displayName}</p>
                                 <span>Yönetici</span>
                             </div>
                         </div>
@@ -500,7 +508,7 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                                             <div className="user-info">
                                                 <img src={user.profilePhoto} alt={user.displayName} />
                                                 <div className="username-and-role-box">
-                                                    <p>{user.displayName}</p>
+                                                    <p className="user-display-name">{user.displayName}</p>
                                                     {isCurrentUser ? (
                                                         <p style={{ color: "#585CE1", fontSize: "14px" }}>Yönetici</p>
                                                     ) : (

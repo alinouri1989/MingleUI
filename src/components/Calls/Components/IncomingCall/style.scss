@@ -7,7 +7,7 @@
     z-index: 999;
     bottom: 30px;
     right: 0px;
-    background: white;
+    background: var(--generalBackgroundColor);
     border: 1px solid #ccc;
     border-radius: 10px;
     padding: 20px;
@@ -39,6 +39,7 @@
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 line-height: 20px;
+                color: var(--text-black);
             }
 
             span {
@@ -62,7 +63,7 @@
 
                 &:first-child {
                     background-color: var(--blue);
-                    color: var(--text-white);
+                    color: white;
                     border: 4px solid rgba(142, 161, 255, 0.622);
 
                     animation: scaleAnimation 0.5s infinite alternate;
@@ -75,7 +76,7 @@
 
                 &:last-child {
                     background-color: var(--smooth-red);
-                    color: var(--text-white);
+                    color: white;
                 }
             }
         }

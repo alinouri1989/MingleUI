@@ -26,6 +26,7 @@ const CallStatus = ({ status, type, userId, participants, callDuration, createdD
         case 3:
             callStatusText = "İptal Edildi";
             icon = type === 0 ? <PiPhoneFill className="icon" /> : <HiMiniVideoCamera className="icon" />;
+            callStatusColor = "#EB6262";
             break;
         case 4:
             if (isOutgoingCall) {

@@ -22,20 +22,41 @@ const DataLoader = ({ children }) => {
                         authApi.endpoints.getUserProfile.initiate()
                     ).unwrap();
 
+                    // Kullanıcı temasını enum'dan string'e çevir
+                    const themeEnum = userProfile?.userSettings?.theme;
+                    let theme = "DefaultSystemMode"; // Varsayılan değer
+
+                    // Enum değerine göre tema ataması
+                    if (themeEnum === 1) {
+                        theme = "Light";
+                    } else if (themeEnum === 2) {
+                        theme = "Dark";
+                    }
+
+                    // userProfile'ı güncelleme
+                    const updatedUserProfile = {
+                        ...userProfile,
+                        userSettings: {
+                            ...userProfile.userSettings,
+                            theme, // Yeni theme değeri burada
+                        }
+                    };
+
+                    // Dispatch işlemi
                     dispatch(
                         setUser({
-                            user: userProfile,
+                            user: updatedUserProfile,
                             token: jwt,
                         })
                     );
 
-                    // Kullanıcı teması ayarla
-                    const theme = userProfile?.userSettings?.theme || "DefaultSystemMode";
+                    // Temayı uygulama
                     if (theme === "DefaultSystemMode" || theme === "Light") {
                         applyTheme("Light");
                     } else if (theme === "Dark") {
                         applyTheme("Dark");
                     }
+
                 } catch (error) {
                     console.error("Failed to fetch user profile:", error);
                 }
@@ -48,6 +69,7 @@ const DataLoader = ({ children }) => {
 
         initializeAuth();
     }, [dispatch]);
+
 
     if (isLoading) {
         return <MinglePreLoader />;

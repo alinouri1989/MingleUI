@@ -27,6 +27,7 @@ import { biographySchema, displayNameSchema, phoneNumberSchema } from "../../../
 function Account() {
 
   const { user } = useSelector(state => state.auth);
+  const isDarkMode = user?.userSettings?.theme == "Dark";
 
   const [selectedImage, setSelectedImage] = useState(user?.profilePhoto || "");
   const [isEditingUsername, setIsEditingUsername] = useState(false);
@@ -194,11 +195,13 @@ function Account() {
                 maxHeight: 48 * 3,
                 width: "18ch",
                 borderRadius: "8px",
-                border: "4px solid #CFD5F2",
+                border: `4px solid ${isDarkMode ? "#222430" : "#CFD5F2"}`,
                 fontWeight: "bold",
+                backgroundColor: isDarkMode ? "#18191A" : "#FFFFFF",
+                color: isDarkMode ? "#E4E6EB" : "#000000",
                 boxShadow: "none",
                 marginLeft: "36px",
-                marginTop: "-27px"
+                marginTop: "-27px",
               },
             },
           }}

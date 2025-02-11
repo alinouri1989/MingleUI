@@ -172,10 +172,18 @@
                     }
                 }
 
+                .copyright-box,
+                .version-info {
+                    p {
+                        color: var(--text-dark-gray);
+                    }
+                }
+
                 .copyright-box {
                     p {
                         font-size: 15px;
                         margin: 10px 0px;
+
                     }
                 }
             }
@@ -214,6 +222,7 @@
                         font-weight: bold;
                         display: block;
                         margin: 15px 0px 20px 0px;
+                        color: var(--text-black);
                     }
 
                     .grid {
@@ -261,11 +270,13 @@
                 padding-right: 15px;
                 @include flex-center(column, flex-start, flex-start);
                 gap: 18px;
-
+                color: var(--text-black);
 
                 h3 {
                     margin-bottom: 0;
                 }
+
+
 
                 .edit-btn {
                     background-color: var(--text-white);
@@ -339,12 +350,14 @@
                     padding-bottom: 10px;
                     border-bottom: 1px solid var(--smooth-light-blue);
 
+
                     p {
                         font-size: 16px;
                         width: 270px;
                         white-space: nowrap;
                         overflow: hidden;
                         text-overflow: ellipsis;
+
                     }
                 }
 
@@ -355,6 +368,7 @@
                         p {
                             margin: 3px 0px;
                             font-size: 16px;
+
                         }
 
                         span,
@@ -478,7 +492,7 @@
 
                     &:last-child {
                         background-color: var(--blue);
-                        color: var(--text-white);
+                        color: white;
 
                         &:hover {
                             background-color: var(--hoverBlue);
