@@ -8,14 +8,16 @@ import GroupChatCard from "./GroupChatCard";
 import { lastMessageDateHelper } from "../../../helpers/dateHelper";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
+import { motion } from 'framer-motion';
+import { opacityEffect } from "../../../shared/animations/animations";
 
 function GroupsList() {
   const { token } = useSelector((state) => state.auth);
   const userId = getUserIdFromToken(token);
   const { showModal, closeModal } = useModal();
-  const { groupList } = useSelector((state) => state.groupList); // Fetch groupList from Redux store
-  const { Group } = useSelector((state) => state.chat); // Fetch chat data from Redux store
-  const location = window.location; // Access the current location.pathname
+  const { groupList } = useSelector((state) => state.groupList);
+  const { Group } = useSelector((state) => state.chat);
+  const location = window.location;
 
   // Add useState for search functionality
   const [searchGroup, setSearchGroup] = useState("");
@@ -40,7 +42,12 @@ function GroupsList() {
       />
       <button onClick={handleNewGroup} className="create-buttons">Yeni Grup Oluştur</button>
       <div className="list-flex">
-        <div className="user-list">
+        <motion.div
+          className="user-list"
+          variants={opacityEffect(0.8)}  // Opacity animasyonunu container için uyguladık
+          initial="initial"
+          animate="animate"
+        >
           {filteredGroupList.length > 0 ? (
             filteredGroupList.map(([groupId, group]) => {
               const chatGroup = Group.find((groupChat) =>
@@ -64,31 +71,40 @@ function GroupsList() {
 
               const currentGroupIdInPath = location.pathname.includes(groupId);
 
-              const unReadMessage = !currentGroupIdInPath && chatGroup?.messages.filter((message) => {
-                return (
-                  !Object.keys(message.status.sent).includes(userId) &&
-                  !message.status.read?.[userId]
-                );
-              }).length;
+              const unReadMessage =
+                !currentGroupIdInPath &&
+                chatGroup?.messages.filter((message) => {
+                  return (
+                    !Object.keys(message.status.sent).includes(userId) &&
+                    !message.status.read?.[userId]
+                  );
+                }).length;
 
               return (
-                <GroupChatCard
+                <motion.div
                   key={groupId}
-                  groupId={chatGroup?.id}
-                  groupName={group.name}
-                  groupPhotoUrl={group.photoUrl}
-                  lastMessage={lastMessage}
-                  lastMessageType={lastMessageType}
-                  lastMessageDate={lastMessageDate}
-                  unReadMessage={unReadMessage}
-                  groupListId={groupId}
-                />
+                  variants={opacityEffect(0.8)}  // Opacity animasyonu her item için uygulanacak
+                  style={{ marginBottom: "10px" }}
+                >
+                  <GroupChatCard
+                    key={groupId}
+                    groupId={chatGroup?.id}
+                    groupName={group.name}
+                    groupPhotoUrl={group.photoUrl}
+                    lastMessage={lastMessage}
+                    lastMessageType={lastMessageType}
+                    lastMessageDate={lastMessageDate}
+                    unReadMessage={unReadMessage}
+                    groupListId={groupId}
+                  />
+                </motion.div>
               );
             })
           ) : (
             <NoActiveData text={searchGroup ? "Eşleşen grup bulunamadı" : "Aktif grup bulunmamaktadır."} />
           )}
-        </div>
+        </motion.div>
+
       </div>
     </div>
   );

@@ -10,17 +10,19 @@ import { RiInformation2Fill } from "react-icons/ri";
 import Account from "./Components/Account.jsx"
 import Theme from "./Components/Theme.jsx"
 import Help from "./Components/Help.jsx"
-
+import Security from "./Components/Security.jsx";
+import { motion } from "framer-motion";  // motion import ediyoruz
 
 import "./style.scss";
-import Security from "./Components/Security.jsx";
 import { authApi, useLogoutUserMutation } from "../../store/Slices/auth/authApi.js";
 import { ErrorAlert, SuccessAlert } from "../../helpers/customAlert.js";
 import { useDispatch } from "react-redux";
 import { userSettingsApi } from "../../store/Slices/userSettings/userSettingsApi.js";
+import { opacityEffect } from "../../shared/animations/animations.js";
+
+
 
 function SettingsModal({ closeModal }) {
-  
   const dispatch = useDispatch();
 
   const menuItems = [
@@ -36,7 +38,7 @@ function SettingsModal({ closeModal }) {
   const handleLogout = async () => {
     try {
       await logoutUser();
-      dispatch(authApi.util.resetApiState()); 
+      dispatch(authApi.util.resetApiState());
       dispatch(userSettingsApi.util.resetApiState());
       SuccessAlert("Çıkış Yapıldı")
       closeModal();
@@ -74,9 +76,15 @@ function SettingsModal({ closeModal }) {
           </div>
         </div>
 
-        <div className="dynamic-content">
+        <motion.div
+          className="dynamic-content"
+          key={activeMenu} // activeMenu değiştiğinde key'i değiştirecek ve animasyon tetiklenecek
+          variants={opacityEffect(0.8)} // opacity animasyonunu buraya ekliyoruz
+          initial="initial"
+          animate="animate"
+        >
           {menuItems.find((item) => item.id === activeMenu)?.component}
-        </div>
+        </motion.div>
       </div>
     </div>
   );

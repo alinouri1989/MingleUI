@@ -1,7 +1,11 @@
-@use "../../../shared/styles/main.scss" as *;
-
 .no-active-datas {
-    @include flex-center(column, center, center);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    // Keyframe animasyonu tanımlıyoruz
+    animation: fadeIn 0.8s ease-in-out;
 
     img {
         width: 250px;
@@ -10,5 +14,16 @@
     p {
         font-size: 13.7px;
         color: var(--text-input-gray);
+    }
+}
+
+// Keyframe animasyonu
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
     }
 }

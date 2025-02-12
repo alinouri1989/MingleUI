@@ -6,15 +6,17 @@ import SearchInput from "./SearchInput";
 import UserChatCard from "./UserChatCard";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import { lastMessageDateHelper } from "../../../helpers/dateHelper";
+import { motion } from 'framer-motion';
 
 import "./style.scss";
 import { useLocation } from "react-router-dom";
 import { getChatId } from "../../../store/Slices/chats/chatSlice";
 import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
+import { opacityEffect } from "../../../shared/animations/animations";
 
 function ChatsList() {
     const { showModal, closeModal } = useModal();
-    const { Individual } = useSelector((state) => state.chat);
+    const { Individual, isChatsInitialized } = useSelector((state) => state.chat);
     const chatList = useSelector((state) => state.chatList.chatList);
     const { token } = useSelector((state) => state.auth);
     const UserId = getUserIdFromToken(token);
@@ -116,33 +118,44 @@ function ChatsList() {
                 onChange={setSearchUser}
                 placeholder={"Sohbetlerinizde aratın..."}
             />
-            <div>
+            <div style={{ width: "100%" }}>
                 <button onClick={handleNewChat} className="create-buttons">
                     Yeni Sohbet
                 </button>
             </div>
             <div className="list-flex">
-                <div className="user-list">
+                <motion.div
+                    className="user-list"
+                    variants={opacityEffect(0.8)}  // Opacity animasyonunu container için uyguladık
+                    initial="initial"
+                    animate="animate"
+                >
                     {filteredChats.length > 0 ? (
                         filteredChats.map((chat) => (
-                            <UserChatCard
+                            <motion.div
                                 key={chat.receiverId}
-                                receiverId={chat.receiverId}
-                                image={chat.image}
-                                status={chat.status}
-                                name={chat.name}
-                                lastMessage={chat.lastMessage}
-                                lastMessageType={chat.lastMessageType}
-                                lastMessageDate={chat.lastMessageDate}
-                                isArchive={chat.isArchive}
-                                unReadMessage={chat.unReadMessage}
-                                isDeleted={chat.isDeleted}
-                            />
+                                style={{ marginBottom: "10px" }}
+                                variants={opacityEffect(0.8)}  // Opacity animasyonu her item için uygulanacak
+                            >
+                                <UserChatCard
+                                    receiverId={chat.receiverId}
+                                    image={chat.image}
+                                    status={chat.status}
+                                    name={chat.name}
+                                    lastMessage={chat.lastMessage}
+                                    lastMessageType={chat.lastMessageType}
+                                    lastMessageDate={chat.lastMessageDate}
+                                    isArchive={chat.isArchive}
+                                    unReadMessage={chat.unReadMessage}
+                                    isDeleted={chat.isDeleted}
+                                />
+                            </motion.div>
                         ))
                     ) : (
-                        <NoActiveData text={searchUser ? "Eşleşen kullanıcı bulunamadı" : "Aktif sohbet bulunamadı"} />
+                        isChatsInitialized && <NoActiveData text={searchUser ? "Eşleşen kullanıcı bulunamadı" : "Aktif sohbet bulunamadı"} />
+
                     )}
-                </div>
+                </motion.div>
             </div>
 
         </div>

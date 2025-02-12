@@ -16,6 +16,7 @@ const chatSlice = createSlice({
 
             state.Individual = transformChats(Individual, "individual");
             state.Group = transformChats(Group, "group");
+            state.isChatsInitialized = true;
         },
 
         addNewIndividualChat: (state, action) => {

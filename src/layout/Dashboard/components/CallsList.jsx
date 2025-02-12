@@ -5,6 +5,8 @@ import "./style.scss";
 import UserCallCard from "./UserCallCard";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
+import { opacityEffect } from "../../../shared/animations/animations";
+import { motion } from 'framer-motion';
 
 function CallsList() {
   const { token } = useSelector(state => state.auth);
@@ -48,25 +50,36 @@ function CallsList() {
         onChange={setSearchTerm}
       />
       <div className="list-flex">
-        <div className="user-list">
+        <motion.div
+          className="user-list"
+          variants={opacityEffect(0.8)}  // Opacity animasyonunu container için uyguladık
+          initial="initial"
+          animate="animate"
+        >
           {filteredCalls.length > 0 ? (
             filteredCalls.map(callInfo => (
-              <UserCallCard
+              <motion.div
                 key={callInfo.id}
-                callId={callInfo.id}
-                image={callInfo.image}
-                status={callInfo.status}
-                callType={callInfo.callType}
-                name={callInfo.name}
-                callStatus={callInfo.callStatus}
-                createdDate={callInfo.createdDate}
-                isOutgoingCall={callInfo.isOutgoingCall}
-              />
+                variants={opacityEffect(0.8)}  // Opacity animasyonu her item için uygulanacak
+                style={{ marginBottom: "10px" }}
+              >
+                <UserCallCard
+                  callId={callInfo.id}
+                  image={callInfo.image}
+                  status={callInfo.status}
+                  callType={callInfo.callType}
+                  name={callInfo.name}
+                  callStatus={callInfo.callStatus}
+                  createdDate={callInfo.createdDate}
+                  isOutgoingCall={callInfo.isOutgoingCall}
+                />
+              </motion.div>
             ))
           ) : (
             <NoActiveData text={searchTerm ? "Eşleşen arama bulunamadı" : "Arama geçmişiniz bulunmamaktadır."} />
           )}
-        </div>
+        </motion.div>
+
       </div>
     </div>
   );

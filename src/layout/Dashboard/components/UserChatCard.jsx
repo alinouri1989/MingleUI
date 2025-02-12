@@ -73,11 +73,18 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
     try {
       await chatConnection.invoke("ClearChat", "Individual", chatId);
       SuccessAlert("Sohbet Silindi");
-      if (location.pathname.includes(chatId)) {
-        navigate("/sohbetler");
+
+      const currentPath = location.pathname;
+
+      if (currentPath.includes(chatId)) {
+        if (currentPath.includes("sohbetler")) {
+          navigate("/sohbetler");
+        } else if (currentPath.includes("arsivler")) {
+          navigate("/arsivler");
+        }
       }
     } catch {
-      ErrorAlert("Sohebt Silinemedi");
+      ErrorAlert("Sohbet Silinemedi");
     }
     handleClose();
   }

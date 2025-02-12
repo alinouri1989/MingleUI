@@ -27,7 +27,7 @@ function GroupChats() {
     }
   }, [isChatsInitialized, Group, id, navigate]);
 
-  // // Grup profilini almak
+
 
 
   useEffect(() => {
@@ -66,9 +66,17 @@ function GroupChats() {
     }
   }, [id, Group, groupList]);
 
+
+
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
+
+
+  if (!isChatsInitialized && id) {
+    return null;
+  }
+
 
   return (
     <>

@@ -8,6 +8,8 @@ import { useLocation } from "react-router-dom";
 import { getChatId } from "../../../store/Slices/chats/chatSlice";
 import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
 import "./style.scss";
+import { motion } from 'framer-motion';
+import { opacityEffect } from "../../../shared/animations/animations";
 
 
 function ArchivesList() {
@@ -101,27 +103,38 @@ function ArchivesList() {
         <div className="archive-list-box">
             <SearchInput value={searchUser} onChange={setSearchUser} placeholder={"Arşivlenmiş sohbetlerde ara"} />
             <div className="list-flex">
-                <div className="user-list">
+                <motion.div
+                    className="user-list"
+                    variants={opacityEffect(0.8)}  // Opacity animasyonunu container için uyguladık
+                    initial="initial"
+                    animate="animate"
+                >
                     {filteredChats.length > 0 ? (
                         filteredChats.map((chat) => (
-                            <UserChatCard
+                            <motion.div
                                 key={chat.receiverId}
-                                receiverId={chat.receiverId}
-                                image={chat.image}
-                                status={chat.status}
-                                name={chat.name}
-                                lastMessage={chat.lastMessage}
-                                lastMessageType={chat.lastMessageType}
-                                lastMessageDate={chat.lastMessageDate}
-                                isArchive={chat.isArchive}
-                                unReadMessage={chat.unReadMessage}
-                                isDeleted={chat.isDeleted}
-                            />
+                                variants={opacityEffect(0.8)}  // Opacity animasyonu her item için uygulanacak
+                                style={{ marginBottom: "10px" }}
+                            >
+                                <UserChatCard
+                                    receiverId={chat.receiverId}
+                                    image={chat.image}
+                                    status={chat.status}
+                                    name={chat.name}
+                                    lastMessage={chat.lastMessage}
+                                    lastMessageType={chat.lastMessageType}
+                                    lastMessageDate={chat.lastMessageDate}
+                                    isArchive={chat.isArchive}
+                                    unReadMessage={chat.unReadMessage}
+                                    isDeleted={chat.isDeleted}
+                                />
+                            </motion.div>
                         ))
                     ) : (
                         <NoActiveData text={searchUser ? "Eşleşen kullanıcı bulunamadı" : "Arşivlenmiş sohbetiniz bulunmamaktadır."} />
                     )}
-                </div>
+                </motion.div>
+
             </div>
         </div>
     )

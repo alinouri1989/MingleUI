@@ -23,7 +23,6 @@ function Chats() {
   const { token } = useSelector((state) => state.auth); // Kullanıcı token'ı
   const UserId = getUserIdFromToken(token); // Token'dan kullanıcı ID'si al
 
-  // Chat var mı kontrolü ve yönlendirme
   useEffect(() => {
     if (isChatsInitialized && id) {
       const chatExists = Individual.some((chat) => chat.id === id);
@@ -60,8 +59,13 @@ function Chats() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  if (!isChatsInitialized && id) {
+    return null;
+  }
+
   return (
     <>
+
       <div className="chat-general-box">
         {!id && (
           <WelcomeScreen text={"Kişisel sohbetleriniz uçtan uca şifrelidir"} />
