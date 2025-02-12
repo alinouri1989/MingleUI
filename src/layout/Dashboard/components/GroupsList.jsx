@@ -49,57 +49,68 @@ function GroupsList() {
           animate="animate"
         >
           {filteredGroupList.length > 0 ? (
-            filteredGroupList.map(([groupId, group]) => {
-              const chatGroup = Group.find((groupChat) =>
-                groupChat.participants.includes(groupId)
-              );
+            filteredGroupList
+              .map(([groupId, group]) => {
+                const chatGroup = Group.find((groupChat) =>
+                  groupChat.participants.includes(groupId)
+                );
 
-              let lastMessage = "";
-              let lastMessageType = "";
-              if (chatGroup && chatGroup?.messages?.length > 0) {
-                const lastMessageIndex = chatGroup.messages.length - 1;
-                lastMessage = chatGroup.messages[lastMessageIndex].content;
-                lastMessageType = chatGroup.messages[lastMessageIndex].type;
-              }
+                let lastMessage = "";
+                let lastMessageType = "";
+                let lastMessageDateForSort = 0;
+                if (chatGroup && chatGroup?.messages?.length > 0) {
+                  const lastMessageIndex = chatGroup.messages.length - 1;
+                  lastMessage = chatGroup.messages[lastMessageIndex].content;
+                  lastMessageType = chatGroup.messages[lastMessageIndex].type;
 
-              const lastMessageDate =
-                chatGroup?.messages?.length > 0
-                  ? lastMessageDateHelper(
-                    Object.values(chatGroup.messages[chatGroup.messages.length - 1].status.sent)[0]
-                  )
-                  : "";
+                  lastMessageDateForSort =
+                    new Date(
+                      Object.values(chatGroup.messages[lastMessageIndex].status.sent)[0]
+                    ).getTime();
+                }
 
-              const currentGroupIdInPath = location.pathname.includes(groupId);
+                const currentGroupIdInPath = location.pathname.includes(groupId);
 
-              const unReadMessage =
-                !currentGroupIdInPath &&
-                chatGroup?.messages.filter((message) => {
-                  return (
-                    !Object.keys(message.status.sent).includes(userId) &&
-                    !message.status.read?.[userId]
-                  );
-                }).length;
+                const unReadMessage =
+                  !currentGroupIdInPath &&
+                  chatGroup?.messages.filter((message) => {
+                    return (
+                      !Object.keys(message.status.sent).includes(userId) &&
+                      !message.status.read?.[userId]
+                    );
+                  }).length;
 
-              return (
+                return {
+                  groupId,
+                  groupName: group.name,
+                  groupPhotoUrl: group.photoUrl,
+                  lastMessage,
+                  lastMessageType,
+                  lastMessageDateForSort,
+                  unReadMessage,
+                  chatGroup
+                };
+              })
+              .sort((a, b) => b.lastMessageDateForSort - a.lastMessageDateForSort)
+              .map(({ groupId, groupName, groupPhotoUrl, lastMessage, lastMessageType, lastMessageDateForSort, unReadMessage, chatGroup }) => (
                 <motion.div
                   key={groupId}
-                  variants={opacityEffect(0.8)}  // Opacity animasyonu her item için uygulanacak
+                  variants={opacityEffect(0.8)}
                   style={{ marginBottom: "10px" }}
                 >
                   <GroupChatCard
                     key={groupId}
                     groupId={chatGroup?.id}
-                    groupName={group.name}
-                    groupPhotoUrl={group.photoUrl}
+                    groupName={groupName}
+                    groupPhotoUrl={groupPhotoUrl}
                     lastMessage={lastMessage}
                     lastMessageType={lastMessageType}
-                    lastMessageDate={lastMessageDate}
+                    lastMessageDate={lastMessageDateHelper(lastMessageDateForSort)}
                     unReadMessage={unReadMessage}
                     groupListId={groupId}
                   />
                 </motion.div>
-              );
-            })
+              ))
           ) : (
             <NoActiveData text={searchGroup ? "Eşleşen grup bulunamadı" : "Aktif grup bulunmamaktadır."} />
           )}

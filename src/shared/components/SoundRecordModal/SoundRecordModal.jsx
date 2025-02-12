@@ -7,6 +7,8 @@ import 'react-h5-audio-player/lib/styles.css'; // default styles
 import "./style.scss";
 import { useLocation } from 'react-router-dom';
 import PreLoader from '../PreLoader/PreLoader';
+import { opacityEffect } from '../../animations/animations';
+import { motion } from "framer-motion";  // motion import ediyoruz
 
 function SoundRecordModal({ closeModal, chatId }) {
     const { chatConnection } = useSignalR();
@@ -186,7 +188,11 @@ function SoundRecordModal({ closeModal, chatId }) {
 
                 {/* Kaydedilen sesin dinletilmesi, sadece Kaydı Bitir'den sonra */}
                 {recordFinished && audioUrl && (
-                    <>
+                    <motion.div
+                        variants={opacityEffect(0.8)}
+                        initial="initial"
+                        animate="animate"
+                        style={{ width: "100%" }}>
                         <div className="audio-player-wrapper">
                             <ReactAudioPlayer
                                 src={combineAudioChunks()} // Kaydedilen sesin URL'si
@@ -198,7 +204,7 @@ function SoundRecordModal({ closeModal, chatId }) {
                             <button onClick={handleDeleteAudio}>Sil</button>
                             <button onClick={handleSendAudio}>Gönder</button>
                         </div>
-                    </>
+                    </motion.div>
                 )}
             </div>
             {isLoading && <PreLoader />}

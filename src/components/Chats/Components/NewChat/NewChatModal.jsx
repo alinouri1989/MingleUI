@@ -12,6 +12,8 @@ import { useDebounce } from "../../../../hooks/useDebounce.jsx";
 import { useSignalR } from "../../../../contexts/SignalRContext.jsx";
 import { getUserIdFromToken } from "../../../../helpers/getUserIdFromToken.js";
 import "./style.scss";
+import { motion } from "framer-motion";  // motion import ediyoruz
+import { opacityEffect } from "../../../../shared/animations/animations.js";
 
 function NewChatModal() {
   const navigate = useNavigate();
@@ -139,10 +141,14 @@ function NewChatModal() {
       {loading && <PreLoader />}
 
       {error && !loading && (
-        <div className="no-result-box active">
+        <motion.div
+          variants={opacityEffect(0.8)}
+          initial="initial"
+          animate="animate"
+          className="no-result-box active">
           <AiFillInfoCircle className="icon" />
           <p>{error}</p>
-        </div>
+        </motion.div>
       )}
 
       {!loading && users.length > 0 && (
@@ -154,18 +160,21 @@ function NewChatModal() {
 
           <div className="users-box">
             {users.map((user) => (
-              <div
+              <motion.div
                 key={user.userId}
                 className="user-box"
                 onClick={() => handleGoToChat(user.userId)}
                 style={{ cursor: "pointer" }}
+                variants={opacityEffect(0.8)}
+                initial="initial"
+                animate="animate"
               >
                 <img src={user.profilePhoto} alt={user.displayName} />
                 <div className="user-info">
                   <p>{user.displayName}</p>
                   <span>{user.email}</span>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>

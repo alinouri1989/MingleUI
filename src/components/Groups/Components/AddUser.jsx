@@ -11,7 +11,8 @@ import { useSignalR } from '../../../contexts/SignalRContext';
 import PreLoader from '../../../shared/components/PreLoader/PreLoader';
 import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
 import "../../Chats/Components/NewChat/style.scss";
-import Okan from "../../../assets/users/okan.png";
+import { motion } from "framer-motion";  // motion import ediyoruz
+import { opacityEffect } from '../../../shared/animations/animations.js';
 
 function AddUser({ closeUserModal, setFormData, formData }) {
     const [inputValue, setInputValue] = useState("");
@@ -114,13 +115,21 @@ function AddUser({ closeUserModal, setFormData, formData }) {
                     </div>
                     {loading && <PreLoader />}
                     {error && !loading && (
-                        <div className="no-result-box active">
+                        <motion.div
+                            variants={opacityEffect(0.8)}
+                            initial="initial"
+                            animate="animate"
+                            className="no-result-box active">
                             <AiFillInfoCircle className="icon" />
                             <p>{error}</p>
-                        </div>
+                        </motion.div>
                     )}
                     {!loading && users.length > 0 && (
-                        <div className="user-list-box active">
+                        <motion.div
+                            variants={opacityEffect(0.8)}
+                            initial="initial"
+                            animate="animate"
+                            className="user-list-box active">
                             <div className="result-number-box">
                                 <TiThList className="icon" />
                                 <p>{users.length} kullanıcı listeleniyor</p>
@@ -131,7 +140,7 @@ function AddUser({ closeUserModal, setFormData, formData }) {
                                     const userRole = isAlreadyAdded ? formData.participants[user.userId].role : null;
                                     return (
                                         <div key={user.userId} className="user-box" onClick={() => handleAddSelectedUser(user.userId)}>
-                                            <img src={user.profilePhoto || Okan} alt={user.displayName} />
+                                            <img src={user.profilePhoto} alt={user.displayName} />
                                             <div className="user-info">
                                                 <p>{user.displayName}</p>
                                                 <span>{user.email}</span>
@@ -155,7 +164,7 @@ function AddUser({ closeUserModal, setFormData, formData }) {
                                     );
                                 })}
                             </div>
-                        </div>
+                        </motion.div>
                     )}
                 </div>
             </div>
