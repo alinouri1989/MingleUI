@@ -57,10 +57,8 @@ function NewChatModal() {
     };
 
     notificationConnection.off("ReceiveSearchUsers");
-    notificationConnection.off("Error");
 
     notificationConnection.on("ReceiveSearchUsers", handleReceiveSearchUsers);
-    notificationConnection.on("Error", handleError);
 
     notificationConnection
       .invoke("SearchUsers", debouncedSearchQuery)
@@ -71,7 +69,6 @@ function NewChatModal() {
 
     return () => {
       notificationConnection.off("ReceiveSearchUsers", handleReceiveSearchUsers);
-      notificationConnection.off("Error", handleError);
     };
   }, [debouncedSearchQuery, notificationConnection]);
 

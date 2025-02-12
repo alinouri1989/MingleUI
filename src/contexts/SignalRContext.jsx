@@ -393,6 +393,16 @@ export const SignalRProvider = ({ children }) => {
                     }
                 });
 
+                notificationConnection.on('Error', (data) => {
+                    console.log("eRRORE", data);
+                });
+                chatConnection.on('Error', (data) => {
+                    console.log("eRRORE", data);
+                });
+                callConnection.on('Error', (data) => {
+                    console.log("eRRORE", data);
+                });
+
                 callConnection.on('ReceiveDeleteCall', (data) => {
                     dispatch(deleteCallHistory(data));
                 });

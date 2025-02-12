@@ -55,6 +55,7 @@
     @include transition();
     border-radius: 17px;
 
+
     &:first-child {
         margin-top: 0px;
     }
@@ -70,6 +71,8 @@
     &.active-call {
         background-color: var(--cardHover);
     }
+
+
 
     .image-box {
         width: max-content;
@@ -255,5 +258,19 @@
 .archive-list-box {
     .list-flex {
         margin-top: 16px;
+    }
+}
+
+@keyframes buttonPress {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(0.93);
+    }
+
+    100% {
+        transform: scale(1);
     }
 }

@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getJwtFromCookie } from '../../helpers/getJwtFromCookie';
 import { setUser } from './authSlice';
 import { removeJwtFromCookie } from '../../helpers/removeJwtFromCookie';
+import { setUserProfileTheme } from '../../../helpers/applyTheme';
 
 // RTK Query auth API
 export const authApi = createApi({
@@ -117,7 +118,9 @@ const handleAuthResponse = async (queryFulfilled, dispatch) => {
       document.cookie = `jwt=${data.token}; expires=${expireDate.toUTCString()}; path=/; secure; samesite=strict`;
 
       const userProfile = await dispatch(authApi.endpoints.getUserProfile.initiate()).unwrap();
-      dispatch(setUser({ user: userProfile, token: data.token }));
+      const updatedUserProfile = setUserProfileTheme(userProfile);
+
+      dispatch(setUser({ user: updatedUserProfile, token: data.token }));
     }
   } catch { }
 };

@@ -19,11 +19,14 @@ import { ErrorAlert, SuccessAlert } from "../../helpers/customAlert.js";
 import { useDispatch } from "react-redux";
 import { userSettingsApi } from "../../store/Slices/userSettings/userSettingsApi.js";
 import { opacityEffect } from "../../shared/animations/animations.js";
+import { applyTheme } from "../../helpers/applyTheme.js";
+import { useSignalR } from "../../contexts/SignalRContext.jsx";
 
 
 
 function SettingsModal({ closeModal }) {
   const dispatch = useDispatch();
+  const { chatConnection, notificationConnection, callConnection } = useSignalR();
 
   const menuItems = [
     { id: "account", icon: <FaUserCog />, text: "Hesap", component: <Account /> },
@@ -37,15 +40,27 @@ function SettingsModal({ closeModal }) {
 
   const handleLogout = async () => {
     try {
+      // SignalR bağlantılarını durdur
+      await Promise.all([
+        chatConnection.stop().catch((err) => console.error("chatConnection durdurulamadı:", err)),
+        notificationConnection.stop().catch((err) => console.error("notificationConnection durdurulamadı:", err)),
+        callConnection.stop().catch((err) => console.error("callConnection durdurulamadı:", err))
+      ]);
+
+      console.log("Tüm SignalR bağlantıları başarıyla durduruldu.");
+
+      // Logout işlemleri
       await logoutUser();
-      dispatch(authApi.util.resetApiState());
-      dispatch(userSettingsApi.util.resetApiState());
-      SuccessAlert("Çıkış Yapıldı")
+      dispatch({ type: 'RESET_STORE' });
+      applyTheme("Light");
+      SuccessAlert('Çıkış Yapıldı');
       closeModal();
-    } catch {
-      ErrorAlert("Çıkış Yapılamıyor")
+    } catch (err) {
+      console.error("Logout işlemi sırasında hata oluştu:", err);
+      ErrorAlert('Çıkış Yapılamıyor');
     }
   };
+
 
   return (
     <div className="setting-general-box">
