@@ -78,39 +78,6 @@ $breakpoints: (
 //!  @include opacity-effect(1s, ease-out, 0.3s, 0.2, 0.8);
 
 
-// ------------------ Button Mixins ------------------
-
-@mixin button($bg-color: gray,
-    $text-color: #fff,
-    $padding: 10px 20px,
-    $margin: 0,
-    $border: none,
-    $border-radius: 4px,
-    $font-size: 16px,
-    $transition: all 0.3s ease-out,
-    $cursor: pointer) {
-    background-color: $bg-color;
-    color: $text-color;
-    padding: $padding;
-    margin: $margin;
-    border: $border;
-    border-radius: $border-radius;
-    font-size: $font-size;
-    cursor: $cursor;
-    transition: $transition;
-}
-
-// .special-button {
-//     @include button(
-//       $bg-color: blue,
-//       $text-color: white,
-//       $hover-bg: darken(blue, 15%),
-//       $padding: 15px 20px,
-//       $margin: 30px,
-//       $border: 2px solid black,
-//       $border-radius: 5px
-//     );
-//   }
 
 
 @mixin CustomScroll {

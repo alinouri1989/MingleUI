@@ -1,5 +1,11 @@
 @use "../shared/styles/main.scss" as *;
 
+.chat-section {
+    position: relative;
+    flex: 1;
+    @include flex-center(row, center, center);
+    height: 100%;
+}
 
 .chat-general-box,
 .group-general-box,
@@ -7,7 +13,6 @@
     @include flex-center(column, space-between, center);
     flex: 1;
     height: 100%;
-
 
     .user-top-bar,
     .group-top-bar {
@@ -165,12 +170,25 @@
         padding: 18px 15px 0px 15px;
         width: 340px;
         opacity: 1;
+
+        @include screen(1360px) {
+            width: 300px;
+        }
+
+        @include screen(1200px) {
+            width: 100%;
+            position: absolute;
+        }
     }
 
     .sidebar-content-box {
         @include flex-center(column, center, center);
         width: 100%;
         height: auto;
+
+        @include screen(1200px) {
+            width: 100%;
+        }
 
         .user-info-box,
         .group-info-box,
@@ -256,6 +274,10 @@
         .description {
             margin: 20px 0px;
             width: 100%;
+
+            @include screen(1200px) {
+                width: 60%;
+            }
 
             strong {
                 font-size: 15px;

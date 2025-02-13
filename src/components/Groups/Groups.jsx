@@ -79,7 +79,7 @@ function GroupChats() {
 
 
   return (
-    <>
+    <div className="chat-section">
       <div className='group-general-box'>
         {!id && <WelcomeScreen text={"Grup sohbetleriniz uçtan uca şifrelidir"} />}
         {id && (
@@ -102,7 +102,7 @@ function GroupChats() {
           groupProfile={groupProfile}
         />
       )}
-    </>
+    </div>
   );
 }
 

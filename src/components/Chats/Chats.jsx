@@ -7,7 +7,6 @@ import MessageInputBar from "../../shared/components/MessageInputBar/MessageInpu
 import "../layout.scss";
 import UserDetailsBar from "./Components/UserDetailsBar";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { useSignalR } from "../../contexts/SignalRContext";
 import { useSelector } from "react-redux";
 import { getUserIdFromToken } from "../../helpers/getUserIdFromToken";
 
@@ -22,6 +21,7 @@ function Chats() {
   const { chatList } = useSelector((state) => state.chatList); // Kullanıcı listesi bilgileri
   const { token } = useSelector((state) => state.auth); // Kullanıcı token'ı
   const UserId = getUserIdFromToken(token); // Token'dan kullanıcı ID'si al
+  const location = useLocation();
 
   useEffect(() => {
     if (isChatsInitialized && id) {
@@ -53,6 +53,11 @@ function Chats() {
     }
   }, [id, Individual, chatList, UserId]);
 
+  useEffect(() => {
+    if (isSidebarOpen) {
+      setIsSidebarOpen(!isSidebarOpen);
+    }
+  }, [location])
 
 
   const toggleSidebar = () => {
@@ -64,8 +69,7 @@ function Chats() {
   }
 
   return (
-    <>
-
+    <div className="chat-section">
       <div className="chat-general-box">
         {!id && (
           <WelcomeScreen text={"Kişisel sohbetleriniz uçtan uca şifrelidir"} />
@@ -92,7 +96,7 @@ function Chats() {
           recipientId={recipientId}
         />
       )}
-    </>
+    </div>
   );
 }
 
