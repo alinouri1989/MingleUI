@@ -55,6 +55,18 @@
     @include transition();
     border-radius: 17px;
 
+    .card-info-box,
+    .date-and-options-box {
+        gap: 5px;
+        @include flex-center(row, center, center);
+    }
+
+    @include screen(900px) {
+        padding: 0px 10px;
+        @include flex-center(row, space-between, center);
+        width: 100%;
+    }
+
 
     &:first-child {
         margin-top: 0px;

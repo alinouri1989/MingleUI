@@ -54,74 +54,78 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
 
   return (
     <div className={`user-dashboard-card-box ${isActiveCall ? "active-call" : ""}`} onClick={handleGoToCall}>
-      <div className="image-box">
-        <img src={image} alt={`${name} profile`} />
-        <p className={`status ${userStatus}`}></p>
+      <div className="card-info-box">
+        <div className="image-box">
+          <img src={image} alt={`${name} profile`} />
+          <p className={`status ${userStatus}`}></p>
+        </div>
+
+        <div className="user-name-and-sub-title">
+          <p>{name}</p>
+          <CallCardCallStatus callStatus={callStatus} callType={callType} isOutgoingCall={isOutgoingCall} />
+        </div>
       </div>
 
-      <div className="user-name-and-sub-title">
-        <p>{name}</p>
-        <CallCardCallStatus callStatus={callStatus} callType={callType} isOutgoingCall={isOutgoingCall} />
-      </div>
-
-      <div className="status-informations-box">
-        <span>{formatTimeHoursMinutes(createdDate)}</span>
-      </div>
-      <div className="option">
-        <IconButton
-          aria-label="more"
-          id="long-button"
-          aria-controls={open ? "long-menu" : undefined}
-          aria-expanded={open ? "true" : undefined}
-          aria-haspopup="true"
-          onClick={handleClick}
-          sx={{
-            color: isDarkMode ? "#616161" : "#828A96",
-          }}
-        >
-          <MoreVertIcon />
-        </IconButton>
-
-        <Menu
-          id="long-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          MenuListProps={{
-            "aria-labelledby": "long-button",
-          }}
-          slotProps={{
-            paper: {
-              style: {
-                maxHeight: 48 * 2,
-                width: "16ch",
-                borderRadius: "8px",
-                border: `4px solid ${isDarkMode ? "#222430" : "#CFD5F2"}`,
-                fontWeight: "bold",
-                backgroundColor: isDarkMode ? "#18191A" : "#FFFFFF",
-                color: isDarkMode ? "#E4E6EB" : "#000000",
-                boxShadow: "none"
-              },
-            },
-          }}
-        >
-          <MenuItem
-            onClick={handleDelete}
-            sx={{ color: "#EB6262", boxShadow: "none" }}
+      <div className="date-and-options-box">
+        <div className="status-informations-box">
+          <span>{formatTimeHoursMinutes(createdDate)}</span>
+        </div>
+        <div className="option">
+          <IconButton
+            aria-label="more"
+            id="long-button"
+            aria-controls={open ? "long-menu" : undefined}
+            aria-expanded={open ? "true" : undefined}
+            aria-haspopup="true"
+            onClick={handleClick}
+            sx={{
+              color: isDarkMode ? "#616161" : "#828A96",
+            }}
           >
-            <ListItemIcon>
-              <DeleteIcon fontSize="medium" sx={{ color: "#EB6262" }} />
-            </ListItemIcon>
-            <ListItemText
-              primary="Sil"
-              primaryTypographyProps={{
-                fontFamily: "Montserrat",
-                fontWeight: "700",
-                fontSize: "15px"
-              }}
-            />
-          </MenuItem>
-        </Menu>
+            <MoreVertIcon />
+          </IconButton>
+
+          <Menu
+            id="long-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              "aria-labelledby": "long-button",
+            }}
+            slotProps={{
+              paper: {
+                style: {
+                  maxHeight: 48 * 2,
+                  width: "16ch",
+                  borderRadius: "8px",
+                  border: `4px solid ${isDarkMode ? "#222430" : "#CFD5F2"}`,
+                  fontWeight: "bold",
+                  backgroundColor: isDarkMode ? "#18191A" : "#FFFFFF",
+                  color: isDarkMode ? "#E4E6EB" : "#000000",
+                  boxShadow: "none"
+                },
+              },
+            }}
+          >
+            <MenuItem
+              onClick={handleDelete}
+              sx={{ color: "#EB6262", boxShadow: "none" }}
+            >
+              <ListItemIcon>
+                <DeleteIcon fontSize="medium" sx={{ color: "#EB6262" }} />
+              </ListItemIcon>
+              <ListItemText
+                primary="Sil"
+                primaryTypographyProps={{
+                  fontFamily: "Montserrat",
+                  fontWeight: "700",
+                  fontSize: "15px"
+                }}
+              />
+            </MenuItem>
+          </Menu>
+        </div>
       </div>
     </div>
   );

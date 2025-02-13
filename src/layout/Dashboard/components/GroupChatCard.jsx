@@ -49,78 +49,82 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
 
     return (
         <div key={groupId} onClick={handleGoGroupChat} className={`group-dashboard-card-box ${isActiveChat ? "active-chat" : ""}`}>
-            <div className="image-box">
-                <img src={groupPhotoUrl} alt={`${groupName} profile`} />
+            <div className="card-info-box">
+                <div className="image-box">
+                    <img src={groupPhotoUrl} alt={`${groupName} profile`} />
+                </div>
+
+                <div className="grup-name-and-sub-title">
+                    <p>{groupName}</p>
+                    <LastMessage lastMessageType={lastMessageType} content={lastMessage} />
+                </div>
             </div>
 
-            <div className="grup-name-and-sub-title">
-                <p>{groupName}</p>
-                <LastMessage lastMessageType={lastMessageType} content={lastMessage} />
-            </div>
+            <div className="date-and-options-box">
+                <div className="status-informations-box">
+                    <span>{lastMessageDate}</span>
+                    {/* Optional unread message count */}
+                    {unReadMessage > 0 && <p>{unReadMessage}</p>}
+                </div>
 
-            <div className="status-informations-box">
-                <span>{lastMessageDate}</span>
-                {/* Optional unread message count */}
-                {unReadMessage > 0 && <p>{unReadMessage}</p>}
-            </div>
-
-            <div className="option">
-                <IconButton
-                    aria-label="more"
-                    id="long-button"
-                    aria-controls={open ? "long-menu" : undefined}
-                    aria-expanded={open ? "true" : undefined}
-                    aria-haspopup="true"
-                    onClick={handleClick}
-                    sx={{
-                        color: isDarkMode ? "#616161" : "#828A96",
-                    }}
-                >
-                    <MoreVertIcon />
-                </IconButton>
-
-                <Menu
-                    id="long-menu"
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
-                    MenuListProps={{
-                        "aria-labelledby": "long-button",
-                    }}
-                    slotProps={{
-                        paper: {
-                            style: {
-                                maxHeight: 48 * 2,
-                                width: "16ch",
-                                padding: "0px",
-                                borderRadius: "8px",
-                                border: `4px solid ${isDarkMode ? "#222430" : "#CFD5F2"}`,
-                                fontWeight: "bold",
-                                backgroundColor: isDarkMode ? "#18191A" : "#FFFFFF",
-                                color: isDarkMode ? "#E4E6EB" : "#000000",
-                                boxShadow: "none",
-                            },
-                        },
-                    }}
-                >
-
-                    <MenuItem
-                        onClick={handleLeaveGroup}
-                        sx={{ color: "#EB6262", boxShadow: "none" }}
+                <div className="option">
+                    <IconButton
+                        aria-label="more"
+                        id="long-button"
+                        aria-controls={open ? "long-menu" : undefined}
+                        aria-expanded={open ? "true" : undefined}
+                        aria-haspopup="true"
+                        onClick={handleClick}
+                        sx={{
+                            color: isDarkMode ? "#616161" : "#828A96",
+                        }}
                     >
-                        <ListItemIcon>
-                            <GroupRemoveIcon fontSize="medium" sx={{ color: "#EB6262" }} />
-                        </ListItemIcon>
-                        <ListItemText
-                            primary="Gruptan Çık"
-                            primaryTypographyProps={{
-                                fontFamily: "Montserrat",
-                                fontWeight: "700",
-                                fontSize: "14px",
-                            }}
-                        />
-                    </MenuItem>
-                </Menu>
+                        <MoreVertIcon />
+                    </IconButton>
+
+                    <Menu
+                        id="long-menu"
+                        anchorEl={anchorEl}
+                        open={open}
+                        onClose={handleClose}
+                        MenuListProps={{
+                            "aria-labelledby": "long-button",
+                        }}
+                        slotProps={{
+                            paper: {
+                                style: {
+                                    maxHeight: 48 * 2,
+                                    width: "16ch",
+                                    padding: "0px",
+                                    borderRadius: "8px",
+                                    border: `4px solid ${isDarkMode ? "#222430" : "#CFD5F2"}`,
+                                    fontWeight: "bold",
+                                    backgroundColor: isDarkMode ? "#18191A" : "#FFFFFF",
+                                    color: isDarkMode ? "#E4E6EB" : "#000000",
+                                    boxShadow: "none",
+                                },
+                            },
+                        }}
+                    >
+
+                        <MenuItem
+                            onClick={handleLeaveGroup}
+                            sx={{ color: "#EB6262", boxShadow: "none" }}
+                        >
+                            <ListItemIcon>
+                                <GroupRemoveIcon fontSize="medium" sx={{ color: "#EB6262" }} />
+                            </ListItemIcon>
+                            <ListItemText
+                                primary="Gruptan Çık"
+                                primaryTypographyProps={{
+                                    fontFamily: "Montserrat",
+                                    fontWeight: "700",
+                                    fontSize: "14px",
+                                }}
+                            />
+                        </MenuItem>
+                    </Menu>
+                </div>
             </div>
         </div>
     );

@@ -12,20 +12,35 @@
         overflow: hidden;
         position: relative;
 
-        .outlet-content {
+        @include screen(900px) {
+            @include flex-center(column, center, center);
+            width: 100%;
+            height: 100%;
+            background-color: var(--generalBackgroundColor);
+        }
 
+        .outlet-content {
             margin-left: 65px;
             @include flex-center(row, flex-start, flex-start);
             height: 100%;
             width: 100%;
             border-radius: 30px 0px 0px 0px;
             background-color: var(--generalBackgroundColor);
+
+            @include screen(900px) {
+                margin: 0;
+
+            }
+
+            .outlet-mobile {
+                z-index: 99999;
+            }
         }
 
     }
 }
 
-// 
+
 .e2e-info-box {
     margin-bottom: 50px;
     @include flex-center(row, center, center);

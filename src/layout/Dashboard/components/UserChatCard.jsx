@@ -18,6 +18,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useSignalR } from "../../../contexts/SignalRContext";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
 import LastMessage from "../../../shared/components/LastMessage/LastMessage";
+import { toggleActiveContent } from "../../../store/Slices/activeContent/activeContentSlice";
 
 function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageDate, lastMessageType, lastMessage, lastDate, unReadMessage, isArchive }) {
 
@@ -90,110 +91,80 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
   }
 
   const handleGoChat = () => {
-    isArchive ? navigate(`/arsivler/${chatId}`) : navigate(`/sohbetler/${chatId}`)
+    isArchive ? navigate(`/arsivler/${chatId}`) : navigate(`/sohbetler/${chatId}`);
+    dispatch(toggleActiveContent());
   };
 
   const isActiveChat = location.pathname.includes(chatId);
 
   return (
     <div className={`user-dashboard-card-box ${isActiveChat ? "active-chat" : ""}`} onClick={() => handleGoChat()}>
-      <div className="image-box">
-        <img src={image} alt={`${name} profile`} />
-        <p className={`status ${status ? "online" : "offline"}`}></p>
+      <div className="card-info-box">
+        <div className="image-box">
+          <img src={image} alt={`${name} profile`} />
+          <p className={`status ${status ? "online" : "offline"}`}></p>
+        </div>
+
+        <div className="user-name-and-sub-title">
+          <p>{name}</p>
+          <LastMessage lastMessageType={lastMessageType} content={lastMessage} />
+        </div>
       </div>
 
-      <div className="user-name-and-sub-title">
-        <p>{name}</p>
-        <LastMessage lastMessageType={lastMessageType} content={lastMessage} />
-      </div>
+      <div className="date-and-options-box">
+        <div className="status-informations-box">
+          <span>{lastMessageDate}</span>
+          {unReadMessage > 0 && <p>{isDeleted ? "" : unReadMessage}</p>}
+        </div>
 
-      <div className="status-informations-box">
-        <span>{lastMessageDate}</span>
-        {unReadMessage > 0 && <p>{isDeleted ? "" : unReadMessage}</p>}
-      </div>
-
-      <div className="option">
-        <IconButton
-          aria-label="more"
-          id="long-button"
-          aria-controls={open ? "long-menu" : undefined}
-          aria-expanded={open ? "true" : undefined}
-          aria-haspopup="true"
-          onClick={handleClick}
-          sx={{
-            color: isDarkMode ? "#616161" : "#828A96",
-          }}
-        >
-          <MoreVertIcon />
-        </IconButton>
-        <Menu
-          id="long-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-          MenuListProps={{
-            "aria-labelledby": "long-button",
-          }}
-          slotProps={{
-            paper: {
-              style: {
-                maxHeight: 48 * 2,
-                width: "16ch",
-                borderRadius: "8px",
-                border: `4px solid ${isDarkMode ? "#222430" : "#CFD5F2"}`,
-                fontWeight: "bold",
-                backgroundColor: isDarkMode ? "#18191A" : "#FFFFFF",
-                color: isDarkMode ? "#E4E6EB" : "#000000",
-                boxShadow: "none"
-              },
-            },
-          }}
-        >
-          <MenuItem
-            onClick={() => {
-              handleClearChat();
+        <div className="option">
+          <IconButton
+            aria-label="more"
+            id="long-button"
+            aria-controls={open ? "long-menu" : undefined}
+            aria-expanded={open ? "true" : undefined}
+            aria-haspopup="true"
+            onClick={handleClick}
+            sx={{
+              color: isDarkMode ? "#616161" : "#828A96",
             }}
-            sx={{ color: "#EB6262" }}
           >
-            <ListItemIcon>
-              <DeleteIcon fontSize="medium" sx={{ color: "#EB6262" }} />
-            </ListItemIcon>
-            <ListItemText
-              primary="Sil"
-              primaryTypographyProps={{
-                fontFamily: "Montserrat",
-                fontWeight: "700",
-                fontSize: "15px"
+            <MoreVertIcon />
+          </IconButton>
+          <Menu
+            id="long-menu"
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            MenuListProps={{
+              "aria-labelledby": "long-button",
+            }}
+            slotProps={{
+              paper: {
+                style: {
+                  maxHeight: 48 * 2,
+                  width: "16ch",
+                  borderRadius: "8px",
+                  border: `4px solid ${isDarkMode ? "#222430" : "#CFD5F2"}`,
+                  fontWeight: "bold",
+                  backgroundColor: isDarkMode ? "#18191A" : "#FFFFFF",
+                  color: isDarkMode ? "#E4E6EB" : "#000000",
+                  boxShadow: "none"
+                },
+              },
+            }}
+          >
+            <MenuItem
+              onClick={() => {
+                handleClearChat();
               }}
-            />
-          </MenuItem>
-          {isArchive ? (
-            <MenuItem
-              onClick={handleRemoveFromArchive}
-              sx={{ color: "#585CE1" }}
-            >
-              <ListItemIcon >
-                <UnarchiveIcon fontSize="medium" sx={{ color: "#585CE1" }} />
-              </ListItemIcon>
-              <ListItemText
-                primary="Çıkar"
-                primaryTypographyProps={{
-                  fontFamily: "Montserrat",
-                  fontWeight: "700",
-                  fontSize: "15px"
-                }}
-              />
-            </MenuItem>
-          ) : (
-            <MenuItem
-              onClick={handleAddArchive}
-              sx={{ color: "#585CE1" }}
+              sx={{ color: "#EB6262" }}
             >
               <ListItemIcon>
-                <ArchiveIcon fontSize="medium" sx={{ color: "#585CE1" }} />
+                <DeleteIcon fontSize="medium" sx={{ color: "#EB6262" }} />
               </ListItemIcon>
               <ListItemText
-                primary="Arşivle"
+                primary="Sil"
                 primaryTypographyProps={{
                   fontFamily: "Montserrat",
                   fontWeight: "700",
@@ -201,8 +172,43 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
                 }}
               />
             </MenuItem>
-          )}
-        </Menu>
+            {isArchive ? (
+              <MenuItem
+                onClick={handleRemoveFromArchive}
+                sx={{ color: "#585CE1" }}
+              >
+                <ListItemIcon >
+                  <UnarchiveIcon fontSize="medium" sx={{ color: "#585CE1" }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Çıkar"
+                  primaryTypographyProps={{
+                    fontFamily: "Montserrat",
+                    fontWeight: "700",
+                    fontSize: "15px"
+                  }}
+                />
+              </MenuItem>
+            ) : (
+              <MenuItem
+                onClick={handleAddArchive}
+                sx={{ color: "#585CE1" }}
+              >
+                <ListItemIcon>
+                  <ArchiveIcon fontSize="medium" sx={{ color: "#585CE1" }} />
+                </ListItemIcon>
+                <ListItemText
+                  primary="Arşivle"
+                  primaryTypographyProps={{
+                    fontFamily: "Montserrat",
+                    fontWeight: "700",
+                    fontSize: "15px"
+                  }}
+                />
+              </MenuItem>
+            )}
+          </Menu>
+        </div>
       </div>
     </div>
   );

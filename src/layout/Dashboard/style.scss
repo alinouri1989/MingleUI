@@ -8,6 +8,11 @@
     border-right: 2px solid var(--smooth-border-color);
 
 
+    @include screen(900px) {
+        padding: 0;
+        width: 100%;
+    }
+
 
     .user-info-box {
         @include flex-center(row, flex-start, center);
@@ -15,6 +20,10 @@
         width: 100%;
         padding-left: 15px;
         padding-top: 5px;
+
+        @include screen(900px) {
+            display: none;
+        }
 
 
         img {
@@ -39,5 +48,10 @@
         margin-top: 15px;
         border-radius: 28px 28px 0px 0px;
         padding: 16px 12px;
+
+        @include screen(900px) {
+            margin-top: 0px;
+        }
+
     }
 }
