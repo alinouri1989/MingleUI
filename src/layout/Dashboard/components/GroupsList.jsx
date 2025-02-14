@@ -10,6 +10,8 @@ import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
 import { motion } from 'framer-motion';
 import { opacityEffect } from "../../../shared/animations/animations";
+import useScreenWidth from "../../../hooks/useScreenWidth";
+import { TbMessagePlus } from "react-icons/tb";
 
 function GroupsList() {
   const { token } = useSelector((state) => state.auth);
@@ -18,6 +20,7 @@ function GroupsList() {
   const { groupList } = useSelector((state) => state.groupList);
   const { Group } = useSelector((state) => state.chat);
   const location = window.location;
+  const isSmallScreen = useScreenWidth(900);
 
   // Add useState for search functionality
   const [searchGroup, setSearchGroup] = useState("");
@@ -40,7 +43,11 @@ function GroupsList() {
         value={searchGroup}
         onChange={setSearchGroup}
       />
-      <button onClick={handleNewGroup} className="create-buttons">Yeni Grup Oluştur</button>
+
+      <button onClick={handleNewGroup} className="create-buttons">
+        {isSmallScreen ? <TbMessagePlus /> : "Yeni Grup Oluştur"}
+      </button>
+
       <div className="list-flex">
         <motion.div
           className="user-list"

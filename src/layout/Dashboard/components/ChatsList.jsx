@@ -7,12 +7,14 @@ import UserChatCard from "./UserChatCard";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import { lastMessageDateHelper } from "../../../helpers/dateHelper";
 import { motion } from 'framer-motion';
+import { TbMessagePlus } from "react-icons/tb";
 
 import "./style.scss";
 import { useLocation } from "react-router-dom";
 import { getChatId } from "../../../store/Slices/chats/chatSlice";
 import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
 import { opacityEffect } from "../../../shared/animations/animations";
+import useScreenWidth from "../../../hooks/useScreenWidth";
 
 function ChatsList() {
     const { showModal, closeModal } = useModal();
@@ -22,6 +24,7 @@ function ChatsList() {
     const UserId = getUserIdFromToken(token);
     const [enhancedChatList, setEnhancedChatList] = useState([]);
     const chatState = useSelector(state => state.chat);
+    const isSmallScreen = useScreenWidth(900);
 
     const [searchUser, setSearchUser] = useState("");
 
@@ -118,11 +121,11 @@ function ChatsList() {
                 onChange={setSearchUser}
                 placeholder={"Sohbetlerinizde aratın..."}
             />
-            <div style={{ width: "100%" }}>
-                <button onClick={handleNewChat} className="create-buttons">
-                    Yeni Sohbet
-                </button>
-            </div>
+
+            <button onClick={handleNewChat} className="create-buttons">
+                {isSmallScreen ? <TbMessagePlus /> : "Yeni Sohbet"}
+            </button>
+
             <div className="list-flex">
                 <motion.div
                     className="user-list"

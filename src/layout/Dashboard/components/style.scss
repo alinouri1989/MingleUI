@@ -12,6 +12,10 @@
     background-color: var(--cardHover);
     border-radius: 10px;
 
+    @include screen(900px) {
+        margin-bottom: 16px;
+    }
+
     .icon-box {
         width: 32px;
         font-size: 32px;
@@ -40,7 +44,17 @@
 
     &:hover {
         background-color: var(--hoverBlue);
+    }
 
+    @include screen(900px) {
+        @include flex-center(row, center, center);
+        width: 57px;
+        height: 57px;
+        position: absolute;
+        bottom: 80px;
+        right: 20px;
+        font-size: 29px;
+        border-radius: 18px;
     }
 }
 
@@ -54,6 +68,11 @@
     cursor: pointer;
     @include transition();
     border-radius: 17px;
+
+
+    @include screen(900px) {
+        margin-top: 0px;
+    }
 
     .card-info-box,
     .date-and-options-box {
@@ -261,6 +280,10 @@
             overflow-y: auto;
             overflow-x: hidden;
             padding-right: 5px;
+
+            @include screen(900px) {
+                padding-bottom: 55px;
+            }
         }
     }
 }
@@ -270,6 +293,10 @@
 .archive-list-box {
     .list-flex {
         margin-top: 16px;
+
+        @include screen(900px) {
+            margin-top: 0px;
+        }
     }
 }
 
