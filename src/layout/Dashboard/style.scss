@@ -11,6 +11,7 @@
     @include screen(900px) {
         padding: 0;
         width: 100%;
+        border: 0;
     }
 
 
@@ -51,6 +52,8 @@
 
         @include screen(900px) {
             margin-top: 0px;
+            border-radius: 0;
+            background-color: var(--generalBackgroundColor);
         }
 
     }

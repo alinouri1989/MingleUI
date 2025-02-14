@@ -1,8 +1,9 @@
 import Logo from "../../assets/logos/MingleLogoWithText.svg";
 import { IoMdSettings } from "react-icons/io";
-import "./style.scss";
 import { useModal } from "../../contexts/ModalContext";
 import SettingsModal from "../../components/Settings/SettingsModal";
+import "./style.scss";
+
 function Header() {
 
   const { showModal, closeModal } = useModal();

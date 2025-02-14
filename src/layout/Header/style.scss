@@ -10,7 +10,9 @@ Header {
 
     @include screen(900px) {
         @include flex-center(row, space-between, center);
-        padding: 8px 14px;
+        padding: 30px 14px;
+        background-color: var(--generalBackgroundColor);
+        border-bottom: 3px solid var(--smooth-light-blue);
     }
 
     img {
@@ -30,6 +32,7 @@ Header {
 
         @include screen(900px) {
             @include flex-center(row, center, center);
+            border-radius: 0px;
         }
 
         &:active {

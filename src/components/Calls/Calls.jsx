@@ -14,6 +14,9 @@ import { setIsCallStarting } from '../../store/Slices/calls/callSlice.js';
 import "./style.scss";
 import { getChatId } from '../../store/Slices/chats/chatSlice.js';
 import CallStatus from '../../shared/components/CallStatus/CallStatus.jsx';
+import { IoMdArrowRoundBack } from "react-icons/io";
+import useScreenWidth from '../../hooks/useScreenWidth.js';
+
 
 function Calls() {
   const { id } = useParams();
@@ -22,6 +25,7 @@ function Calls() {
   const { token } = useSelector(state => state.auth);
   const state = useSelector(state => state.chat);
   const userId = getUserIdFromToken(token);
+  const isSmallScreen = useScreenWidth(540);
 
   const { calls, callRecipientList, isInitialCallsReady } = useSelector(state => state.call);
 
@@ -84,7 +88,12 @@ function Calls() {
     <div className="calls-general-box">
       {id &&
         <div className="call-info-bar-box">
-          <h2>Arama Bilgisi</h2>
+          <div className='title-and-back-box'>
+            <button onClick={() => navigate("/aramalar")}>
+              <IoMdArrowRoundBack />
+            </button>
+            <h2>Arama Bilgisi</h2>
+          </div>
           <div className="details-box">
             <div className="user-and-call-box">
               <div className="user-info">
@@ -92,9 +101,9 @@ function Calls() {
                 <p>{displayName}</p>
               </div>
               <div className="call-options">
-                <button onClick={handleGoIndividualChat}><IoChatbubbleEllipses /></button>
-                <button onClick={handleVoiceCall}><PiPhoneFill /></button>
-                <button onClick={handleVideoCall}><HiMiniVideoCamera /></button>
+                <button onClick={handleGoIndividualChat}><IoChatbubbleEllipses />{isSmallScreen && <span>Mesaj</span>}</button>
+                <button onClick={handleVoiceCall}><PiPhoneFill />{isSmallScreen && <span>Sesli</span>}</button>
+                <button onClick={handleVideoCall}><HiMiniVideoCamera />{isSmallScreen && <span>Görüntülü</span>}</button>
               </div>
             </div>
             <div className="call-details">
