@@ -7,11 +7,13 @@ import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
 import { opacityEffect } from "../../../shared/animations/animations";
 import { motion } from 'framer-motion';
+import useScreenWidth from "../../../hooks/useScreenWidth";
 
 function CallsList() {
   const { token } = useSelector(state => state.auth);
   const { callRecipientList, calls } = useSelector(state => state.call);
   const userId = getUserIdFromToken(token);
+  const isSmallScreen = useScreenWidth(900);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -44,6 +46,7 @@ function CallsList() {
 
   return (
     <div className="call-list-box">
+      {isSmallScreen && <h2 className="mobil-menu-title">Aramalar</h2>}
       <SearchInput
         placeholder={"Aratın veya yeni arama başlatın"}
         value={searchTerm}

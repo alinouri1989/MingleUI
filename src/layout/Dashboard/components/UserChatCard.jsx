@@ -124,7 +124,10 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
             aria-controls={open ? "long-menu" : undefined}
             aria-expanded={open ? "true" : undefined}
             aria-haspopup="true"
-            onClick={handleClick}
+            onClick={(event) => {
+              event.stopPropagation(); // Parent tıklamasını durduruyoruz
+              handleClick(event); // `event.currentTarget`'ı anchor olarak ayarlıyoruz
+            }}
             sx={{
               color: isDarkMode ? "#616161" : "#828A96",
             }}
@@ -135,27 +138,31 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
             id="long-menu"
             anchorEl={anchorEl}
             open={open}
-            onClose={handleClose}
+            onClose={(event) => {
+              event.stopPropagation(); // Menüyü kapatırken de parent tetiklenmesin
+              handleClose(event);
+            }}
             MenuListProps={{
               "aria-labelledby": "long-button",
             }}
             slotProps={{
               paper: {
                 style: {
-                  maxHeight: 48 * 2,
+                  maxHeight: "auto",
                   width: "16ch",
                   borderRadius: "8px",
                   border: `4px solid ${isDarkMode ? "#222430" : "#CFD5F2"}`,
                   fontWeight: "bold",
                   backgroundColor: isDarkMode ? "#18191A" : "#FFFFFF",
                   color: isDarkMode ? "#E4E6EB" : "#000000",
-                  boxShadow: "none"
+                  boxShadow: "none",
                 },
               },
             }}
           >
             <MenuItem
-              onClick={() => {
+              onClick={(event) => {
+                event.stopPropagation();
                 handleClearChat();
               }}
               sx={{ color: "#EB6262" }}
@@ -174,7 +181,10 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
             </MenuItem>
             {isArchive ? (
               <MenuItem
-                onClick={handleRemoveFromArchive}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleRemoveFromArchive();
+                }}
                 sx={{ color: "#585CE1" }}
               >
                 <ListItemIcon >
@@ -191,7 +201,10 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
               </MenuItem>
             ) : (
               <MenuItem
-                onClick={handleAddArchive}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  handleAddArchive();
+                }}
                 sx={{ color: "#585CE1" }}
               >
                 <ListItemIcon>

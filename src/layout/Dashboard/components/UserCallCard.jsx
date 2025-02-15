@@ -77,7 +77,10 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
             aria-controls={open ? "long-menu" : undefined}
             aria-expanded={open ? "true" : undefined}
             aria-haspopup="true"
-            onClick={handleClick}
+            onClick={(event) => {
+              event.stopPropagation(); // Parent tıklamasını durduruyoruz
+              handleClick(event); // `event.currentTarget`'ı anchor olarak ayarlıyoruz
+            }}
             sx={{
               color: isDarkMode ? "#616161" : "#828A96",
             }}
@@ -89,7 +92,10 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
             id="long-menu"
             anchorEl={anchorEl}
             open={open}
-            onClose={handleClose}
+            onClose={(event) => {
+              event.stopPropagation(); // Menüyü kapatırken de parent tetiklenmesin
+              handleClose(event);
+            }}
             MenuListProps={{
               "aria-labelledby": "long-button",
             }}
@@ -109,7 +115,10 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
             }}
           >
             <MenuItem
-              onClick={handleDelete}
+              onClick={(event) => {
+                event.stopPropagation();
+                handleDelete();
+              }}
               sx={{ color: "#EB6262", boxShadow: "none" }}
             >
               <ListItemIcon>

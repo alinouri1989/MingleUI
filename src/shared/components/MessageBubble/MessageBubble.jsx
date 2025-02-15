@@ -23,6 +23,7 @@ import { useSignalR } from '../../../contexts/SignalRContext';
 import { AudioMessage } from './components/AudioMessage';
 import { useModal } from '../../../contexts/ModalContext';
 import MessageInfo from '../MessageInfo/MessageInfo';
+import useScreenWidth from '../../../hooks/useScreenWidth';
 
 function MessageBubble({ chatId, userId, messageId, userColor, content, isDeleted, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
     if (content == "" || isDeleted) {
@@ -36,6 +37,7 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
     const { chatConnection } = useSignalR();
     const [isShowImage, setIsShowImage] = useState(false);
     const { showModal, closeModal } = useModal();
+    const isSmallScreen = useScreenWidth(400);
 
     const isDarkMode = user?.userSettings?.theme == "Dark";
 
@@ -223,10 +225,10 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
 
     const UserInfo = ({ displayName, userColor, messageType }) => (
         <div className='user-info' style={{ color: userColor }}>
+            {messageType === 3 && <img src={senderProfile?.profilePhoto} alt="" />}
             <p className={`sender-profile-name ${messageType === 0 ? 'text' : messageType === 1 ? 'image' : 'other'}`}>
                 {displayName}
             </p>
-
         </div>
     );
 
@@ -270,15 +272,12 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
 
     return (
         <div className={"message-bubble-box"}>
-
             <div className={`message-box ${isSender ? 'sender' : 'receiver'}`} >
-                {isGroupMessageBubble &&
-                    !isSender &&
-
+                {isGroupMessageBubble && !isSender && (!isSmallScreen || messageType !== 3) && (
                     <div className='image-box'>
                         <img src={senderProfile?.profilePhoto} alt="" />
                     </div>
-                }
+                )}
 
                 <div
                     className={`message-content ${getMessageContentClass(
@@ -298,123 +297,125 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
                     {renderMessageContent(messageType, content, setIsShowImage)}
                 </div>
 
-                <div className='message-hour'>
-                    {timestamp}
-                </div>
-
-                {isSender && (
-                    <div className='option'>
-                        <IconButton
-                            aria-label="more"
-                            id="long-button"
-                            aria-controls={open ? "long-menu" : undefined}
-                            aria-expanded={open ? "true" : undefined}
-                            aria-haspopup="true"
-                            onClick={handleClick}
-                            sx={{
-                                color: isDarkMode ? "#616161" : "#707070",
-                            }}
-                        >
-                            <MoreHorizIcon />
-                        </IconButton>
-
-                        <Menu
-                            id="long-menu"
-                            anchorEl={anchorEl}
-                            open={open}
-                            onClose={handleClose}
-                            MenuListProps={{
-                                "aria-labelledby": "long-button",
-                            }}
-                            slotProps={{
-                                paper: {
-                                    style: {
-                                        width: "18ch",
-                                        borderRadius: "8px",
-                                        border: `4px solid ${isDarkMode ? "#222430" : "#CFD5F2"}`,
-                                        fontWeight: "bold",
-                                        backgroundColor: isDarkMode ? "#18191A" : "#FFFFFF",
-                                        color: isDarkMode ? "#E4E6EB" : "#000000",
-                                        boxShadow: "none",
-                                    },
-                                },
-                            }}
-                        >
-                            <MenuItem
-                                onClick={() => handleDelete(0)}
-                                sx={{ color: "#EB6262" }}
-                            >
-                                <ListItemIcon sx={{ color: "inherit" }}>
-                                    <DeleteOutlineRoundedIcon />
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary="Benden sil"
-                                    primaryTypographyProps={{
-                                        fontFamily: "Montserrat",
-                                        fontWeight: "700",
-                                        fontSize: "14px",
-                                    }}
-                                />
-                            </MenuItem>
-
-                            <MenuItem
-                                onClick={() => handleDelete(1)}
-                                sx={{ color: "#EB6262" }}
-                            >
-                                <ListItemIcon sx={{ color: "inherit" }}>
-                                    <DeleteIcon />
-                                </ListItemIcon>
-                                <ListItemText
-                                    primary="Herkesten sil"
-                                    primaryTypographyProps={{
-                                        fontFamily: "Montserrat",
-                                        fontWeight: "700",
-                                        fontSize: "14px",
-                                    }}
-                                />
-                            </MenuItem>
-
-                            {messageType === 0 &&
-                                <MenuItem
-                                    onClick={handleCopy}
-                                    sx={{ color: "#585CE1" }}
-                                >
-                                    <ListItemIcon fontSize={"small"} sx={{ color: "inherit" }}>
-                                        <ContentCopyIcon />
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        primary="Kopyala"
-                                        primaryTypographyProps={{
-                                            fontFamily: "Montserrat",
-                                            fontWeight: "700",
-                                            fontSize: "14px",
-                                        }}
-                                    />
-                                </MenuItem>
-                            }
-
-
-                            {isGroupMessageBubble &&
-                                <MenuItem
-                                    onClick={handleMessageInfo}
-                                    sx={{ color: "#585CE1" }}
-                                >
-                                    <ListItemIcon fontSize={"small"} sx={{ color: "inherit" }}>
-                                        <InfoIcon />
-                                    </ListItemIcon>
-                                    <ListItemText
-                                        primary="Bilgi"
-                                        primaryTypographyProps={{
-                                            fontFamily: "Montserrat",
-                                            fontWeight: "700",
-                                            fontSize: "14px",
-                                        }}
-                                    />
-                                </MenuItem>
-                            }
-                        </Menu>
+                <div className='message-hour-and-option-box'>
+                    <div className='message-hour'>
+                        {timestamp}
                     </div>
-                )}
+
+                    {isSender && (
+                        <div className='option'>
+                            <IconButton
+                                aria-label="more"
+                                id="long-button"
+                                aria-controls={open ? "long-menu" : undefined}
+                                aria-expanded={open ? "true" : undefined}
+                                aria-haspopup="true"
+                                onClick={handleClick}
+                                sx={{
+                                    color: isDarkMode ? "#616161" : "#707070",
+                                }}
+                            >
+                                <MoreHorizIcon />
+                            </IconButton>
+
+                            <Menu
+                                id="long-menu"
+                                anchorEl={anchorEl}
+                                open={open}
+                                onClose={handleClose}
+                                MenuListProps={{
+                                    "aria-labelledby": "long-button",
+                                }}
+                                slotProps={{
+                                    paper: {
+                                        style: {
+                                            width: "18ch",
+                                            borderRadius: "8px",
+                                            border: `4px solid ${isDarkMode ? "#222430" : "#CFD5F2"}`,
+                                            fontWeight: "bold",
+                                            backgroundColor: isDarkMode ? "#18191A" : "#FFFFFF",
+                                            color: isDarkMode ? "#E4E6EB" : "#000000",
+                                            boxShadow: "none",
+                                        },
+                                    },
+                                }}
+                            >
+                                <MenuItem
+                                    onClick={() => handleDelete(0)}
+                                    sx={{ color: "#EB6262" }}
+                                >
+                                    <ListItemIcon sx={{ color: "inherit" }}>
+                                        <DeleteOutlineRoundedIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="Benden sil"
+                                        primaryTypographyProps={{
+                                            fontFamily: "Montserrat",
+                                            fontWeight: "700",
+                                            fontSize: "14px",
+                                        }}
+                                    />
+                                </MenuItem>
+
+                                <MenuItem
+                                    onClick={() => handleDelete(1)}
+                                    sx={{ color: "#EB6262" }}
+                                >
+                                    <ListItemIcon sx={{ color: "inherit" }}>
+                                        <DeleteIcon />
+                                    </ListItemIcon>
+                                    <ListItemText
+                                        primary="Herkesten sil"
+                                        primaryTypographyProps={{
+                                            fontFamily: "Montserrat",
+                                            fontWeight: "700",
+                                            fontSize: "14px",
+                                        }}
+                                    />
+                                </MenuItem>
+
+                                {messageType === 0 &&
+                                    <MenuItem
+                                        onClick={handleCopy}
+                                        sx={{ color: "#585CE1" }}
+                                    >
+                                        <ListItemIcon fontSize={"small"} sx={{ color: "inherit" }}>
+                                            <ContentCopyIcon />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary="Kopyala"
+                                            primaryTypographyProps={{
+                                                fontFamily: "Montserrat",
+                                                fontWeight: "700",
+                                                fontSize: "14px",
+                                            }}
+                                        />
+                                    </MenuItem>
+                                }
+
+
+                                {isGroupMessageBubble &&
+                                    <MenuItem
+                                        onClick={handleMessageInfo}
+                                        sx={{ color: "#585CE1" }}
+                                    >
+                                        <ListItemIcon fontSize={"small"} sx={{ color: "inherit" }}>
+                                            <InfoIcon />
+                                        </ListItemIcon>
+                                        <ListItemText
+                                            primary="Bilgi"
+                                            primaryTypographyProps={{
+                                                fontFamily: "Montserrat",
+                                                fontWeight: "700",
+                                                fontSize: "14px",
+                                            }}
+                                        />
+                                    </MenuItem>
+                                }
+                            </Menu>
+                        </div>
+                    )}
+                </div>
             </div>
 
             {

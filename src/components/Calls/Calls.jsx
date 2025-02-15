@@ -16,7 +16,10 @@ import { getChatId } from '../../store/Slices/chats/chatSlice.js';
 import CallStatus from '../../shared/components/CallStatus/CallStatus.jsx';
 import { IoMdArrowRoundBack } from "react-icons/io";
 import useScreenWidth from '../../hooks/useScreenWidth.js';
+import BackToMenuButton from '../../shared/components/BackToMenuButton/BackToMenuButton.jsx';
+import { opacityEffect } from "../../shared/animations/animations.js"
 
+import { motion } from 'framer-motion';
 
 function Calls() {
   const { id } = useParams();
@@ -85,13 +88,17 @@ function Calls() {
   };
 
   return (
-    <div className="calls-general-box">
+    <motion.div
+      className="calls-general-box"
+      variants={opacityEffect()}
+      initial="initial"
+      animate="animate"
+      transition="transition"
+    >
       {id &&
         <div className="call-info-bar-box">
           <div className='title-and-back-box'>
-            <button onClick={() => navigate("/aramalar")}>
-              <IoMdArrowRoundBack />
-            </button>
+            <BackToMenuButton path={"aramalar"} />
             <h2>Arama Bilgisi</h2>
           </div>
           <div className="details-box">
@@ -113,7 +120,7 @@ function Calls() {
           </div>
         </div>
       }
-    </div>
+    </motion.div>
   );
 }
 

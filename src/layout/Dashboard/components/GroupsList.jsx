@@ -38,6 +38,7 @@ function GroupsList() {
 
   return (
     <div className="group-list-box">
+      {isSmallScreen && <h2 className="mobil-menu-title">Gruplar</h2>}
       <SearchInput
         placeholder={"Gruplarda aratın"}
         value={searchGroup}

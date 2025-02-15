@@ -116,6 +116,7 @@ function ChatsList() {
 
     return (
         <div className="chat-list-box">
+            {isSmallScreen && <h2 className="mobil-menu-title">Sohbetler</h2>}
             <SearchInput
                 value={searchUser}
                 onChange={setSearchUser}

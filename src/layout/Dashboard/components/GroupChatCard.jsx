@@ -74,7 +74,10 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
                         aria-controls={open ? "long-menu" : undefined}
                         aria-expanded={open ? "true" : undefined}
                         aria-haspopup="true"
-                        onClick={handleClick}
+                        onClick={(event) => {
+                            event.stopPropagation(); // Parent onClick'i tetiklenmesin
+                            handleClick(event);
+                        }}
                         sx={{
                             color: isDarkMode ? "#616161" : "#828A96",
                         }}
@@ -86,7 +89,10 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
                         id="long-menu"
                         anchorEl={anchorEl}
                         open={open}
-                        onClose={handleClose}
+                        onClose={(event) => {
+                            event.stopPropagation(); // Menüyü kapatırken de parent tetiklenmesin
+                            handleClose(event);
+                        }}
                         MenuListProps={{
                             "aria-labelledby": "long-button",
                         }}
@@ -108,7 +114,10 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
                     >
 
                         <MenuItem
-                            onClick={handleLeaveGroup}
+                            onClick={(event) => {
+                                event.stopPropagation();
+                                handleLeaveGroup();
+                            }}
                             sx={{ color: "#EB6262", boxShadow: "none" }}
                         >
                             <ListItemIcon>

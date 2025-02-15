@@ -23,6 +23,10 @@
         padding: 0px 15px;
         transition: transform 0.5s ease, opacity 0.5s ease, visibility 0.5s ease;
 
+        @include screen(900px) {
+            padding: 0px 10px 0px 0px;
+        }
+
         &.close {
             transform: translateY(-100%);
             opacity: 0;
@@ -34,6 +38,7 @@
         .group-info {
             @include flex-center(row, flex-start, center);
             gap: 8px;
+            cursor: pointer;
 
             .image-box {
                 position: relative;
@@ -76,7 +81,6 @@
                     color: var(--text-black);
                     font-weight: 800;
                     font-size: 15px;
-
                 }
 
                 span {
@@ -152,7 +156,6 @@
         background: transparent;
         border-radius: 6px;
     }
-
 }
 
 .user-details-sidebar,
@@ -277,6 +280,10 @@
 
             @include screen(1200px) {
                 width: 60%;
+            }
+
+            @include screen(900px) {
+                width: 100%;
             }
 
             strong {

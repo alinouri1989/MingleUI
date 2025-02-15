@@ -64,10 +64,34 @@
             box-shadow: rgba(42, 42, 42, 0.205) 0px 2px 8px 0px;
             cursor: pointer;
 
+            @include screen(900px) {
+                max-width: 300px;
+            }
+
+            @include screen(360px) {
+                max-width: 230px;
+            }
+
+            @include screen(340px) {
+                max-width: 220px;
+            }
+
             &.image {
                 padding: 3px 7px;
                 background-color: rgba(227, 227, 227, 0.067);
                 max-width: 380px;
+
+                @include screen(1000px) {
+                    max-width: 280px;
+                }
+
+                @include screen(540px) {
+                    max-width: 220px;
+                }
+
+                @include screen(369px) {
+                    max-width: 190px;
+                }
             }
 
             &.audio,
@@ -91,6 +115,19 @@
                 width: 100%;
                 @include flex-center(row, flex-start, center);
                 padding: 0px 0px 2px 0px;
+
+                img {
+                    display: none;
+
+                    @include screen(400px) {
+                        display: flex;
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        object-fit: cover;
+                    }
+                }
+
 
                 .sender-profile-name {
                     font-weight: bold;
@@ -173,13 +210,25 @@
             }
         }
 
-        .message-hour {
-            color: rgb(100, 100, 100);
-            text-align: center;
-            font-size: 12px;
-            font-weight: 700;
-        }
 
+        .message-hour-and-option-box {
+            @include flex-center(row, center, center);
+            gap: 5px;
+            margin: 0px 5px;
+
+
+            @include screen(360px) {
+                @include flex-center(column, center, center);
+                gap: 0px;
+            }
+
+            .message-hour {
+                color: rgb(100, 100, 100);
+                text-align: center;
+                font-size: 12px;
+                font-weight: 700;
+            }
+        }
     }
 
     .status-box {
@@ -264,6 +313,10 @@
     @include flex-center(row, center, center);
     padding: 5px 10px;
 
+    @include screen(540px) {
+        width: 230px;
+    }
+
     .audio-controls {
         @include flex-center(row, center, center);
         width: 300px;
@@ -282,6 +335,9 @@
             @include flex-center(row, center, center);
             gap: 16px;
 
+            @include screen(540px) {
+                padding: 0px;
+            }
 
             .time {
                 font-size: 14px;

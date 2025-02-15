@@ -3,12 +3,14 @@ import { IoPlay } from "react-icons/io5";
 import { IoPause } from "react-icons/io5";
 import { FiDownload } from "react-icons/fi";
 import { Slider, Stack } from '@mui/material';
+import useScreenWidth from "../../../../hooks/useScreenWidth"
 
 export function AudioMessage({ content }) {
     const audioRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
+    const isScreenSmall = useScreenWidth(540);
 
     useEffect(() => {
         if (audioRef.current) {
@@ -73,7 +75,7 @@ export function AudioMessage({ content }) {
                             max={duration}
                             step={0.1}
                             className="custom-slider"
-                            sx={{ width: '120px' }}
+                            sx={{ width: isScreenSmall ? '50px' : '120px' }}
                         />
                     </Stack>
                     <div className="time">

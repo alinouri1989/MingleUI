@@ -10,6 +10,7 @@ import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
 import "./style.scss";
 import { motion } from 'framer-motion';
 import { opacityEffect } from "../../../shared/animations/animations";
+import useScreenWidth from "../../../hooks/useScreenWidth";
 
 
 function ArchivesList() {
@@ -21,6 +22,7 @@ function ArchivesList() {
     const location = useLocation();
     const chatState = useSelector(state => state.chat);
     const [searchUser, setSearchUser] = useState("");
+    const isSmallScreen = useScreenWidth(900);
 
     const [enhancedChatList, setEnhancedChatList] = useState([]);
 
@@ -101,6 +103,7 @@ function ArchivesList() {
 
     return (
         <div className="archive-list-box">
+            {isSmallScreen && <h2 className="mobil-menu-title">Arşivler</h2>}
             <SearchInput value={searchUser} onChange={setSearchUser} placeholder={"Arşivlenmiş sohbetlerde ara"} />
             <div className="list-flex">
                 <motion.div

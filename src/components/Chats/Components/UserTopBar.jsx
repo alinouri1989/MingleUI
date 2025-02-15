@@ -8,6 +8,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { formatDateForLastConnectionDate } from '../../../helpers/dateHelper';
 import { useSignalR } from '../../../contexts/SignalRContext';
 import { setIsCallStarted, setIsCallStarting } from '../../../store/Slices/calls/callSlice';
+import useScreenWidth from '../../../hooks/useScreenWidth';
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { useLocation, useNavigate } from 'react-router-dom';
+import BackToMenuButton from '../../../shared/components/BackToMenuButton/BackToMenuButton';
 
 function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientId }) {
 
@@ -17,12 +21,15 @@ function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientI
 
     const { callConnection } = useSignalR();
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const location = useLocation();
 
     const status = recipientProfile.lastConnectionDate == "0001-01-01T00:00:00" ? 'online' : 'offline';
     const lastConnectionDate = recipientProfile.lastConnectionDate;
 
     const { showModal, closeModal } = useModal();
     const { isCallStarted, callId } = useSelector((state) => state.call);
+    const isSmallScreen = useScreenWidth(900);
 
     const handleVoiceCall = async () => {
         if (callConnection) {
@@ -51,11 +58,17 @@ function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientI
     return (
         <div className={`user-top-bar ${isSidebarOpen ? 'close' : ''}`}>
             <div className="user-info">
-                <div className="image-box">
+                {isSmallScreen && (
+                    <BackToMenuButton
+                        path={location.pathname.includes("arsivler") ? "arsivler" : "sohbetler"}
+                    />
+                )}
+
+                <div onClick={toggleSidebar} className="image-box">
                     <img src={recipientProfile.profilePhoto} alt={`${recipientProfile.displayName} profile`} />
                     <p className={`status ${status}`}></p>
                 </div>
-                <div className="name-and-status-box">
+                <div onClick={toggleSidebar} className="name-and-status-box">
                     <p className="user-name">{recipientProfile.displayName}</p>
 
                     {status == "online" ?
@@ -71,10 +84,12 @@ function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientI
                     <button onClick={() => handleVoiceCall()}><PiPhoneFill /></button>
                     <button onClick={() => handleVideoCall()}><HiMiniVideoCamera /></button>
                 </div>
-                <IoIosArrowDropleftCircle
-                    className="sidebar-toggle-buttons"
-                    onClick={toggleSidebar}
-                />
+                {!isSmallScreen &&
+                    <IoIosArrowDropleftCircle
+                        className="sidebar-toggle-buttons"
+                        onClick={toggleSidebar}
+                    />
+                }
             </div>
         </div>
     )

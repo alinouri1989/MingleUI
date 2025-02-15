@@ -5,9 +5,12 @@ import NewGroupModal from './NewAndSettingsGroup/NewAndSettingsGroupModal';
 import { useSelector } from 'react-redux';
 import { jwtDecode } from 'jwt-decode';
 import { formatDateToTR } from '../../../helpers/dateHelper';
+import { IoMdArrowRoundBack } from "react-icons/io";
+import useScreenWidth from "../../../hooks/useScreenWidth";
 
 function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }) {
     const { showModal, closeModal } = useModal();
+    const isSmallScreen = useScreenWidth(900);
 
     const { token } = useSelector((state) => state.auth);
     const { Group } = useSelector((state) => state.chat);
@@ -37,10 +40,17 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }
             {isSidebarOpen &&
                 <>
                     <div className='option-buttons'>
-                        <IoIosArrowDroprightCircle
-                            className="sidebar-toggle-buttons"
-                            onClick={toggleSidebar}
-                        />
+                        {isSmallScreen ?
+                            <button className='back-to-menu-btn' onClick={toggleSidebar}>
+                                <IoMdArrowRoundBack />
+                            </button>
+                            :
+                            <IoIosArrowDroprightCircle
+                                className="sidebar-toggle-buttons"
+                                onClick={toggleSidebar}
+                            />
+                        }
+
                         {isAdmin &&
                             <button onClick={handleGroupSettings} className='group-setting-btn'>
                                 <IoMdSettings />

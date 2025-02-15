@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { IoIosArrowDroprightCircle } from "react-icons/io";
 import { PiPhoneFill } from "react-icons/pi";
 import { HiMiniVideoCamera } from "react-icons/hi2";
@@ -8,6 +8,9 @@ import { formatDateForLastConnectionDate } from '../../../helpers/dateHelper';
 import { useSignalR } from '../../../contexts/SignalRContext';
 import { setIsCallStarting } from '../../../store/Slices/calls/callSlice';
 import { useDispatch } from 'react-redux';
+import useScreenWidth from '../../../hooks/useScreenWidth';
+import { useNavigate } from 'react-router-dom';
+import { IoMdArrowRoundBack } from "react-icons/io";
 
 function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientId }) {
 
@@ -20,8 +23,30 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
     const status = recipientProfile.lastConnectionDate == "0001-01-01T00:00:00" ? 'online' : 'offline';
     const lastConnectionDate = recipientProfile.lastConnectionDate;
 
+    const isSmallScreen = useScreenWidth(900);
+    const navigate = useNavigate();
 
     const { showModal, closeModal } = useModal();
+
+
+
+
+    useEffect(() => {
+        // Telefonun geri tuşu dinleniyor
+        const handleBackButton = (e) => {
+            e.preventDefault(); // Varsayılan geri gitme işlemini engelliyoruz
+            toggleSidebar(); // Geri tuşuna basıldığında toggleSidebar fonksiyonunu çalıştırıyoruz
+        };
+
+        // Popstate event'ini dinle
+        window.addEventListener('popstate', handleBackButton);
+
+        // Temizleme işlemi
+        return () => {
+            window.removeEventListener('popstate', handleBackButton);
+        };
+    }, []);
+
 
     const handleVoiceCall = async () => {
         if (callConnection) {
@@ -51,11 +76,17 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
         <div className={`user-details-sidebar ${isSidebarOpen ? "open" : ""}`}>
             {isSidebarOpen &&
                 <>
-                    <IoIosArrowDroprightCircle
-                        className="sidebar-toggle-buttons"
-                        onClick={toggleSidebar}
-                    />
-
+                    {!isSmallScreen
+                        ?
+                        <IoIosArrowDroprightCircle
+                            className="sidebar-toggle-buttons"
+                            onClick={toggleSidebar}
+                        />
+                        :
+                        <button className='back-to-menu-btn' onClick={toggleSidebar}>
+                            <IoMdArrowRoundBack />
+                        </button>
+                    }
                     <div className='sidebar-content-box'>
                         <div className='user-info-box'>
                             <img src={recipientProfile.profilePhoto} alt={`profile`} />
