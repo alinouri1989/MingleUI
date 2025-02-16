@@ -3,6 +3,12 @@
 .new-group-modal {
     width: 500px;
 
+    @include screen(768px) {
+        width: 100%;
+        height: auto;
+    }
+
+
     .title-box {
         @include flex-center(row, flex-start, center);
         gap: 9px;
@@ -26,6 +32,12 @@
         overflow: auto;
         height: 400px;
         padding: 0px 12px;
+
+
+        @include screen(768px) {
+            height: 100%;
+            overflow: hidden;
+        }
 
         .choose-group-image {
             width: 100%;
@@ -219,6 +231,11 @@
                 border-radius: 7px;
                 background-color: var(--smooth-light-red);
 
+
+                @include screen(768px) {
+                    width: 80px;
+                }
+
                 .icon {
                     font-size: 24px;
                 }
@@ -302,11 +319,16 @@
             z-index: 55500;
 
             @media (max-width:768px) {
-                height: 100%;
                 max-height: 100%;
+                height: 100%;
                 overflow: scroll;
+                overflow-x: hidden;
                 border-radius: 0px;
-                border: 0px;
+                width: 100%;
+                border: 0;
+                border-radius: 0px;
+                background-color: var(--generalBackgroundColor);
+
             }
 
 
@@ -346,6 +368,11 @@
                 margin-top: 25px;
                 display: none;
 
+                @media (max-width:768px) {
+                    height: auto;
+                    overflow-x: hidden;
+                }
+
 
                 &.active {
                     display: block;
@@ -376,6 +403,10 @@
                     overflow: auto;
                     transition: height 0.3s ease;
 
+                    @media (max-width:768px) {
+                        height: 100%;
+
+                    }
 
                     .user-box {
                         @include flex-center(row, flex-start, center);

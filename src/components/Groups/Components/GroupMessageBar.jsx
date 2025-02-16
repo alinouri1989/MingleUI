@@ -5,6 +5,9 @@ import { getChatBackgroundColor } from '../../../helpers/getChatBackgroundColor.
 import { useEffect } from 'react';
 import { getUserIdFromToken } from '../../../helpers/getUserIdFromToken.js';
 import { convertToLocalTime } from '../../../helpers/convertToLocalTime.js';
+import { opacityAndTransformEffect, opacityEffect } from '../../../shared/animations/animations.js';
+import FirstChatBanner from "../../../assets/images/Home/FirstChatBanner.png";
+import { motion } from "framer-motion";
 
 function GroupMessageBar({ groupId }) {
 
@@ -58,59 +61,66 @@ function GroupMessageBar({ groupId }) {
         return acc;
     }, {}) || {};
 
+    const filteredGroupedMessages = Object.entries(groupedMessagesByDate).filter(
+        ([_, messages]) => messages.length > 0
+    );
 
     return (
         <div className="group-message-bar" style={{ backgroundImage }}>
             <div className="messages-list">
+                {filteredGroupedMessages.length === 0 ? (
+                    <motion.div
+                        variants={opacityEffect(1.5)}
+                        initial="initial"
+                        animate="animate"
+                        transition={{ delay: 0.5 }}
+                        className="first-chat-box"
+                    >
+                        <img src={FirstChatBanner} alt="No messages yet" />
+                        <motion.p {...opacityAndTransformEffect(0.5, 30, 0.5)}>
+                            İlk mesajınızı göndererek sohbeti başlatın
+                        </motion.p>
+                    </motion.div>
+                ) : (
+                    filteredGroupedMessages.map(([date, messages]) => (
+                        <div key={date} className="date-group">
+                            <div className="date-heading">{date}</div>
 
-                {Object.entries(groupedMessagesByDate).map(([date, messages]) => (
-                    <div key={date} className="date-group">
-                        <div className="date-heading">{date}</div>
+                            {messages.map((msg) => {
+                                const userId = Object.keys(msg.status.sent || {})[0];
+                                const groupListId = GroupChat?.participants?.[0];
+                                const group = groupList[groupListId];
+                                const senderProfile = group?.participants?.[userId];
+                                const isSender = currentUserId === userId;
+                                const formattedTimestamp = convertToLocalTime(
+                                    msg.status.sent[userId]
+                                );
+                                const userColor = assignColorToUser(userId);
 
-                        {messages.map((msg) => {
-                            // Mesajın göndericisinin userId'sini al
-                            const userId = Object.keys(msg.status.sent || {})[0];
-
-                            // GroupChat içindeki groupId'yi al
-                            const groupListId = GroupChat?.participants?.[0];
-
-                            // GroupList'ten ilgili grubu bul
-                            const group = groupList[groupListId];
-
-                            // Katılımcılar arasında userId'ye göre kullanıcıyı buluyoruz
-                            const senderProfile = group?.participants?.[userId];
-
-                            // isSender kontrolü, mesajın göndericisi ile geçerli kullanıcıyı karşılaştırıyoruz
-                            const isSender = currentUserId === userId;
-
-                            // timestamp'i uygun formatta dönüştür
-                            const formattedTimestamp = convertToLocalTime(msg.status.sent[userId]);
-
-                            const userColor = assignColorToUser(userId);
-
-                            return (
-                                <MessageBubble
-                                    key={msg.id}
-                                    chatId={groupId}
-                                    messageId={msg.id}
-                                    userId={currentUserId}
-                                    content={msg.content}
-                                    timestamp={formattedTimestamp}
-                                    isSender={isSender}
-                                    status={msg.status}
-                                    isGroupMessageBubble={true}
-                                    messageType={msg.type}
-                                    senderProfile={senderProfile}
-                                    userColor={userColor}
-                                />
-                            );
-                        })}
-                    </div>
-                ))}
+                                return (
+                                    <MessageBubble
+                                        key={msg.id}
+                                        chatId={groupId}
+                                        messageId={msg.id}
+                                        userId={currentUserId}
+                                        content={msg.content}
+                                        timestamp={formattedTimestamp}
+                                        isSender={isSender}
+                                        status={msg.status}
+                                        isGroupMessageBubble={true}
+                                        messageType={msg.type}
+                                        senderProfile={senderProfile}
+                                        userColor={userColor}
+                                    />
+                                );
+                            })}
+                        </div>
+                    ))
+                )}
             </div>
             <div ref={groupMessagesEndRef} />
         </div>
-    )
+    );
 }
 
 export default GroupMessageBar

@@ -83,7 +83,7 @@ function Chats() {
               recipientProfile={recipientProfile}
               recipientId={recipientId}
             />
-            <UserMessageBar ChatId={id} /> {/* Örnek veriyi gruplama */}
+            <UserMessageBar ChatId={id} />
             <MessageInputBar chatId={id} />
           </>
         )}

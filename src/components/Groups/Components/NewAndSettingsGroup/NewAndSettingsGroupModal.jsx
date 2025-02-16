@@ -9,6 +9,7 @@ import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 
+
 import { MdPersonRemoveAlt1 } from "react-icons/md";
 import { HiUserAdd } from "react-icons/hi"
 import { MdClose } from 'react-icons/md';
@@ -29,6 +30,7 @@ import "./style.scss";
 import { useSignalR } from "../../../../contexts/SignalRContext.jsx";
 import { useNavigate } from "react-router-dom";
 import { addNewGroupChat } from "../../../../store/Slices/chats/chatSlice.js";
+import useScreenWidth from "../../../../hooks/useScreenWidth.js";
 
 function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, groupId, userId }) {
 
@@ -50,6 +52,7 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
 
     const [isShowProfileImage, setIsShowProfileImage] = useState(false);
     const [isSaveDisabled, setSaveDisabled] = useState(true);
+    const isSmallScreen = useScreenWidth(768);
 
     const initialData = {
         name: isGroupSettings ? groupProfile?.name : "",
@@ -360,7 +363,7 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                                 slotProps={{
                                     paper: {
                                         style: {
-                                            maxHeight: 48 * 3,
+                                            maxHeight: "auto",
                                             width: "18ch",
                                             borderRadius: "8px",
                                             border: `4px solid ${isDarkMode ? "#222430" : "#CFD5F2"}`,
@@ -531,7 +534,11 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                                                 }
                                             >
                                                 <MdPersonRemoveAlt1 className="icon" />
-                                                <span>{isCurrentUser ? "Gruptan Ayrıl" : "Gruptan Çıkar"}</span>
+                                                <span>
+                                                    {isSmallScreen
+                                                        ? (isCurrentUser ? "Ayrıl" : "Çıkar")
+                                                        : (isCurrentUser ? "Gruptan Ayrıl" : "Gruptan Çıkar")}
+                                                </span>
                                             </button>
                                         </div>
                                     );

@@ -161,6 +161,11 @@
                 padding: 5px;
                 gap: 5px;
 
+
+                @include screen(360px) {
+                    width: 170px;
+                }
+
                 .file-info-box {
                     @include flex-center(row, flex-start, center);
                     gap: 5px;

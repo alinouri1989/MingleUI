@@ -79,10 +79,6 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
         handleClose();
     }
 
-
-
-
-
     let statusIcon;
     let statusColor;
 
@@ -223,9 +219,11 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
         );
     };
 
+
+
     const UserInfo = ({ displayName, userColor, messageType }) => (
         <div className='user-info' style={{ color: userColor }}>
-            {messageType === 3 && <img src={senderProfile?.profilePhoto} alt="" />}
+            {messageType === 3 && isGroupMessageBubble && < img src={senderProfile?.profilePhoto} alt="" />}
             <p className={`sender-profile-name ${messageType === 0 ? 'text' : messageType === 1 ? 'image' : 'other'}`}>
                 {displayName}
             </p>

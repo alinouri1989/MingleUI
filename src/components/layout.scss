@@ -131,6 +131,31 @@
             width: 100%;
             flex: 1;
             padding: 10px 20px;
+            height: 100%;
+
+            .first-chat-box {
+                @include flex-center(row, center, center);
+                flex-direction: column;
+                height: 100%;
+                width: 100%;
+
+                img {
+                    max-width: 75%;
+                    max-height: 75%;
+                    user-select: none;
+
+                    @include screen(768px) {
+                        max-width: 90%;
+                        max-height: 90%;
+                    }
+                }
+
+                p {
+                    color: var(--text-dark-gray);
+                    font-size: 14px;
+
+                }
+            }
         }
 
         .date-group {

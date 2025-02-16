@@ -6,6 +6,9 @@ import { useSignalR } from '../../../contexts/SignalRContext.jsx';
 import { getUserIdFromToken } from '../../../helpers/getUserIdFromToken.js';
 import { convertToLocalTime } from '../../../helpers/convertToLocalTime.js';
 import { SuccessAlert } from '../../../helpers/customAlert.js';
+import FirstChatBanner from "../../../assets/images/Home/FirstChatBanner.png";
+import { motion } from "framer-motion"
+import { opacityAndTransformEffect, opacityEffect } from '../../../shared/animations/animations.js';
 
 function UserMessageBar({ ChatId }) {
   const { token, user } = useSelector((state) => state.auth);
@@ -54,43 +57,59 @@ function UserMessageBar({ ChatId }) {
     return acc;
   }, {}) || {};
 
+  // Boş grupları filtrele
+  const filteredGroupedMessages = Object.entries(groupedMessagesByDate).filter(
+    ([_, messages]) => messages.length > 0
+  );
 
   return (
-    <div className="user-message-bar " style={{ backgroundImage }}>
+    <div className="user-message-bar" style={{ backgroundImage }}>
       <div className="messages-list">
-        {Object.entries(groupedMessagesByDate).map(([date, messages]) => (
-          <div key={date} className="date-group">
-            <div className="date-heading">{date}</div>
-            {messages.map((msg) => {
-              // Gönderen kullanıcıyı bul
-              const senderId = Object.keys(msg.status.sent)[0];
-              const isSender = senderId === userId;
-              const isDeleted = msg.deletedFor?.hasOwnProperty(userId) ?? false;
+        {filteredGroupedMessages.length === 0 ? (
+          <motion.div
+            variants={opacityEffect(1.5)}
+            initial="initial"
+            animate="animate"
+            transition={{ delay: 0.5 }}
+            className='first-chat-box'>
+            <img src={FirstChatBanner} alt="No messages yet" />
+            <motion.p
+              {...opacityAndTransformEffect(0.5, 30, 0.5)}
+            >
+              İlk mesajınızı göndererek sohbeti başlatın
+            </motion.p>
+          </motion.div>
+        ) : (
+          filteredGroupedMessages.map(([date, messages]) => (
+            <div key={date} className="date-group">
+              <div className="date-heading">{date}</div>
+              {messages.map((msg) => {
+                const senderId = Object.keys(msg.status.sent)[0];
+                const isSender = senderId === userId;
+                const isDeleted = msg.deletedFor?.hasOwnProperty(userId) ?? false;
+                const formattedTimestamp = convertToLocalTime(msg.status.sent[senderId]);
 
-              // Mesajın gönderim zamanını dönüştür
-              const formattedTimestamp = convertToLocalTime(msg.status.sent[senderId]);
-
-              return (
-                <MessageBubble
-                  chatId={ChatId}
-                  key={msg.id}
-                  messageId={msg.id}
-                  content={msg.content}
-                  timestamp={formattedTimestamp} // Dönüştürülmüş zaman
-                  isSender={isSender}
-                  status={msg.status}
-                  messageType={msg.type}
-                  userId={userId}
-                  isDeleted={isDeleted}
-                />
-              );
-            })}
-          </div>
-        ))}
-        <div ref={messagesEndRef} />
+                return (
+                  <MessageBubble
+                    chatId={ChatId}
+                    key={msg.id}
+                    messageId={msg.id}
+                    content={msg.content}
+                    timestamp={formattedTimestamp}
+                    isSender={isSender}
+                    status={msg.status}
+                    messageType={msg.type}
+                    userId={userId}
+                    isDeleted={isDeleted}
+                  />
+                );
+              })}
+            </div>
+          ))
+        )}
       </div>
+      <div ref={messagesEndRef} />
     </div>
-
   );
 }
 
