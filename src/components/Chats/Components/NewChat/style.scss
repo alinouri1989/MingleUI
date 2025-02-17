@@ -121,6 +121,14 @@
                 .user-info {
                     @include flex-center(column, center, flex-start);
 
+                    p,
+                    span {
+                        width: 100%;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                    }
+
                     p {
                         color: var(--text-black);
                         font-size: 15px;
@@ -131,6 +139,7 @@
                     span {
                         color: var(--text-input-gray);
                         font-size: 13px;
+
                     }
                 }
             }

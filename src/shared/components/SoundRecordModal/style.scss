@@ -1,12 +1,30 @@
 @use "../../../shared/styles/main.scss" as *;
 
 .sound-record-box {
+    width: 100%;
+    height: 100%;
+
+
     .sound-record-content {
         width: 400px;
+        height: 100%;
+
+        .content-box {
+            @include flex-center(row, center, center);
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+        }
 
         @include screen(768px) {
             width: 100%;
             height: 100%;
+        }
+
+        .record-finished-box {
+            height: 100%;
+            @include flex-center(column, center, center);
+
         }
 
         @include flex-center(column, center, center);
@@ -39,10 +57,14 @@
             .wave {
                 border-radius: 16px;
                 width: 13px;
-
                 background-color: var(--smooth-blue-hover);
                 height: 50px; // Başlangıç yüksekliği
                 transition: all 0.3s ease-in-out;
+
+                @include screen(768px) {
+                    width: 17px;
+                    height: 60px;
+                }
 
                 &.animate {
                     animation: waveAnimation 1s ease-in-out infinite;
@@ -78,6 +100,11 @@
                 background-color: var(--blue);
                 color: white;
                 font-size: 15px;
+
+                @include screen(768px) {
+                    padding: 12px 24px;
+                    border-radius: 30px;
+                }
             }
         }
 
@@ -100,6 +127,14 @@
                 height: 35px;
                 font-size: 15px;
                 transition: all 0.3s ease-in-out;
+
+                @include screen(768px) {
+                    @include flex-center(row, center, center);
+                    padding: 12px 24px;
+                    height: auto;
+                    width: 100px;
+                    border-radius: 30px;
+                }
 
                 &:first-child {
                     background-color: var(--smooth-red);

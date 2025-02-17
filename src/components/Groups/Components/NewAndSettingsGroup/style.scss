@@ -180,7 +180,6 @@
                 height: 60px;
                 border-radius: 50%;
                 object-fit: cover;
-
             }
 
             .group-admin,
@@ -191,10 +190,13 @@
 
             .group-admin .admin-info,
             .other-users .user-box .user-info .username-and-role-box {
+
+
                 p {
                     font-weight: 700;
                     font-size: 15px;
                     line-height: 20px;
+
                 }
 
                 span {
@@ -219,6 +221,7 @@
                 @include flex-center(row, space-between, center);
                 width: 100%;
                 margin-bottom: 15px;
+
             }
 
             .remove-user-box {
@@ -399,17 +402,18 @@
                     gap: 5px;
                     margin-top: 15px;
                     height: 250px;
+
                     padding-right: 15px;
                     overflow: auto;
                     transition: height 0.3s ease;
 
                     @media (max-width:768px) {
                         height: 100%;
-
                     }
 
+
                     .user-box {
-                        @include flex-center(row, flex-start, center);
+                        @include flex-center(row, center, center);
                         position: relative;
                         width: 100%;
                         gap: 10px;
@@ -417,7 +421,6 @@
                         border-radius: 100px;
                         @include transition();
                         cursor: pointer;
-
 
                         .add-user-box,
                         .added-user {
@@ -430,10 +433,18 @@
                             color: var(--blue);
                             opacity: 0;
 
-
+                            @include screen(500px) {
+                                right: 20px;
+                            }
 
                             .icon {
                                 font-size: 22px;
+                            }
+
+                            p {
+                                @include screen(500px) {
+                                    display: none;
+                                }
                             }
                         }
 
@@ -448,11 +459,12 @@
                         }
 
                         img {
-                            width: 52px;
-                            height: 52px;
+                            width: 50px;
+                            height: 50px;
                             object-fit: cover;
                             border-radius: 50%;
                             border: 2px solid var(--smooth-blue);
+                            max-width: none;
                         }
 
                         // Or
@@ -468,17 +480,27 @@
 
                         .user-info {
                             @include flex-center(column, center, flex-start);
+                            width: 100%;
 
                             p {
                                 color: var(--text-black);
                                 font-size: 15px;
                                 font-weight: 700;
                                 line-height: 24px;
+                                width: 70%;
+                                white-space: nowrap;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
                             }
 
                             span {
                                 color: var(--text-input-gray);
+                                width: 70%;
                                 font-size: 13px;
+                                white-space: nowrap;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+
                             }
                         }
 
@@ -535,7 +557,6 @@
 
     }
 }
-
 
 
 

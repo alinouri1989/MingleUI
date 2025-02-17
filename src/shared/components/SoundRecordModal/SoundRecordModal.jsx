@@ -161,7 +161,7 @@ function SoundRecordModal({ closeModal, chatId }) {
                     <p>Sesini Kaydet</p>
                 </div>
                 {!recordFinished &&
-                    <>
+                    <div className='content-box'>
                         <div className="sound-waves-box">
                             <div className={`wave ${wavesAnimation ? 'animate first' : ''}`}></div>
                             <div className={`wave ${wavesAnimation ? 'animate second' : ''}`}></div>
@@ -172,7 +172,7 @@ function SoundRecordModal({ closeModal, chatId }) {
                             {String(Math.floor(timer / 60)).padStart(2, '0')}:
                             {String(timer % 60).padStart(2, '0')}
                         </div>
-                    </>
+                    </div>
                 }
                 <div className="options-box">
                     {/* Kayıt başlamışsa "Bitir" butonunu göster */}
@@ -189,6 +189,7 @@ function SoundRecordModal({ closeModal, chatId }) {
                 {/* Kaydedilen sesin dinletilmesi, sadece Kaydı Bitir'den sonra */}
                 {recordFinished && audioUrl && (
                     <motion.div
+                        className="record-finished-box"
                         variants={opacityEffect(0.8)}
                         initial="initial"
                         animate="animate"
@@ -200,12 +201,14 @@ function SoundRecordModal({ closeModal, chatId }) {
                                 controls
                             />
                         </div>
-                        <div className='send-and-cancel-buttons-box'>
-                            <button onClick={handleDeleteAudio}>Sil</button>
-                            <button onClick={handleSendAudio}>Gönder</button>
-                        </div>
                     </motion.div>
                 )}
+                {recordFinished && audioUrl &&
+                    <div className='send-and-cancel-buttons-box'>
+                        <button onClick={handleDeleteAudio}>Sil</button>
+                        <button onClick={handleSendAudio}>Gönder</button>
+                    </div>
+                }
             </div>
             {isLoading && <PreLoader />}
         </div>

@@ -140,7 +140,9 @@ function AddUser({ closeUserModal, setFormData, formData }) {
                                     const userRole = isAlreadyAdded ? formData.participants[user.userId].role : null;
                                     return (
                                         <div key={user.userId} className="user-box" onClick={() => handleAddSelectedUser(user.userId)}>
-                                            <img src={user.profilePhoto} alt={user.displayName} />
+                                            <div className='image-box'>
+                                                <img src={user.profilePhoto} alt={user.displayName} />
+                                            </div>
                                             <div className="user-info">
                                                 <p>{user.displayName}</p>
                                                 <span>{user.email}</span>
