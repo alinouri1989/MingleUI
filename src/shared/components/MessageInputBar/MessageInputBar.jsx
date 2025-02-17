@@ -302,8 +302,8 @@ function MessageInputBar({ chatId }) {
                                 style={{
                                     backgroundColor: user?.userSettings?.theme === "Dark" ? "#141414" : "#ffffff", // Dark için koyu, Light için beyaz
                                     borderRadius: "23px", // İsteğe bağlı: Kenarları yuvarlak yapabilirsiniz
+                                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
 
-                                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Hafif bir gölge eklemek
                                 }}
                             />
                         </div>

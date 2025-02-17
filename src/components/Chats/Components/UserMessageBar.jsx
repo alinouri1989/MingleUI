@@ -9,6 +9,7 @@ import { SuccessAlert } from '../../../helpers/customAlert.js';
 import FirstChatBanner from "../../../assets/images/Home/FirstChatBanner.png";
 import { motion } from "framer-motion"
 import { opacityAndTransformEffect, opacityEffect } from '../../../shared/animations/animations.js';
+import useScreenWidth from '../../../hooks/useScreenWidth.js';
 
 function UserMessageBar({ ChatId }) {
   const { token, user } = useSelector((state) => state.auth);
@@ -19,17 +20,18 @@ function UserMessageBar({ ChatId }) {
 
   // ChatId ile eşleşen chat'i bul
   const chat = Individual.find(chat => chat?.id === ChatId);
+  const isSmallScreen = useScreenWidth(900);
 
   const backgroundImage = getChatBackgroundColor(user.userSettings.chatBackground);
-  const messagesEndRef = useRef(null);
-
+  const messagesContainerRef = useRef(null);
 
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   }, [chat?.messages]);
-  // Mesajları tarih bazlı gruplandırma
+
+
 
   const groupedMessagesByDate = chat?.messages?.reduce((acc, message) => {
     const sentDate = Object.values(message.status.sent)[0];
@@ -63,8 +65,13 @@ function UserMessageBar({ ChatId }) {
   );
 
   return (
-    <div className="user-message-bar" style={{ backgroundImage }}>
-      <div className="messages-list">
+    <motion.div
+      key={ChatId}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={isSmallScreen ? { delay: 0.4, duration: 0.5 } : { duration: 0 }}
+      className="user-message-bar" style={{ backgroundImage }}>
+      <div className="messages-list" ref={messagesContainerRef}>
         {filteredGroupedMessages.length === 0 ? (
           <motion.div
             variants={opacityEffect(1.5)}
@@ -104,12 +111,12 @@ function UserMessageBar({ ChatId }) {
                   />
                 );
               })}
+
             </div>
           ))
         )}
       </div>
-      <div ref={messagesEndRef} />
-    </div>
+    </motion.div>
   );
 }
 

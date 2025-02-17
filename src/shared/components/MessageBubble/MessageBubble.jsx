@@ -24,6 +24,7 @@ import { AudioMessage } from './components/AudioMessage';
 import { useModal } from '../../../contexts/ModalContext';
 import MessageInfo from '../MessageInfo/MessageInfo';
 import useScreenWidth from '../../../hooks/useScreenWidth';
+import { motion } from "framer-motion";
 
 function MessageBubble({ chatId, userId, messageId, userColor, content, isDeleted, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
     if (content == "" || isDeleted) {
@@ -269,7 +270,7 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
     };
 
     return (
-        <div className={"message-bubble-box"}>
+        <div className="message-bubble-box">
             <div className={`message-box ${isSender ? 'sender' : 'receiver'}`} >
                 {isGroupMessageBubble && !isSender && (!isSmallScreen || messageType !== 3) && (
                     <div className='image-box'>
@@ -433,7 +434,7 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
                     </button>
                 </div>
             }
-        </div >
+        </div>
     );
 }
 

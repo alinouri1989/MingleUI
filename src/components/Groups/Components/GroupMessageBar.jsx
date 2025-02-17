@@ -8,6 +8,7 @@ import { convertToLocalTime } from '../../../helpers/convertToLocalTime.js';
 import { opacityAndTransformEffect, opacityEffect } from '../../../shared/animations/animations.js';
 import FirstChatBanner from "../../../assets/images/Home/FirstChatBanner.png";
 import { motion } from "framer-motion";
+import useScreenWidth from '../../../hooks/useScreenWidth.js';
 
 function GroupMessageBar({ groupId }) {
 
@@ -20,8 +21,9 @@ function GroupMessageBar({ groupId }) {
 
     const GroupChat = Group.find(group => group?.id === groupId);
     const backgroundImage = getChatBackgroundColor(user.userSettings.chatBackground)
-    const groupMessagesEndRef = useRef(null);
 
+    const messagesContainerRef = useRef(null);
+    const isSmallScreen = useScreenWidth(900);
     const colorPalette = ["#4984F1", "#3B3BBA", "#21BE43", "#FFAB3D", "#FF4D4D", "#7E51CD", "#10AA91", "#9F2162", "#94775D"];
     const userColorsRef = useRef(new Map());
 
@@ -33,9 +35,10 @@ function GroupMessageBar({ groupId }) {
         return userColorsRef.current.get(userId);
     };
 
+
     useEffect(() => {
-        if (groupMessagesEndRef.current) {
-            groupMessagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        if (messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
         }
     }, [GroupChat?.messages]);
 
@@ -66,8 +69,13 @@ function GroupMessageBar({ groupId }) {
     );
 
     return (
-        <div className="group-message-bar" style={{ backgroundImage }}>
-            <div className="messages-list">
+        <motion.div
+            key={groupId}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={isSmallScreen ? { delay: 0.4, duration: 0.5 } : { duration: 0 }}
+            className="group-message-bar" style={{ backgroundImage }}>
+            <div className="messages-list" ref={messagesContainerRef} >
                 {filteredGroupedMessages.length === 0 ? (
                     <motion.div
                         variants={opacityEffect(1.5)}
@@ -118,8 +126,7 @@ function GroupMessageBar({ groupId }) {
                     ))
                 )}
             </div>
-            <div ref={groupMessagesEndRef} />
-        </div>
+        </motion.div>
     );
 }
 
