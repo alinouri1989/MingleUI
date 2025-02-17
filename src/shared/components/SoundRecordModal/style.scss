@@ -58,7 +58,7 @@
                 border-radius: 16px;
                 width: 13px;
                 background-color: var(--smooth-blue-hover);
-                height: 50px; // Başlangıç yüksekliği
+                height: 50px;
                 transition: all 0.3s ease-in-out;
 
                 @include screen(768px) {

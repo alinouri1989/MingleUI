@@ -8,10 +8,11 @@ import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
 import { opacityEffect } from "../../../shared/animations/animations";
 import { motion } from 'framer-motion';
 import useScreenWidth from "../../../hooks/useScreenWidth";
+import PreLoader from "../../../shared/components/PreLoader/PreLoader";
 
 function CallsList() {
   const { token } = useSelector(state => state.auth);
-  const { callRecipientList, calls } = useSelector(state => state.call);
+  const { callRecipientList, calls, isInitialCallsReady } = useSelector(state => state.call);
   const userId = getUserIdFromToken(token);
   const isSmallScreen = useScreenWidth(900);
 
@@ -79,7 +80,8 @@ function CallsList() {
               </motion.div>
             ))
           ) : (
-            <NoActiveData text={searchTerm ? "Eşleşen arama bulunamadı" : "Arama geçmişiniz bulunmamaktadır."} />
+            isInitialCallsReady ? <NoActiveData text={searchTerm ? "Eşleşen arama bulunamadı" : "Arama geçmişiniz bulunmamaktadır."} />
+              : <PreLoader />
           )}
         </motion.div>
 

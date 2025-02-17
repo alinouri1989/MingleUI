@@ -11,11 +11,12 @@ import "./style.scss";
 import { motion } from 'framer-motion';
 import { opacityEffect } from "../../../shared/animations/animations";
 import useScreenWidth from "../../../hooks/useScreenWidth";
+import PreLoader from "../../../shared/components/PreLoader/PreLoader";
 
 
 function ArchivesList() {
 
-    const { Individual } = useSelector((state) => state.chat);
+    const { Individual, isChatsInitialized } = useSelector((state) => state.chat);
     const chatList = useSelector((state) => state.chatList.chatList);
     const { token } = useSelector((state) => state.auth);
     const UserId = getUserIdFromToken(token);
@@ -134,7 +135,9 @@ function ArchivesList() {
                             </motion.div>
                         ))
                     ) : (
-                        <NoActiveData text={searchUser ? "Eşleşen kullanıcı bulunamadı" : "Arşivlenmiş sohbetiniz bulunmamaktadır."} />
+                        isChatsInitialized
+                            ? <NoActiveData text={searchUser ? "Eşleşen kullanıcı bulunamadı" : "Arşivlenmiş sohbetiniz bulunmamaktadır."} />
+                            : <PreLoader />
                     )}
                 </motion.div>
 

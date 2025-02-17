@@ -15,6 +15,7 @@ import { getChatId } from "../../../store/Slices/chats/chatSlice";
 import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
 import { opacityEffect } from "../../../shared/animations/animations";
 import useScreenWidth from "../../../hooks/useScreenWidth";
+import PreLoader from "../../../shared/components/PreLoader/PreLoader";
 
 function ChatsList() {
     const { showModal, closeModal } = useModal();
@@ -156,8 +157,9 @@ function ChatsList() {
                             </motion.div>
                         ))
                     ) : (
-                        isChatsInitialized && <NoActiveData text={searchUser ? "Eşleşen kullanıcı bulunamadı" : "Aktif sohbet bulunamadı"} />
-
+                        isChatsInitialized
+                            ? <NoActiveData text={searchUser ? "Eşleşen kullanıcı bulunamadı" : "Aktif sohbet bulunamadı"} />
+                            : <PreLoader />
                     )}
                 </motion.div>
             </div>

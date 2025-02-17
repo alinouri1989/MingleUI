@@ -5,7 +5,7 @@ export const createContainerVariants = (delayChildren = 0.3, staggerChildren = 0
         scale: 1,
         transition: {
             delayChildren,
-            staggerChildren,  // Burada her bir öğe arasında bir gecikme ekliyoruz
+            staggerChildren,
         },
     },
 });

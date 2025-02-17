@@ -192,7 +192,7 @@ function Account() {
           slotProps={{
             paper: {
               style: {
-                maxHeight: 48 * 3,
+                maxHeight: "auto",
                 width: "18ch",
                 borderRadius: "8px",
                 border: `4px solid ${isDarkMode ? "#222430" : "#CFD5F2"}`,

@@ -1,14 +1,29 @@
-import "./style.scss"
-import MingleLogo from "../../../assets/logos/MingleLogoWithText.svg"
+import MingleLogo from "../../../assets/logos/MingleLogoWithText.svg";
+import "./style.scss";
+import { motion } from "framer-motion";
+
 function MinglePreLoader() {
     return (
-        <div className="loading-container">
+        <motion.div
+            className="loading-container"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8 }}
+        >
             <img src={MingleLogo} alt="" />
             <div className="progress-bar">
                 <div className="progress"></div>
             </div>
-        </div>
-    )
+        </motion.div>
+    );
 }
 
-export default MinglePreLoader
+export default MinglePreLoader;
+
+export const opacityEffect = (duration = 0.8) => ({
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+    transition: { duration }
+});

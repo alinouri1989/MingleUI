@@ -13,6 +13,17 @@
     border: 4px solid;
     border-color: var(--smooth-blue-hover);
 
+    @include screen(430px) {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        border-radius: 0;
+        border: 0;
+
+    }
+
     .intro-box {
         height: 100%;
         width: 100%;
@@ -42,6 +53,10 @@
     .content-box {
         height: 100%;
         @include flex-center(column, center, center);
+
+        @include screen(430px) {
+            height: 100%;
+        }
 
         .navigation-box,
         .options-box {
@@ -109,23 +124,28 @@
 
                 img {
                     width: 130px;
-                    height: 130px;
+
                 }
             }
 
             .text-generator-result,
             .image-generator-result {
                 width: 100%;
+                height: 100%;
             }
 
             .text-generator-result {
                 margin-top: 5px;
-                padding: 0px 10px;
+                padding: 10px;
                 overflow: auto;
                 max-height: 300px;
-                overflow-y: scroll;
-                overflow-x: hidden; // Yatay kaydırmayı kapatır
+                overflow-x: hidden;
+                border: 2px solid red;
 
+                @include screen(430px) {
+                    max-height: 100%;
+                    height: 100%;
+                }
 
                 p {
                     text-align: justify;

@@ -12,13 +12,14 @@ import { motion } from 'framer-motion';
 import { opacityEffect } from "../../../shared/animations/animations";
 import useScreenWidth from "../../../hooks/useScreenWidth";
 import { TbMessagePlus } from "react-icons/tb";
+import PreLoader from "../../../shared/components/PreLoader/PreLoader";
 
 function GroupsList() {
   const { token } = useSelector((state) => state.auth);
   const userId = getUserIdFromToken(token);
   const { showModal, closeModal } = useModal();
   const { groupList } = useSelector((state) => state.groupList);
-  const { Group } = useSelector((state) => state.chat);
+  const { Group, isChatsInitialized } = useSelector((state) => state.chat);
   const location = window.location;
   const isSmallScreen = useScreenWidth(900);
 
@@ -120,7 +121,9 @@ function GroupsList() {
                 </motion.div>
               ))
           ) : (
-            <NoActiveData text={searchGroup ? "Eşleşen grup bulunamadı" : "Aktif grup bulunmamaktadır."} />
+            isChatsInitialized
+              ? <NoActiveData text={searchGroup ? "Eşleşen grup bulunamadı" : "Aktif grup bulunmamaktadır."} />
+              : <PreLoader />
           )}
         </motion.div>
 

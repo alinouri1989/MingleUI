@@ -23,6 +23,8 @@ import { LuDownload } from "react-icons/lu";
 export const AIModal = ({ isOpen, onClose, buttonRef }) => {
     const [position, setPosition] = useState({ top: 0, left: 0 });
     const [isContent, setIsContent] = useState(false);
+    const [maxHeight, setMaxHeight] = useState("300px");
+
     const modalRef = useRef(null);
 
     const [isTextGeneratorMode, setIsTextGeneratorMode] = useState(true);
@@ -34,10 +36,22 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
             const rect = buttonRef.current.getBoundingClientRect();
             const modalRect = modalRef.current.getBoundingClientRect();
 
-            setPosition({
-                top: rect.top - modalRect.height - 38,
-                left: rect.left - modalRect.width * 0.7,
-            });
+            // Ekran genişliğini kontrol et
+            if (window.innerWidth < 430) { // Mobil ekran için eşik
+                setPosition({
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                });
+            } else {
+                setPosition({
+                    top: rect.top - modalRect.height - 38,
+                    left: rect.left - modalRect.width * 0.7,
+                    width: "auto",
+                    height: "auto",
+                });
+            }
         }
     };
 
@@ -64,16 +78,15 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
         }
     }, [isOpen]);
 
-    // Modal dışına tıklayınca kapatma fonksiyonu
     const handleOutsideClick = (event) => {
         if (
             modalRef.current &&
-            !modalRef.current.contains(event.target) && // Modal dışında bir yere tıklandı mı?
+            !modalRef.current.contains(event.target) &&
             buttonRef.current &&
-            !buttonRef.current.contains(event.target) && // Açma butonuna tıklanmadı mı?
-            !event.target.closest(".send-prompt-btn") // Gönder butonuna tıklanmadı mı?
+            !buttonRef.current.contains(event.target) &&
+            !event.target.closest(".send-prompt-btn")
         ) {
-            onClose(); // Modalı kapat
+            onClose();
         }
     };
 
@@ -88,6 +101,23 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
             handleSendPrompt();
         }
     };
+
+    const updateHeight = () => {
+        if (window.innerWidth <= 430) {
+            setMaxHeight(`${window.innerHeight * 0.75}px`); // %80 ekran yüksekliği
+        } else {
+            setMaxHeight("300px"); // Varsayılan max-height
+        }
+    };
+
+    useEffect(() => {
+        updateHeight();
+        window.addEventListener("resize", updateHeight);
+
+        return () => {
+            window.removeEventListener("resize", updateHeight);
+        };
+    }, []);
 
     return createPortal(
         <AnimatePresence>
@@ -136,7 +166,12 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                 </div> */}
 
                                 {isTextGeneratorMode ?
-                                    <div className="text-generator-result">
+                                    <div style={{
+                                        maxHeight: maxHeight,
+                                        overflowY: "auto",
+                                    }} className="text-generator-result">
+                                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing eli. Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim nihil nam, deserunt deleniti asperiores ex impedit assumenda. Quae doloribus quos deleniti praesentium quam, omnis ratione expedita pariatur repellat non numquam at itaque vitae suscipit maxime nisi. Laborum, iste rem? Necessitatibus repellat dolore ea impedit nostrum reprehenderit. Dignissimos, nulla? Officiis consequatur debitis deleniti animi. Nulla nisi harum earum pariatur vitae sapiente quo sequi ipsum ex, quidem non quasi a error quisquam voluptas dolorem laboriosam magni nostrum odit id, similique autem debitis consequuntur? Consequuntur minus harum esse in, totam voluptate placeat consequatur aliquid labore? Doloremque nam nemo quasi aspernatur adipisci quas nobis!</p>
+
                                         <p>Lorem ipsum, dolor sit amet consectetur adipisicing eli. Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim nihil nam, deserunt deleniti asperiores ex impedit assumenda. Quae doloribus quos deleniti praesentium quam, omnis ratione expedita pariatur repellat non numquam at itaque vitae suscipit maxime nisi. Laborum, iste rem? Necessitatibus repellat dolore ea impedit nostrum reprehenderit. Dignissimos, nulla? Officiis consequatur debitis deleniti animi. Nulla nisi harum earum pariatur vitae sapiente quo sequi ipsum ex, quidem non quasi a error quisquam voluptas dolorem laboriosam magni nostrum odit id, similique autem debitis consequuntur? Consequuntur minus harum esse in, totam voluptate placeat consequatur aliquid labore? Doloremque nam nemo quasi aspernatur adipisci quas nobis!</p>
                                     </div> :
 
