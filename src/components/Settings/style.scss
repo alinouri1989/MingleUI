@@ -10,6 +10,11 @@
         height: 100%;
     }
 
+    @include screen(359px) {
+        height: auto;
+        overflow: auto;
+    }
+
     .title-box {
         width: 100%;
         @include flex-center(row, flex-start, center);
@@ -191,6 +196,11 @@
             // Component Styles
 
             .help-box {
+                @include screen(600px) {
+                    padding-right: 10px;
+                }
+
+
                 .version-info {
                     @include flex-center(column, center, flex-start);
                     gap: 10px;
@@ -253,6 +263,10 @@
 
             .theme-box {
                 width: 100%;
+
+                @include screen(600px) {
+                    padding-right: 10px;
+                }
 
                 .theme-select {
                     margin-bottom: 20px;
@@ -519,6 +533,7 @@
 
                 @include screen(600px) {
                     width: 100%;
+                    padding-right: 10px;
                 }
 
                 .inputs-box {

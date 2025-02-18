@@ -230,6 +230,16 @@ function CallModal({ closeModal, isCameraCall }) {
             )}
             <>
                 <div className={`camera-bar ${!isCameraCall ? 'only-voice-call' : ''}`}>
+                    {isCallStarted && (
+                        <div className="other-camera-box">
+                            <video ref={remoteVideoRef} autoPlay></video>
+                            <div className="user-info">
+                                <img src={callerProfile?.profilePhoto} alt="" />
+                                <p>{callerProfile?.displayName}</p>
+                            </div>
+                        </div>
+                    )}
+
                     <div className={`device-camera-box ${isCallStarted ? 'remote-connected' : ''}`}>
                         {isCameraCall &&
                             <video
@@ -240,16 +250,6 @@ function CallModal({ closeModal, isCameraCall }) {
                             ></video>
                         }
                     </div>
-
-                    {isCallStarted && (
-                        <div className="other-camera-box">
-                            <video ref={remoteVideoRef} autoPlay></video>
-                            <div className="user-info">
-                                <img src={callerProfile?.profilePhoto} alt="" />
-                                <p>{callerProfile?.displayName}</p>
-                            </div>
-                        </div>
-                    )}
                 </div>
 
                 {isCallStarted && isCameraCall && <p className="video-call-time-status">{callStatus}</p>}
