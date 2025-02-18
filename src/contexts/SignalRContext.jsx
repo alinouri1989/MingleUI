@@ -52,6 +52,9 @@ export const SignalRProvider = ({ children }) => {
     const callIdRef = useRef(callId);
     const peerConnection = useRef(null);
 
+    const [pendingRequests, setPendingRequests] = useState(new Set());
+
+
     const initializePeerConnection = async (callType) => {
         try {
             const pc = new RTCPeerConnection(servers);
@@ -471,6 +474,19 @@ export const SignalRProvider = ({ children }) => {
         } catch { }
     };
 
+
+    const addPendingRequest = (messageId) => {
+        setPendingRequests((prev) => new Set(prev).add(messageId));
+    };
+
+    const removePendingRequest = (messageId) => {
+        setPendingRequests((prev) => {
+            const newSet = new Set(prev);
+            newSet.delete(messageId);
+            return newSet;
+        });
+    };
+
     const deliverMessages = async () => {
         try {
             const chatIdFromLocation = window.location.pathname.includes("sohbetler") || window.location.pathname.includes("arsivler")
@@ -480,33 +496,42 @@ export const SignalRProvider = ({ children }) => {
                 ? window.location.pathname.split('/')[2]
                 : null;
 
-
-            const individualPromises = Individual.flatMap(chat => {
-                return chat?.messages
+            const individualPromises = Individual.flatMap(chat =>
+                chat?.messages
                     .filter(message => {
                         const isSent = message.status.sent && Object.keys(message.status.sent).includes(userId);
                         const isDelivered = message.status.delivered && Object.keys(message.status.delivered).includes(userId);
-                        return !(isSent || isDelivered);
+                        return !isSent && !isDelivered && !pendingRequests.has(message.id);
                     })
-                    .map(message =>
-                        chatConnection.invoke("DeliverMessage", "Individual", chat.id, message.id)
-                    );
-            });
+                    .map(async message => {
+                        addPendingRequest(message.id);
+                        try {
+                            await chatConnection.invoke("DeliverMessage", "Individual", chat.id, message.id);
+                        } finally {
+                            removePendingRequest(message.id);
+                        }
+                    })
+            );
 
-            // Aktif chatId için okuma kontrolü ve işlem (Individual)
             const individualReadPromises = chatIdFromLocation
                 ? Individual.flatMap(chat => {
                     if (chat.id === chatIdFromLocation) {
                         return chat.messages
                             .filter(message => {
+                                const isDelivered = message.status.delivered && Object.keys(message.status.delivered).includes(userId);
                                 const isRead = message.status.read && Object.keys(message.status.read).includes(userId);
                                 const isSentByUser = message.status.sent && Object.keys(message.status.sent).includes(userId);
-                                return !isRead && !isSentByUser;
-                            })
-                            .map(message =>
 
-                                chatConnection.invoke("ReadMessage", "Individual", chat.id, message.id)
-                            );
+                                return isDelivered && !isRead && !isSentByUser && !pendingRequests.has(message.id);
+                            })
+                            .map(async message => {
+                                addPendingRequest(message.id);
+                                try {
+                                    await chatConnection.invoke("ReadMessage", "Individual", chat.id, message.id);
+                                } finally {
+                                    removePendingRequest(message.id);
+                                }
+                            });
                     }
                     return [];
                 })
@@ -518,11 +543,16 @@ export const SignalRProvider = ({ children }) => {
                     .filter(message => {
                         const isSent = message.status.sent && Object.keys(message.status.sent).includes(userId);
                         const isDelivered = message.status.delivered && Object.keys(message.status.delivered).includes(userId);
-                        return !(isSent || isDelivered);
+                        return !(isSent || isDelivered) && !pendingRequests.has(message.id);
                     })
-                    .map(message =>
-                        chatConnection.invoke("DeliverMessage", "Group", chat.id, message.id)
-                    )
+                    .map(async message => {
+                        addPendingRequest(message.id);
+                        try {
+                            await chatConnection.invoke("DeliverMessage", "Group", chat.id, message.id);
+                        } finally {
+                            removePendingRequest(message.id);
+                        }
+                    })
             );
 
             const groupReadPromises = groupIdFromLocation
@@ -532,20 +562,26 @@ export const SignalRProvider = ({ children }) => {
                             .filter(message => {
                                 const isRead = message.status.read && Object.keys(message.status.read).includes(userId);
                                 const isSentByUser = message.status.sent && Object.keys(message.status.sent).includes(userId);
-                                return !isRead && !isSentByUser;
+                                return !isRead && !isSentByUser && !pendingRequests.has(message.id);
                             })
-                            .map(message =>
-                                chatConnection.invoke("ReadMessage", "Group", chat.id, message.id)
-                            );
+                            .map(async message => {
+                                addPendingRequest(message.id);
+                                try {
+                                    await chatConnection.invoke("ReadMessage", "Group", chat.id, message.id);
+                                } finally {
+                                    removePendingRequest(message.id);
+                                }
+                            });
                     }
                     return [];
                 })
                 : [];
 
-            // Tüm mesajları gönder
             await Promise.all([...individualPromises, ...individualReadPromises, ...groupPromises, ...groupReadPromises]);
 
-        } catch { }
+        } catch (error) {
+            console.error("deliverMessages hatası:", error);
+        }
     };
 
     if (loading) {
