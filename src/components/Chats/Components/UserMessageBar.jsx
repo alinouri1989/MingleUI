@@ -29,7 +29,7 @@ function UserMessageBar({ ChatId }) {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
-  }, [chat?.messages]);
+  }, [chat?.messages.length]);
 
 
 

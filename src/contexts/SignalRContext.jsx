@@ -173,6 +173,7 @@ export const SignalRProvider = ({ children }) => {
                 //Initial Group / Individual Chats 
                 chatConnection.on("ReceiveInitialChats", (data) => {
                     store.dispatch(initializeChats(data));
+
                 });
 
                 chatConnection.on("ReceiveInitialRecipientChatProfiles", (data) => {
@@ -350,6 +351,8 @@ export const SignalRProvider = ({ children }) => {
                 //! ===========  CALL CONNECTION ===========
 
                 callConnection.on('ReceiveInitialCalls', async (data) => {
+                    console.log(data);
+                    alert("geldi mi")
                     dispatch(setInitialCalls(data));
                 });
                 callConnection.on('ReceiveInitialCallRecipientProfiles', async (data) => {
@@ -368,11 +371,9 @@ export const SignalRProvider = ({ children }) => {
 
                 callConnection.on('ReceiveEndCall', (data) => {
                     handleEndCall(data.call, dispatch);
-
                     const otherDataKey = Object.keys(data).find(key => key !== 'call');
                     if (otherDataKey) {
                         const otherDataObject = data[otherDataKey];
-
                         if (otherDataObject) {
                             const formattedData = {
                                 [otherDataKey]: {
@@ -380,21 +381,27 @@ export const SignalRProvider = ({ children }) => {
                                     ...otherDataObject
                                 }
                             };
-
                             dispatch(updateCallRecipientList(formattedData));
                         }
                     }
-
+                    // PeerConnection temizliği
                     if (peerConnection.current) {
-                        peerConnection.current.getSenders().forEach((sender) => {
+                        console.log("giriyor mu bura");
+                        peerConnection.current.getSenders().forEach(sender => {
                             if (sender.track) {
-                                sender.track.stop(); // WebRTC medya akışlarını durdur
+                                sender.track.stop();
                             }
                         });
                         peerConnection.current.close();
                         peerConnection.current = null;
                     }
+
+                    // State temizliği
+                    setLocalStream(null);
+                    setRemoteStream(null);
                 });
+
+
 
                 notificationConnection.on('Error', (data) => {
                     console.log("eRRORE", data);
@@ -522,7 +529,7 @@ export const SignalRProvider = ({ children }) => {
                                 const isRead = message.status.read && Object.keys(message.status.read).includes(userId);
                                 const isSentByUser = message.status.sent && Object.keys(message.status.sent).includes(userId);
 
-                                return isDelivered && !isRead && !isSentByUser && !pendingRequests.has(message.id);
+                                return isDelivered && !isRead && !isSentByUser;
                             })
                             .map(async message => {
                                 addPendingRequest(message.id);
