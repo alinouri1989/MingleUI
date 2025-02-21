@@ -14,7 +14,6 @@ function GroupMessageBar({ groupId }) {
 
     const { user, token } = useSelector((state) => state.auth);
 
-
     const { Group } = useSelector((state) => state.chat);
     const { groupList } = useSelector((state) => state.groupList);
     const currentUserId = getUserIdFromToken(token);
@@ -100,6 +99,7 @@ function GroupMessageBar({ groupId }) {
                                 const group = groupList[groupListId];
                                 const senderProfile = group?.participants?.[userId];
                                 const isSender = currentUserId === userId;
+                                const isDeleted = msg.deletedFor?.hasOwnProperty(currentUserId) ? true : false;
                                 const formattedTimestamp = convertToLocalTime(
                                     msg.status.sent[userId]
                                 );
@@ -119,6 +119,7 @@ function GroupMessageBar({ groupId }) {
                                         messageType={msg.type}
                                         senderProfile={senderProfile}
                                         userColor={userColor}
+                                        isDeleted={isDeleted}
                                     />
                                 );
                             })}

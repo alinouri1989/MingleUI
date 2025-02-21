@@ -62,7 +62,7 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
 
             <div className="date-and-options-box">
                 <div className="status-informations-box">
-                    <span>{lastMessageDate}</span>
+                    <span>{lastMessage && lastMessageDate}</span>
                     {/* Optional unread message count */}
                     {unReadMessage > 0 && <p>{unReadMessage}</p>}
                 </div>

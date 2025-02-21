@@ -28,6 +28,8 @@ import { motion } from "framer-motion";
 
 function MessageBubble({ chatId, userId, messageId, userColor, content, isDeleted, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
 
+
+
     const { Group } = useSelector((state) => state.chat);
     const { groupList } = useSelector((state) => state.groupList);
     const { user } = useSelector(state => state.auth);

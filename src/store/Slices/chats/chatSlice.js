@@ -18,7 +18,6 @@ const chatSlice = createSlice({
             state.Group = transformChats(Group, "group");
             state.isChatsInitialized = true;
         },
-
         addNewIndividualChat: (state, action) => {
             const { chatId, chatData } = action.payload;
 
@@ -44,7 +43,6 @@ const chatSlice = createSlice({
             state.Individual.push(newChat);
 
         },
-
         addNewGroupChat: (state, action) => {
             const { chatId, chatData } = action.payload;
 
@@ -69,7 +67,6 @@ const chatSlice = createSlice({
             };
             state.Group.push(newGroupChat);
         },
-
         addMessageToIndividual: (state, action) => {
             const { chatId, messageId, messageData, userId } = action.payload;
 
@@ -107,35 +104,43 @@ const chatSlice = createSlice({
                 state.Individual.push(newChat);
             }
         },
-
-
         addMessageToGroup: (state, action) => {
-            const { chatId, messageId, messageData } = action.payload;
+            const { chatId, messageId, messageData, userId } = action.payload;
 
-            // İlgili chat'i bul veya oluştur
-            const chat = state.Group.find((chat) => chat.id === chatId);
+            const chat = state.Group.find(chat => chat.id === chatId);
 
             if (chat) {
-                // Mesajı varsa güncelle, yoksa ekle
-                const existingMessageIndex = chat.messages.findIndex((msg) => msg.id === messageId);
+                const existingMessageIndex = chat.messages.findIndex(msg => msg.id === messageId);
 
                 if (existingMessageIndex > -1) {
-                    chat.messages[existingMessageIndex] = { id: messageId, ...messageData };
+                    const existingMessage = chat.messages[existingMessageIndex];
+
+                    const isDeletedForOthers = messageData.deletedFor &&
+                        Object.keys(messageData.deletedFor).some(id => id !== userId);
+
+                    if (!(isDeletedForOthers && messageData.content === "")) {
+                        chat.messages[existingMessageIndex] = { ...existingMessage, ...messageData };
+                    }
                 } else {
                     chat.messages.push({ id: messageId, ...messageData });
                 }
             } else {
-                // Eğer chatId yoksa yeni bir chat oluştur
-                state.Group.push({
-                    id: chatId,
+                const newChat = {
+                    id: Object.keys(action.payload.Group)[0],
                     participants: [],
                     archivedFor: {},
                     createdDate: new Date().toISOString(),
-                    messages: [{ id: messageId, ...messageData }],
-                });
+                    messages: Object.entries(action.payload.Group).map(([chatId, messages]) => {
+                        return Object.entries(messages).map(([messageId, messageData]) => ({
+                            id: messageId,
+                            ...messageData
+                        }));
+                    }).flat()
+                };
+
+                state.Group.push(newChat);
             }
         },
-
         getChatMessages: (state, action) => {
             const { type, chatId } = action.payload;
             const chat = type === "Individual"
@@ -143,7 +148,6 @@ const chatSlice = createSlice({
                 : state.Group.find(chat => chat.id === chatId);
             return chat ? chat.messages : [];
         },
-
         addArchive: (state, action) => {
             const { Individual } = action.payload;
             const chatId = Object.keys(Individual)[0];
@@ -171,7 +175,6 @@ const chatSlice = createSlice({
                 }
             }
         },
-
         removeIndividualChat: (state, action) => {
             const chatId = Object.keys(action.payload.Individual)[0];
 
@@ -181,11 +184,9 @@ const chatSlice = createSlice({
                 state.Individual[chatIndex].messages = [];
             }
         },
-
         removeGroupChat: (state, action) => {
             state.Group = state.Group.filter(group => !group.participants.includes(action.payload));
         },
-
         resetChats: (state) => {
             state.Individual = [];
             state.Group = [];
@@ -194,11 +195,10 @@ const chatSlice = createSlice({
 });
 
 export const getChatId = (state, authId, receiveId) => {
-    // Individual sohbetlerinde authId ve receiveId'yi içeren bir chatId arıyoruz
     const chat = state.Individual.find(chat =>
         chat.participants.includes(authId) && chat.participants.includes(receiveId)
     );
-    return chat ? chat.id : null;  // Eğer chat bulunamazsa null döndür
+    return chat ? chat.id : null;
 };
 
 const transformChats = (chats, chatType) =>
