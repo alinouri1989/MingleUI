@@ -71,40 +71,43 @@ const chatSlice = createSlice({
         },
 
         addMessageToIndividual: (state, action) => {
-            const { chatId, messageId, messageData } = action.payload;
+            const { chatId, messageId, messageData, userId } = action.payload;
 
             const chat = state.Individual.find(chat => chat.id === chatId);
 
             if (chat) {
-                // Var olan sohbetin mesajını güncelle veya ekle
                 const existingMessageIndex = chat.messages.findIndex(msg => msg.id === messageId);
 
                 if (existingMessageIndex > -1) {
-                    chat.messages[existingMessageIndex] = { ...chat.messages[existingMessageIndex], ...messageData };
+                    const existingMessage = chat.messages[existingMessageIndex];
+
+                    const isDeletedForOthers = messageData.deletedFor &&
+                        Object.keys(messageData.deletedFor).some(id => id !== userId);
+
+                    if (!(isDeletedForOthers && messageData.content === "")) {
+                        chat.messages[existingMessageIndex] = { ...existingMessage, ...messageData };
+                    }
                 } else {
                     chat.messages.push({ id: messageId, ...messageData });
                 }
-
             } else {
-                // Yeni sohbet ekle
                 const newChat = {
-                    id: Object.keys(action.payload.Individual)[0], // Yeni sohbetin ID'si
-                    participants: [], // Katılımcılar için bir yapı belirtebilirsiniz
-                    archivedFor: {},  // Varsayılan değerler
-                    createdDate: new Date().toISOString(), // Şimdiki tarih
+                    id: Object.keys(action.payload.Individual)[0],
+                    participants: [],
+                    archivedFor: {},
+                    createdDate: new Date().toISOString(),
                     messages: Object.entries(action.payload.Individual).map(([chatId, messages]) => {
                         return Object.entries(messages).map(([messageId, messageData]) => ({
                             id: messageId,
                             ...messageData
                         }));
-                    }).flat() // Gelen mesajları formatla ve tek bir düz liste haline getir
+                    }).flat()
                 };
 
                 state.Individual.push(newChat);
-
-                // Yeni eklenen sohbeti kontrol etmek için
             }
         },
+
 
         addMessageToGroup: (state, action) => {
             const { chatId, messageId, messageData } = action.payload;

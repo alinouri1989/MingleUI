@@ -198,6 +198,7 @@ export const SignalRProvider = ({ children }) => {
                                         chatId,
                                         messageId,
                                         messageData: { ...messageData, content: decryptedContent },
+                                        userId
                                     })
                                 );
                             });

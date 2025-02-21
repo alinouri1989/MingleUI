@@ -59,7 +59,7 @@ function UserMessageBar({ ChatId }) {
     return acc;
   }, {}) || {};
 
-  // Boş grupları filtrele
+
   const filteredGroupedMessages = Object.entries(groupedMessagesByDate).filter(
     ([_, messages]) => messages.length > 0
   );
@@ -93,7 +93,7 @@ function UserMessageBar({ ChatId }) {
               {messages.map((msg) => {
                 const senderId = Object.keys(msg.status.sent)[0];
                 const isSender = senderId === userId;
-                const isDeleted = msg.deletedFor?.hasOwnProperty(userId) ?? false;
+                const isDeleted = msg.deletedFor?.hasOwnProperty(userId) ? true : false;
                 const formattedTimestamp = convertToLocalTime(msg.status.sent[senderId]);
 
                 return (
