@@ -352,7 +352,6 @@ export const SignalRProvider = ({ children }) => {
 
                 callConnection.on('ReceiveInitialCalls', async (data) => {
                     console.log(data);
-                    alert("geldi mi")
                     dispatch(setInitialCalls(data));
                 });
                 callConnection.on('ReceiveInitialCallRecipientProfiles', async (data) => {
@@ -469,7 +468,7 @@ export const SignalRProvider = ({ children }) => {
         if (chatConnection && (Individual?.length > 0 || Group?.length > 0)) {
             deliverMessages();
         }
-    }, [chatConnection, Individual, Group, location]);
+    }, [chatConnection, Individual, Group, location, pendingRequests]);
 
     //! ====== METHODS ======
 
@@ -532,18 +531,19 @@ export const SignalRProvider = ({ children }) => {
                                 return isDelivered && !isRead && !isSentByUser;
                             })
                             .map(async message => {
-                                addPendingRequest(message.id);
-                                try {
-                                    await chatConnection.invoke("ReadMessage", "Individual", chat.id, message.id);
-                                } finally {
-                                    removePendingRequest(message.id);
+                                if (!pendingRequests.has(message.id)) {  // Buraya kontrol ekleyelim
+                                    addPendingRequest(message.id);
+                                    try {
+                                        await chatConnection.invoke("ReadMessage", "Individual", chat.id, message.id);
+                                    } finally {
+                                        removePendingRequest(message.id);
+                                    }
                                 }
                             });
                     }
                     return [];
                 })
                 : [];
-
 
             const groupPromises = Group.flatMap(chat =>
                 chat.messages
