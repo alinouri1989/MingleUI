@@ -19,7 +19,7 @@ import "./CallModal.scss";
 
 function CallModal({ closeModal, isCameraCall }) {
 
-    const { callConnection, localStream, remoteStream, setLocalStream } = useSignalR();
+    const { callConnection, localStream, remoteStream } = useSignalR();
 
     const { callerProfile, callId, isCallStarted, isRingingOutgoing, callStartedDate, isCallStarting } = useSelector((state) => state.call);
 
@@ -172,16 +172,9 @@ function CallModal({ closeModal, isCameraCall }) {
     };
 
     const handleSpeakerMode = () => {
-        if (remoteStream) {
-            remoteStream.getAudioTracks().forEach(track => {
-                track.enabled = !isSpeakerOn;
-            });
+        if (remoteVideoRef.current) {
+            remoteVideoRef.current.muted = isSpeakerOn;
         }
-
-        if (audioRef.current) {
-            audioRef.current.volume = isSpeakerOn ? 0 : 1;
-        }
-
         setSpeakerMode(!isSpeakerOn);
     };
 
