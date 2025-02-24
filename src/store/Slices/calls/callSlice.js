@@ -99,8 +99,7 @@ const callSlice = createSlice({
         },
         updateCallRecipientList: (state, action) => {
             const updateData = action.payload;
-            // Gelen objeyi işleyerek, ID'ye göre güncelleme veya ekleme yapıyoruz
-            const recipientId = Object.keys(updateData)[0]; // ID'yi alıyoruz (örneğin: "Du70dE1dx4c8m9yHqRhNyu6gcMw2")
+            const recipientId = Object.keys(updateData)[0];
             const updateValues = updateData[recipientId];
 
             const existingRecipientIndex = state.callRecipientList.findIndex(
@@ -121,7 +120,6 @@ const callSlice = createSlice({
         },
         deleteCallHistory: (state, action) => {
             const callId = action.payload;
-            console.log("girdi mi geldimi id", callId)
             state.calls = state.calls.filter(call => call.id !== callId);
         }
     },

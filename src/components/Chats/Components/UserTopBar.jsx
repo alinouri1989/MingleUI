@@ -28,7 +28,7 @@ function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientI
     const lastConnectionDate = recipientProfile.lastConnectionDate;
 
     const { showModal, closeModal } = useModal();
-    const { isCallStarted, callId } = useSelector((state) => state.call);
+    const { isCallStarted, callId, isRingingIncoming } = useSelector((state) => state.call);
     const isSmallScreen = useScreenWidth(900);
 
     const handleVoiceCall = async () => {
@@ -81,8 +81,17 @@ function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientI
 
             <div className="top-bar-buttons">
                 <div className='call-options'>
-                    <button onClick={() => handleVoiceCall()}><PiPhoneFill /></button>
-                    <button onClick={() => handleVideoCall()}><HiMiniVideoCamera /></button>
+                    <button
+                        disabled={isRingingIncoming}
+                        style={{ opacity: isRingingIncoming ? "0.6" : "1" }}
+                        onClick={() => handleVoiceCall()}><PiPhoneFill />
+                    </button>
+
+                    <button
+                        disabled={isRingingIncoming}
+                        style={{ opacity: isRingingIncoming ? "0.6" : "1" }}
+                        onClick={() => handleVideoCall()}><HiMiniVideoCamera />
+                    </button>
                 </div>
                 {!isSmallScreen &&
                     <IoIosArrowDropleftCircle

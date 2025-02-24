@@ -7,7 +7,7 @@ import CallModal from '../../Calls/Components/CallModal';
 import { formatDateForLastConnectionDate } from '../../../helpers/dateHelper';
 import { useSignalR } from '../../../contexts/SignalRContext';
 import { setIsCallStarting } from '../../../store/Slices/calls/callSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import useScreenWidth from '../../../hooks/useScreenWidth';
 import { useNavigate } from 'react-router-dom';
 import { IoMdArrowRoundBack } from "react-icons/io";
@@ -25,23 +25,17 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
 
     const isSmallScreen = useScreenWidth(900);
     const navigate = useNavigate();
-
+    const { isRingingIncoming } = useSelector(state => state.call);
     const { showModal, closeModal } = useModal();
 
 
-
-
     useEffect(() => {
-        // Telefonun geri tuşu dinleniyor
         const handleBackButton = (e) => {
-            e.preventDefault(); // Varsayılan geri gitme işlemini engelliyoruz
-            toggleSidebar(); // Geri tuşuna basıldığında toggleSidebar fonksiyonunu çalıştırıyoruz
+            e.preventDefault();
+            toggleSidebar();
         };
 
-        // Popstate event'ini dinle
         window.addEventListener('popstate', handleBackButton);
-
-        // Temizleme işlemi
         return () => {
             window.removeEventListener('popstate', handleBackButton);
         };
@@ -112,11 +106,17 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
                         </div>
                         <div className='call-buttons'>
                             <div className='button-box'>
-                                <button onClick={handleVoiceCall}><PiPhoneFill /> </button>
+                                <button
+                                    disabled={isRingingIncoming}
+                                    style={{ opacity: isRingingIncoming ? "0.6" : "1" }}
+                                    onClick={handleVoiceCall}><PiPhoneFill /> </button>
                                 <p>Sesli Ara</p>
                             </div>
                             <div className='button-box'>
-                                <button onClick={handleVideoCall}><HiMiniVideoCamera /></button>
+                                <button
+                                    disabled={isRingingIncoming}
+                                    style={{ opacity: isRingingIncoming ? "0.6" : "1" }}
+                                    onClick={handleVideoCall}><HiMiniVideoCamera /></button>
                                 <p>Görüntülü Ara</p>
                             </div>
                         </div>

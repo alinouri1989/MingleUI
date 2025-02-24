@@ -11,13 +11,12 @@ import CallModal from './Components/CallModal';
 import { formatDateToTR } from '../../helpers/dateHelper.js';
 import { useSignalR } from '../../contexts/SignalRContext.jsx';
 import { setIsCallStarting } from '../../store/Slices/calls/callSlice.js';
-import "./style.scss";
 import { getChatId } from '../../store/Slices/chats/chatSlice.js';
 import CallStatus from '../../shared/components/CallStatus/CallStatus.jsx';
-import { IoMdArrowRoundBack } from "react-icons/io";
 import useScreenWidth from '../../hooks/useScreenWidth.js';
 import BackToMenuButton from '../../shared/components/BackToMenuButton/BackToMenuButton.jsx';
 import { opacityEffect } from "../../shared/animations/animations.js"
+import "./style.scss";
 
 import { motion } from 'framer-motion';
 
@@ -30,7 +29,7 @@ function Calls() {
   const userId = getUserIdFromToken(token);
   const isSmallScreen = useScreenWidth(540);
 
-  const { calls, callRecipientList, isInitialCallsReady } = useSelector(state => state.call);
+  const { calls, callRecipientList, isInitialCallsReady, isRingingIncoming } = useSelector(state => state.call);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -109,8 +108,17 @@ function Calls() {
               </div>
               <div className="call-options">
                 <button onClick={handleGoIndividualChat}><IoChatbubbleEllipses />{isSmallScreen && <span>Mesaj</span>}</button>
-                <button onClick={handleVoiceCall}><PiPhoneFill />{isSmallScreen && <span>Sesli</span>}</button>
-                <button onClick={handleVideoCall}><HiMiniVideoCamera />{isSmallScreen && <span>Görüntülü</span>}</button>
+                <button
+                  disabled={isRingingIncoming}
+                  style={{ opacity: isRingingIncoming ? "0.6" : "1" }}
+                  onClick={handleVoiceCall}><PiPhoneFill />{isSmallScreen && <span>Sesli</span>}
+                </button>
+
+                <button
+                  disabled={isRingingIncoming}
+                  style={{ opacity: isRingingIncoming ? "0.6" : "1" }}
+                  onClick={handleVideoCall}><HiMiniVideoCamera />{isSmallScreen && <span>Görüntülü</span>}
+                </button>
               </div>
             </div>
             <div className="call-details">
