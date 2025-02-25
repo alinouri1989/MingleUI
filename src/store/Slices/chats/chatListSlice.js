@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { defaultProfilePhoto } from "../../../constants/DefaultProfilePhoto";
 
 const initialState = {
     chatList: {},
@@ -18,10 +19,10 @@ const chatListSlice = createSlice({
             const newUserData = action.payload[newUserId];
             if (!state.chatList[newUserId]) {
                 state.chatList[newUserId] = {
-                    displayName: newUserData.displayName || "Unknown",
+                    displayName: newUserData.displayName || "Mingle",
                     email: newUserData.email || "",
                     biography: newUserData.biography || "",
-                    profilePhoto: newUserData.profilePhoto || "https://res.cloudinary.com/mingle-realtime-messaging-app/image/upload/v1734185072/DefaultUserProfilePhoto.png",
+                    profilePhoto: newUserData.profilePhoto || defaultProfilePhoto,
                     lastConnectionDate: newUserData.lastConnectionDate || null,
                 };
             }

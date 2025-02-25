@@ -46,7 +46,7 @@ function Sidebar() {
     { icon: <HiUserGroup className="icon" />, label: "Gruplar", path: "/gruplar" },
   ];
 
-  if (isWideScreen) {
+  if (!isSmallScreen) {
     navItems.push({ icon: <AiFillHome className="icon home" />, label: "Anasayfa", path: "/anasayfa" });
   }
 

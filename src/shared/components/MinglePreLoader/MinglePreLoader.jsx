@@ -1,6 +1,6 @@
 import MingleLogo from "../../../assets/logos/MingleLogoWithText.svg";
-import "./style.scss";
 import { motion } from "framer-motion";
+import "./style.scss";
 
 function MinglePreLoader() {
     return (

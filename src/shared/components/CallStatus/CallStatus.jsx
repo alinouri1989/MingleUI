@@ -1,4 +1,3 @@
-import React from "react";
 import { PiPhoneFill } from "react-icons/pi";
 import { HiMiniVideoCamera } from "react-icons/hi2";
 import { formatCallDuration, formatTimeHoursMinutes } from "../../../helpers/dateHelper";

@@ -1,5 +1,5 @@
-import { LuImage } from 'react-icons/lu'; // Fotoğraf simgesi
-import { BiSolidMicrophone } from 'react-icons/bi'; // Mikrofon simgesi
+import { LuImage } from 'react-icons/lu';
+import { BiSolidMicrophone } from 'react-icons/bi';
 import { LuFileVideo } from "react-icons/lu";
 import { FaFileAlt } from "react-icons/fa";
 

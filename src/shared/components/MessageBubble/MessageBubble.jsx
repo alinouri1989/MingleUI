@@ -1,41 +1,45 @@
-import React, { useEffect, useState } from 'react';
-import IconButton from "@mui/material/IconButton";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import { MdClose } from 'react-icons/md';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { useEffect, useState } from 'react';
+import { useSignalR } from '../../../contexts/SignalRContext';
+import { useSelector } from 'react-redux';
+import { useModal } from '../../../contexts/ModalContext';
+
 import { FaFileAlt } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
-import InfoIcon from '@mui/icons-material/Info';
-
-import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import { MdClose } from 'react-icons/md';
 import { LuCheck } from "react-icons/lu";
 import { LuCheckCheck } from "react-icons/lu";
 import { FaEarthAfrica } from "react-icons/fa6";
-import './style.scss';
-import { SuccessAlert } from '../../../helpers/customAlert';
-import { useSelector } from 'react-redux';
-import { useSignalR } from '../../../contexts/SignalRContext';
+
+import IconButton from "@mui/material/IconButton";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import DeleteIcon from '@mui/icons-material/Delete';
+import InfoIcon from '@mui/icons-material/Info';
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
+
+import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
 import { AudioMessage } from './components/AudioMessage';
-import { useModal } from '../../../contexts/ModalContext';
+
 import MessageInfo from '../MessageInfo/MessageInfo';
 import useScreenWidth from '../../../hooks/useScreenWidth';
-import { motion } from "framer-motion";
 
-function MessageBubble({ chatId, userId, messageId, userColor, content, isDeleted, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
+import './style.scss';
 
+function MessageBubble({ chatId, userId, messageId, userColor, content, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
 
+    const { chatConnection } = useSignalR();
 
     const { Group } = useSelector((state) => state.chat);
     const { groupList } = useSelector((state) => state.groupList);
     const { user } = useSelector(state => state.auth);
-    const [anchorEl, setAnchorEl] = useState(null);
-    const { chatConnection } = useSignalR();
+
     const [isShowImage, setIsShowImage] = useState(false);
+    const [anchorEl, setAnchorEl] = useState(null);
+
     const { showModal, closeModal } = useModal();
     const isSmallScreen = useScreenWidth(400);
 
@@ -51,7 +55,6 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
     };
 
     const handleDelete = (deletionType) => {
-        // public async Task DeleteMessage(string chatType, string chatId, string messageId, byte deletionType)
         let chatType;
         if (isGroupMessageBubble) {
             chatType = "Group";
@@ -62,15 +65,15 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
         try {
             chatConnection.invoke("DeleteMessage", chatType, chatId, messageId, deletionType);
             SuccessAlert("Mesaj Silindi")
-        } catch (error) {
-
+        } catch {
+            ErrorAlert("Bir hata meydana geldi");
         }
         handleClose();
     };
 
     const handleCopy = () => {
         navigator.clipboard.writeText(content);
-        SuccessAlert("Mesaj Kopyalandı")
+        SuccessAlert("Mesaj Kopyalandı");
         handleClose();
     };
 
@@ -82,32 +85,27 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
     let statusIcon;
     let statusColor;
 
-    // Aktif grup ID'sini window.location'dan al
     const groupIdFromLocation = window.location.pathname.includes("gruplar")
         ? window.location.pathname.split('/')[2]
         : null;
 
     if (!isGroupMessageBubble) {
-        // Bireysel mesajlar için
         if (status.read && Object.keys(status.read).length > 0) {
-            // Eğer mesaj okunduysa
             statusIcon = <LuCheckCheck />;
-            statusColor = "#585CE1"; // Mavi (Okundu)
+            statusColor = "#585CE1";
         } else if (status.delivered && Object.keys(status.delivered).length > 0) {
-            // Eğer mesaj teslim edildiyse
+
             statusIcon = <LuCheckCheck />;
-            statusColor = "#828A96"; // Gri (Teslim Edildi)
+            statusColor = "#828A96";
         } else if (status.sent && status.sent[userId]) {
-            // Eğer mesaj gönderildiyse
+
             statusIcon = <LuCheck />;
-            statusColor = "#828A96"; // Gri (Gönderildi)
+            statusColor = "#828A96";
         } else {
-            // Durum yoksa
             statusIcon = <FaEarthAfrica />;
-            statusColor = "#828A96"; // Varsayılan gri
+            statusColor = "#828A96";
         }
     } else {
-        // Grup mesajları için
         const chatGroup = Group.find(group => group.id === groupIdFromLocation);
         if (chatGroup) {
             const participantKeys = chatGroup.participants;
@@ -123,24 +121,22 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
                 Object.keys(groupParticipants).includes(userId)
             ).length;
 
-            // Eğer tüm katılımcılar (mesaj gönderen hariç) okuduysa
             if (readCount === totalParticipants - 1) {
                 statusIcon = <LuCheckCheck />;
-                statusColor = "#585CE1"; // Mavi (Okundu)
+                statusColor = "#585CE1";
             } else if (deliverCount === totalParticipants - 1) {
                 statusIcon = <LuCheckCheck />;
-                statusColor = "#828A96"; // Gri (Kısmen okundu)
+                statusColor = "#828A96";
             } else if (status.sent && status.sent[userId]) {
                 statusIcon = <LuCheck />;
-                statusColor = "#828A96"; // Gri (Gönderildi)
+                statusColor = "#828A96";
             } else {
                 statusIcon = <FaEarthAfrica />;
-                statusColor = "#828A96"; // Varsayılan gri
+                statusColor = "#828A96";
             }
         } else {
-            // Grup bulunamazsa
             statusIcon = <FaEarthAfrica />;
-            statusColor = "#828A96"; // Varsayılan gri
+            statusColor = "#828A96";
         }
     }
 
@@ -156,8 +152,8 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
         <div>
             <video
                 src={content}
-                controls // Video kontrol düğmelerini ekler (oynat, durdur, ses ayarı vb.)
-                style={{ maxWidth: "100%", borderRadius: "8px" }} // İsteğe bağlı stil
+                controls
+                style={{ maxWidth: "100%", borderRadius: "8px" }}
             >
                 Tarayıcınız video elementini desteklemiyor.
             </video>
@@ -175,25 +171,23 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
         useEffect(() => {
             const fetchFileInfo = async (url) => {
                 try {
-                    // HEAD isteği gönderiyoruz
                     const response = await fetch(url, { method: 'HEAD' });
 
                     if (response.ok) {
-                        // MIME türünü alıyoruz
                         const contentType = response.headers.get('Content-Type');
-                        const fileSize = response.headers.get('Content-Length'); // Dosyanın boyutu
-                        const fileName = url.split('/').pop(); // URL'den dosya adı
-                        const fileExtension = fileName.split('.').pop(); // Dosya uzantısı
+                        const fileSize = response.headers.get('Content-Length');
+                        const fileName = url.split('/').pop();
+                        const fileExtension = fileName.split('.').pop();
 
                         setFileInfo({
                             fileName,
                             fileExtension,
-                            fileSize: fileSize ? `${(fileSize / 1024).toFixed(2)} KB` : 'N/A', // KB cinsinden boyut
+                            fileSize: fileSize ? `${(fileSize / 1024).toFixed(2)} KB` : 'N/A',
                             contentType: contentType || 'N/A',
                         });
                     }
-                } catch (error) {
-                    console.error('Dosya bilgileri alınamadı:', error);
+                } catch {
+                    ErrorAlert("Bir hata meydana geldi");
                 }
             };
 
@@ -218,8 +212,6 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
             </div>
         );
     };
-
-
 
     const UserInfo = ({ displayName, userColor, messageType }) => (
         <div className='user-info' style={{ color: userColor }}>
@@ -276,7 +268,6 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
                         <img src={senderProfile?.profilePhoto} alt="" />
                     </div>
                 )}
-
                 <div
                     className={`message-content ${getMessageContentClass(
                         messageType,
@@ -299,7 +290,6 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
                     <div className='message-hour'>
                         {timestamp}
                     </div>
-
                     {isSender && (
                         <div className='option'>
                             <IconButton
@@ -415,7 +405,6 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
                     )}
                 </div>
             </div>
-
             {
                 isSender && (
                     <div className='status-box' style={{ color: statusColor }}>
@@ -423,7 +412,6 @@ function MessageBubble({ chatId, userId, messageId, userColor, content, isDelete
                     </div>
                 )
             }
-
             {
                 isShowImage &&
                 <div className="full-size-image-box">

@@ -4,7 +4,6 @@
     width: 100%;
     height: 100%;
 
-
     .sound-record-content {
         width: 400px;
         height: 100%;
@@ -26,8 +25,6 @@
             @include flex-center(column, center, center);
 
         }
-
-
 
         .title-box {
             width: 100%;
@@ -148,23 +145,15 @@
 
                 &:hover {
                     filter: brightness(90%);
-                    /* Renkleri %85 oranında koyulaştırır */
                 }
             }
         }
     }
 }
 
-
-
-/* Genel ayarlamalar */
-
-/* Butonlar ve Progress Çubuğu için Renk */
-$rhap_theme-color: var(--blue) !default; // Mavi renk
-$rhap_bar-color: var(--smooth-blue) !default; // Gri progress bar
-$rhap_progress-color: var(--blue); // İlerleme çubuğu mavi
-
-/* Progress Bar ve İlerleme */
+$rhap_theme-color: var(--blue) !default;
+$rhap_bar-color: var(--smooth-blue) !default;
+$rhap_progress-color: var(--blue);
 
 .audio-player-wrapper {
     box-shadow: none;
@@ -175,7 +164,6 @@ $rhap_progress-color: var(--blue); // İlerleme çubuğu mavi
     background-color: var(--smooth-light-blue);
     border-radius: 8px;
     padding: 12px;
-
 }
 
 .rhap_progress-bar {
@@ -185,7 +173,6 @@ $rhap_progress-color: var(--blue); // İlerleme çubuğu mavi
     width: 100%;
     height: 5px;
     background-color: $rhap_bar-color;
-    /* Gri Progress Bar */
     border-radius: 2px;
 }
 
@@ -194,21 +181,16 @@ $rhap_progress-color: var(--blue); // İlerleme çubuğu mavi
     position: absolute;
     z-index: 2;
     background-color: $rhap_progress-color;
-    /* İlerleme çubuğu mavi */
     border-radius: 2px;
 }
-
-/* Buton Renkleri */
 
 .rhap_play-pause-button {
     font-size: 40px;
     width: 40px;
     height: 40px;
     color: $rhap_theme-color;
-    /* Play/Pause butonları mavi */
     transition: background-color 0.3s ease;
     background-color: transparent;
-    /* Şeffaf arka plan */
 }
 
 .rhap_main-controls-button {
@@ -225,11 +207,9 @@ $rhap_progress-color: var(--blue); // İlerleme çubuğu mavi
     width: 26px;
     height: 26px;
     color: $rhap_theme-color;
-    /* İleri/Geri sarma butonları mavi */
     margin-right: 6px;
 }
 
-/* Kontrol Butonları */
 .rhap_controls-section {
     display: flex;
     flex: 1 1 auto;
@@ -237,15 +217,12 @@ $rhap_progress-color: var(--blue); // İlerleme çubuğu mavi
     align-items: center;
 }
 
-/* Ses ve Diğer Butonlar */
-
 .rhap_volume-button {
     flex: 0 0 26px;
     font-size: 26px;
     width: 26px;
     height: 26px;
     color: $rhap_theme-color;
-    /* Ses butonları mavi */
     margin-right: 6px;
 }
 
@@ -255,7 +232,6 @@ $rhap_progress-color: var(--blue); // İlerleme çubuğu mavi
     width: 100%;
     height: 4px;
     background: $rhap_bar-color;
-    /* Ses çubuğu gri */
     border-radius: 2px;
 }
 
@@ -275,11 +251,9 @@ $rhap_progress-color: var(--blue); // İlerleme çubuğu mavi
 
     &:hover {
         opacity: 1;
-        /* Hover efekti ile daha belirgin */
     }
 }
 
-/* Genel Butonlar için şeffaf arka plan ve geçiş */
 .rhap_button-clear {
     background-color: transparent;
     border: none;
@@ -301,7 +275,6 @@ $rhap_progress-color: var(--blue); // İlerleme çubuğu mavi
     }
 }
 
-/* Progress Indicator (Yuvarlak) */
 .rhap_progress-indicator {
     box-sizing: border-box;
     position: absolute;
@@ -309,17 +282,11 @@ $rhap_progress-color: var(--blue); // İlerleme çubuğu mavi
     width: 20px;
     height: 20px;
     margin-left: -10px;
-    /* Yatay konum ayarı */
     top: -8px;
-    /* Dikey konum ayarı */
     background: $rhap_theme-color;
-    /* Yuvarlağın rengi mavi */
     border-radius: 50%;
 
-    /* Hafif gölge efekti */
     cursor: pointer;
-    /* Kullanıcı tıklayabilir ve sürükleyebilir */
-
 }
 
 .rhap_current-time,
@@ -350,12 +317,11 @@ $rhap_progress-color: var(--blue); // İlerleme çubuğu mavi
 
     0%,
     100% {
-
-        height: 25px; // Sabit yükseklik
+        height: 25px;
     }
 
     50% {
-        height: 50px; // Sabit
+        height: 50px;
     }
 }
 

@@ -115,7 +115,7 @@ function CallModal({ closeModal, isCameraCall }) {
                         closeModal();
                     }, 4000);
                 }
-            }, 25000);
+            }, 7500);
 
             return () => {
                 clearTimeout(timeout);

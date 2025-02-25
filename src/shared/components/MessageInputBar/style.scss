@@ -43,9 +43,7 @@
 
                 &:active {
                     transform: scale(0.6);
-                    /* Tıklama sırasında küçültme */
                 }
-
             }
 
             .file-menu {
@@ -58,7 +56,6 @@
                 position: absolute;
                 margin-bottom: 276px;
                 border-radius: 12px;
-                /* Animasyonun uygulanması */
                 animation: slide-up 0.3s ease-out forwards;
 
                 button {
@@ -74,7 +71,6 @@
                     &:hover {
                         scale: 1.5;
                     }
-
 
                     &:first-child {
                         color: rgb(8, 162, 131);
@@ -175,15 +171,12 @@
                 @include screen(500px) {
                     @include flex-center(row, center, center);
                     right: 0px;
-
-                    position: fixed;
                     left: 0;
-
+                    position: fixed;
                     scale: 0.9;
                     border: 0;
                     border-radius: 0;
                     box-shadow: "none";
-
                 }
             }
 
@@ -217,18 +210,15 @@
 }
 
 
-/* Animasyon tanımı */
 @keyframes slide-up {
     0% {
         opacity: 0;
         transform: translateY(30px);
-        /* 30px aşağıda başlıyor */
     }
 
     100% {
         opacity: 1;
         transform: translateY(0);
-        /* Son pozisyona geliyor */
     }
 }
 

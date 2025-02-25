@@ -1,4 +1,3 @@
-import React from "react";
 import { useSelector } from "react-redux";
 import { LuCheckCheck } from "react-icons/lu";
 import { formatDateForMessageInfo } from "../../../helpers/dateHelper";

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { IoPlay } from "react-icons/io5";
 import { IoPause } from "react-icons/io5";
 import { FiDownload } from "react-icons/fi";
@@ -6,6 +6,7 @@ import { Slider, Stack } from '@mui/material';
 import useScreenWidth from "../../../../hooks/useScreenWidth"
 
 export function AudioMessage({ content }) {
+
     const audioRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
     const [currentTime, setCurrentTime] = useState(0);

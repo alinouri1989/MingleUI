@@ -1,16 +1,19 @@
-import CloseModalButton from "../../../contexts/components/CloseModalButton";
-import { FaImages } from "react-icons/fa6";
-import { useState } from "react"; // useState importu
-import "./style.scss";
-import { useLocation } from "react-router-dom";
+import { useState } from "react";
 import { useSignalR } from "../../../contexts/SignalRContext";
+import { useLocation } from "react-router-dom";
+
+import { FaImages } from "react-icons/fa6";
+import CloseModalButton from "../../../contexts/components/CloseModalButton";
 import PreLoader from "../PreLoader/PreLoader";
 
+import { ErrorAlert } from "../../../helpers/customAlert";
+import "./style.scss";
 
 function ImageModal({ image, closeModal, chatId }) {
+
     const { chatConnection } = useSignalR();
     const location = useLocation();
-    const [isLoading, setIsLoading] = useState(false); // isLoading durumu
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSendImage = async () => {
         let chatType = '';
@@ -21,10 +24,10 @@ function ImageModal({ image, closeModal, chatId }) {
         }
 
         try {
-            setIsLoading(true); // Yükleme durumunu başlat
+            setIsLoading(true);
 
             const reader = new FileReader();
-            reader.readAsDataURL(image); // `image` bir File nesnesi olmalı
+            reader.readAsDataURL(image);
             reader.onloadend = async () => {
                 const base64Image = reader.result;
                 const base64String = base64Image.split(',')[1];
@@ -38,7 +41,7 @@ function ImageModal({ image, closeModal, chatId }) {
                 closeModal();
             };
         } catch (error) {
-            console.error("Resim gönderme hatası:", error);
+            ErrorAlert("Bir hata meydana geldi");
             setIsLoading(false);
         }
     };
@@ -53,7 +56,7 @@ function ImageModal({ image, closeModal, chatId }) {
             <img src={URL.createObjectURL(image)} alt="Uploaded preview" />
             <button onClick={handleSendImage} className="send-image-btn">Gönder</button>
 
-            {isLoading && <PreLoader />} {/* Yükleme durumu göster */}
+            {isLoading && <PreLoader />}
         </div>
     );
 }

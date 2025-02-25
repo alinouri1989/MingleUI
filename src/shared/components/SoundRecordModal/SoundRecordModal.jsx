@@ -1,37 +1,42 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useSignalR } from "../../../contexts/SignalRContext";
+
 import CloseModalButton from "../../../contexts/components/CloseModalButton";
 import { BiSolidMicrophone } from "react-icons/bi";
 import ReactAudioPlayer from 'react-h5-audio-player';
-import { useSignalR } from "../../../contexts/SignalRContext";
-import 'react-h5-audio-player/lib/styles.css'; // default styles
-import "./style.scss";
-import { useLocation } from 'react-router-dom';
+import 'react-h5-audio-player/lib/styles.css';
+
 import PreLoader from '../PreLoader/PreLoader';
 import { opacityEffect } from '../../animations/animations';
-import { motion } from "framer-motion";  // motion import ediyoruz
+import { ErrorAlert } from '../../../helpers/customAlert';
+
+import { motion } from "framer-motion";
+import "./style.scss";
 
 function SoundRecordModal({ closeModal, chatId }) {
-    const { chatConnection } = useSignalR();
-    const [isRecording, setIsRecording] = useState(false); // Kayıt başlatma durumu
-    const [isLoading, setIsLoading] = useState(false); // Kayıt başlatma durumu
-    const [recordStarted, setRecordStarted] = useState(false); // Kayıt başladı mı?
-    const [recordFinished, setRecordFinished] = useState(false); // Kayıt tamamlandı mı?
-    const [wavesAnimation, setWavesAnimation] = useState(false); // Dalgaların animasyonu
-    const [timer, setTimer] = useState(0); // Timer için state
-    const [audioUrl, setAudioUrl] = useState(null); // Kaydedilen sesin URL'si
-    const [audioStream, setAudioStream] = useState(null); // Ses kaydını tutacak stream
-    const [mediaRecorder, setMediaRecorder] = useState(null); // MediaRecorder nesnesi
-    const [audioChunks, setAudioChunks] = useState([]); // Kaydedilen sesin parçaları
+
     const location = useLocation();
+    const { chatConnection } = useSignalR();
 
-    const timerRef = useRef(null); // Timer'ı kontrol etmek için ref
+    const [isRecording, setIsRecording] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
-    // Kayıt sırasında timer'ı yönet
+    const [recordStarted, setRecordStarted] = useState(false);
+    const [recordFinished, setRecordFinished] = useState(false);
+    const [wavesAnimation, setWavesAnimation] = useState(false);
+
+    const [timer, setTimer] = useState(0);
+    const [audioUrl, setAudioUrl] = useState(null);
+    const [audioStream, setAudioStream] = useState(null);
+    const [mediaRecorder, setMediaRecorder] = useState(null);
+    const [audioChunks, setAudioChunks] = useState([]);
+
     useEffect(() => {
         let timerInterval;
         if (isRecording) {
             timerInterval = setInterval(() => {
-                setTimer(prev => prev + 1); // Timer her saniyede bir artacak
+                setTimer(prev => prev + 1);
             }, 1000);
         } else if (!isRecording && timer > 0) {
             clearInterval(timerInterval);
@@ -40,10 +45,9 @@ function SoundRecordModal({ closeModal, chatId }) {
         return () => clearInterval(timerInterval);
     }, [isRecording]);
 
-    // Ses kaydını başlatan fonksiyon
     const startRecording = async () => {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });  // Ses kaydını almak için izin iste
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             setAudioStream(stream);
             const recorder = new MediaRecorder(stream);
             setMediaRecorder(recorder);
@@ -55,55 +59,52 @@ function SoundRecordModal({ closeModal, chatId }) {
             recorder.onstop = () => {
                 const audioBlob = new Blob(chunks, { type: 'audio/wav' });
                 const audioUrl = URL.createObjectURL(audioBlob);
-                setAudioUrl(audioUrl);  // Ses kaydını URL'ye çevir
-                setAudioChunks(chunks);  // Ses parçalarını sakla
+                setAudioUrl(audioUrl);
+                setAudioChunks(chunks);
             };
 
             recorder.start();
             setAudioChunks(chunks);
             setIsRecording(true);
-            setRecordStarted(true); // Kayıt başladığını işaretle
-            setWavesAnimation(true);  // Dalgaların animasyonunu başlat
-        } catch (err) {
-            console.error('Error accessing audio devices: ', err);
+            setRecordStarted(true);
+            setWavesAnimation(true);
+        } catch {
+            ErrorAlert("Bir hata meydana geldi");
         }
     };
 
-    // Kaydı bitiren fonksiyon
     const stopRecording = () => {
         setIsRecording(false);
-        setWavesAnimation(false);  // Dalgaların animasyonunu durdur
+        setWavesAnimation(false);
         if (mediaRecorder) {
-            mediaRecorder.stop();  // Kaydı durdur
+            mediaRecorder.stop();
         }
         if (audioStream) {
             const tracks = audioStream.getTracks();
-            tracks.forEach(track => track.stop());  // Ses kaydını durdur
+            tracks.forEach(track => track.stop());
         }
-        setRecordFinished(true);  // Kayıt tamamlandı
+        setRecordFinished(true);
     };
 
-    // Kaydın bitirilmesi ve timer'ı sıfırlama
     const finishRecording = () => {
         stopRecording();
-        setTimer(0);  // Timer'ı sıfırla
+        setTimer(0);
     };
 
-    // Audio parçalarını birleştir ve yeni URL oluştur
     const combineAudioChunks = () => {
         const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
         const audioUrl = URL.createObjectURL(audioBlob);
         return audioUrl;
     };
 
-    // Sil butonuna basıldığında state'i sıfırla
     const handleDeleteAudio = () => {
         setAudioUrl(null);
         setRecordStarted(false);
         setRecordFinished(false);
         setWavesAnimation(false);
-        setTimer(0);
         setAudioChunks([]);
+        setTimer(0);
+
         if (mediaRecorder) {
             mediaRecorder.stop();
         }
@@ -113,7 +114,6 @@ function SoundRecordModal({ closeModal, chatId }) {
         }
     };
 
-    // Gönder butonuna basıldığında yapılacak işlemler
     const handleSendAudio = async () => {
         const chatType = location.pathname.includes('sohbetler') || location.pathname.includes('arsivler')
             ? 'Individual'
@@ -154,7 +154,6 @@ function SoundRecordModal({ closeModal, chatId }) {
     return (
         <div className='sound-record-box'>
             <div onClick={handleRemoveAudioTrack}><CloseModalButton closeModal={closeModal} /></div>
-
             <div className="sound-record-content">
                 <div className="title-box">
                     <BiSolidMicrophone />
@@ -175,18 +174,15 @@ function SoundRecordModal({ closeModal, chatId }) {
                     </div>
                 }
                 <div className="options-box">
-                    {/* Kayıt başlamışsa "Bitir" butonunu göster */}
                     {recordStarted && !recordFinished && (
                         <button className="record-button" onClick={finishRecording}>Kaydı Bitir</button>
                     )}
 
-                    {/* Kayıt başlamamışsa "Başlat" butonunu göster */}
                     {!recordStarted && !recordFinished && (
                         <button className="record-button" onClick={startRecording}>Kaydı Başlat</button>
                     )}
                 </div>
 
-                {/* Kaydedilen sesin dinletilmesi, sadece Kaydı Bitir'den sonra */}
                 {recordFinished && audioUrl && (
                     <motion.div
                         className="record-finished-box"
@@ -196,8 +192,8 @@ function SoundRecordModal({ closeModal, chatId }) {
                         style={{ width: "100%" }}>
                         <div className="audio-player-wrapper">
                             <ReactAudioPlayer
-                                src={combineAudioChunks()} // Kaydedilen sesin URL'si
-                                autoPlay={false} // Otomatik başlatmasın
+                                src={combineAudioChunks()}
+                                autoPlay={false}
                                 controls
                             />
                         </div>

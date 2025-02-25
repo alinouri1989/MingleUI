@@ -1,45 +1,46 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { useSignalR } from "../../../contexts/SignalRContext";
+import { useModal } from "../../../contexts/ModalContext";
+import { useLocation } from "react-router-dom";
+
+import EmojiPicker from "emoji-picker-react";
 import { HiPlus } from "react-icons/hi";
 import { MdOutlineEmojiEmotions } from "react-icons/md";
-import EmojiPicker from "emoji-picker-react";
 import { LuFileUp } from "react-icons/lu";
 import { LuImage } from "react-icons/lu";
 import { BiSolidMicrophone } from "react-icons/bi";
 import { LuFileVideo } from "react-icons/lu";
 import { SiGooglegemini } from "react-icons/si";
 
-
-import { useModal } from "../../../contexts/ModalContext";
 import ImageModal from "../ImageModal/ImageModal";
-import { useLocation } from "react-router-dom";
-import { encryptMessage } from "../../../helpers/messageCryptoHelper";
 import SoundRecordModal from "../SoundRecordModal/SoundRecordModal";
-import "./style.scss";
+import { AIModal } from "../AIModal/AIModal";
+
+import { encryptMessage } from "../../../helpers/messageCryptoHelper";
 import { convertFileToBase64 } from "../../../store/helpers/convertFileToBase64";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
+
 import PreLoader from "../PreLoader/PreLoader";
-import { AIModal } from "../AIModal/AIModal";
-import { useSelector } from "react-redux";
+import "./style.scss";
 
 function MessageInputBar({ chatId }) {
+
     const location = useLocation();
+    const { showModal, closeModal } = useModal();
     const { chatConnection } = useSignalR();
     const { user } = useSelector(state => state.auth);
-    const [isLoading, setIsLoading] = useState(false);
 
-    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    const [isShowFileMenu, setShowFileMenu] = useState(false);
-    const emojiPickerRef = useRef(null);
-
-    const [isAIModalOpen, setIsAIModalOpen] = useState(false);
-    const AIButtonRef = useRef(null);
-
-    const { showModal, closeModal } = useModal();
     const [message, setMessage] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
 
+    const [isLoading, setIsLoading] = useState(false);
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [isShowFileMenu, setShowFileMenu] = useState(false);
+    const [isAIModalOpen, setIsAIModalOpen] = useState(false);
 
+    const emojiPickerRef = useRef(null);
+    const AIButtonRef = useRef(null);
     const fileImageInputRef = useRef(null);
     const fileVideoInputRef = useRef(null);
     const fileInputRef = useRef(null);
@@ -48,7 +49,6 @@ function MessageInputBar({ chatId }) {
 
     useEffect(() => {
         function handleClickOutside(event) {
-            // Eğer tıklanan eleman fileMenuRef veya buttonRef içinde değilse menüyü kapat
             if (
                 fileMenuRef.current &&
                 !fileMenuRef.current.contains(event.target) &&
@@ -59,10 +59,8 @@ function MessageInputBar({ chatId }) {
             }
         }
 
-        // Document'a tıklama dinleyicisi ekle
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
-            // Component unmount olduğunda dinleyiciyi temizle
             document.removeEventListener('mousedown', handleClickOutside);
         };
     }, []);
@@ -91,7 +89,6 @@ function MessageInputBar({ chatId }) {
             document.removeEventListener("keydown", handleKeyDown);
         };
     }, [message, selectedFile]);
-
 
     const handleEmojiClick = (emojiData) => {
         setMessage((prev) => prev + emojiData.emoji);
@@ -134,12 +131,10 @@ function MessageInputBar({ chatId }) {
             try {
                 setIsLoading(true);
                 const base64String = await convertFileToBase64(file);
-                // Videoyu göndermek için chatConnection.invoke çağrısı
                 await chatConnection.invoke("SendMessage", chatType, chatId, {
                     ContentType: 2,
                     content: base64String,
                 });
-
                 setIsLoading(false);
                 SuccessAlert("Video gönderildi");
             } catch {
@@ -163,7 +158,6 @@ function MessageInputBar({ chatId }) {
         const file = e.target.files[0];
         let chatType = '';
 
-        // Chat türünü belirle
         if (location.pathname.includes('sohbetler') || location.pathname.includes('arsivler')) {
             chatType = 'Individual';
         } else if (location.pathname.includes('gruplar')) {
@@ -173,11 +167,9 @@ function MessageInputBar({ chatId }) {
         if (file) {
             try {
                 setIsLoading(true);
-                // Dosyayı base64'e dönüştür
                 const base64String = await convertFileToBase64(file);
-                // Dosyayı göndermek için chatConnection.invoke çağrısı
                 await chatConnection.invoke("SendMessage", chatType, chatId, {
-                    ContentType: 4, // 4: Belge, ses veya farklı türdeki dosya
+                    ContentType: 4,
                     content: base64String,
                 });
 
@@ -199,15 +191,13 @@ function MessageInputBar({ chatId }) {
             return;
         }
 
-        // ContentType'ı belirleme
         let contentType;
         if (message) {
-            contentType = 0; // Text
+            contentType = 0;
         } else if (selectedFile) {
-            contentType = 1; // File
+            contentType = 1;
         }
 
-        // DTO'yu oluşturma
         const sendMessageDto = {
             ContentType: contentType,
             Content: message || null,
@@ -215,11 +205,10 @@ function MessageInputBar({ chatId }) {
 
         let chatType = '';
 
-        // Check the pathname and determine the chat type
         if (location.pathname.includes('sohbetler') || location.pathname.includes('arsivler')) {
-            chatType = 'Individual'; // If "sohbetler" or "arsivler" is in the pathname, chatType = Individual
+            chatType = 'Individual';
         } else if (location.pathname.includes('gruplar')) {
-            chatType = 'Group'; // If "gruplar" is in the pathname, chatType = Group
+            chatType = 'Group';
         }
         try {
             const encryptedMessage = encryptMessage(message, chatId);
@@ -300,8 +289,8 @@ function MessageInputBar({ chatId }) {
                                 theme={user?.userSettings?.theme === "Dark" ? "dark" : "light"}
                                 onEmojiClick={handleEmojiClick}
                                 style={{
-                                    backgroundColor: user?.userSettings?.theme === "Dark" ? "#141414" : "#ffffff", // Dark için koyu, Light için beyaz
-                                    borderRadius: "23px", // İsteğe bağlı: Kenarları yuvarlak yapabilirsiniz
+                                    backgroundColor: user?.userSettings?.theme === "Dark" ? "#141414" : "#ffffff",
+                                    borderRadius: "23px",
                                     boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
 
                                 }}

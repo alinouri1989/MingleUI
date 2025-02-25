@@ -6,7 +6,6 @@
     @include screen(900px) {
         @include flex-center(row, center, center);
         flex-direction: column;
-
     }
 
     .title-box {
@@ -25,7 +24,6 @@
         p {
             font-size: 17px;
         }
-
     }
 
     img {
@@ -57,5 +55,4 @@
             margin: 0px 60px;
         }
     }
-
 }

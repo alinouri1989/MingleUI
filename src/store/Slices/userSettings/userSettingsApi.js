@@ -1,9 +1,8 @@
+import { setUser } from '../auth/authSlice.js';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getJwtFromCookie } from '../../helpers/getJwtFromCookie.js';
 import { updateUserField } from "../../helpers/updateUserField.js";
-import { setUser } from '../auth/authSlice.js';
-import { current } from '@reduxjs/toolkit';
-import { convertFileToBase64 } from '../../helpers/convertFileToBase64.js';
+import { ErrorAlert } from '../../../helpers/customAlert.js';
 
 export const userSettingsApi = createApi({
   reducerPath: 'accountSettingsApi',
@@ -19,7 +18,6 @@ export const userSettingsApi = createApi({
   }),
 
   endpoints: (builder) => ({
-    // Remove Profile Photo
     removeProfilePhoto: builder.mutation({
       query: () => ({
         url: 'User/ProfilePhoto',
@@ -59,7 +57,6 @@ export const userSettingsApi = createApi({
       },
     }),
 
-    // Update Display Name
     updateDisplayName: builder.mutation({
       query: (newDisplayName) => ({
         url: 'User/DisplayName',
@@ -78,7 +75,6 @@ export const userSettingsApi = createApi({
       },
     }),
 
-    // Update Phone Number
     updatePhoneNumber: builder.mutation({
       query: (newPhoneNumber) => ({
         url: 'User/PhoneNumber',
@@ -96,7 +92,6 @@ export const userSettingsApi = createApi({
       },
     }),
 
-    // Update Biography
     updateBiography: builder.mutation({
       query: (newBiography) => ({
         url: 'User/Biography',
@@ -114,7 +109,6 @@ export const userSettingsApi = createApi({
       },
     }),
 
-    // Change Password
     changePassword: builder.mutation({
       query: (formData) => ({
         url: 'User/Password',
@@ -135,7 +129,7 @@ export const userSettingsApi = createApi({
         try {
           await queryFulfilled;
 
-          const currentAuth = getState().auth; // Tüm auth durumunu al
+          const currentAuth = getState().auth;
           const themeMapping = {
             0: "DefaultSystemMode",
             1: "Light",
@@ -144,12 +138,12 @@ export const userSettingsApi = createApi({
 
           dispatch(
             setUser({
-              ...currentAuth, // auth'un tamamını koru
+              ...currentAuth,
               user: {
-                ...currentAuth.user, // user içindeki diğer alanları koru
+                ...currentAuth.user,
                 userSettings: {
-                  ...currentAuth.user.userSettings, // userSettings içindeki diğer alanları koru
-                  theme: themeMapping[arg], // theme alanını güncelle
+                  ...currentAuth.user.userSettings,
+                  theme: themeMapping[arg],
                 },
               },
             })
@@ -170,26 +164,25 @@ export const userSettingsApi = createApi({
         try {
           await queryFulfilled;
 
-          const currentAuth = getState().auth; // Tüm auth durumunu al
+          const currentAuth = getState().auth;
 
           dispatch(
             setUser({
-              ...currentAuth, // auth'un tamamını koru
+              ...currentAuth,
               user: {
-                ...currentAuth.user, // user içindeki diğer alanları koru
+                ...currentAuth.user,
                 userSettings: {
-                  ...currentAuth.user.userSettings, // userSettings içindeki diğer alanları koru
-                  chatBackground: arg, // Sadece chatBackground'u güncelle
+                  ...currentAuth.user.userSettings,
+                  chatBackground: arg,
                 },
               },
             })
           );
-        } catch (error) {
-          console.error('Error updating chat background:', error);
+        } catch {
+          ErrorAlert("Bir hata meydana geldi");
         }
       },
     }),
-
   }),
 });
 

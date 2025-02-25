@@ -3,8 +3,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-
-    // Keyframe animasyonu tanımlıyoruz
     animation: fadeIn 0.8s ease-in-out;
 
     img {
@@ -17,7 +15,6 @@
     }
 }
 
-// Keyframe animasyonu
 @keyframes fadeIn {
     0% {
         opacity: 0;
