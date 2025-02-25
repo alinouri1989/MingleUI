@@ -1,27 +1,36 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
+
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
 import { TbEdit } from "react-icons/tb";
 import { FaCheck } from "react-icons/fa";
 import { MdClose } from 'react-icons/md';
-import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
-import ImageSearchRoundedIcon from '@mui/icons-material/ImageSearchRounded';
+
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+
+import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
+import ImageSearchRoundedIcon from '@mui/icons-material/ImageSearchRounded';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
+
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { useSelector } from "react-redux";
+
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
-import { useUpdateDisplayNameMutation, useUpdatePhoneNumberMutation, useUpdateBiographyMutation, useRemoveProfilePhotoMutation, useUpdateProfilePhotoMutation } from "../../../store/Slices/userSettings/userSettingsApi";
 import PreLoader from "../../../shared/components/PreLoader/PreLoader";
 import { defaultProfilePhoto } from "../../../constants/DefaultProfilePhoto";
 import { convertFileToBase64 } from "../../../store/helpers/convertFileToBase64";
-import { convertFileToByteArray } from "../../../store/helpers/convertFileToByteArray";
+import {
+  useUpdateDisplayNameMutation,
+  useUpdatePhoneNumberMutation,
+  useUpdateBiographyMutation,
+  useRemoveProfilePhotoMutation,
+  useUpdateProfilePhotoMutation
+} from "../../../store/Slices/userSettings/userSettingsApi";
 
-
-import { useForm, Controller } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { biographySchema, displayNameSchema, phoneNumberSchema } from "../../../schemas/AccountSchemas";
 
 function Account() {
@@ -63,10 +72,9 @@ function Account() {
     defaultValues: { bio: user?.biography || "" },
   });
 
-
-  // User Image Edit States
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -76,14 +84,13 @@ function Account() {
     setAnchorEl(null);
   };
 
-  //! User Informations Edit Handlers
 
   const onSubmitForDisplayName = async (data) => {
-    setIsEditingUsername(!isEditingUsername);  // Toggle out of edit mode
+    setIsEditingUsername(!isEditingUsername);
 
     if (user.displayName !== data.displayName) {
       try {
-        await updateDisplayName(data.displayName);  // Use data from form submission
+        await updateDisplayName(data.displayName);
         SuccessAlert("Ad Soyad Değiştirildi");
       } catch (error) {
         ErrorAlert("İsim Değiştirilemedi");
@@ -118,7 +125,6 @@ function Account() {
     }
   };
 
-  //! User Profile Image Menu Item Handlers
 
   const handleChangeProfileImage = () => {
     handleClose();
@@ -291,7 +297,6 @@ function Account() {
             <p>{user.displayName}</p>
           )}
 
-          {/* Düzenleme Butonu (Sadece Toggle İşlemi Yapacak) */}
           {!isEditingUsername && (
             <button
               className="edit-btn"
@@ -302,7 +307,6 @@ function Account() {
             </button>
           )}
 
-          {/* Kaydet Butonu (Formu Gönderecek) */}
           {isEditingUsername && (
             <button className="edit-btn" type="submit">
               <FaCheck />
@@ -317,13 +321,11 @@ function Account() {
 
       <form>
         <div className="email-and-phone-box">
-          {/* E-posta */}
           <div className="email-box">
             <p>Email</p>
             <span>{user?.email}</span>
           </div>
 
-          {/* Telefon Numarası */}
           <div className="phone-box">
             <p>Telefon</p>
             <div className="phone-edit-box">
@@ -338,7 +340,6 @@ function Account() {
                 <p>{user?.phoneNumber || "Belirtilmedi"}</p>
               )}
 
-              {/* Düzenleme Butonu */}
               {!isEditingPhone && (
                 <button
                   className="edit-btn"
@@ -349,7 +350,6 @@ function Account() {
                 </button>
               )}
 
-              {/* Kaydetme Butonu */}
               {isEditingPhone && (
                 <button
                   className="edit-btn"
@@ -365,12 +365,10 @@ function Account() {
             )}
           </div>
 
-          {/* Biyografi */}
           <div className="biography-box">
             <div className="biograpy-edit-box">
               <p>Biyografi</p>
 
-              {/* Düzenleme Butonu */}
               {!isEditingBiography && (
                 <button
                   className="edit-btn"
@@ -381,7 +379,6 @@ function Account() {
                 </button>
               )}
 
-              {/* Kaydetme Butonu */}
               {isEditingBiography && (
                 <button
                   className="edit-btn"
@@ -393,7 +390,6 @@ function Account() {
               )}
             </div>
 
-            {/* Metin veya Düzenleme Alanı */}
             {!isEditingBiography ? (
               <span className="biography-span">{user?.biography}</span>
             ) : (

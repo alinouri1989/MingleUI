@@ -1,38 +1,46 @@
-import React, { useEffect } from 'react'
-import WelcomeScreen from '../WelcomeScreen/WelcomeScreen'
+import { useEffect } from 'react'
+import { useSignalR } from '../../contexts/SignalRContext.jsx';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useModal } from "../../contexts/ModalContext.jsx";
+
 import { IoChatbubbleEllipses } from "react-icons/io5";
 import { PiPhoneFill } from "react-icons/pi";
 import { HiMiniVideoCamera } from "react-icons/hi2";
-import { useModal } from "../../contexts/ModalContext.jsx";
-import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { getUserIdFromToken } from '../../helpers/getUserIdFromToken.js';
+
 import CallModal from './Components/CallModal';
-import { formatDateToTR } from '../../helpers/dateHelper.js';
-import { useSignalR } from '../../contexts/SignalRContext.jsx';
-import { setIsCallStarting } from '../../store/Slices/calls/callSlice.js';
-import { getChatId } from '../../store/Slices/chats/chatSlice.js';
-import CallStatus from '../../shared/components/CallStatus/CallStatus.jsx';
 import useScreenWidth from '../../hooks/useScreenWidth.js';
-import BackToMenuButton from '../../shared/components/BackToMenuButton/BackToMenuButton.jsx';
+import WelcomeScreen from '../WelcomeScreen/WelcomeScreen'
+
+import CallStatus from '../../shared/components/CallStatus/CallStatus.jsx';
+import { getUserIdFromToken } from '../../helpers/getUserIdFromToken.js';
+import { getChatId } from '../../store/Slices/chats/chatSlice.js';
+
+import { formatDateToTR } from '../../helpers/dateHelper.js';
 import { opacityEffect } from "../../shared/animations/animations.js"
+import BackToMenuButton from '../../shared/components/BackToMenuButton/BackToMenuButton.jsx';
+
 import "./style.scss";
 
 import { motion } from 'framer-motion';
+import { startCall } from '../../helpers/startCall.js';
 
 function Calls() {
-  const { id } = useParams();
-  const { showModal, closeModal } = useModal();
-  const { callConnection } = useSignalR();
-  const { token } = useSelector(state => state.auth);
-  const state = useSelector(state => state.chat);
-  const userId = getUserIdFromToken(token);
-  const isSmallScreen = useScreenWidth(540);
-
-  const { calls, callRecipientList, isInitialCallsReady, isRingingIncoming } = useSelector(state => state.call);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { id } = useParams();
+  const { showModal, closeModal } = useModal();
+  const { callConnection } = useSignalR();
+  const isSmallScreen = useScreenWidth(540);
+
+  const { token } = useSelector(state => state.auth);
+  const state = useSelector(state => state.chat);
+
+  const userId = getUserIdFromToken(token);
+
+  const { calls, callRecipientList, isInitialCallsReady, isRingingIncoming } = useSelector(state => state.call);
 
   const currentCall = calls.find(call => call.id === id);
 
@@ -49,37 +57,25 @@ function Calls() {
   }
 
   const { participants, type, status, callDuration, createdDate } = currentCall;
-  const otherParticipantId = participants?.find(participant => participant !== userId);
-  const participantInfo = callRecipientList?.find(recipient => recipient.id === otherParticipantId);
+  const recipientId = participants?.find(participant => participant !== userId);
+  const participantInfo = callRecipientList?.find(recipient => recipient.id === recipientId);
 
   const { displayName, profilePhoto } = participantInfo || {};
 
-  const handleVoiceCall = async () => {
-    if (callConnection) {
-      try {
-        await callConnection.invoke("StartCall", otherParticipantId, 0);
-        dispatch(setIsCallStarting(true));
-        showModal(<CallModal closeModal={closeModal} isCameraCall={false} />);
-      } catch (error) {
-        console.error("Error starting voice call:", error);
-      }
-    }
+  const handleVoiceCall = () => {
+    startCall(callConnection, recipientId, false, dispatch, () =>
+      showModal(<CallModal closeModal={closeModal} isCameraCall={false} />)
+    );
   };
 
-  const handleVideoCall = async () => {
-    if (callConnection) {
-      try {
-        await callConnection.invoke("StartCall", otherParticipantId, 1);
-        dispatch(setIsCallStarting(true));
-        showModal(<CallModal closeModal={closeModal} isCameraCall={true} />);
-      } catch (error) {
-        console.error("Error starting video call:", error);
-      }
-    }
-  }
+  const handleVideoCall = () => {
+    startCall(callConnection, recipientId, true, dispatch, () =>
+      showModal(<CallModal closeModal={closeModal} isCameraCall={true} />)
+    );
+  };
 
   const handleGoIndividualChat = () => {
-    const chatId = getChatId(state, userId, otherParticipantId);
+    const chatId = getChatId(state, userId, recipientId);
     const chatData = Object.values(state.Individual).find(chat => chat.id === chatId);
     const isArchived = chatData.archivedFor?.hasOwnProperty(userId);
     const destination = isArchived ? `/arsivler/${chatId}` : `/sohbetler/${chatId}`;

@@ -108,13 +108,11 @@
 @keyframes slideIn {
     0% {
         transform: translateX(300px);
-        /* Start off-screen to the right */
         opacity: 0;
     }
 
     100% {
         transform: translateX(0);
-        /* End position at right: 0 */
         opacity: 1;
     }
 }

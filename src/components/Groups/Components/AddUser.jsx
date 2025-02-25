@@ -1,23 +1,27 @@
-import { MdClose } from 'react-icons/md';
-import { HiUserAdd } from "react-icons/hi";
-import { HiCheckCircle } from "react-icons/hi2";
-import star from "../../../assets/svg/star.svg";
-import { BiSearchAlt } from "react-icons/bi";
-import { TiThList } from "react-icons/ti";
-import { AiFillInfoCircle } from "react-icons/ai";
 import { useState, useEffect } from "react";
 import { useDebounce } from '../../../hooks/useDebounce';
 import { useSignalR } from '../../../contexts/SignalRContext';
+
+import { MdClose } from 'react-icons/md';
+import { HiUserAdd } from "react-icons/hi";
+import { HiCheckCircle } from "react-icons/hi2";
+import { BiSearchAlt } from "react-icons/bi";
+import { TiThList } from "react-icons/ti";
+import { AiFillInfoCircle } from "react-icons/ai";
+import star from "../../../assets/svg/star.svg";
+
 import PreLoader from '../../../shared/components/PreLoader/PreLoader';
-import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
-import "../../Chats/Components/NewChat/style.scss";
-import { motion } from "framer-motion";  // motion import ediyoruz
 import { opacityEffect } from '../../../shared/animations/animations.js';
+import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
+import { motion } from "framer-motion";
+import "../../Chats/Components/NewChat/style.scss";
 
 function AddUser({ closeUserModal, setFormData, formData }) {
+
+    const { notificationConnection } = useSignalR();
     const [inputValue, setInputValue] = useState("");
     const debouncedSearchQuery = useDebounce(inputValue, 300);
-    const { notificationConnection } = useSignalR();
+
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -91,7 +95,6 @@ function AddUser({ closeUserModal, setFormData, formData }) {
             }
         }
     };
-
 
     return (
         <div className='add-user-modal'>

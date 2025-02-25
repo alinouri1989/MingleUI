@@ -1,51 +1,51 @@
 import { useState, useEffect } from "react";
-import WelcomeScreen from "../WelcomeScreen/WelcomeScreen";
-
-import UserTopBar from "./Components/UserTopBar";
-import UserMessageBar from "./Components/UserMessageBar";
-import MessageInputBar from "../../shared/components/MessageInputBar/MessageInputBar";
-import "../layout.scss";
-import UserDetailsBar from "./Components/UserDetailsBar";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
+
+import WelcomeScreen from "../WelcomeScreen/WelcomeScreen";
+import UserTopBar from "./Components/UserTopBar";
+import UserDetailsBar from "./Components/UserDetailsBar";
+import UserMessageBar from "./Components/UserMessageBar";
+import MessageInputBar from "../../shared/components/MessageInputBar/MessageInputBar";
+
 import { getUserIdFromToken } from "../../helpers/getUserIdFromToken";
+import "../layout.scss";
 
 function Chats() {
-  const { id } = useParams(); // URL'den ID'yi al
-  const navigate = useNavigate(); // Navigate fonksiyonu
+
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [recipientProfile, setRecipientProfile] = useState(null);
   const [recipientId, setRecipientId] = useState(null);
 
-  const { Individual, isChatsInitialized } = useSelector((state) => state.chat); // Chat bilgileri
-  const { chatList } = useSelector((state) => state.chatList); // Kullanıcı listesi bilgileri
-  const { token } = useSelector((state) => state.auth); // Kullanıcı token'ı
-  const UserId = getUserIdFromToken(token); // Token'dan kullanıcı ID'si al
+  const { Individual, isChatsInitialized } = useSelector((state) => state.chat);
+  const { chatList } = useSelector((state) => state.chatList);
+  const { token } = useSelector((state) => state.auth);
+
+  const UserId = getUserIdFromToken(token);
   const location = useLocation();
 
   useEffect(() => {
     if (isChatsInitialized && id) {
       const chatExists = Individual.some((chat) => chat.id === id);
       if (!chatExists) {
-        navigate("/anasayfa", { replace: true }); // Anasayfaya yönlendir
+        navigate("/anasayfa", { replace: true });
       }
     }
   }, [isChatsInitialized, Individual, id, navigate]);
 
-  // Recipient bilgilerini al
   useEffect(() => {
     if (id && Individual.length > 0 && chatList) {
-      // Individual içinde id ile eşleşen chat'i bul
+
       const chat = Individual.find((chat) => chat.id === id);
 
       if (chat) {
-        // participants dizisinden kullanıcı ID'siyle eşleşmeyen diğer ID'yi al
         const recipientId = chat.participants.find((participant) => participant !== UserId);
 
         if (recipientId) {
-          // chatList içinde recipientId ile eşleşen kullanıcıyı bul
           const recipient = chatList[recipientId];
-
           setRecipientProfile(recipient || null);
           setRecipientId(recipientId);
         }
@@ -58,7 +58,6 @@ function Chats() {
       setIsSidebarOpen(!isSidebarOpen);
     }
   }, [location])
-
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -74,7 +73,6 @@ function Chats() {
         {!id && (
           <WelcomeScreen text={"Kişisel sohbetleriniz uçtan uca şifrelidir"} />
         )}
-
         {id && (
           <>
             <UserTopBar

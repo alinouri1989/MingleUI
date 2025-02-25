@@ -1,8 +1,10 @@
+import { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
-import React, { useState, useRef, useEffect } from "react";
+import { useSignalR } from "../../../contexts/SignalRContext";
+
 import MingleLogo from "../../../assets/logos/MingleLogoWithText.svg";
 import CallSound from "../../../assets/Sounds/MingleCallSound.mp3";
-import { useSignalR } from "../../../contexts/SignalRContext";
+import BusySound from "../../../assets/sounds/MingleCallBusySound.mp3"
 
 import { MdScreenShare } from "react-icons/md";
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
@@ -27,9 +29,12 @@ function CallModal({ closeModal, isCameraCall }) {
     const [isSpeakerOn, setSpeakerMode] = useState(true);
     const [callStatus, setCallStatus] = useState("Aranıyor...");
 
-    const audioRef = useRef(null);
+    const callAudioRef = useRef(null);
+    const busyAudioRef = useRef(null);
+
     const localVideoRef = useRef(null);
     const remoteVideoRef = useRef(null);
+
     const [temporaryStream, setTemporaryStream] = useState(null);
 
     useEffect(() => {
@@ -47,7 +52,6 @@ function CallModal({ closeModal, isCameraCall }) {
 
         getTemporaryStream();
 
-        // Temizlik işlemi
         return () => {
             if (temporaryStream) {
                 temporaryStream.getTracks().forEach((track) => track.stop());
@@ -65,12 +69,12 @@ function CallModal({ closeModal, isCameraCall }) {
             remoteVideoRef.current.srcObject = remoteStream;
         }
 
-        // Cleanup sırasında video referansını da sıfırla
         return () => {
             if (localVideoRef.current) localVideoRef.current.srcObject = null;
             if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
         };
     }, [localStream, temporaryStream, remoteStream]);
+
 
     useEffect(() => {
         if (localStream) {
@@ -82,22 +86,53 @@ function CallModal({ closeModal, isCameraCall }) {
 
 
     useEffect(() => {
-        const audio = new Audio(CallSound);
-        audio.loop = true;
-        audio.play();
-        audioRef.current = audio;
+        if (isCallStarting) {
+            const callAudio = new Audio(CallSound);
+            callAudio.loop = true;
+            callAudio.play();
+            callAudioRef.current = callAudio;
 
-        const timer = setTimeout(() => {
-            audio.pause();
-            audio.currentTime = 0;
-        }, 20000);
+            let timeout = setTimeout(() => {
+                if (!isCallStarted) {
 
-        return () => {
-            clearTimeout(timer);
-            audio.pause();
-            audio.currentTime = 0;
-        };
-    }, []);
+                    setCallStatus("Meşgul");
+
+                    if (callAudioRef.current) {
+                        callAudioRef.current.pause();
+                        callAudioRef.current.currentTime = 0;
+                    }
+
+                    const busyAudio = new Audio(BusySound);
+                    busyAudio.play();
+                    busyAudioRef.current = busyAudio;
+
+                    setTimeout(() => {
+                        if (busyAudioRef.current) {
+                            busyAudioRef.current.pause();
+                            busyAudioRef.current.currentTime = 0;
+                        }
+                        callConnection.invoke("EndCall", callId, 4, callStartedDate);
+                        closeModal();
+                    }, 4000);
+                }
+            }, 25000);
+
+            return () => {
+                clearTimeout(timeout);
+
+                if (callAudioRef.current) {
+                    callAudioRef.current.pause();
+                    callAudioRef.current.currentTime = 0;
+                }
+
+                if (busyAudioRef.current) {
+                    busyAudioRef.current.pause();
+                    busyAudioRef.current.currentTime = 0;
+                }
+            };
+        }
+    }, [isCallStarting, isCallStarted, callId]);
+
 
     useEffect(() => {
         if (!isCallStarted && !isRingingOutgoing) {
@@ -109,24 +144,22 @@ function CallModal({ closeModal, isCameraCall }) {
     useEffect(() => {
         let timerInterval;
         if (isCallStarted) {
-            setTemporaryStream(null);
-            if (isCallStarted && audioRef.current) {
-                audioRef.current.pause();
-                audioRef.current.currentTime = 0;
+            if (callAudioRef.current) {
+                callAudioRef.current.pause();
+                callAudioRef.current.currentTime = 0;
             }
 
+            setCallStatus("Bağlandı");
             let elapsedTime = 0;
             timerInterval = setInterval(() => {
                 elapsedTime += 1;
-                const formattedTime = formatTime(elapsedTime);
-                setCallStatus(formattedTime);
+                setCallStatus(formatTime(elapsedTime));
             }, 1000);
         } else {
             clearInterval(timerInterval);
             setCallStatus("Aranıyor...");
-            if (isCallStarted == false && isCallStarting == false) {
+            if (isCallStarted === false && isCallStarting === false) {
                 closeModal();
-
             }
         }
 
@@ -135,28 +168,6 @@ function CallModal({ closeModal, isCameraCall }) {
         };
     }, [isCallStarted]);
 
-
-    useEffect(() => {
-        let timeout;
-        if (isCallStarting) {
-            timeout = setTimeout(() => {
-                if (!isCallStarted) {
-                    console.log("CallId", callId);
-                    setCallStatus("Meşgul");
-                    setTimeout(() => {
-                        callConnection.invoke("EndCall", callId, 4, callStartedDate);
-                        closeModal();
-                    }, 4000);
-                }
-            }, 20000);
-        }
-
-        return () => {
-            if (timeout) {
-                clearTimeout(timeout);
-            }
-        };
-    }, [isCallStarting, isCallStarted, callId]);
 
     const handleMicrophoneMode = () => {
         setMicrophoneMode((prev) => {
@@ -176,8 +187,23 @@ function CallModal({ closeModal, isCameraCall }) {
             remoteVideoRef.current.muted = isSpeakerOn;
         }
         setSpeakerMode(!isSpeakerOn);
-    };
 
+        if (isSpeakerOn) {
+            if (callAudioRef.current) {
+                callAudioRef.current.volume = 0;
+            }
+            if (busyAudioRef.current) {
+                busyAudioRef.current.volume = 0;
+            }
+        } else {
+            if (callAudioRef.current) {
+                callAudioRef.current.volume = 1;
+            }
+            if (busyAudioRef.current) {
+                busyAudioRef.current.volume = 1;
+            }
+        }
+    };
 
     const handleCloseCall = () => {
         if (isCallStarted) {
@@ -196,7 +222,6 @@ function CallModal({ closeModal, isCameraCall }) {
 
     return (
         <div className={`call-modal ${isCallStarted ? 'video-call-Mode' : ''}`}>
-            {/* Logo ve şifreleme bilgisi */}
             <div className="logo-and-e2e-box">
                 <img src={MingleLogo} alt="Mingle Logo" />
                 <div className="e2e-box">
@@ -245,7 +270,6 @@ function CallModal({ closeModal, isCameraCall }) {
 
                 {isCallStarted && isCameraCall && <p className="video-call-time-status">{callStatus}</p>}
             </>
-
 
             <div className="call-option-buttons">
                 <button className="disabled">

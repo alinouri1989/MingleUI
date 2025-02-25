@@ -1,10 +1,5 @@
 @use "../../../shared/styles/main.scss" as *;
 
-.local-ref-box,
-.remote-ref-box {
-    border: 2px solid red,
-}
-
 .call-modal {
     @include flex-center(column, space-between, center);
     width: 560px;
@@ -15,7 +10,6 @@
         width: 100%;
         height: 100%;
     }
-
 
     .logo-and-e2e-box {
         width: 100%;
@@ -86,7 +80,7 @@
         @include screen(768px) {
             @include flex-center(column, center, space-between);
             width: 100%;
-            flex: 1; // Ekran daraldığında da genişliğini ve esnekliğini korur.
+            flex: 1;
         }
 
         &.only-voice-call {
@@ -158,12 +152,12 @@
             }
 
             video {
-                width: 100%; // Genişliği sabitle
-                max-width: 100%; // Taşmayı engelle
-                height: auto; // Oranları koru
+                width: 100%;
+                max-width: 100%;
+                height: auto;
                 border-radius: 20px;
                 border: 4px solid var(--smooth-light-blue);
-                object-fit: cover; // Video içeriğini kesmeden kapsa
+                object-fit: cover;
 
                 @include screen(768px) {
                     position: initial;
@@ -252,12 +246,10 @@
 @keyframes fadeIn {
     from {
         opacity: 0;
-        /* Başlangıç: tamamen görünmez */
     }
 
     to {
         opacity: 1;
-        /* Bitiş: tamamen görünür */
     }
 }
 

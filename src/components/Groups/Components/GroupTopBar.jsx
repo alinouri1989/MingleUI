@@ -1,8 +1,5 @@
-import React from 'react'
 import { IoIosArrowDropleftCircle } from "react-icons/io";
 import useScreenWidth from '../../../hooks/useScreenWidth';
-import { IoMdArrowRoundBack } from "react-icons/io";
-import { useNavigate } from 'react-router-dom';
 import BackToMenuButton from '../../../shared/components/BackToMenuButton/BackToMenuButton';
 
 function GroupTopBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
@@ -12,8 +9,6 @@ function GroupTopBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
         : 0;
 
     const isSmallScreen = useScreenWidth(900);
-    const navigate = useNavigate();
-
 
     return (
         <div onClick={toggleSidebar} className={`group-top-bar ${isSidebarOpen ? 'close' : ''}`}>

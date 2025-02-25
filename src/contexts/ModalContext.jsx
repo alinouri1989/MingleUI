@@ -1,7 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
-import { MdClose } from 'react-icons/md';
-import IncomingCall from '../components/Calls/Components/IncomingCall/IncomingCall';
 import { useSelector } from 'react-redux';
+import { createContext, useContext, useState } from 'react';
+import IncomingCall from '../components/Calls/Components/IncomingCall/IncomingCall';
+
 const ModalContext = createContext();
 
 export const ModalProvider = ({ children }) => {

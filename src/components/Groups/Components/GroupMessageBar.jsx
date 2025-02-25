@@ -1,15 +1,17 @@
-import React, { useRef } from 'react'
-import MessageBubble from "../../../shared/components/MessageBubble/MessageBubble.jsx";
+import { useRef, useEffect } from 'react'
 import { useSelector } from 'react-redux';
-import { getChatBackgroundColor } from '../../../helpers/getChatBackgroundColor.js';
-import { useEffect } from 'react';
-import { getUserIdFromToken } from '../../../helpers/getUserIdFromToken.js';
-import { convertToLocalTime } from '../../../helpers/convertToLocalTime.js';
-import { opacityAndTransformEffect, opacityEffect } from '../../../shared/animations/animations.js';
-import FirstChatBanner from "../../../assets/images/Home/FirstChatBanner.png";
 import { motion } from "framer-motion";
 import useScreenWidth from '../../../hooks/useScreenWidth.js';
 
+import { getChatBackgroundColor } from '../../../helpers/getChatBackgroundColor.js';
+import { getUserIdFromToken } from '../../../helpers/getUserIdFromToken.js';
+import { convertToLocalTime } from '../../../helpers/convertToLocalTime.js';
+import { groupMessagesByDate } from '../../../helpers/groupMessageByDate.js';
+
+import { opacityAndTransformEffect, opacityEffect } from '../../../shared/animations/animations.js';
+import MessageBubble from "../../../shared/components/MessageBubble/MessageBubble.jsx";
+
+import FirstChatBanner from "../../../assets/images/Home/FirstChatBanner.png";
 function GroupMessageBar({ groupId }) {
 
     const { user, token } = useSelector((state) => state.auth);
@@ -19,10 +21,11 @@ function GroupMessageBar({ groupId }) {
     const currentUserId = getUserIdFromToken(token);
 
     const GroupChat = Group.find(group => group?.id === groupId);
-    const backgroundImage = getChatBackgroundColor(user.userSettings.chatBackground)
+    const backgroundImage = getChatBackgroundColor(user.userSettings.chatBackground);
 
     const messagesContainerRef = useRef(null);
     const isSmallScreen = useScreenWidth(900);
+
     const colorPalette = ["#4984F1", "#3B3BBA", "#21BE43", "#FFAB3D", "#FF4D4D", "#7E51CD", "#10AA91", "#9F2162", "#94775D"];
     const userColorsRef = useRef(new Map());
 
@@ -34,38 +37,13 @@ function GroupMessageBar({ groupId }) {
         return userColorsRef.current.get(userId);
     };
 
-
     useEffect(() => {
         if (messagesContainerRef.current) {
             messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
         }
     }, [GroupChat?.messages]);
 
-    const groupedMessagesByDate = GroupChat?.messages?.reduce((acc, message) => {
-        const sentDate = Object.values(message?.status?.sent)[0];
-        const date = sentDate ? sentDate.split("T")[0] : "Geçersiz Tarih";
-
-        const today = new Date().toISOString().split("T")[0];
-        const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
-
-        let groupLabel;
-        if (date === today) {
-            groupLabel = "Bugün";
-        } else if (date === yesterday) {
-            groupLabel = "Dün";
-        } else {
-            groupLabel = date;
-        }
-
-        if (!acc[groupLabel]) acc[groupLabel] = [];
-        acc[groupLabel].push({ id: message.id, ...message });
-
-        return acc;
-    }, {}) || {};
-
-    const filteredGroupedMessages = Object.entries(groupedMessagesByDate).filter(
-        ([_, messages]) => messages.length > 0
-    );
+    const filteredGroupedMessages = groupMessagesByDate(GroupChat?.messages);
 
     return (
         <motion.div

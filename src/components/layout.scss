@@ -70,7 +70,6 @@
                 }
             }
 
-
             .name-and-status-box {
                 @include flex-center(column, center, flex-start);
                 gap: 1px;
@@ -457,8 +456,6 @@
     }
 }
 
-//Sidebar
-
 .option-buttons {
     @include flex-center(row, space-between, center);
 
@@ -487,12 +484,10 @@
     0% {
         opacity: 0;
         transform: translateY(20px);
-        /* Aşağıdan yukarı */
     }
 
     100% {
         opacity: 1;
         transform: translateY(0);
-        /* Normal pozisyon */
     }
 }

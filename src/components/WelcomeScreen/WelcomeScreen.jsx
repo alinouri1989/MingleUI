@@ -1,8 +1,7 @@
-import React from 'react'
 import Logo from "../../assets/logos/Logo.png";
 import "./style.scss";
 
-function WelcomeScreen({text}) {
+function WelcomeScreen({ text }) {
     return (
         <div className='welcome-screen'>
             <img src={Logo} alt="Mingle Logo" />

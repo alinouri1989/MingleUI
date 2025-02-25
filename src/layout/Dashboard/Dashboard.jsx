@@ -1,6 +1,5 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import UserImage from "../../assets/users/hamza.png";
 import ChatsList from "./components/ChatsList";
 import CallsList from "./components/CallsList";
 import ArchivesList from "./components/ArchivesList";

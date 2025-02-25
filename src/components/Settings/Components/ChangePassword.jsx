@@ -1,11 +1,13 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { changePasswordSchema } from "../../../schemas/SecuritySchemas";
+
+import PreLoader from "../../../shared/components/PreLoader/PreLoader";
 import { useChangePasswordMutation } from "../../../store/Slices/userSettings/userSettingsApi";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
-import PreLoader from "../../../shared/components/PreLoader/PreLoader";
+import { changePasswordSchema } from "../../../schemas/SecuritySchemas";
 
 function ChangePassword() {
+
     const [changePassword, { isLoading }] = useChangePasswordMutation();
 
     const { register, handleSubmit, formState: { errors }, reset } = useForm({

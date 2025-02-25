@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+
 import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie";
 import { authApi } from "../store/Slices/auth/authApi";
 import { setUser } from "../store/Slices/auth/authSlice";
-import MinglePreLoader from "../shared/components/MinglePreLoader/MinglePreLoader";
+
 import { setUserProfileTheme } from "../helpers/applyTheme";
 import { SignalRProvider } from "../contexts/SignalRContext";
+import MinglePreLoader from "../shared/components/MinglePreLoader/MinglePreLoader";
+import { ErrorAlert } from "../helpers/customAlert";
 
 const DataLoader = ({ children }) => {
     const dispatch = useDispatch();
@@ -31,7 +34,7 @@ const DataLoader = ({ children }) => {
                         })
                     );
                 } catch (error) {
-                    console.error("Failed to fetch user profile:", error);
+                    ErrorAlert("Bir hata meydana geldi");
                 }
             }
 

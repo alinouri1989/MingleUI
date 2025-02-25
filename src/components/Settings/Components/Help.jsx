@@ -1,5 +1,3 @@
-
-
 function Help() {
   return (
     <div className="help-box">

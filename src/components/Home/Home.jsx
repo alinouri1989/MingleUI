@@ -1,9 +1,10 @@
+import { useSelector } from "react-redux";
+import { motion } from "framer-motion";
+
 import LaptopImage from "../../assets/images/Home/MingleLaptop.png";
 import LaptopImageDark from "../../assets/images/Home/MingleLaptopDark.png";
-import { useSelector } from "react-redux";
-import { motion } from "framer-motion";  // motion import ediyoruz
-import "./style.scss";
 import { opacityEffect } from "../../shared/animations/animations";
+import "./style.scss";
 
 function Home() {
   const { user } = useSelector(state => state.auth);
@@ -12,7 +13,7 @@ function Home() {
     <div className='home-general-box'>
       <motion.div
         className="laptop-banner-box"
-        variants={opacityEffect(0.8)}  // Opacity animasyonu ekliyoruz
+        variants={opacityEffect(0.8)}
         initial="initial"
         animate="animate"
       >
@@ -21,7 +22,7 @@ function Home() {
 
       <motion.div
         className="informations-box"
-        variants={opacityEffect(0.8)}  // Opacity animasyonu ekliyoruz
+        variants={opacityEffect(0.8)}
         initial="initial"
         animate="animate"
       >

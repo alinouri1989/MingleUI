@@ -1,14 +1,17 @@
-import { IoIosArrowDroprightCircle } from "react-icons/io";
-import { IoMdSettings } from "react-icons/io";
-import { useModal } from '../../../contexts/ModalContext';
-import NewGroupModal from './NewAndSettingsGroup/NewAndSettingsGroupModal';
 import { useSelector } from 'react-redux';
-import { jwtDecode } from 'jwt-decode';
-import { formatDateToTR } from '../../../helpers/dateHelper';
-import { IoMdArrowRoundBack } from "react-icons/io";
 import useScreenWidth from "../../../hooks/useScreenWidth";
+import { jwtDecode } from 'jwt-decode';
+import { useModal } from '../../../contexts/ModalContext';
+
+import { IoMdSettings } from "react-icons/io";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { IoIosArrowDroprightCircle } from "react-icons/io";
+
+import NewGroupModal from './NewAndSettingsGroup/NewAndSettingsGroupModal';
+import { formatDateToTR } from '../../../helpers/dateHelper';
 
 function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }) {
+
     const { showModal, closeModal } = useModal();
     const isSmallScreen = useScreenWidth(900);
 
@@ -19,10 +22,9 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }
 
     const selectedGroup = Group.find((group) => group.id === groupId);
 
-    // Eğer grup bulunduysa, participants içinden ilk öğeyi editGroupId'ye atıyoruz
     let editGroupId = null;
     if (selectedGroup && selectedGroup.participants && selectedGroup.participants.length > 0) {
-        editGroupId = selectedGroup.participants[0]; // İlk participant'ı alıyoruz
+        editGroupId = selectedGroup.participants[0];
     }
 
     const isAdmin = userId &&
@@ -30,7 +32,6 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }
         groupProfile?.participants[userId].role === 0;
 
 
-    // Grup ayarlarını aç
     const handleGroupSettings = () => {
         showModal(<NewGroupModal closeModal={closeModal} isGroupSettings={true} groupProfile={groupProfile} groupId={editGroupId} userId={userId} />);
     };
@@ -59,7 +60,6 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }
                     </div>
 
                     <div className='sidebar-content-box'>
-                        {/* Grup Bilgileri */}
                         {groupProfile ? (
                             <>
                                 <div className='group-info-box'>

@@ -1,23 +1,28 @@
-import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { useParams, useNavigate } from "react-router-dom";
+
 import WelcomeScreen from "../WelcomeScreen/WelcomeScreen";
 import MessageInputBar from "../../shared/components/MessageInputBar/MessageInputBar";
 import GroupMessageBar from "./Components/GroupMessageBar";
 import GroupDetailsBar from "./Components/GroupDetailsBar";
 import GroupTopBar from "./Components/GroupTopBar";
-import { useSelector } from "react-redux";
+
+import { ErrorAlert } from "../../helpers/customAlert";
 import "../layout.scss";
 
 
 function GroupChats() {
-  const { id } = useParams(); // URL'den ID'yi al
-  const navigate = useNavigate(); // Navigate fonksiyonu
+
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [groupProfile, setGroupProfile] = useState(null);
-
-  // Group bilgileri ve chatList Redux'tan alınır
   const { Group, isChatsInitialized } = useSelector((state) => state.chat);
   const { groupList } = useSelector((state) => state.groupList);
+
+
   useEffect(() => {
     if (isChatsInitialized && id) {
       const groupExists = Group.some((group) => group.id === id);
@@ -28,37 +33,32 @@ function GroupChats() {
   }, [isChatsInitialized, Group, id, navigate]);
 
 
-
-
   useEffect(() => {
     if (id && Group?.length > 0 && groupList) {
-      // `id` ve `group.id` eşleşmesini kontrol et
       const matchedGroup = Group.find((group) => String(group.id) === String(id));
 
       if (matchedGroup) {
-        // matchedGroup içinde participants'tan ilk ID'yi al
         const participantId = matchedGroup.participants?.[0];
 
         if (participantId) {
-          // groupList'te participantId ile eşleşen nesneyi bul
           const matchedGroupListEntry = groupList[participantId];
 
           if (matchedGroupListEntry) {
             setGroupProfile({
               ...matchedGroupListEntry,
-              groupId: matchedGroup.id, // Group'dan id ekle
-              lastMessage: matchedGroup.messages?.[matchedGroup.messages.length - 1]?.content || "", // Son mesaj
+              groupId: matchedGroup.id,
+              lastMessage: matchedGroup.messages?.[matchedGroup.messages.length - 1]?.content || "",
             });
           } else {
-            console.warn("Eşleşen groupList verisi bulunamadı");
+            ErrorAlert("Bir hata meydana geldi");
             setGroupProfile(null);
           }
         } else {
-          console.warn("Group'un participants içinde ID bulunamadı");
+          ErrorAlert("Bir hata meydana geldi");
           setGroupProfile(null);
         }
       } else {
-        console.warn("Eşleşen Group bulunamadı");
+        ErrorAlert("Bir hata meydana geldi");
         setGroupProfile(null);
       }
     } else {
@@ -67,16 +67,13 @@ function GroupChats() {
   }, [id, Group, groupList]);
 
 
-
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-
   if (!isChatsInitialized && id) {
     return null;
   }
-
 
   return (
     <div className="chat-section">
@@ -87,7 +84,7 @@ function GroupChats() {
             <GroupTopBar
               isSidebarOpen={isSidebarOpen}
               toggleSidebar={toggleSidebar}
-              groupProfile={groupProfile} // Grup profilini üst bileşene geçir
+              groupProfile={groupProfile}
             />
             <GroupMessageBar groupId={id} />
             <MessageInputBar chatId={id} />

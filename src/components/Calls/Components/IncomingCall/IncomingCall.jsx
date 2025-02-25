@@ -1,33 +1,26 @@
-import React, { useEffect, useRef } from 'react';
-import UserImage from "../../../../assets/users/okan.png";
+import { useModal } from '../../../../contexts/ModalContext';
+import { useSignalR } from '../../../../contexts/SignalRContext';
+import { useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { ErrorAlert } from "../../../../helpers/customAlert.js";
+
 import { PiPhoneFill } from "react-icons/pi";
 import { PiPhoneSlashFill } from "react-icons/pi";
 import { HiMiniVideoCamera } from "react-icons/hi2";
 
-import IncomingCallSound from "../../../../assets/sounds/MingleCallSound.mp3";
-import { useSignalR } from '../../../../contexts/SignalRContext';
-import { setIsRingingIncoming } from '../../../../store/Slices/calls/callSlice';
-import { useDispatch, useSelector } from 'react-redux';
-import { useModal } from '../../../../contexts/ModalContext';
 import CallModal from '../CallModal';
+import IncomingCallSound from "../../../../assets/sounds/MingleCallSound.mp3";
+import { setIsRingingIncoming } from '../../../../store/Slices/calls/callSlice';
 import "./style.scss";
 
-
 function IncomingCall({ callType, callerProfile, callId }) {
-    const { callConnection, handleAcceptCall } = useSignalR();
-    const { isCallStarted } = useSelector(state => state.call);
+
     const dispatch = useDispatch();
+    const { callConnection, handleAcceptCall, localStream } = useSignalR();
+    const { isCallStarted } = useSelector(state => state.call);
 
     const { showModal, closeModal } = useModal();
-    const { localStream } = useSignalR();
-
     const localVideoRef = useRef(null);
-
-    useEffect(() => {
-        if (localStream && localVideoRef.current) {
-            localVideoRef.current.srcObject = localStream;
-        }
-    }, [localStream]);
 
     useEffect(() => {
         const audio = new Audio(IncomingCallSound);
@@ -40,19 +33,29 @@ function IncomingCall({ callType, callerProfile, callId }) {
         };
     }, []);
 
+    useEffect(() => {
+        if (localStream && localVideoRef.current) {
+            localVideoRef.current.srcObject = localStream;
+        }
+    }, [localStream]);
+
     const handleDeclineCall = async () => {
         try {
             await callConnection.invoke("EndCall", callId, 2, null);
             dispatch(setIsRingingIncoming(false));
-        } catch (error) {
-            console.log("Arama sonlandırılamadı: ", error);
+        } catch {
+            ErrorAlert("Bir hata meydana geldi");
         }
     };
 
     useEffect(() => {
         if (isCallStarted) {
             dispatch(setIsRingingIncoming(false));
-            showModal(<CallModal callId={callId} closeModal={closeModal} isCameraCall={callType == 1 ? true : false} />);
+            showModal(<CallModal
+                callId={callId}
+                closeModal={closeModal}
+                isCameraCall={callType == 1 ? true : false}
+            />);
         }
     }, [isCallStarted]);
 
@@ -74,7 +77,6 @@ function IncomingCall({ callType, callerProfile, callId }) {
                 </div>
             </div>
 
-            {/* Video sadece callType 1 olduğunda render edilecek */}
             {callType === 1 && (
                 <video className='local-video' playsInline ref={localVideoRef} autoPlay muted></video>
             )}

@@ -1,16 +1,17 @@
-import React, { useEffect } from 'react'
-import { IoIosArrowDroprightCircle } from "react-icons/io";
-import { PiPhoneFill } from "react-icons/pi";
-import { HiMiniVideoCamera } from "react-icons/hi2";
+import { useEffect } from 'react'
 import { useModal } from '../../../contexts/ModalContext';
-import CallModal from '../../Calls/Components/CallModal';
-import { formatDateForLastConnectionDate } from '../../../helpers/dateHelper';
 import { useSignalR } from '../../../contexts/SignalRContext';
-import { setIsCallStarting } from '../../../store/Slices/calls/callSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import useScreenWidth from '../../../hooks/useScreenWidth';
-import { useNavigate } from 'react-router-dom';
+
+import { PiPhoneFill } from "react-icons/pi";
+import { HiMiniVideoCamera } from "react-icons/hi2";
+import { IoIosArrowDroprightCircle } from "react-icons/io";
 import { IoMdArrowRoundBack } from "react-icons/io";
+
+import CallModal from '../../Calls/Components/CallModal';
+import { formatDateForLastConnectionDate } from '../../../helpers/dateHelper';
+import { startCall } from '../../../helpers/startCall';
 
 function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientId }) {
 
@@ -18,16 +19,14 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
         return null;
     }
 
-    const { callConnection } = useSignalR();
     const dispatch = useDispatch();
-    const status = recipientProfile.lastConnectionDate == "0001-01-01T00:00:00" ? 'online' : 'offline';
-    const lastConnectionDate = recipientProfile.lastConnectionDate;
-
-    const isSmallScreen = useScreenWidth(900);
-    const navigate = useNavigate();
+    const { callConnection } = useSignalR();
     const { isRingingIncoming } = useSelector(state => state.call);
     const { showModal, closeModal } = useModal();
+    const isSmallScreen = useScreenWidth(900);
 
+    const status = recipientProfile.lastConnectionDate == "0001-01-01T00:00:00" ? 'online' : 'offline';
+    const lastConnectionDate = recipientProfile.lastConnectionDate;
 
     useEffect(() => {
         const handleBackButton = (e) => {
@@ -42,29 +41,17 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
     }, []);
 
 
-    const handleVoiceCall = async () => {
-        if (callConnection) {
-            try {
-                await callConnection.invoke("StartCall", recipientId, 0);
-                dispatch(setIsCallStarting(true));
-                showModal(<CallModal closeModal={closeModal} isCameraCall={false} />);
-            } catch (error) {
-                console.error("Error starting voice call:", error);
-            }
-        }
+    const handleVoiceCall = () => {
+        startCall(callConnection, recipientId, false, dispatch, () =>
+            showModal(<CallModal closeModal={closeModal} isCameraCall={false} />)
+        );
     };
 
-    const handleVideoCall = async () => {
-        if (callConnection) {
-            try {
-                await callConnection.invoke("StartCall", recipientId, 1);
-                dispatch(setIsCallStarting(true));
-                showModal(<CallModal closeModal={closeModal} isCameraCall={true} />);
-            } catch (error) {
-                console.error("Error starting video call:", error);
-            }
-        }
-    }
+    const handleVideoCall = () => {
+        startCall(callConnection, recipientId, true, dispatch, () =>
+            showModal(<CallModal closeModal={closeModal} isCameraCall={true} />)
+        );
+    };
 
     return (
         <div className={`user-details-sidebar ${isSidebarOpen ? "open" : ""}`}>

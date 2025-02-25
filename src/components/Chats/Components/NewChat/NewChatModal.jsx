@@ -1,26 +1,34 @@
-import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { useModal } from "../../../../contexts/ModalContext.jsx";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import CloseButton from "../../../../contexts/components/CloseModalButton.jsx";
-import PreLoader from "../../../../shared/components/PreLoader/PreLoader.jsx";
-import star from "../../../../assets/svg/star.svg";
+import { useDebounce } from "../../../../hooks/useDebounce.jsx";
+import { useSignalR } from "../../../../contexts/SignalRContext.jsx";
+import { useModal } from "../../../../contexts/ModalContext.jsx";
+
 import { BiSearchAlt } from "react-icons/bi";
 import { TiThList } from "react-icons/ti";
 import { AiFillInfoCircle } from "react-icons/ai";
-import { useDebounce } from "../../../../hooks/useDebounce.jsx";
-import { useSignalR } from "../../../../contexts/SignalRContext.jsx";
+import star from "../../../../assets/svg/star.svg";
+
+import CloseButton from "../../../../contexts/components/CloseModalButton.jsx";
+import PreLoader from "../../../../shared/components/PreLoader/PreLoader.jsx";
 import { getUserIdFromToken } from "../../../../helpers/getUserIdFromToken.js";
-import "./style.scss";
-import { motion } from "framer-motion";  // motion import ediyoruz
+import { ErrorAlert } from "../../../../helpers/customAlert.js";
 import { opacityEffect } from "../../../../shared/animations/animations.js";
 
+import { motion } from "framer-motion";
+import "./style.scss";
+
+
 function NewChatModal() {
+
   const navigate = useNavigate();
   const { closeModal } = useModal();
   const { notificationConnection, chatConnection, connectionStatus } = useSignalR();
+
   const [inputValue, setInputValue] = useState("");
   const debouncedSearchQuery = useDebounce(inputValue, 300);
+
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -47,12 +55,6 @@ function NewChatModal() {
       }
 
       setUsers(formattedUsers);
-      setLoading(false);
-    };
-
-    const handleError = (err) => {
-      setError(err.message);
-      setUsers([]);
       setLoading(false);
     };
 
@@ -85,10 +87,10 @@ function NewChatModal() {
           navigate(destination);
           closeModal();
         } else {
-          console.error("Chat ID alınamadı:", response);
+          ErrorAlert("Bir hata meydana geldi");
         }
       } else {
-        console.error("Individual bilgisi bulunamadı:", response);
+        ErrorAlert("Bir hata meydana geldi");
       }
     };
 
@@ -105,14 +107,14 @@ function NewChatModal() {
 
   const handleGoToChat = async (userId) => {
     if (connectionStatus !== "connected") {
-      console.error("Bağlantı henüz kurulmadı.");
+      ErrorAlert("Bir hata meydana geldi");
       return;
     }
 
     try {
       await chatConnection.invoke("CreateChat", "Individual", userId);
-    } catch (err) {
-      console.error("CreateChat isteği sırasında hata:", err);
+    } catch {
+      ErrorAlert("Bir hata meydana geldi");
     }
   };
 

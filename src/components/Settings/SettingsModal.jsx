@@ -1,5 +1,8 @@
-import React, { useState } from "react";
-import CloseButton from "../../contexts/components/CloseModalButton.jsx";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useSignalR } from "../../contexts/SignalRContext.jsx";
+import { motion } from "framer-motion";
+
 import { IoMdSettings } from "react-icons/io";
 import { FaUserCog } from "react-icons/fa";
 import { PiPaintBrushFill } from "react-icons/pi";
@@ -11,19 +14,17 @@ import Account from "./Components/Account.jsx"
 import Theme from "./Components/Theme.jsx"
 import Help from "./Components/Help.jsx"
 import Security from "./Components/Security.jsx";
-import { motion } from "framer-motion";
 
-import "./style.scss";
 import { useLogoutUserMutation } from "../../store/Slices/auth/authApi.js";
 import { ErrorAlert, SuccessAlert } from "../../helpers/customAlert.js";
-import { useDispatch } from "react-redux";
-import { opacityEffect } from "../../shared/animations/animations.js";
 import { applyTheme } from "../../helpers/applyTheme.js";
-import { useSignalR } from "../../contexts/SignalRContext.jsx";
 
-
+import { opacityEffect } from "../../shared/animations/animations.js";
+import CloseButton from "../../contexts/components/CloseModalButton.jsx";
+import "./style.scss";
 
 function SettingsModal({ closeModal }) {
+
   const dispatch = useDispatch();
   const { chatConnection, notificationConnection, callConnection } = useSignalR();
 
@@ -39,11 +40,10 @@ function SettingsModal({ closeModal }) {
 
   const handleLogout = async () => {
     try {
-
       await Promise.all([
-        chatConnection.stop().catch((err) => console.error("chatConnection durdurulamadı:", err)),
-        notificationConnection.stop().catch((err) => console.error("notificationConnection durdurulamadı:", err)),
-        callConnection.stop().catch((err) => console.error("callConnection durdurulamadı:", err))
+        chatConnection.stop().catch(() => ErrorAlert("Bir hata meydana geldi")),
+        notificationConnection.stop().catch(() => ErrorAlert("Bir hata meydana geldi")),
+        callConnection.stop().catch(() => ErrorAlert("Bir hata meydana geldi"))
       ]);
 
       await logoutUser();
@@ -51,12 +51,10 @@ function SettingsModal({ closeModal }) {
       applyTheme("Light");
       SuccessAlert('Çıkış Yapıldı');
       closeModal();
-    } catch (err) {
-      console.error("Logout işlemi sırasında hata oluştu:", err);
+    } catch {
       ErrorAlert('Çıkış Yapılamıyor');
     }
   };
-
 
   return (
     <div className="setting-general-box">

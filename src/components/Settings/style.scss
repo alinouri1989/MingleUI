@@ -43,7 +43,6 @@
         }
 
 
-
         .sidebar {
             @include flex-center(column, space-between, center);
             width: 200px;
@@ -192,8 +191,6 @@
                 color: var(--text-black);
                 margin-bottom: 18px;
             }
-
-            // Component Styles
 
             .help-box {
                 @include screen(600px) {
@@ -406,17 +403,17 @@
                         height: 100%;
                         background-color: rgba(28, 28, 28, 0.768);
                         backdrop-filter: blur(4px);
-                        opacity: 0; // Başlangıçta görünmez
-                        animation: fadeIn 0.3s forwards; // Animasyon ekledik
+                        opacity: 0;
+                        animation: fadeIn 0.3s forwards;
 
 
                         img {
                             max-height: 80%;
                             border-radius: 13px;
                             max-width: 90%;
-                            transform: translateY(50px); // Başlangıç pozisyonu (50px aşağıda)
-                            opacity: 0; // Başlangıçta görünmez
-                            animation: slideUp 0.7s ease-out forwards; // Animasyonu uygula
+                            transform: translateY(50px);
+                            opacity: 0;
+                            animation: slideUp 0.7s ease-out forwards;
                         }
 
                         button {
@@ -627,12 +624,12 @@
 
 @keyframes slideUp {
     from {
-        transform: translateY(30px); // 50px aşağıda başla
-        opacity: 0; // Şeffaf
+        transform: translateY(30px);
+        opacity: 0;
     }
 
     to {
-        transform: translateY(0); // Normal pozisyona gel
-        opacity: 1; // Görünür
+        transform: translateY(0);
+        opacity: 1;
     }
 }
