@@ -1,7 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { useModal } from '../../../contexts/ModalContext';
-import { act } from 'react';
-
 
 const initialState = {
     callId: null,

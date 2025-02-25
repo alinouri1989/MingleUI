@@ -1,17 +1,15 @@
+import { setUser } from './authSlice';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getJwtFromCookie } from '../../helpers/getJwtFromCookie';
-import { setUser } from './authSlice';
 import { removeJwtFromCookie } from '../../helpers/removeJwtFromCookie';
 import { setUserProfileTheme } from '../../../helpers/applyTheme';
 
-// RTK Query auth API
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://localhost:7042/api/',
   }),
   endpoints: (builder) => ({
-    // Register (SignUp) endpoint
     registerUser: builder.mutation({
       query: (formData) => ({
         url: 'Auth/SignUp',

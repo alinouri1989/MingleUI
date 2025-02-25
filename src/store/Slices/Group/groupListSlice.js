@@ -62,10 +62,9 @@ const groupListSlice = createSlice({
           state.groupList[groupId] = {
             ...oldGroupData,
             ...newGroupData,
-            participants: newParticipants, // Yeni ve güncellenmiş `participants`
+            participants: newParticipants,
           };
         } else {
-          // Grup mevcut değilse yeni grubu ekle
           state.groupList[groupId] = newGroupData;
         }
       });

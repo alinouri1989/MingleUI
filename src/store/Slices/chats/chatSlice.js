@@ -21,13 +21,10 @@ const chatSlice = createSlice({
         addNewIndividualChat: (state, action) => {
             const { chatId, chatData } = action.payload;
 
-            // Eğer chatId zaten mevcutsa, yeni sohbeti eklemeyin
             const chatExists = state.Individual.some(chat => chat.id === chatId);
             if (chatExists) {
                 return;
             }
-
-            // Gelen chat objesini uygun formata çevir
             const newChat = {
                 id: chatId,
                 participants: chatData.participants,
@@ -39,9 +36,7 @@ const chatSlice = createSlice({
                 })),
             };
 
-
             state.Individual.push(newChat);
-
         },
         addNewGroupChat: (state, action) => {
             const { chatId, chatData } = action.payload;
@@ -162,14 +157,12 @@ const chatSlice = createSlice({
             }
         },
         removeArchive: (state, action) => {
-
-            const individual = action.payload.Individual; // Gelen verideki Individual objesini al
-            for (let chatId in individual) {  // Individual içindeki her bir chatId'yi kontrol et
-                if (individual.hasOwnProperty(chatId)) {  // Eğer chatId'nin kendisi varsa
+            const individual = action.payload.Individual;
+            for (let chatId in individual) {
+                if (individual.hasOwnProperty(chatId)) {
                     const chatIndex = state.Individual.findIndex(chat => chat.id === chatId);
 
                     if (chatIndex !== -1) {
-                        // İlgili chatId'yi bulduk, archivedFor alanını boş yap
                         state.Individual[chatIndex].archivedFor = {};
                     }
                 }
