@@ -1,6 +1,5 @@
 @use './../../shared/styles/main.scss' as *;
 
-// ------------------------------- General Style -------------------------------
 
 .sign-general-box {
     display: flex;
@@ -454,8 +453,6 @@ form {
 
             }
         }
-
-
     }
 }
 
@@ -463,8 +460,6 @@ form {
     .membership-agreement-box {
         margin-top: 22px;
         display: flex;
-
-
         @include flex-center(row, center, center);
 
         p {

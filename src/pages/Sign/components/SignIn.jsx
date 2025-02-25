@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import Logo from "../../../assets/logos/MingleLogoWithText.svg";
 
@@ -52,8 +52,7 @@ function SignIn() {
       const token = await user.getIdToken();
       await SignInGoogle(token).unwrap();
 
-    } catch (error) {
-      console.error('Google ile giriş başarısız oldu:', error.message);
+    } catch {
       ErrorAlert("Giriş Başarısız");
     }
   };
@@ -66,8 +65,7 @@ function SignIn() {
       await SignInFacebook(token).unwrap();
       SuccessAlert("Giriş Yapıldı");
 
-    } catch (error) {
-      console.error('Facebook ile giriş başarısız oldu:', error.message);
+    } catch {
       ErrorAlert("Giriş Başarısız");
     }
   };

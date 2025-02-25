@@ -41,20 +41,14 @@ export const sendIceCandidate = async (callId, candidate, callConnection) => {
 export const createAndSendOffer = async (callId, callConnection, peerConnection) => {
     try {
         const offer = await peerConnection.current.createOffer();
-
-        // SDP manipülasyonu: Opus codec'i öncelikli hale getir
         const prioritizedOffer = prioritizeOpusCodec(offer);
-
         await peerConnection.current.setLocalDescription(prioritizedOffer);
-
-        // SDP'yi gönder
         await sendSdp(callId, prioritizedOffer, callConnection);
     } catch (error) {
         console.error("Teklif oluşturulamadı:", error);
         throw error;
     }
 };
-
 
 const prioritizeOpusCodec = (offer) => {
     const sdpLines = offer.sdp.split("\n");
@@ -66,12 +60,11 @@ const prioritizeOpusCodec = (offer) => {
             const audioLine = sdpLines[audioLineIndex];
             const audioLineParts = audioLine.split(" ");
 
-            // Opus payload'u başa taşı
             const updatedAudioLine = [
-                audioLineParts[0], // "m=audio"
-                audioLineParts[1], // port
-                audioLineParts[2], // protocol
-                opusPayloadType,   // Opus codec ID
+                audioLineParts[0],
+                audioLineParts[1],
+                audioLineParts[2],
+                opusPayloadType,
                 ...audioLineParts.slice(3).filter((pt) => pt !== opusPayloadType),
             ].join(" ");
 

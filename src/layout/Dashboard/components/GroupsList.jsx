@@ -1,36 +1,41 @@
 import { useState } from "react";
-import SearchInput from "./SearchInput";
-import NewGroupModal from "../../../components/Groups/Components/NewAndSettingsGroup/NewAndSettingsGroupModal";
-import { useModal } from "../../../contexts/ModalContext";
 import { useSelector } from "react-redux";
-import "./style.scss";
-import GroupChatCard from "./GroupChatCard";
-import { lastMessageDateHelper } from "../../../helpers/dateHelper";
-import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
-import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
-import { motion } from 'framer-motion';
-import { opacityEffect } from "../../../shared/animations/animations";
+import { useModal } from "../../../contexts/ModalContext";
 import useScreenWidth from "../../../hooks/useScreenWidth";
-import { TbMessagePlus } from "react-icons/tb";
+
+import SearchInput from "./SearchInput";
+import GroupChatCard from "./GroupChatCard";
+
+import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
+import { lastMessageDateHelper } from "../../../helpers/dateHelper";
+
+import { opacityEffect } from "../../../shared/animations/animations";
 import PreLoader from "../../../shared/components/PreLoader/PreLoader";
+import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
+import NewGroupModal from "../../../components/Groups/Components/NewAndSettingsGroup/NewAndSettingsGroupModal";
+
+import { TbMessagePlus } from "react-icons/tb"
+import { motion } from 'framer-motion';
+import "./style.scss";
 
 function GroupsList() {
+
   const { token } = useSelector((state) => state.auth);
   const userId = getUserIdFromToken(token);
-  const { showModal, closeModal } = useModal();
-  const { groupList } = useSelector((state) => state.groupList);
-  const { Group, isChatsInitialized } = useSelector((state) => state.chat);
-  const location = window.location;
-  const isSmallScreen = useScreenWidth(900);
 
-  // Add useState for search functionality
+  const { Group, isChatsInitialized } = useSelector((state) => state.chat);
+  const { groupList } = useSelector((state) => state.groupList);
+
   const [searchGroup, setSearchGroup] = useState("");
 
+  const { showModal, closeModal } = useModal();
+  const isSmallScreen = useScreenWidth(900);
+  const location = window.location;
+
   const handleNewGroup = () => {
-    showModal(<NewGroupModal closeModal={closeModal} />); // Show modal to create new group
+    showModal(<NewGroupModal closeModal={closeModal} />);
   };
 
-  // Filter groupList based on searchGroup value
   const filteredGroupList = groupList
     ? Object.entries(groupList).filter(([groupId, group]) =>
       group.name.toLowerCase().includes(searchGroup.toLowerCase())

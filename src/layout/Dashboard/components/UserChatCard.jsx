@@ -1,39 +1,40 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useSignalR } from "../../../contexts/SignalRContext";
+
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { BiSolidMicrophone } from "react-icons/bi";
 import ArchiveIcon from "@mui/icons-material/Archive";
 import UnarchiveIcon from "@mui/icons-material/Unarchive";
-import { LuImage } from "react-icons/lu";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 
+import LastMessage from "../../../shared/components/LastMessage/LastMessage";
 import { getChatId } from "../../../store/Slices/chats/chatSlice";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
-import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useSignalR } from "../../../contexts/SignalRContext";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
-import LastMessage from "../../../shared/components/LastMessage/LastMessage";
 import { toggleActiveContent } from "../../../store/Slices/activeContent/activeContentSlice";
 
 function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageDate, lastMessageType, lastMessage, lastDate, unReadMessage, isArchive }) {
 
-  const [anchorEl, setAnchorEl] = useState(null);
-  const { user } = useSelector(state => state.auth);
-  const isDarkMode = user.userSettings.theme == "Dark";
-  const { chatConnection } = useSignalR();
-  const open = Boolean(anchorEl);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
+  const { chatConnection } = useSignalR();
+  const { user } = useSelector(state => state.auth);
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+
+  const isDarkMode = user.userSettings.theme == "Dark";
+
   const { token } = useSelector(state => state.auth);
   const chatState = useSelector(state => state.chat);
-
   const chatId = getChatId(chatState, getUserIdFromToken(token), receiverId);
 
   const handleClick = (event) => {
@@ -125,8 +126,8 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
             aria-expanded={open ? "true" : undefined}
             aria-haspopup="true"
             onClick={(event) => {
-              event.stopPropagation(); // Parent tıklamasını durduruyoruz
-              handleClick(event); // `event.currentTarget`'ı anchor olarak ayarlıyoruz
+              event.stopPropagation();
+              handleClick(event);
             }}
             sx={{
               color: isDarkMode ? "#616161" : "#828A96",
@@ -139,7 +140,7 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
             anchorEl={anchorEl}
             open={open}
             onClose={(event) => {
-              event.stopPropagation(); // Menüyü kapatırken de parent tetiklenmesin
+              event.stopPropagation();
               handleClose(event);
             }}
             MenuListProps={{

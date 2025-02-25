@@ -7,13 +7,11 @@
     padding: 16px 14px 0px 14px;
     border-right: 2px solid var(--smooth-border-color);
 
-
     @include screen(900px) {
         padding: 0;
         width: 100%;
         border: 0;
     }
-
 
     .user-info-box {
         @include flex-center(row, flex-start, center);
@@ -25,7 +23,6 @@
         @include screen(900px) {
             display: none;
         }
-
 
         img {
             width: 62px;

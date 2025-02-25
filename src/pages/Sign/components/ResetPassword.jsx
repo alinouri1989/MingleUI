@@ -1,18 +1,20 @@
-import { useResetPasswordMutation } from "../../../store/Slices/auth/authApi";
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useResetPasswordMutation } from "../../../store/Slices/auth/authApi";
 import Logo from "../../../assets/logos/MingleLogoWithText.svg";
-import PreLoader from "../../../shared/components/PreLoader/PreLoader";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { resetPasswordSchema } from "../../../schemas/SignSchemas";   // Doğru yolunuzu belirtin
+
+import { resetPasswordSchema } from "../../../schemas/SignSchemas";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
+import PreLoader from "../../../shared/components/PreLoader/PreLoader";
 
 function ResetPassword() {
+
   const [resetPassword, { isLoading }] = useResetPasswordMutation();
   const navigate = useNavigate();
 
-  const { register, handleSubmit, formState: { errors }, setValue } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(resetPasswordSchema),
     mode: "onChange"
   });
@@ -34,6 +36,7 @@ function ResetPassword() {
   return (
     <div className='reset-password-general-container'>
       <img src={Logo} alt="" />
+
       <div className='title-container'>
         <h1>Şifre Yenile</h1>
         <p style={{ maxWidth: "360px" }}>Şifre yenileme bağlantısını gönderebilmemiz için e-posta adresinize ihtiyacımız var.</p>

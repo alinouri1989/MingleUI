@@ -1,26 +1,28 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useSignalR } from "../../../contexts/SignalRContext";
 
-import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
+import IconButton from "@mui/material/IconButton";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { formatTimeHoursMinutes } from "../../../helpers/dateHelper";
-import { useLocation, useNavigate } from "react-router-dom";
-import CallCardCallStatus from "../../../shared/components/CallStatus/CallCardCallStatus";
-import { useSignalR } from "../../../contexts/SignalRContext";
-import { SuccessAlert, ErrorAlert } from "../../../helpers/customAlert";
-import { useSelector } from "react-redux";
 
+import { formatTimeHoursMinutes } from "../../../helpers/dateHelper";
+import { SuccessAlert, ErrorAlert } from "../../../helpers/customAlert";
+import CallCardCallStatus from "../../../shared/components/CallStatus/CallCardCallStatus";
 
 function UserCallCard({ callId, image, status, name, callType, callStatus, createdDate, isOutgoingCall }) {
 
   const { callConnection } = useSignalR();
   const [anchorEl, setAnchorEl] = useState(null);
+
   const open = Boolean(anchorEl);
   const { user } = useSelector(state => state.auth);
+
   const isDarkMode = user?.userSettings?.theme == "Dark";
 
   const navigate = useNavigate();
@@ -55,6 +57,7 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
   return (
     <div className={`user-dashboard-card-box ${isActiveCall ? "active-call" : ""}`} onClick={handleGoToCall}>
       <div className="card-info-box">
+
         <div className="image-box">
           <img src={image} alt={`${name} profile`} />
           <p className={`status ${userStatus}`}></p>
@@ -78,8 +81,8 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
             aria-expanded={open ? "true" : undefined}
             aria-haspopup="true"
             onClick={(event) => {
-              event.stopPropagation(); // Parent tıklamasını durduruyoruz
-              handleClick(event); // `event.currentTarget`'ı anchor olarak ayarlıyoruz
+              event.stopPropagation();
+              handleClick(event);
             }}
             sx={{
               color: isDarkMode ? "#616161" : "#828A96",
@@ -93,7 +96,7 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
             anchorEl={anchorEl}
             open={open}
             onClose={(event) => {
-              event.stopPropagation(); // Menüyü kapatırken de parent tetiklenmesin
+              event.stopPropagation();
               handleClose(event);
             }}
             MenuListProps={{

@@ -1,24 +1,27 @@
 
-import { useEffect, useState } from "react";
-import Logo from "../../../assets/logos/MingleLogoWithText.svg";
-import { IoEye } from "react-icons/io5";
-import { IoEyeOff } from "react-icons/io5";
-import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert.js"
-import MembershipModal from "./MembershipModal";
-import { useModal } from "../../../contexts/ModalContext";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useRegisterUserMutation } from "../../../store/Slices/auth/authApi.js";
-import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css";
-import { registerLocale } from 'react-datepicker';
-import tr from 'date-fns/locale/tr';
-import PreLoader from "../../../shared/components/PreLoader/PreLoader.jsx";
-import { Controller } from "react-hook-form";
+import Logo from "../../../assets/logos/MingleLogoWithText.svg";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signUpSchema } from '../../../schemas/SignSchemas.js';
 
+import { useModal } from "../../../contexts/ModalContext";
+import { useRegisterUserMutation } from "../../../store/Slices/auth/authApi.js";
+
+import { Controller } from "react-hook-form";
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css";
+import { registerLocale } from 'react-datepicker';
+import tr from 'date-fns/locale/tr';
+
+import { IoEye } from "react-icons/io5";
+import { IoEyeOff } from "react-icons/io5";
+
+import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert.js"
+import MembershipModal from "./MembershipModal";
+import PreLoader from "../../../shared/components/PreLoader/PreLoader.jsx";
 
 registerLocale('tr', tr);
 
@@ -26,20 +29,19 @@ function SignUp() {
 
   const navigate = useNavigate();
   const { showModal } = useModal();
-  const [registerUser, { isLoading, isSuccess }] = useRegisterUserMutation();
+
+  const [registerUser, { isLoading }] = useRegisterUserMutation();
 
   const [showPassword, setShowPassword] = useState(false);
   const [showAgainPassword, setShowAgainPassword] = useState(false);
   const [isMembershipAgreementAccepted, setIsMembershipAgreementAccepted] = useState(false);
 
-  const { register, handleSubmit, formState: { errors, isValid }, setValue, control } = useForm({
+  const { register, handleSubmit, formState: { errors, isValid }, control } = useForm({
     resolver: zodResolver(signUpSchema),
-    mode: "onChange",  // Formun her değişiminde geçerlilik kontrolünü tetikle
+    mode: "onChange",
   });
 
-  // Form validity check
   const isFormValid = isValid && isMembershipAgreementAccepted;
-
   const today = new Date();
 
   const handleKeyPressForBirthDate = (e) => {
@@ -76,6 +78,7 @@ function SignUp() {
   return (
     <div className='sign-up-general-container'>
       <img src={Logo} alt="" />
+
       <div className='title-container'>
         <h1>Hesap Oluştur</h1>
         <p>Kolayca hesap oluştur, sohbete hemen başla</p>
@@ -83,7 +86,6 @@ function SignUp() {
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className='inputs-container'>
-
           <div className='input-box'>
             <svg xmlns="http://www.w3.org/2000/svg" width="25" height="26" viewBox="0 0 25 26" fill="none">
               <path d="M2.08333 25.9639C2.08333 25.9639 0 25.9639 0 23.8805C0 21.7972 2.08333 15.5472 12.5 15.5472C22.9167 15.5472 25 21.7972 25 23.8805C25 25.9639 22.9167 25.9639 22.9167 25.9639H2.08333ZM12.5 13.4639C14.1576 13.4639 15.7473 12.8054 16.9194 11.6333C18.0915 10.4612 18.75 8.87147 18.75 7.21387C18.75 5.55626 18.0915 3.96655 16.9194 2.79445C15.7473 1.62235 14.1576 0.963867 12.5 0.963867C10.8424 0.963867 9.25268 1.62235 8.08058 2.79445C6.90848 3.96655 6.25 5.55626 6.25 7.21387C6.25 8.87147 6.90848 10.4612 8.08058 11.6333C9.25268 12.8054 10.8424 13.4639 12.5 13.4639Z" fill="#828A96" />
@@ -124,7 +126,6 @@ function SignUp() {
             }
           </div>
           {errors.Password && <span className="error-message">{errors.Password.message}</span>}
-
 
           <div className='input-box password'>
             <div>

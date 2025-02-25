@@ -15,24 +15,19 @@ function AppRoutes() {
 
     return (
         <Routes>
-            {/* Public Routes */}
             {!user && (
                 <>
                     <Route path="/giris-yap" element={<Sign />} />
                     <Route path="/uye-ol" element={<Sign />} />
                     <Route path="/sifre-yenile" element={<Sign />} />
-                    {/* Kullanıcı giriş yapmadan başka bir rota denerse */}
                     <Route path="*" element={<Navigate to="/giris-yap" replace />} />
                 </>
             )}
 
-            {/* Protected Routes */}
             {user && (
                 <>
-                    {/* Giriş yapılmış kullanıcılar için yönlendirme */}
                     <Route path="/" element={<Navigate to="/anasayfa" replace />} />
 
-                    {/* Layout ile korunan rotalar */}
                     <Route path="/" element={<Layout />}>
                         <Route path="anasayfa" element={<Home />} />
                         <Route path="sohbetler" element={<Chats />} />
@@ -45,14 +40,12 @@ function AppRoutes() {
                         <Route path="aramalar/:id" element={<Calls />} />
                     </Route>
 
-                    {/* Giriş yapmış kullanıcı public rotalara erişmeye çalışırsa */}
                     <Route path="/giris-yap" element={<Navigate to="/anasayfa" replace />} />
                     <Route path="/uye-ol" element={<Navigate to="/anasayfa" replace />} />
                     <Route path="/sifre-yenile" element={<Navigate to="/anasayfa" replace />} />
                 </>
             )}
 
-            {/* Default: Tanımlı olmayan rotalar */}
             <Route path="*" element={<Navigate to={user ? "/anasayfa" : "/giris-yap"} replace />} />
         </Routes>
     );

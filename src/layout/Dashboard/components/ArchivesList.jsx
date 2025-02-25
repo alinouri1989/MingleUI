@@ -1,29 +1,35 @@
-import React, { useEffect, useState } from "react";
-import UserChatCard from "./UserChatCard";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
-import { lastMessageDateHelper } from "../../../helpers/dateHelper";
-import SearchInput from "./SearchInput";
 import { useLocation } from "react-router-dom";
-import { getChatId } from "../../../store/Slices/chats/chatSlice";
-import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
-import "./style.scss";
-import { motion } from 'framer-motion';
-import { opacityEffect } from "../../../shared/animations/animations";
 import useScreenWidth from "../../../hooks/useScreenWidth";
+
+import SearchInput from "./SearchInput";
+import UserChatCard from "./UserChatCard";
+
+import { lastMessageDateHelper } from "../../../helpers/dateHelper";
+import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
+import { getChatId } from "../../../store/Slices/chats/chatSlice";
+
+import { opacityEffect } from "../../../shared/animations/animations";
+import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
 import PreLoader from "../../../shared/components/PreLoader/PreLoader";
+
+import { motion } from 'framer-motion';
+import "./style.scss";
 
 
 function ArchivesList() {
 
+    const location = useLocation();
+
     const { Individual, isChatsInitialized } = useSelector((state) => state.chat);
+    const chatState = useSelector(state => state.chat);
     const chatList = useSelector((state) => state.chatList.chatList);
     const { token } = useSelector((state) => state.auth);
     const UserId = getUserIdFromToken(token);
-    const location = useLocation();
-    const chatState = useSelector(state => state.chat);
-    const [searchUser, setSearchUser] = useState("");
+
     const isSmallScreen = useScreenWidth(900);
+    const [searchUser, setSearchUser] = useState("");
 
     const [enhancedChatList, setEnhancedChatList] = useState([]);
 
@@ -56,7 +62,6 @@ function ArchivesList() {
                         )
                         : "";
 
-                // Tarih sıralama için kullanılacak
                 const lastMessageDateForSort =
                     chatData.messages.length > 0
                         ? new Date(
@@ -66,7 +71,6 @@ function ArchivesList() {
 
                 const isArchive = chatData.archivedFor?.hasOwnProperty(UserId);
 
-                // URL'deki chatId'yi kontrol et
                 const isActiveChat = location.pathname.includes(chatId);
 
                 const unReadMessage = !isActiveChat && chatData.messages.filter((message) => {
@@ -109,7 +113,7 @@ function ArchivesList() {
             <div className="list-flex">
                 <motion.div
                     className="user-list"
-                    variants={opacityEffect(0.8)}  // Opacity animasyonunu container için uyguladık
+                    variants={opacityEffect(0.8)}
                     initial="initial"
                     animate="animate"
                 >
@@ -117,7 +121,7 @@ function ArchivesList() {
                         filteredChats.map((chat) => (
                             <motion.div
                                 key={chat.receiverId}
-                                variants={opacityEffect(0.8)}  // Opacity animasyonu her item için uygulanacak
+                                variants={opacityEffect(0.8)}
                                 style={{ marginBottom: "10px" }}
                             >
                                 <UserChatCard

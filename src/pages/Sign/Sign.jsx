@@ -1,5 +1,5 @@
-import React from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+
+import { useLocation } from 'react-router-dom';
 import SignVector from "../../assets/images/Sign/SignVector.svg";
 
 import SignIn from "./components/SignIn";

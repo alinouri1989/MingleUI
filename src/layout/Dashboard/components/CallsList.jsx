@@ -1,16 +1,20 @@
-import { useSelector } from "react-redux";
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import useScreenWidth from "../../../hooks/useScreenWidth";
+
 import SearchInput from "./SearchInput";
-import "./style.scss";
 import UserCallCard from "./UserCallCard";
+
+import { opacityEffect } from "../../../shared/animations/animations";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
-import { opacityEffect } from "../../../shared/animations/animations";
-import { motion } from 'framer-motion';
-import useScreenWidth from "../../../hooks/useScreenWidth";
 import PreLoader from "../../../shared/components/PreLoader/PreLoader";
 
+import { motion } from 'framer-motion';
+import "./style.scss";
+
 function CallsList() {
+
   const { token } = useSelector(state => state.auth);
   const { callRecipientList, calls, isInitialCallsReady } = useSelector(state => state.call);
   const userId = getUserIdFromToken(token);
@@ -18,7 +22,6 @@ function CallsList() {
 
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Calls listesi işleniyor
   const processedCalls = calls.map(call => {
     const otherParticipantId = call.participants.find(participant => participant !== userId);
     const recipientInfo = callRecipientList.find(recipient => recipient.id === otherParticipantId);
@@ -37,10 +40,7 @@ function CallsList() {
     };
   });
 
-  // Çağrıları tarihe göre sırala (En güncelden eskiye)
   const sortedCalls = processedCalls.sort((a, b) => b.createdDate - a.createdDate);
-
-  // Arama terimine göre filtreleme yap
   const filteredCalls = sortedCalls.filter(call =>
     call.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -56,7 +56,7 @@ function CallsList() {
       <div className="list-flex">
         <motion.div
           className="user-list"
-          variants={opacityEffect(0.8)}  // Opacity animasyonunu container için uyguladık
+          variants={opacityEffect(0.8)}
           initial="initial"
           animate="animate"
         >
@@ -64,7 +64,7 @@ function CallsList() {
             filteredCalls.map(callInfo => (
               <motion.div
                 key={callInfo.id}
-                variants={opacityEffect(0.8)}  // Opacity animasyonu her item için uygulanacak
+                variants={opacityEffect(0.8)}
                 style={{ marginBottom: "10px" }}
               >
                 <UserCallCard

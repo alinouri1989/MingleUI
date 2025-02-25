@@ -1,4 +1,3 @@
-/* modal-overlay (arka plan) */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -23,12 +22,10 @@
 @keyframes fadeIn {
     0% {
         opacity: 0;
-        /* Başlangıçta şeffaf */
     }
 
     100% {
         opacity: 1;
-        /* Sonunda görünür */
     }
 }
 

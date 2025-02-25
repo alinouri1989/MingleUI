@@ -1,4 +1,3 @@
-import React from 'react'
 import CloseModalButton from '../../../contexts/components/CloseModalButton';
 import { useModal } from '../../../contexts/ModalContext';
 

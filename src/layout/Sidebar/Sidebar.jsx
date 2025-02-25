@@ -1,23 +1,28 @@
-import React, { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useModal } from "../../contexts/ModalContext.jsx";
-import { HiMenu } from "react-icons/hi";
+import { useOutsideClick } from "../../hooks/useOutsideClick";
+
 import { IoChatbubbleEllipses } from "react-icons/io5";
 import { PiPhoneFill } from "react-icons/pi";
 import { HiArchiveBox } from "react-icons/hi2";
 import { HiUserGroup } from "react-icons/hi2";
 import { AiFillHome } from "react-icons/ai";
 import { IoMdSettings } from "react-icons/io";
-import { useOutsideClick } from "../../hooks/useOutsideClick";
-import "./style.scss";
+import { HiMenu } from "react-icons/hi";
+
 import SettingsModal from "../../components/Settings/SettingsModal.jsx";
+import useScreenWidth from "../../hooks/useScreenWidth.js";
+import "./style.scss";
 
 function Sidebar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isWideScreen, setIsWideScreen] = useState(window.innerWidth >= 900);
-  const { showModal, closeModal } = useModal();
-  const location = useLocation();
+
   const navigate = useNavigate();
+  const location = useLocation();
+  const { showModal, closeModal } = useModal();
+
+  const [isOpen, setIsOpen] = useState(false);
+  const isSmallScreen = useScreenWidth(900);
   const sidebarRef = useRef(null);
 
   useEffect(() => {
@@ -28,19 +33,11 @@ function Sidebar() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Kontrol edilecek yollar
   const restrictedPaths = ['sohbetler/', 'aramalar/', 'arsivler/', 'gruplar/'];
 
-  // Ekran genişliği 900px altındaysa ve belirtilen yollardan biri eşleşiyorsa sidebar'ı render etme
-  const shouldHideSidebar =
-    !isWideScreen &&
-    restrictedPaths.some(path =>
-      location.pathname.startsWith(`/${path}`) && location.pathname.length > path.length + 1
-    );
-
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
+  const shouldHideSidebar = isSmallScreen && restrictedPaths.some(path =>
+    location.pathname.startsWith(`/${path}`) && location.pathname.length > path.length + 1
+  );
 
   const navItems = [
     { icon: <IoChatbubbleEllipses className="icon" />, label: "Sohbetler", path: "/sohbetler" },
@@ -66,13 +63,15 @@ function Sidebar() {
     showModal(<SettingsModal closeModal={closeModal} />);
   };
 
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
+
   const isActive = (path) => location.pathname.includes(path) ? "active" : "";
 
-
   if (shouldHideSidebar) {
-    return null; // Burada sadece render işlemi yapılmaz ama tüm hook'lar doğru sırada kullanıldı
+    return null;
   }
-
 
   return (
     <div ref={sidebarRef} className={`sidebar-container ${isOpen ? "open" : ""}`}>

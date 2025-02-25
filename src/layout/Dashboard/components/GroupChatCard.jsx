@@ -1,27 +1,32 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 import IconButton from "@mui/material/IconButton";
-import { useLeaveGroupMutation } from "../../../store/Slices/Group/GroupApi.js";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import GroupRemoveIcon from "@mui/icons-material/GroupRemove";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import { defaultGroupPhoto } from "../../../constants/DefaultProfilePhoto.js";
-import "./style.scss";
-import { useNavigate } from "react-router-dom";
+
 import LastMessage from "../../../shared/components/LastMessage/LastMessage.jsx";
-import { ErrorAlert } from "../../../helpers/customAlert.js";
 import CloseModalButton from "../../../contexts/components/CloseModalButton.jsx";
-import { useSelector } from "react-redux";
+
+import { ErrorAlert } from "../../../helpers/customAlert.js";
+import { useLeaveGroupMutation } from "../../../store/Slices/Group/GroupApi.js";
+import "./style.scss";
 
 function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMessage, lastMessageType, lastMessageDate, unReadMessage }) {
+
+    const navigate = useNavigate();
+    const { user } = useSelector(state => state.auth);
+
+    const [leaveGroup] = useLeaveGroupMutation();
+    const isDarkMode = user?.userSettings?.theme == "Dark";
+
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
-    const navigate = useNavigate();
-    const [leaveGroup, { isLoading: leaveLoading }] = useLeaveGroupMutation();
-    const { user } = useSelector(state => state.auth);
-    const isDarkMode = user?.userSettings?.theme == "Dark";
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -34,10 +39,10 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
     const handleLeaveGroup = async () => {
         try {
             await leaveGroup(groupListId).unwrap();
-            SuccessAlert("Gruptan Çıktın") // Implement or replace with actual alert logic
-            CloseModalButton(); // closeModal logic needs to be passed or managed outside the component
+            SuccessAlert("Gruptan Çıktın")
+            CloseModalButton();
         } catch (error) {
-            ErrorAlert("Bir hata meydana geldi", error); // Implement or replace with actual error handling
+            ErrorAlert("Bir hata meydana geldi", error);
         }
     };
 
@@ -63,7 +68,6 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
             <div className="date-and-options-box">
                 <div className="status-informations-box">
                     <span>{lastMessage && lastMessageDate}</span>
-                    {/* Optional unread message count */}
                     {unReadMessage > 0 && <p>{unReadMessage}</p>}
                 </div>
 
@@ -75,7 +79,7 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
                         aria-expanded={open ? "true" : undefined}
                         aria-haspopup="true"
                         onClick={(event) => {
-                            event.stopPropagation(); // Parent onClick'i tetiklenmesin
+                            event.stopPropagation();
                             handleClick(event);
                         }}
                         sx={{
@@ -90,7 +94,7 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
                         anchorEl={anchorEl}
                         open={open}
                         onClose={(event) => {
-                            event.stopPropagation(); // Menüyü kapatırken de parent tetiklenmesin
+                            event.stopPropagation();
                             handleClose(event);
                         }}
                         MenuListProps={{

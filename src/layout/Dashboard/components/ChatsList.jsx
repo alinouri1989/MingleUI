@@ -1,33 +1,39 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import NewChatModal from "../../../components/Chats/Components/NewChat/NewChatModal";
 import { useModal } from "../../../contexts/ModalContext";
+
+import NewChatModal from "../../../components/Chats/Components/NewChat/NewChatModal";
 import SearchInput from "./SearchInput";
 import UserChatCard from "./UserChatCard";
+
+import { getChatId } from "../../../store/Slices/chats/chatSlice";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import { lastMessageDateHelper } from "../../../helpers/dateHelper";
-import { motion } from 'framer-motion';
-import { TbMessagePlus } from "react-icons/tb";
 
-import "./style.scss";
-import { useLocation } from "react-router-dom";
-import { getChatId } from "../../../store/Slices/chats/chatSlice";
 import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
+import PreLoader from "../../../shared/components/PreLoader/PreLoader";
 import { opacityEffect } from "../../../shared/animations/animations";
 import useScreenWidth from "../../../hooks/useScreenWidth";
-import PreLoader from "../../../shared/components/PreLoader/PreLoader";
+
+import { TbMessagePlus } from "react-icons/tb";
+import { motion } from 'framer-motion';
+import "./style.scss";
 
 function ChatsList() {
+
     const { showModal, closeModal } = useModal();
     const { Individual, isChatsInitialized } = useSelector((state) => state.chat);
     const chatList = useSelector((state) => state.chatList.chatList);
+
     const { token } = useSelector((state) => state.auth);
     const UserId = getUserIdFromToken(token);
-    const [enhancedChatList, setEnhancedChatList] = useState([]);
-    const chatState = useSelector(state => state.chat);
-    const isSmallScreen = useScreenWidth(900);
 
     const [searchUser, setSearchUser] = useState("");
+    const [enhancedChatList, setEnhancedChatList] = useState([]);
+
+    const chatState = useSelector(state => state.chat);
+    const isSmallScreen = useScreenWidth(900);
 
     const location = useLocation();
 
@@ -46,7 +52,6 @@ function ChatsList() {
                     return null;
                 }
 
-                // Eğer tüm mesajlar UserId için silinmişse, return etme
                 const allMessagesDeleted = chatData?.messages.every(
                     (message) => message.deletedFor && Object.keys(message.deletedFor).length > 0 && message.deletedFor.hasOwnProperty(UserId)
                 );
@@ -105,7 +110,6 @@ function ChatsList() {
         setEnhancedChatList(updatedChatList);
     }, [chatList, Individual, UserId, chatState]);
 
-
     const handleNewChat = () => {
         showModal(<NewChatModal closeModal={closeModal} />);
     };
@@ -131,7 +135,7 @@ function ChatsList() {
             <div className="list-flex">
                 <motion.div
                     className="user-list"
-                    variants={opacityEffect(0.8)}  // Opacity animasyonunu container için uyguladık
+                    variants={opacityEffect(0.8)}
                     initial="initial"
                     animate="animate"
                 >
@@ -140,7 +144,7 @@ function ChatsList() {
                             <motion.div
                                 key={chat.receiverId}
                                 style={{ marginBottom: "10px" }}
-                                variants={opacityEffect(0.8)}  // Opacity animasyonu her item için uygulanacak
+                                variants={opacityEffect(0.8)}
                             >
                                 <UserChatCard
                                     receiverId={chat.receiverId}
