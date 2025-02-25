@@ -1,19 +1,22 @@
-import store from '../store/index.js';
 import { useDispatch, useSelector } from "react-redux";
-import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import { useLocation, useNavigate } from 'react-router-dom';
 import { createContext, useContext, useState, useEffect, useRef } from "react";
+import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 
 import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
 import { removeGroupList, setGroupList, updateGroupInformations, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
-import { addNewUserToChatList, setInitialChatList, updateUserInfoToChatList } from "../store/Slices/chats/chatListSlice.js";
 import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats, addArchive, removeArchive, removeIndividualChat, removeGroupChat } from "../store/Slices/chats/chatSlice.js";
 import { deleteCallHistory, handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, updateCallRecipientList } from "../store/Slices/calls/callSlice.js";
+import { addNewUserToChatList, setInitialChatList, updateUserInfoToChatList } from "../store/Slices/chats/chatListSlice.js";
 import { createAndSendOffer, handleRemoteSDP, sendSdp } from "../services/webRtcService.js";
 
 import { servers } from "../constants/StunTurnServers.js";
 import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
 import { decryptMessage } from '../helpers/messageCryptoHelper.js';
-import { useLocation, useNavigate } from 'react-router-dom';
+
+import store from '../store/index.js';
+import { ErrorAlert } from "../helpers/customAlert.js";
+
 
 const SignalRContext = createContext();
 
@@ -31,20 +34,21 @@ export const useSignalR = () => {
 export const SignalRProvider = ({ children }) => {
 
     const dispatch = useDispatch();
-    const location = useLocation();
-    const [connectionStatus, setConnectionStatus] = useState("disconnected");
-    const [chatConnection, setChatConnection] = useState(null);
-    const [notificationConnection, setNotificationConnection] = useState(null);
-    const [callConnection, setCallConnection] = useState(null);
-    const { callId } = useSelector(state => state.call);
     const navigate = useNavigate();
+    const location = useLocation();
 
-    const { Individual, Group } = useSelector(state => state.chat);
-    const { token } = useSelector(state => state.auth);
-    const userId = getUserIdFromToken(token);
+    const [connectionStatus, setConnectionStatus] = useState("disconnected");
+    const [notificationConnection, setNotificationConnection] = useState(null);
+    const [chatConnection, setChatConnection] = useState(null);
+    const [callConnection, setCallConnection] = useState(null);
 
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
+
+    const { callId } = useSelector(state => state.call);
+    const { Individual, Group } = useSelector(state => state.chat);
+    const { token } = useSelector(state => state.auth);
+    const userId = getUserIdFromToken(token);
 
     const [localStream, setLocalStream] = useState(null);
     const [remoteStream, setRemoteStream] = useState(null);
@@ -53,7 +57,6 @@ export const SignalRProvider = ({ children }) => {
     const peerConnection = useRef(null);
 
     const [pendingRequests, setPendingRequests] = useState(new Set());
-
 
     const initializePeerConnection = async (callType) => {
         try {
@@ -80,11 +83,8 @@ export const SignalRProvider = ({ children }) => {
             });
 
             peerConnection.current = pc;
-        } catch (error) {
-            console.error("Kamera veya mikrofon erişiminde hata:", error);
-        }
+        } catch { ErrorAlert("Bir hata meydana geldi"); }
     };
-
 
     if (peerConnection.current) {
         peerConnection.current.onicecandidate = (event) => {
@@ -125,7 +125,6 @@ export const SignalRProvider = ({ children }) => {
     useEffect(() => {
         callIdRef.current = callId;
     }, [callId]);
-
 
     useEffect(() => {
         const token = getJwtFromCookie();
@@ -170,10 +169,8 @@ export const SignalRProvider = ({ children }) => {
 
                 //! ===========  CHAT CONNECTION ===========
 
-                //Initial Group / Individual Chats 
                 chatConnection.on("ReceiveInitialChats", (data) => {
                     store.dispatch(initializeChats(data));
-
                 });
 
                 chatConnection.on("ReceiveInitialRecipientChatProfiles", (data) => {
@@ -210,7 +207,6 @@ export const SignalRProvider = ({ children }) => {
                             Object.entries(messages).forEach(([messageId, messageData]) => {
                                 let decryptedContent = messageData.content;
 
-                                // Aynı if koşulu burada uygulanıyor
                                 if (messageData.type === 0 && decryptedContent && decryptedContent !== "Bu mesaj silindi.") {
                                     decryptedContent = decryptMessage(messageData.content, chatId);
                                 }
@@ -240,8 +236,6 @@ export const SignalRProvider = ({ children }) => {
                         if (chatId) {
                             const chatData = individualData[chatId];
                             dispatch(addNewIndividualChat({ chatId, chatData }));
-                        } else {
-                            console.error("Chat ID alınamadı:", data);
                         }
                     } else if (data.Group) {
                         const groupData = data.Group;
@@ -261,10 +255,9 @@ export const SignalRProvider = ({ children }) => {
                                             id: messageId,
                                             ...msg,
                                             content: decryptedContent,
-                                            sentDate: new Date(msg.status.sent?.[Object.keys(msg.status.sent)[0]]) // Sent tarihini alıyoruz (görünmeyecek)
+                                            sentDate: new Date(msg.status.sent?.[Object.keys(msg.status.sent)[0]])
                                         };
                                     })
-                                    // Sent tarihine göre sıralama yap
                                     .sort((a, b) => a.sentDate - b.sentDate)
                                     .map(({ sentDate, ...msg }) => msg);
                             }
@@ -285,6 +278,7 @@ export const SignalRProvider = ({ children }) => {
                 chatConnection.on("ReceiveUnarchiveChat", (data) => {
                     dispatch(removeArchive(data));
                 });
+
                 chatConnection.on("ReceiveClearChat", (data) => {
                     dispatch(removeIndividualChat(data));
                 });
@@ -295,44 +289,36 @@ export const SignalRProvider = ({ children }) => {
                     dispatch(updateUserInfoToChatList(data));
                     dispatch(updateUserInfoToGroupList(data));
                     dispatch(updateCallRecipientList(data));
-
                 });
 
                 notificationConnection.on("ReceiveNewGroupProfiles", (data) => {
                     dispatch(setGroupList(data));
-                    // Gelen data'nın key'ini almak için Object.keys() kullanılıyor
                     const groupId = Object.keys(data)[0];
 
                     if (groupId) {
-                        // ChatConnection'un bağlı olduğundan emin olarak işlem yapıyoruz
                         if (chatConnection.state === "Connected") {
                             chatConnection.invoke("CreateChat", "Group", groupId)
-                        } else {
-                            console.error("ChatConnection şu anda bağlı değil, işlem gerçekleştirilemedi.");
-                            // Bağlantı durumunu beklemek için event-based bir çözüm eklenebilir
+                        }
+                        else {
                             chatConnection.onclose(() => {
                                 chatConnection.start()
                                     .then(() => {
                                         chatConnection.invoke("CreateChat", "Group", groupId)
                                     })
                                     .catch((err) => {
-                                        console.error("ChatConnection yeniden bağlanırken hata oluştu:", err);
+                                        //If there is an error this block can execute
                                     });
                             });
                         }
-                    } else {
-                        console.error("Grup ID alınamadı.");
                     }
                 });
 
                 notificationConnection.on("ReceiveGroupProfiles", (data) => {
-                    const groupId = Object.keys(data)[0];  // Gelen veriden grupId'yi alıyoruz
-                    const groupData = data[groupId];  // Gelen data içindeki grup bilgilerini alıyoruz
+                    const groupId = Object.keys(data)[0];
+                    const groupData = data[groupId];
 
-                    // participants içindeki userId'ye bakarak rolünü kontrol et
                     const userParticipant = groupData.participants[userId];
 
-                    // Eğer rolü 2 ise (atılmışsa) işlemi sonlandırıyoruz
                     if (userParticipant && userParticipant.role === 2) {
                         dispatch(removeGroupChat(groupId));
                         dispatch(removeGroupList(groupId));
@@ -340,13 +326,12 @@ export const SignalRProvider = ({ children }) => {
                         return;
                     }
 
-                    // Eğer currentGroupList içinde bu grup varsa, veriyi güncelliyoruz
                     const currentGroupList = store.getState().groupList;
                     if (Object.hasOwn(currentGroupList.groupList, groupId)) {
-                        dispatch(updateGroupInformations(data));  // Veriyi güncelliyoruz
+                        dispatch(updateGroupInformations(data));
                     } else {
-                        dispatch(updateGroupInformations(data));  // Veriyi güncelliyoruz
-                        chatConnection.invoke("CreateChat", "Group", groupId); // Yeni sohbet oluşturuluyor
+                        dispatch(updateGroupInformations(data));
+                        chatConnection.invoke("CreateChat", "Group", groupId);
                     }
                 });
 
@@ -384,9 +369,7 @@ export const SignalRProvider = ({ children }) => {
                             dispatch(updateCallRecipientList(formattedData));
                         }
                     }
-                    // PeerConnection temizliği
                     if (peerConnection.current) {
-                        console.log("giriyor mu bura");
                         peerConnection.current.getSenders().forEach(sender => {
                             if (sender.track) {
                                 sender.track.stop();
@@ -396,21 +379,8 @@ export const SignalRProvider = ({ children }) => {
                         peerConnection.current = null;
                     }
 
-                    // State temizliği
                     setLocalStream(null);
                     setRemoteStream(null);
-                });
-
-
-
-                notificationConnection.on('Error', (data) => {
-                    console.log("eRRORE", data);
-                });
-                chatConnection.on('Error', (data) => {
-                    console.log("eRRORE", data);
-                });
-                callConnection.on('Error', (data) => {
-                    console.log("eRRORE", data);
                 });
 
                 callConnection.on('ReceiveDeleteCall', (data) => {
@@ -436,9 +406,25 @@ export const SignalRProvider = ({ children }) => {
                         }
                     } catch { }
                 });
+
+                //! ==== CONNECTION ERRORS =====
+
+                chatConnection.on('Error', () => {
+                    //This listining block can be used for error handling
+                    //Added this code to prevent warning error in WebSocket.
+                });
+
+                notificationConnection.on('Error', () => {
+                    //This listining block can be used for error handling
+                    //Added this code to prevent warning error in WebSocket.
+                });
+
+                callConnection.on('Error', () => {
+                    //This listining block can be used for error handling
+                    //Added this code to prevent warning error in WebSocket.
+                });
             })
             .catch((err) => {
-                console.error("Hub bağlantı hatası:", err);
                 setConnectionStatus("failed");
                 setError(err);
                 setLoading(false);
@@ -456,7 +442,6 @@ export const SignalRProvider = ({ children }) => {
 
         window.addEventListener("beforeunload", handleBeforeUnload);
 
-        // Cleanup
         return () => {
             if (chatConnection) chatConnection.stop();
             if (notificationConnection) notificationConnection.stop();
@@ -481,6 +466,7 @@ export const SignalRProvider = ({ children }) => {
         } catch { }
     };
 
+    // Messages Deliver and Read Set Methods
 
     const addPendingRequest = (messageId) => {
         setPendingRequests((prev) => new Set(prev).add(messageId));
@@ -532,7 +518,7 @@ export const SignalRProvider = ({ children }) => {
                                 return isDelivered && !isRead && !isSentByUser;
                             })
                             .map(async message => {
-                                if (!pendingRequests.has(message.id)) {  // Buraya kontrol ekleyelim
+                                if (!pendingRequests.has(message.id)) {
                                     addPendingRequest(message.id);
                                     try {
                                         await chatConnection.invoke("ReadMessage", "Individual", chat.id, message.id);
@@ -587,9 +573,7 @@ export const SignalRProvider = ({ children }) => {
 
             await Promise.all([...individualPromises, ...individualReadPromises, ...groupPromises, ...groupReadPromises]);
 
-        } catch (error) {
-            console.error("deliverMessages hatası:", error);
-        }
+        } catch { }
     };
 
     if (loading) {
