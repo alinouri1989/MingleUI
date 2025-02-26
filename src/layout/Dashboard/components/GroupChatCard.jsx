@@ -17,6 +17,9 @@ import { ErrorAlert } from "../../../helpers/customAlert.js";
 import { useLeaveGroupMutation } from "../../../store/Slices/Group/GroupApi.js";
 import "./style.scss";
 
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
+
 function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMessage, lastMessageType, lastMessageDate, unReadMessage }) {
 
     const navigate = useNavigate();
@@ -56,7 +59,11 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
         <div key={groupId} onClick={handleGoGroupChat} className={`group-dashboard-card-box ${isActiveChat ? "active-chat" : ""}`}>
             <div className="card-info-box">
                 <div className="image-box">
-                    <img src={groupPhotoUrl} alt={`${groupName} profile`} />
+                    <LazyLoadImage
+                        src={groupPhotoUrl}
+                        effect="custom"
+                        className="lazy-load-image"
+                    />
                 </div>
 
                 <div className="grup-name-and-sub-title">

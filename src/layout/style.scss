@@ -50,3 +50,16 @@
     bottom: 0;
     font-size: 14px;
 }
+
+
+.lazy-load-image-background {
+    filter: blur(2px);
+    opacity: 0.0;
+    transition: filter 0.3s ease, opacity 0.5s ease;
+
+}
+
+.lazy-load-image-loaded {
+    filter: blur(0);
+    opacity: 1;
+}

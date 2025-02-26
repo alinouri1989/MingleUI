@@ -11,6 +11,7 @@ import MinglePreLoader from "../shared/components/MinglePreLoader/MinglePreLoade
 import { ErrorAlert } from "../helpers/customAlert";
 
 const DataLoader = ({ children }) => {
+
     const dispatch = useDispatch();
     const user = useSelector((state) => state.auth.user);
     const [isLoading, setIsLoading] = useState(true);

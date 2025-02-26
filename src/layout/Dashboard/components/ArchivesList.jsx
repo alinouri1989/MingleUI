@@ -17,6 +17,8 @@ import PreLoader from "../../../shared/components/PreLoader/PreLoader";
 import { motion } from 'framer-motion';
 import "./style.scss";
 
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 function ArchivesList() {
 

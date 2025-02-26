@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useModal } from "../../contexts/ModalContext.jsx";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
+import { lazy, Suspense } from "react";
 
 import { IoChatbubbleEllipses } from "react-icons/io5";
 import { PiPhoneFill } from "react-icons/pi";
@@ -11,7 +12,7 @@ import { AiFillHome } from "react-icons/ai";
 import { IoMdSettings } from "react-icons/io";
 import { HiMenu } from "react-icons/hi";
 
-import SettingsModal from "../../components/Settings/SettingsModal.jsx";
+const LazySettingsModal = lazy(() => import("../../components/Settings/SettingsModal.jsx"));
 import useScreenWidth from "../../hooks/useScreenWidth.js";
 import "./style.scss";
 
@@ -24,14 +25,6 @@ function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const isSmallScreen = useScreenWidth(900);
   const sidebarRef = useRef(null);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsWideScreen(window.innerWidth >= 900);
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const restrictedPaths = ['sohbetler/', 'aramalar/', 'arsivler/', 'gruplar/'];
 
@@ -60,9 +53,12 @@ function Sidebar() {
   };
 
   const handleSettings = () => {
-    showModal(<SettingsModal closeModal={closeModal} />);
+    showModal(
+      <Suspense fallback={<div></div>}>
+        <LazySettingsModal closeModal={closeModal} />
+      </Suspense>
+    );
   };
-
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };

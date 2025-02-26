@@ -19,6 +19,9 @@ import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
 import { toggleActiveContent } from "../../../store/Slices/activeContent/activeContentSlice";
 
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
+
 function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageDate, lastMessageType, lastMessage, lastDate, unReadMessage, isArchive }) {
 
   const dispatch = useDispatch();
@@ -102,7 +105,11 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
     <div className={`user-dashboard-card-box ${isActiveChat ? "active-chat" : ""}`} onClick={() => handleGoChat()}>
       <div className="card-info-box">
         <div className="image-box">
-          <img src={image} alt={`${name} profile`} />
+          <LazyLoadImage
+            src={image}
+            effect="custom"
+            className="lazy-load-image"
+          />
           <p className={`status ${status ? "online" : "offline"}`}></p>
         </div>
 
