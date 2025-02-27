@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Logo from "../../../assets/logos/MingleLogoWithText.svg";
+import Logo from "../../../assets/logos/MingleLogoWithText.webp";
 
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
@@ -16,6 +16,8 @@ import { useSignInWithEmailMutation, useSignInGoogleMutation, useSignInFacebookM
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema } from '../../../schemas/SignSchemas.js';
+import { opacityEffect } from '../../../shared/animations/animations.js';
+import { motion } from "framer-motion";
 
 function SignIn() {
 
@@ -71,7 +73,9 @@ function SignIn() {
   };
 
   return (
-    <div className='sign-in-general-container'>
+    <motion.div
+      className="sign-in-general-container"
+      {...opacityEffect()}>
       <img src={Logo} alt="" />
       <div className='title-container'>
         <h1>Hesabın ile giriş yap</h1>
@@ -142,7 +146,7 @@ function SignIn() {
         </p>
       </form >
       {isLoading && <PreLoader />}
-    </div >
+    </motion.div>
   )
 }
 

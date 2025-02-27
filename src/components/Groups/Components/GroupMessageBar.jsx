@@ -11,7 +11,7 @@ import { groupMessagesByDate } from '../../../helpers/groupMessageByDate.js';
 import { opacityAndTransformEffect, opacityEffect } from '../../../shared/animations/animations.js';
 import MessageBubble from "../../../shared/components/MessageBubble/MessageBubble.jsx";
 
-import FirstChatBanner from "../../../assets/images/Home/FirstChatBanner.png";
+import FirstChatBanner from "../../../assets/images/Home/FirstChatBanner.webp";
 function GroupMessageBar({ groupId }) {
 
     const { user, token } = useSelector((state) => state.auth);

@@ -10,7 +10,7 @@ import { groupMessagesByDate } from '../../../helpers/groupMessageByDate.js';
 import MessageBubble from '../../../shared/components/MessageBubble/MessageBubble.jsx';
 import { opacityAndTransformEffect, opacityEffect } from '../../../shared/animations/animations.js';
 
-import FirstChatBanner from "../../../assets/images/Home/FirstChatBanner.png";
+import FirstChatBanner from "../../../assets/images/Home/FirstChatBanner.webp";
 import { motion } from "framer-motion"
 
 function UserMessageBar({ ChatId }) {

@@ -1,13 +1,12 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import MingleAI from "../../../assets/logos/MingleAI.png";
-import ImageGeneratorBanner from "../../../assets/images/AIModal/ImageGeneratorBanner.png";
-import TextGeneratorBanner from "../../../assets/images/AIModal/TextGeneratorBanner.png";
+import MingleAI from "../../../assets/logos/MingleAI.webp";
+import ImageGeneratorBanner from "../../../assets/images/AIModal/ImageGeneratorBanner.webp";
+import TextGeneratorBanner from "../../../assets/images/AIModal/TextGeneratorBanner.webp";
 
 import { SuccessAlert } from "../../../helpers/customAlert"
 
-import ExamplePhoto from "../../../assets/ExamplePhoto.png"
 import "./style.scss";
 
 import { IoClose } from "react-icons/io5";
@@ -176,7 +175,7 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                     </div> :
 
                                     <div className="image-generator-result">
-                                        <img src={ExamplePhoto} alt="result-image" />
+                                        <div>örnek resim</div>
                                     </div>
                                 }
                             </div>

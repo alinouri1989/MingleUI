@@ -1,8 +1,8 @@
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 
-import LaptopImage from "../../assets/images/Home/MingleLaptop.png";
-import LaptopImageDark from "../../assets/images/Home/MingleLaptopDark.png";
+import LaptopImage from "../../assets/images/Home/MingleLaptop.webp";
+import LaptopImageDark from "../../assets/images/Home/MingleLaptopDark.webp";
 import { opacityEffect } from "../../shared/animations/animations";
 import "./style.scss";
 

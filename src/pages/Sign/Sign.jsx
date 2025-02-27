@@ -1,12 +1,16 @@
 
 import { useLocation } from 'react-router-dom';
-import SignVector from "../../assets/images/Sign/SignVector.svg";
+import SignVector from "../../assets/images/Sign/SignVector.webp";
 
 import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import ResetPassword from './components/ResetPassword';
 
+
+import { motion } from "framer-motion";
+
 import "./style.scss";
+import { opacityEffect } from '../../shared/animations/animations.js';
 
 function Sign() {
     const location = useLocation();
@@ -27,11 +31,13 @@ function Sign() {
                 {renderComponent()}
             </div>
             <div className='banner-bar'>
-                <div className='banner-bar-container'>
+                <motion.div
+                    {...opacityEffect()}
+                    className='banner-bar-container'>
                     <h1>Doyasıya Sohbetin Keyfini Çıkar</h1>
                     <img src={SignVector} alt="" />
                     <p>Mingle</p>
-                </div>
+                </motion.div>
             </div>
         </div>
     );

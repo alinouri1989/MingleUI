@@ -1,4 +1,4 @@
-import MingleLogo from "../../../assets/logos/MingleLogoWithText.svg";
+import MingleLogo from "../../../assets/logos/MingleLogoWithText.webp";
 import { motion } from "framer-motion";
 import "./style.scss";
 

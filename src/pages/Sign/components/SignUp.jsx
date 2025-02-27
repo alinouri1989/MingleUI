@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Logo from "../../../assets/logos/MingleLogoWithText.svg";
+import Logo from "../../../assets/logos/MingleLogoWithText.webp";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -22,6 +22,9 @@ import { IoEyeOff } from "react-icons/io5";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert.js"
 import MembershipModal from "./MembershipModal";
 import PreLoader from "../../../shared/components/PreLoader/PreLoader.jsx";
+
+import { opacityEffect } from '../../../shared/animations/animations.js';
+import { motion } from "framer-motion";
 
 registerLocale('tr', tr);
 
@@ -76,7 +79,9 @@ function SignUp() {
   };
 
   return (
-    <div className='sign-up-general-container'>
+    <motion.div
+      {...opacityEffect()}
+      className='sign-up-general-container'>
       <img src={Logo} alt="" />
 
       <div className='title-container'>
@@ -222,7 +227,7 @@ function SignUp() {
 
       </form >
       {isLoading && <PreLoader />}
-    </div>
+    </motion.div>
   )
 }
 

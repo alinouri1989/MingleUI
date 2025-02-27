@@ -1,8 +1,8 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useModal } from "../../contexts/ModalContext.jsx";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
-import { lazy, Suspense } from "react";
+
 
 import { IoChatbubbleEllipses } from "react-icons/io5";
 import { PiPhoneFill } from "react-icons/pi";
@@ -12,9 +12,10 @@ import { AiFillHome } from "react-icons/ai";
 import { IoMdSettings } from "react-icons/io";
 import { HiMenu } from "react-icons/hi";
 
-const LazySettingsModal = lazy(() => import("../../components/Settings/SettingsModal.jsx"));
+
 import useScreenWidth from "../../hooks/useScreenWidth.js";
 import "./style.scss";
+import SettingsModal from "../../components/Settings/SettingsModal.jsx";
 
 function Sidebar() {
 
@@ -53,12 +54,10 @@ function Sidebar() {
   };
 
   const handleSettings = () => {
-    showModal(
-      <Suspense fallback={<div></div>}>
-        <LazySettingsModal closeModal={closeModal} />
-      </Suspense>
+    showModal(<SettingsModal closeModal={closeModal} />
     );
   };
+
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };

@@ -9,6 +9,8 @@
     @include flex-center(column, center, center);
 
     img {
+        width: 240px;
+
         @include screen(768px) {
             width: 200px;
         }

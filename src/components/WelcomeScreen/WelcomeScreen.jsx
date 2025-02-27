@@ -1,4 +1,4 @@
-import Logo from "../../assets/logos/Logo.png";
+import Logo from "../../assets/logos/Logo.webp";
 import "./style.scss";
 
 function WelcomeScreen({ text }) {

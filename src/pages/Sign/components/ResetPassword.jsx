@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useResetPasswordMutation } from "../../../store/Slices/auth/authApi";
-import Logo from "../../../assets/logos/MingleLogoWithText.svg";
+import Logo from "../../../assets/logos/MingleLogoWithText.webp";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,6 +8,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPasswordSchema } from "../../../schemas/SignSchemas";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
 import PreLoader from "../../../shared/components/PreLoader/PreLoader";
+
+import { opacityEffect } from '../../../shared/animations/animations.js';
+import { motion } from "framer-motion";
 
 function ResetPassword() {
 
@@ -34,7 +37,9 @@ function ResetPassword() {
   };
 
   return (
-    <div className='reset-password-general-container'>
+    <motion.div
+      {...opacityEffect()}
+      className='reset-password-general-container'>
       <img src={Logo} alt="" />
 
       <div className='title-container'>
@@ -65,7 +70,7 @@ function ResetPassword() {
       </form>
 
       {isLoading && <PreLoader />}
-    </div>
+    </motion.div>
   );
 }
 

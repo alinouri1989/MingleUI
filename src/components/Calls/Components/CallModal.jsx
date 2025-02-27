@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useSignalR } from "../../../contexts/SignalRContext";
 
-import MingleLogo from "../../../assets/logos/MingleLogoWithText.svg";
+import MingleLogo from "../../../assets/logos/MingleLogoWithText.webp";
 import CallSound from "../../../assets/Sounds/MingleCallSound.mp3";
 import BusySound from "../../../assets/sounds/MingleCallBusySound.mp3"
 
