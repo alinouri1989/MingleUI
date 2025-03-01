@@ -43,7 +43,7 @@ function SignIn() {
       await SignInWithEmail(data).unwrap();
       SuccessAlert("Giriş Yapıldı");
     } catch (error) {
-      ErrorAlert(error.data.message);
+      ErrorAlert(error?.data?.message);
     }
   };
 

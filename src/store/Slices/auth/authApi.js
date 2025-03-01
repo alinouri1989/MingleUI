@@ -117,7 +117,7 @@ const handleAuthResponse = async (queryFulfilled, dispatch) => {
 
       const userProfile = await dispatch(authApi.endpoints.getUserProfile.initiate()).unwrap();
       const updatedUserProfile = setUserProfileTheme(userProfile);
-
+      console.log("updatedUserProfile", updatedUserProfile);
       dispatch(setUser({ user: updatedUserProfile, token: data.token }));
     }
   } catch { }

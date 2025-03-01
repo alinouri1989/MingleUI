@@ -5,7 +5,7 @@ import MingleAI from "../../../assets/logos/MingleAI.webp";
 import ImageGeneratorBanner from "../../../assets/images/AIModal/ImageGeneratorBanner.webp";
 import TextGeneratorBanner from "../../../assets/images/AIModal/TextGeneratorBanner.webp";
 
-import { SuccessAlert } from "../../../helpers/customAlert"
+import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert"
 
 import "./style.scss";
 
@@ -18,8 +18,13 @@ import { MdRefresh } from "react-icons/md";
 import { AiFillLike } from "react-icons/ai";
 import { MdContentCopy } from "react-icons/md";
 import { LuDownload } from "react-icons/lu";
+import { useMediaQuery } from "@mui/material";
+import { useGeminiTextMutation } from "../../../store/Slices/mingleAi/MingleAiApi";
 
 export const AIModal = ({ isOpen, onClose, buttonRef }) => {
+
+    const [geminiText, { isLoading: isGeminiTextLoading }] = useGeminiTextMutation();
+    const [responseText, setResponseText] = useState("");
     const [position, setPosition] = useState({ top: 0, left: 0 });
     const [isContent, setIsContent] = useState(false);
     const [maxHeight, setMaxHeight] = useState("300px");
@@ -29,14 +34,12 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
     const [isTextGeneratorMode, setIsTextGeneratorMode] = useState(true);
     const [prompt, setPrompt] = useState("");
 
-    // Konumu hesaplayan fonksiyon
     const updatePosition = () => {
         if (buttonRef.current && modalRef.current) {
             const rect = buttonRef.current.getBoundingClientRect();
             const modalRect = modalRef.current.getBoundingClientRect();
 
-            // Ekran genişliğini kontrol et
-            if (window.innerWidth < 430) { // Mobil ekran için eşik
+            if (window.innerWidth < 430) {
                 setPosition({
                     top: 0,
                     left: 0,
@@ -59,17 +62,16 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
             updatePosition();
             setIsContent(false);
 
-            // 1.5 saniye sonra içeriği göster
             const timer = setTimeout(() => {
-                setIsContent(true); // İçeriği göster
-            }, 1500); // 1.5 saniye sonra içerik görünsün
+                setIsContent(true);
+            }, 1500);
 
             window.addEventListener("resize", updatePosition);
             window.addEventListener("scroll", updatePosition);
             window.addEventListener("click", handleOutsideClick);
 
             return () => {
-                clearTimeout(timer); // Temizle
+                clearTimeout(timer);
                 window.removeEventListener("resize", updatePosition);
                 window.removeEventListener("scroll", updatePosition);
                 window.removeEventListener("click", handleOutsideClick);
@@ -89,11 +91,18 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
         }
     };
 
-    const handleSendPrompt = () => {
-        SuccessAlert("Loading...");
-        setPrompt("");
-        setIsContent(false);
-    }
+    const handleSendPrompt = async () => {
+        try {
+            const data = await geminiText(prompt).unwrap();
+            setResponseText(data.responseText);
+            console.log("Gelen veri:", data);
+
+        } catch (error) {
+            console.error("Hata:", error);
+        }
+    };
+
+
 
     const handleKeyDown = (event) => {
         if (event.key === "Enter") {
@@ -103,9 +112,9 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
 
     const updateHeight = () => {
         if (window.innerWidth <= 430) {
-            setMaxHeight(`${window.innerHeight * 0.75}px`); // %80 ekran yüksekliği
+            setMaxHeight(`${window.innerHeight * 0.75}px`);
         } else {
-            setMaxHeight("300px"); // Varsayılan max-height
+            setMaxHeight("300px");
         }
     };
 
@@ -160,28 +169,31 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                             </div>
 
                             <div className="result-box">
-                                {/* <div className="banner">
-                                    <img src={isTextGeneratorMode ? TextGeneratorBanner : ImageGeneratorBanner} alt="" />
-                                </div> */}
 
-                                {isTextGeneratorMode ?
-                                    <div style={{
-                                        maxHeight: maxHeight,
-                                        overflowY: "auto",
-                                    }} className="text-generator-result">
-                                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing eli. Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim nihil nam, deserunt deleniti asperiores ex impedit assumenda. Quae doloribus quos deleniti praesentium quam, omnis ratione expedita pariatur repellat non numquam at itaque vitae suscipit maxime nisi. Laborum, iste rem? Necessitatibus repellat dolore ea impedit nostrum reprehenderit. Dignissimos, nulla? Officiis consequatur debitis deleniti animi. Nulla nisi harum earum pariatur vitae sapiente quo sequi ipsum ex, quidem non quasi a error quisquam voluptas dolorem laboriosam magni nostrum odit id, similique autem debitis consequuntur? Consequuntur minus harum esse in, totam voluptate placeat consequatur aliquid labore? Doloremque nam nemo quasi aspernatur adipisci quas nobis!</p>
 
-                                        <p>Lorem ipsum, dolor sit amet consectetur adipisicing eli. Lorem ipsum dolor sit amet consectetur adipisicing elit. Enim nihil nam, deserunt deleniti asperiores ex impedit assumenda. Quae doloribus quos deleniti praesentium quam, omnis ratione expedita pariatur repellat non numquam at itaque vitae suscipit maxime nisi. Laborum, iste rem? Necessitatibus repellat dolore ea impedit nostrum reprehenderit. Dignissimos, nulla? Officiis consequatur debitis deleniti animi. Nulla nisi harum earum pariatur vitae sapiente quo sequi ipsum ex, quidem non quasi a error quisquam voluptas dolorem laboriosam magni nostrum odit id, similique autem debitis consequuntur? Consequuntur minus harum esse in, totam voluptate placeat consequatur aliquid labore? Doloremque nam nemo quasi aspernatur adipisci quas nobis!</p>
-                                    </div> :
+                                {responseText ?
+                                    isTextGeneratorMode ?
+                                        <div style={{
+                                            maxHeight: maxHeight,
+                                            overflowY: "auto",
+                                        }} className="text-generator-result">
+                                            <p>{responseText}</p>
+                                        </div> :
 
-                                    <div className="image-generator-result">
-                                        <div>örnek resim</div>
+                                        <div className="image-generator-result">
+                                            <div>örnek resim</div>
+                                        </div>
+                                    :
+                                    <div className="banner">
+                                        <img src={isTextGeneratorMode ? TextGeneratorBanner : ImageGeneratorBanner} alt="" />
                                     </div>
                                 }
+
+
                             </div>
 
                             <div className="options-box">
-                                {/* <div className="input-box">
+                                <div className="input-box">
                                     <input
                                         placeholder="Bir istemde bulunun"
                                         type="text"
@@ -192,8 +204,8 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                     <button className="send-prompt-btn" onClick={handleSendPrompt}>
                                         <HiArrowSmUp />
                                     </button>
-                                </div> */}
-                                <div className="result-options-box">
+                                </div>
+                                {/* <div className="result-options-box">
                                     <div className="buttons">
                                         <button><MdDelete /></button>
                                         <button><MdRefresh /></button>
@@ -206,7 +218,7 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                     <button className="send-message-btn">
                                         Gönder
                                     </button>
-                                </div>
+                                </div> */}
                             </div>
                         </motion.div>
                     )

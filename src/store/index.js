@@ -4,6 +4,7 @@ import { authApi } from "./Slices/auth/authApi.js";
 import { userSettingsApi } from './Slices/userSettings/userSettingsApi.js';
 import { searchUsersApi } from './Slices/searchUsers/searchUserApi.js';
 import { GroupApi } from './Slices/Group/GroupApi.js';
+import { MingleAiApi } from './Slices/mingleAi/MingleAiApi.js';
 
 const store = configureStore({
   reducer: rootReducer,
@@ -12,7 +13,8 @@ const store = configureStore({
       authApi.middleware,
       userSettingsApi.middleware,
       searchUsersApi.middleware,
-      GroupApi.middleware
+      GroupApi.middleware,
+      MingleAiApi.middleware
     ),
 });
 
