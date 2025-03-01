@@ -19,12 +19,16 @@ import { AiFillLike } from "react-icons/ai";
 import { MdContentCopy } from "react-icons/md";
 import { LuDownload } from "react-icons/lu";
 import { useMediaQuery } from "@mui/material";
-import { useGeminiTextMutation } from "../../../store/Slices/mingleAi/MingleAiApi";
+import { useGeminiTextMutation, useFluxImageMutation } from "../../../store/Slices/mingleAi/MingleAiApi";
+import { convertBase64ToImage } from "../../../store/helpers/convertBase64ToImage";
 
 export const AIModal = ({ isOpen, onClose, buttonRef }) => {
 
     const [geminiText, { isLoading: isGeminiTextLoading }] = useGeminiTextMutation();
-    const [responseText, setResponseText] = useState("");
+    const [fluxImage, { isLoading: isFluxImageLoading }] = useFluxImageMutation();
+    const isLoading = isGeminiTextLoading || isFluxImageLoading;
+
+    const [response, setResponse] = useState("");
     const [position, setPosition] = useState({ top: 0, left: 0 });
     const [isContent, setIsContent] = useState(false);
     const [maxHeight, setMaxHeight] = useState("300px");
@@ -93,16 +97,19 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
 
     const handleSendPrompt = async () => {
         try {
-            const data = await geminiText(prompt).unwrap();
-            setResponseText(data.responseText);
-            console.log("Gelen veri:", data);
-
+            if (isTextGeneratorMode) {
+                const data = await geminiText(prompt).unwrap();
+                setResponse(data.responseText);
+                console.log("Gelen veri:", data);
+            } else {
+                const data = await fluxImage(prompt).unwrap();
+                console.log("Gelen base64 image veri:", data);
+                setResponse(convertBase64ToImage(data.responseImage));
+            }
         } catch (error) {
             console.error("Hata:", error);
         }
     };
-
-
 
     const handleKeyDown = (event) => {
         if (event.key === "Enter") {
@@ -168,57 +175,60 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                 <button onClick={() => onClose()} className="close-btn"><IoClose /></button>
                             </div>
 
-                            <div className="result-box">
-
-
-                                {responseText ?
+                            {!isLoading ? <div className="result-box">
+                                {response ?
                                     isTextGeneratorMode ?
                                         <div style={{
                                             maxHeight: maxHeight,
                                             overflowY: "auto",
                                         }} className="text-generator-result">
-                                            <p>{responseText}</p>
+                                            <p>{response}</p>
                                         </div> :
 
                                         <div className="image-generator-result">
-                                            <div>örnek resim</div>
+                                            <img src={response} alt="" />
                                         </div>
                                     :
                                     <div className="banner">
                                         <img src={isTextGeneratorMode ? TextGeneratorBanner : ImageGeneratorBanner} alt="" />
                                     </div>
                                 }
-
-
                             </div>
+                                :
+                                <div>Resim Oluşturuluyor...</div>
+                            }
+
 
                             <div className="options-box">
-                                <div className="input-box">
-                                    <input
-                                        placeholder="Bir istemde bulunun"
-                                        type="text"
-                                        onKeyDown={handleKeyDown}
-                                        value={prompt}
-                                        onChange={(e) => setPrompt(e.target.value)}
-                                    />
-                                    <button className="send-prompt-btn" onClick={handleSendPrompt}>
-                                        <HiArrowSmUp />
-                                    </button>
-                                </div>
-                                {/* <div className="result-options-box">
-                                    <div className="buttons">
-                                        <button><MdDelete /></button>
-                                        <button><MdRefresh /></button>
-                                        <button><AiFillLike /></button>
-                                        {isTextGeneratorMode
-                                            ? <button><MdContentCopy /></button>
-                                            : <button><LuDownload /></button>
-                                        }
+                                {response ?
+                                    <div className="result-options-box">
+                                        <div className="buttons">
+                                            <button><MdDelete /></button>
+                                            <button><MdRefresh /></button>
+                                            <button><AiFillLike /></button>
+                                            {isTextGeneratorMode
+                                                ? <button><MdContentCopy /></button>
+                                                : <button><LuDownload /></button>
+                                            }
+                                        </div>
+                                        <button className="send-message-btn">
+                                            Gönder
+                                        </button>
                                     </div>
-                                    <button className="send-message-btn">
-                                        Gönder
-                                    </button>
-                                </div> */}
+                                    :
+                                    <div className="input-box">
+                                        <input
+                                            placeholder="Bir istemde bulunun"
+                                            type="text"
+                                            onKeyDown={handleKeyDown}
+                                            value={prompt}
+                                            onChange={(e) => setPrompt(e.target.value)}
+                                        />
+                                        <button className="send-prompt-btn" onClick={handleSendPrompt}>
+                                            <HiArrowSmUp />
+                                        </button>
+                                    </div>
+                                }
                             </div>
                         </motion.div>
                     )
@@ -228,6 +238,7 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                         </div>
 
                     }
+
                 </motion.div>
             )
             }

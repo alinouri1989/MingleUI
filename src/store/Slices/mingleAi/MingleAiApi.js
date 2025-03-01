@@ -19,13 +19,18 @@ export const MingleAiApi = createApi({
                 method: 'POST',
                 body: { prompt: prompt },
             }),
-            onQueryFulfilled: (data) => {
-                console.log("Gelen data:", data);
-            },
+        }),
+        fluxImage: builder.mutation({
+            query: (prompt) => ({
+                url: 'GenerativeAi/FluxImage',
+                method: 'POST',
+                body: { prompt: prompt },
+            }),
         }),
     }),
 });
 
 export const {
     useGeminiTextMutation,
+    useFluxImageMutation
 } = MingleAiApi;
