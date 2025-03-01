@@ -175,7 +175,7 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
 
     const handleDeleteGroupImage = () => {
         handleClose();
-        setFormData((prev) => ({ ...prev, photo: null, photoUrl: null }));
+        setFormData((prev) => ({ ...prev, photo: "", photoUrl: null }));
     };
 
     const handleRemoveUser = (userId) => {
