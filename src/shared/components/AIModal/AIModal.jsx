@@ -20,9 +20,9 @@ import { MdRefresh } from "react-icons/md";
 import { AiFillLike } from "react-icons/ai";
 import { MdContentCopy } from "react-icons/md";
 import { LuDownload } from "react-icons/lu";
-import { useMediaQuery } from "@mui/material";
-import { useGeminiTextMutation, useFluxImageMutation } from "../../../store/Slices/mingleAi/MingleAiApi";
+import { FaCheck } from "react-icons/fa6";
 
+import { useGeminiTextMutation, useFluxImageMutation } from "../../../store/Slices/mingleAi/MingleAiApi";
 
 import "./style.scss";
 
@@ -38,8 +38,12 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
     const [responseText, setResponseText] = useState("");
     const [responseImage, setResponseImage] = useState("");
 
-    const [isTextLiked, SetIsTextLiked] = useState(false);
-    const [isImageLiked, SetIsImageLiked] = useState(false);
+    const [textError, setTextError] = useState(false);
+    const [imageError, setImageError] = useState(false);
+
+    const [isTextLiked, setIsTextLiked] = useState(false);
+    const [isImageLiked, setIsImageLiked] = useState(false);
+    const [isTextCopied, setIsTextCopied] = useState(false);
 
     const [position, setPosition] = useState({ top: 0, left: 0 });
     const [isContent, setIsContent] = useState(true);
@@ -85,6 +89,15 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
         }
     }, [isOpen]);
 
+    useEffect(() => {
+        updateHeight();
+        window.addEventListener("resize", updateHeight);
+
+        return () => {
+            window.removeEventListener("resize", updateHeight);
+        };
+    }, []);
+
     const handleOutsideClick = (event) => {
         if (
             modalRef.current &&
@@ -93,28 +106,50 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
             !buttonRef.current.contains(event.target) &&
             !event.target.closest(".send-prompt-btn") &&
             !event.target.closest(".delete-response") &&
-            !event.target.closest(".refresh-response")
+            !event.target.closest(".refresh-response") &&
+            !event.target.closest(".copy-text") &&
+            !event.target.closest(".copy-icons")
         ) {
             onClose();
         }
     };
-
 
     const handleDeleteResponse = () => {
         if (isTextGeneratorMode) {
             if (textPrompt) {
                 setResponseText("");
                 setTextPrompt("");
+                setIsTextLiked(false);
             }
         }
         else {
             if (imagePrompt) {
                 setResponseImage("");
                 setImagePrompt("");
+                setIsImageLiked(false);
             }
         }
     }
 
+    const handleCopyText = () => {
+        if (!responseText) return;
+
+        const tempElement = document.createElement("div");
+        tempElement.innerHTML = responseText;
+
+        const plainText = tempElement.innerText || tempElement.textContent;
+
+        // Panoya kopyala
+        navigator.clipboard.writeText(plainText)
+            .then(() => {
+                setIsTextCopied(true);
+                SuccessAlert("Metin panoya kopyalandı");
+                setTimeout(() => setIsTextCopied(false), 2000);
+            })
+            .catch(err => {
+                ErrorAlert("Metin kopyalanırken bir hata oluştu");
+            });
+    };
 
     const handleSendMessage = () => {
         if (isTextGeneratorMode) {
@@ -126,20 +161,32 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
     }
 
     const handleSendPrompt = async () => {
-        try {
-            setIsContent(false);
-            if (isTextGeneratorMode) {
+
+        setIsTextLiked(false);
+        setIsImageLiked(false);
+        setIsContent(false);
+        setTextError(false);
+        setImageError(false);
+
+        if (isTextGeneratorMode) {
+            try {
                 const data = await geminiText(textPrompt).unwrap();
                 const markdownToHtml = (markdown) => marked(data.responseText);
                 setResponseText(markdownToHtml);
-            } else {
+                setIsContent(true);
+            } catch (error) {
+                setTextError(true);
+                setIsContent(true);
+            }
+        } else {
+            try {
                 const data = await fluxImage(imagePrompt).unwrap();
                 setResponseImage(convertBase64ToImage(data.responseImage));
+                setIsContent(true);
+            } catch (error) {
+                setImageError(true);
+                setIsContent(true);
             }
-            setIsContent(true);
-        } catch (error) {
-            console.error("Hata:", error);
-            setIsContent(true);
         }
     };
 
@@ -162,15 +209,6 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
             setMaxHeight("300px");
         }
     };
-
-    useEffect(() => {
-        updateHeight();
-        window.addEventListener("resize", updateHeight);
-
-        return () => {
-            window.removeEventListener("resize", updateHeight);
-        };
-    }, []);
 
     return createPortal(
         <AnimatePresence>
@@ -219,6 +257,7 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                 {isTextGeneratorMode
                                     ?
                                     responseText ?
+
                                         <div style={{ maxHeight: maxHeight, overflowY: "auto" }}
                                             dangerouslySetInnerHTML={{ __html: responseText }}
                                             className="text-generator-result">
@@ -226,6 +265,7 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                         :
                                         <div className="banner">
                                             <img src={TextGeneratorBanner} alt="text-generator-banner" />
+                                            {textError && <span>Bir hata meydana geldi. Tekrar Deneyin.</span>}
                                         </div>
 
                                     :
@@ -237,6 +277,7 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                         :
                                         <div className="banner">
                                             <img src={ImageGeneratorBanner} alt="text-generator-banner" />
+                                            {imageError && <span>Bir hata meydana geldi. Tekrar Deneyin.</span>}
                                         </div>
                                 }
                             </div>
@@ -248,8 +289,10 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                             <div className="buttons">
                                                 <button className="delete-response" onClick={handleDeleteResponse}><MdDelete /></button>
                                                 <button className="refresh-response" onClick={handleSendPrompt}><MdRefresh /></button>
-                                                <button className={`like-response ${isTextLiked ? "liked" : ""}`} onClick={() => SetIsTextLiked(!isTextLiked)}><AiFillLike /></button>
-                                                <button><MdContentCopy /></button>
+                                                <button className={`like-response ${isTextLiked ? "liked" : ""}`} onClick={() => setIsTextLiked(!isTextLiked)}><AiFillLike /></button>
+                                                <button className="copy-text" onClick={handleCopyText}>
+                                                    {isTextCopied ? <FaCheck className="copy-icons" /> : <MdContentCopy className="copy-icons" />}
+                                                </button>
                                             </div>
                                             <button onClick={handleSendMessage} className="send-message-btn">
                                                 Gönder
@@ -275,7 +318,7 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                             <div className="buttons">
                                                 <button className="delete-response" onClick={handleDeleteResponse}><MdDelete /></button>
                                                 <button className="refresh-response" onClick={handleSendPrompt}><MdRefresh /></button>
-                                                <button className={`like-response ${isImageLiked ? "liked" : ""}`} onClick={() => SetIsImageLiked(!isImageLiked)}><AiFillLike /></button>
+                                                <button className={`like-response ${isImageLiked ? "liked" : ""}`} onClick={() => setIsImageLiked(!isImageLiked)}><AiFillLike /></button>
                                                 <button className="download-image" onClick={handleDownloadImage}><LuDownload /></button>
                                             </div>
                                             <button onClick={handleSendMessage} className="send-message-btn">
