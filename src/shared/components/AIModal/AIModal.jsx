@@ -257,7 +257,6 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                 {isTextGeneratorMode
                                     ?
                                     responseText ?
-
                                         <div style={{ maxHeight: maxHeight, overflowY: "auto" }}
                                             dangerouslySetInnerHTML={{ __html: responseText }}
                                             className="text-generator-result">
