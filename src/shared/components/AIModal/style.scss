@@ -191,10 +191,11 @@
                     width: 100%;
                     text-align: left;
                     padding: 10px;
-                    border: 1px solid gray;
+                    color: var(--blue);
                     border-radius: 10px;
                     white-space: pre-wrap;
                     margin-bottom: 10px;
+                    background-color: var(--smooth-light-blue);
                 }
 
                 code {
@@ -284,6 +285,11 @@
                         &:active {
                             scale: 0.9;
                         }
+
+                        &.liked {
+                            background-color: var(--blue);
+                            color: white;
+                        }
                     }
                 }
 
@@ -303,6 +309,8 @@
                         scale: 1;
                     }
                 }
+
+
             }
         }
     }

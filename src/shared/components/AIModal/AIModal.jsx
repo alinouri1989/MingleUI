@@ -8,6 +8,8 @@ import ImageGeneratorBanner from "../../../assets/images/AIModal/ImageGeneratorB
 import TextGeneratorBanner from "../../../assets/images/AIModal/TextGeneratorBanner.webp";
 
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert"
+import { downloadImageFromBase64 } from "../../../helpers/downloadImageFromBase64.js";
+import { convertBase64ToImage } from "../../../store/helpers/convertBase64ToImage.js"
 
 import { IoClose } from "react-icons/io5";
 import { TbFileText } from "react-icons/tb";
@@ -20,7 +22,7 @@ import { MdContentCopy } from "react-icons/md";
 import { LuDownload } from "react-icons/lu";
 import { useMediaQuery } from "@mui/material";
 import { useGeminiTextMutation, useFluxImageMutation } from "../../../store/Slices/mingleAi/MingleAiApi";
-import { convertBase64ToImage } from "../../../store/helpers/convertBase64ToImage";
+
 
 import "./style.scss";
 
@@ -113,6 +115,7 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
         }
     }
 
+
     const handleSendMessage = () => {
         if (isTextGeneratorMode) {
             //.. text send
@@ -138,6 +141,12 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
             console.error("Hata:", error);
             setIsContent(true);
         }
+    };
+
+    const handleDownloadImage = () => {
+        const base64Image = responseImage;
+        console.log("girdi");
+        downloadImageFromBase64(base64Image, 'MingleImage.png');
     };
 
     const handleKeyDown = (event) => {
@@ -267,7 +276,7 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                                 <button className="delete-response" onClick={handleDeleteResponse}><MdDelete /></button>
                                                 <button className="refresh-response" onClick={handleSendPrompt}><MdRefresh /></button>
                                                 <button className={`like-response ${isImageLiked ? "liked" : ""}`} onClick={() => SetIsImageLiked(!isImageLiked)}><AiFillLike /></button>
-                                                <button><LuDownload /></button>
+                                                <button className="download-image" onClick={handleDownloadImage}><LuDownload /></button>
                                             </div>
                                             <button onClick={handleSendMessage} className="send-message-btn">
                                                 Gönder
