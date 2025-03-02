@@ -31,7 +31,7 @@
 
         img {
             width: 50px;
-            animation: scaleRotateAnimation 1s ease-in-out forwards; // Hem scale hem de rotate animasyonu uygula
+            animation: scaleRotateAnimation 1.1s ease-in-out infinite; // Hem scale hem de rotate animasyonu uygula
 
             @keyframes scaleRotateAnimation {
                 0% {
@@ -129,7 +129,8 @@
             }
 
             .text-generator-result,
-            .image-generator-result {
+            .image-generator-result,
+            .loading-box {
                 width: 100%;
                 height: 100%;
             }
@@ -139,18 +140,69 @@
                 padding: 10px;
                 overflow: auto;
                 max-height: 300px;
+                width: 100%;
                 overflow-x: hidden;
+                @include flex-center(column, flex-start, center);
+
 
                 @include screen(430px) {
                     max-height: 100%;
                     height: 100%;
                 }
 
-                p {
-                    text-align: justify;
-                    font-size: 13px;
-                    color: var(--text-black);
+                p,
+                h1,
+                h2 {
+                    text-align: left;
+                    font-size: 14px;
+                    color: var(--ai-text-color);
+                    margin-bottom: 10px;
+                    width: 100%;
                 }
+
+                p {
+                    text-align: left;
+                }
+
+
+                strong {
+                    font-weight: bold;
+                    color: var(--blue);
+                }
+
+                ul,
+                ol {
+                    width: 100%;
+
+                    li {
+                        color: var(--text-dark-gray);
+                        text-align: initial;
+                        font-size: 13.3px;
+                        margin-bottom: 10px;
+
+                        strong {
+                            color: var(--text-dark-gray);
+                            font-weight: 700;
+                        }
+                    }
+                }
+
+                pre {
+                    width: 100%;
+                    text-align: left;
+                    padding: 10px;
+                    border: 1px solid gray;
+                    border-radius: 10px;
+                    white-space: pre-wrap;
+                    margin-bottom: 10px;
+                }
+
+                code {
+                    width: 100%;
+                    text-align: left;
+                    font-size: 13px;
+                }
+
             }
 
             .image-generator-result {
@@ -236,16 +288,15 @@
                 }
 
                 .send-message-btn {
-                    background-color: var(--blue);
+                    background: var(--blue);
                     color: white;
                     width: 150px;
                     height: 85%;
                     border-radius: 30px;
                     font-size: 15px;
-                    @include transition();
 
                     &:hover {
-                        background-color: var(--hoverBlue);
+                        background: var(--hoverBlue);
                     }
 
                     &:active {

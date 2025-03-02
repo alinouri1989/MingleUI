@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { marked } from "marked";
+
 import MingleAI from "../../../assets/logos/MingleAI.webp";
 import ImageGeneratorBanner from "../../../assets/images/AIModal/ImageGeneratorBanner.webp";
 import TextGeneratorBanner from "../../../assets/images/AIModal/TextGeneratorBanner.webp";
 
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert"
-
-import "./style.scss";
 
 import { IoClose } from "react-icons/io5";
 import { TbFileText } from "react-icons/tb";
@@ -22,21 +22,27 @@ import { useMediaQuery } from "@mui/material";
 import { useGeminiTextMutation, useFluxImageMutation } from "../../../store/Slices/mingleAi/MingleAiApi";
 import { convertBase64ToImage } from "../../../store/helpers/convertBase64ToImage";
 
+import "./style.scss";
+
 export const AIModal = ({ isOpen, onClose, buttonRef }) => {
 
-    const [geminiText, { isLoading: isGeminiTextLoading }] = useGeminiTextMutation();
-    const [fluxImage, { isLoading: isFluxImageLoading }] = useFluxImageMutation();
-    const isLoading = isGeminiTextLoading || isFluxImageLoading;
-
-    const [response, setResponse] = useState("");
-    const [position, setPosition] = useState({ top: 0, left: 0 });
-    const [isContent, setIsContent] = useState(false);
-    const [maxHeight, setMaxHeight] = useState("300px");
-
-    const modalRef = useRef(null);
+    const [geminiText, { }] = useGeminiTextMutation();
+    const [fluxImage, { }] = useFluxImageMutation();
 
     const [isTextGeneratorMode, setIsTextGeneratorMode] = useState(true);
-    const [prompt, setPrompt] = useState("");
+    const [textPrompt, setTextPrompt] = useState("");
+    const [imagePrompt, setImagePrompt] = useState("");
+
+    const [responseText, setResponseText] = useState("");
+    const [responseImage, setResponseImage] = useState("");
+
+    const [isTextLiked, SetIsTextLiked] = useState(false);
+    const [isImageLiked, SetIsImageLiked] = useState(false);
+
+    const [position, setPosition] = useState({ top: 0, left: 0 });
+    const [isContent, setIsContent] = useState(true);
+    const [maxHeight, setMaxHeight] = useState("300px");
+    const modalRef = useRef(null);
 
     const updatePosition = () => {
         if (buttonRef.current && modalRef.current) {
@@ -64,18 +70,12 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
     useEffect(() => {
         if (isOpen) {
             updatePosition();
-            setIsContent(false);
-
-            const timer = setTimeout(() => {
-                setIsContent(true);
-            }, 1500);
 
             window.addEventListener("resize", updatePosition);
             window.addEventListener("scroll", updatePosition);
             window.addEventListener("click", handleOutsideClick);
 
             return () => {
-                clearTimeout(timer);
                 window.removeEventListener("resize", updatePosition);
                 window.removeEventListener("scroll", updatePosition);
                 window.removeEventListener("click", handleOutsideClick);
@@ -89,25 +89,54 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
             !modalRef.current.contains(event.target) &&
             buttonRef.current &&
             !buttonRef.current.contains(event.target) &&
-            !event.target.closest(".send-prompt-btn")
+            !event.target.closest(".send-prompt-btn") &&
+            !event.target.closest(".delete-response") &&
+            !event.target.closest(".refresh-response")
         ) {
             onClose();
         }
     };
 
+
+    const handleDeleteResponse = () => {
+        if (isTextGeneratorMode) {
+            if (textPrompt) {
+                setResponseText("");
+                setTextPrompt("");
+            }
+        }
+        else {
+            if (imagePrompt) {
+                setResponseImage("");
+                setImagePrompt("");
+            }
+        }
+    }
+
+    const handleSendMessage = () => {
+        if (isTextGeneratorMode) {
+            //.. text send
+        }
+        else {
+            //image send...
+        }
+    }
+
     const handleSendPrompt = async () => {
         try {
+            setIsContent(false);
             if (isTextGeneratorMode) {
-                const data = await geminiText(prompt).unwrap();
-                setResponse(data.responseText);
-                console.log("Gelen veri:", data);
+                const data = await geminiText(textPrompt).unwrap();
+                const markdownToHtml = (markdown) => marked(data.responseText);
+                setResponseText(markdownToHtml);
             } else {
-                const data = await fluxImage(prompt).unwrap();
-                console.log("Gelen base64 image veri:", data);
-                setResponse(convertBase64ToImage(data.responseImage));
+                const data = await fluxImage(imagePrompt).unwrap();
+                setResponseImage(convertBase64ToImage(data.responseImage));
             }
+            setIsContent(true);
         } catch (error) {
             console.error("Hata:", error);
+            setIsContent(true);
         }
     };
 
@@ -166,69 +195,99 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                                     <TbFileText />
                                     <span>Metin</span>
                                 </button>
+
                                 <button
                                     onClick={() => setIsTextGeneratorMode(false)}
                                     className={`image-generate-btn ${!isTextGeneratorMode ? "active" : ""}`}>
                                     <BiImage />
                                     <span>Resim</span>
                                 </button>
+
                                 <button onClick={() => onClose()} className="close-btn"><IoClose /></button>
                             </div>
 
-                            {!isLoading ? <div className="result-box">
-                                {response ?
-                                    isTextGeneratorMode ?
-                                        <div style={{
-                                            maxHeight: maxHeight,
-                                            overflowY: "auto",
-                                        }} className="text-generator-result">
-                                            <p>{response}</p>
-                                        </div> :
-
-                                        <div className="image-generator-result">
-                                            <img src={response} alt="" />
+                            <div className="result-box">
+                                {isTextGeneratorMode
+                                    ?
+                                    responseText ?
+                                        <div style={{ maxHeight: maxHeight, overflowY: "auto" }}
+                                            dangerouslySetInnerHTML={{ __html: responseText }}
+                                            className="text-generator-result">
                                         </div>
+                                        :
+                                        <div className="banner">
+                                            <img src={TextGeneratorBanner} alt="text-generator-banner" />
+                                        </div>
+
                                     :
-                                    <div className="banner">
-                                        <img src={isTextGeneratorMode ? TextGeneratorBanner : ImageGeneratorBanner} alt="" />
-                                    </div>
+                                    responseImage ?
+                                        <div className="image-generator-result">
+                                            <img src={responseImage} alt="" />
+                                        </div>
+
+                                        :
+                                        <div className="banner">
+                                            <img src={ImageGeneratorBanner} alt="text-generator-banner" />
+                                        </div>
                                 }
                             </div>
-                                :
-                                <div>Resim Oluşturuluyor...</div>
-                            }
-
 
                             <div className="options-box">
-                                {response ?
-                                    <div className="result-options-box">
-                                        <div className="buttons">
-                                            <button><MdDelete /></button>
-                                            <button><MdRefresh /></button>
-                                            <button><AiFillLike /></button>
-                                            {isTextGeneratorMode
-                                                ? <button><MdContentCopy /></button>
-                                                : <button><LuDownload /></button>
-                                            }
+                                {isTextGeneratorMode ? (
+                                    responseText ? (
+                                        <div className="result-options-box">
+                                            <div className="buttons">
+                                                <button className="delete-response" onClick={handleDeleteResponse}><MdDelete /></button>
+                                                <button className="refresh-response" onClick={handleSendPrompt}><MdRefresh /></button>
+                                                <button className={`like-response ${isTextLiked ? "liked" : ""}`} onClick={() => SetIsTextLiked(!isTextLiked)}><AiFillLike /></button>
+                                                <button><MdContentCopy /></button>
+                                            </div>
+                                            <button onClick={handleSendMessage} className="send-message-btn">
+                                                Gönder
+                                            </button>
                                         </div>
-                                        <button className="send-message-btn">
-                                            Gönder
-                                        </button>
-                                    </div>
-                                    :
-                                    <div className="input-box">
-                                        <input
-                                            placeholder="Bir istemde bulunun"
-                                            type="text"
-                                            onKeyDown={handleKeyDown}
-                                            value={prompt}
-                                            onChange={(e) => setPrompt(e.target.value)}
-                                        />
-                                        <button className="send-prompt-btn" onClick={handleSendPrompt}>
-                                            <HiArrowSmUp />
-                                        </button>
-                                    </div>
-                                }
+                                    ) : (
+                                        <div className="input-box">
+                                            <input
+                                                placeholder="Bir istemde bulunun"
+                                                type="text"
+                                                onKeyDown={handleKeyDown}
+                                                value={textPrompt}
+                                                onChange={(e) => setTextPrompt(e.target.value)}
+                                            />
+                                            <button className="send-prompt-btn" onClick={handleSendPrompt}>
+                                                <HiArrowSmUp />
+                                            </button>
+                                        </div>
+                                    )
+                                ) : (
+                                    responseImage ? (
+                                        <div className="result-options-box">
+                                            <div className="buttons">
+                                                <button className="delete-response" onClick={handleDeleteResponse}><MdDelete /></button>
+                                                <button className="refresh-response" onClick={handleSendPrompt}><MdRefresh /></button>
+                                                <button className={`like-response ${isImageLiked ? "liked" : ""}`} onClick={() => SetIsImageLiked(!isImageLiked)}><AiFillLike /></button>
+                                                <button><LuDownload /></button>
+                                            </div>
+                                            <button onClick={handleSendMessage} className="send-message-btn">
+                                                Gönder
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="input-box">
+                                            <input
+                                                placeholder="Bir istemde bulunun"
+                                                type="text"
+                                                onKeyDown={handleKeyDown}
+                                                value={imagePrompt}
+                                                onChange={(e) => setImagePrompt(e.target.value)}
+                                            />
+                                            <button className="send-prompt-btn" onClick={handleSendPrompt}>
+                                                <HiArrowSmUp />
+                                            </button>
+                                        </div>
+                                    )
+                                )}
                             </div>
                         </motion.div>
                     )
@@ -238,7 +297,6 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
                         </div>
 
                     }
-
                 </motion.div>
             )
             }

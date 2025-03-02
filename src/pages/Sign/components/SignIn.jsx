@@ -50,12 +50,15 @@ function SignIn() {
   const handleSignInWithGoogle = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
+      console.log("obje=", result);
       const user = result.user;
       const token = await user.getIdToken();
+      console.log(token);
       await SignInGoogle(token).unwrap();
 
-    } catch {
+    } catch (error) {
       ErrorAlert("Giriş Başarısız");
+      console.log(error)
     }
   };
 
