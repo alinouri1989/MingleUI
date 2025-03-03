@@ -25,11 +25,14 @@ import { FaCheck } from "react-icons/fa6";
 import { useGeminiTextMutation, useFluxImageMutation } from "../../../store/Slices/mingleAi/MingleAiApi";
 
 import "./style.scss";
+import { encryptMessage } from "../../../helpers/messageCryptoHelper.js";
+import { useSignalR } from "../../../contexts/SignalRContext.jsx";
 
-export const AIModal = ({ isOpen, onClose, buttonRef }) => {
+export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
 
     const [geminiText, { }] = useGeminiTextMutation();
     const [fluxImage, { }] = useFluxImageMutation();
+    const { chatConnection } = useSignalR();
 
     const [isTextGeneratorMode, setIsTextGeneratorMode] = useState(true);
     const [textPrompt, setTextPrompt] = useState("");
@@ -151,14 +154,40 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
             });
     };
 
-    const handleSendMessage = () => {
+    const stripHtmlTags = (html) => {
+        const doc = new DOMParser().parseFromString(html, "text/html");
+        return doc.body.textContent || "";
+    };
+
+    const extractBase64 = (dataUrl) => dataUrl.split(",")[1] || "";
+
+    const getChatType = (pathname) => {
+        if (pathname.includes('sohbetler') || pathname.includes('arsivler')) return 'Individual';
+        if (pathname.includes('gruplar')) return 'Group';
+        return '';
+    };
+
+    const sendMessage = async (contentType, content) => {
+        try {
+            await chatConnection.invoke("SendMessage", getChatType(location.pathname), chatId, { ContentType: contentType, Content: content });
+            onClose();
+        } catch (error) {
+            ErrorAlert("Mesaj gönderilirken bir hata oluştu");
+            console.error(error);
+        }
+    };
+
+    const handleSendMessage = async () => {
         if (isTextGeneratorMode) {
-            //.. text send
+            if (!textPrompt) return;
+            const textContent = stripHtmlTags(responseText);
+            const encryptedMessage = encryptMessage(textContent, chatId);
+            await sendMessage(0, encryptedMessage);
+        } else {
+            if (!responseImage) return;
+            await sendMessage(1, extractBase64(responseImage));
         }
-        else {
-            //image send...
-        }
-    }
+    };
 
     const handleSendPrompt = async () => {
 
@@ -192,7 +221,6 @@ export const AIModal = ({ isOpen, onClose, buttonRef }) => {
 
     const handleDownloadImage = () => {
         const base64Image = responseImage;
-        console.log("girdi");
         downloadImageFromBase64(base64Image, 'MingleImage.png');
     };
 

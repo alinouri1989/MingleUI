@@ -185,6 +185,9 @@ function MessageInputBar({ chatId }) {
     };
 
     const handleSendMessage = async () => {
+        if (isAIModalOpen) {
+            return
+        }
         setMessage("");
         if (!message && !selectedFile) {
             console.error("Boş bir mesaj gönderilemez.");
@@ -273,7 +276,7 @@ function MessageInputBar({ chatId }) {
                 />
 
                 <div className="ai-emoji-send-buttons">
-                    <AIModal isOpen={isAIModalOpen} onClose={() => setIsAIModalOpen(false)} buttonRef={AIButtonRef} />
+                    <AIModal chatConnection={chatConnection} chatId={chatId} isOpen={isAIModalOpen} onClose={() => setIsAIModalOpen(false)} buttonRef={AIButtonRef} />
 
                     <button ref={AIButtonRef} onClick={() => setIsAIModalOpen(!isAIModalOpen)} className="ai-button">
                         <SiGooglegemini />
