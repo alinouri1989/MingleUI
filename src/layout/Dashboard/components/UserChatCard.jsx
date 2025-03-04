@@ -19,7 +19,7 @@ import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
 import { toggleActiveContent } from "../../../store/Slices/activeContent/activeContentSlice";
 
-function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageDate, lastMessageType, lastMessage, lastDate, unReadMessage, isArchive }) {
+function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageDate, lastMessageType, lastMessage, unReadMessage, isArchive }) {
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
