@@ -29,7 +29,11 @@ import useScreenWidth from '../../../hooks/useScreenWidth';
 
 import './style.scss';
 
-function MessageBubble({ chatId, userId, messageId, userColor, content, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
+function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, content, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
+
+    if (!content || isDeleted) {
+        return;
+    }
 
     const { chatConnection } = useSignalR();
 

@@ -494,6 +494,7 @@ export const SignalRProvider = ({ children }) => {
                     .filter(message => {
                         const isSent = message.status.sent && Object.keys(message.status.sent).includes(userId);
                         const isDelivered = message.status.delivered && Object.keys(message.status.delivered).includes(userId);
+
                         return !isSent && !isDelivered && !pendingRequests.has(message.id);
                     })
                     .map(async message => {

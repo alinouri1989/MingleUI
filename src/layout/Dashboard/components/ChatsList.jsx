@@ -36,7 +36,6 @@ function ChatsList() {
     const isSmallScreen = useScreenWidth(900);
 
     const location = useLocation();
-
     useEffect(() => {
         const updatedChatList = Object.entries(chatList)
             .map(([receiverId, user]) => {
@@ -52,43 +51,41 @@ function ChatsList() {
                     return null;
                 }
 
-                const allMessagesDeleted = chatData?.messages.every(
-                    (message) => message.deletedFor && Object.keys(message.deletedFor).length > 0 && message.deletedFor.hasOwnProperty(UserId)
+                const allMessagesDeleted = chatData.messages.every(
+                    (message) =>
+                        message.deletedFor &&
+                        Object.keys(message.deletedFor).length > 0 &&
+                        message.deletedFor.hasOwnProperty(UserId)
                 );
                 if (allMessagesDeleted) {
                     return null;
                 }
 
-                const lastMessage = chatData?.messages[chatData?.messages.length - 1].content;
+                let lastMessageObj = [...chatData.messages].reverse().find(
+                    (message) => !message.deletedFor?.hasOwnProperty(UserId)
+                );
 
-                const lastMessageForDeleted = chatData?.messages[chatData?.messages.length - 1];
-                const isDeleted = lastMessageForDeleted?.deletedFor?.hasOwnProperty(UserId) ?? false;
-                const lastMessageType = chatData?.messages[chatData?.messages.length - 1].type;
+                const lastMessage = lastMessageObj?.content;
 
-                const lastMessageDate =
-                    chatData.messages.length > 0
-                        ? lastMessageDateHelper(
-                            Object.values(chatData.messages[chatData.messages.length - 1].status.sent)[0]
-                        )
-                        : "";
-
-                const lastMessageDateForSort =
-                    chatData.messages.length > 0
-                        ? new Date(
-                            Object.values(chatData.messages[chatData.messages.length - 1].status.sent)[0]
-                        ).getTime()
-                        : "";
+                const lastMessageType = lastMessageObj?.type;
+                const lastMessageDate = lastMessageObj
+                    ? lastMessageDateHelper(Object.values(lastMessageObj.status.sent)[0])
+                    : "";
+                const lastMessageDateForSort = lastMessageObj
+                    ? new Date(Object.values(lastMessageObj.status.sent)[0]).getTime()
+                    : "";
 
                 const isArchive = chatData.archivedFor?.hasOwnProperty(UserId);
-
                 const isActiveChat = location.pathname.includes(chatId);
 
-                const unReadMessage = !isActiveChat && chatData.messages.filter((message) => {
-                    return (
-                        !Object.keys(message.status.sent).includes(UserId) &&
-                        !message.status.read?.[UserId]
-                    );
-                }).length;
+                const unReadMessage =
+                    !isActiveChat &&
+                    chatData.messages.filter(
+                        (message) =>
+                            !Object.keys(message.status.sent).includes(UserId) &&
+                            !message.status.read?.[UserId] &&
+                            !message.deletedFor?.hasOwnProperty(UserId)
+                    ).length;
 
                 return {
                     receiverId,
@@ -100,8 +97,8 @@ function ChatsList() {
                     lastMessageDate,
                     lastMessageDateForSort,
                     isArchive,
-                    isDeleted,
-                    unReadMessage
+                    isDeleted: lastMessageObj?.deletedFor?.hasOwnProperty(UserId) ?? false,
+                    unReadMessage,
                 };
             })
             .filter((chat) => chat !== null)
