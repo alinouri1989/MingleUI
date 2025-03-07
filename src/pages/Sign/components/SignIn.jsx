@@ -44,21 +44,17 @@ function SignIn() {
       SuccessAlert("Giriş Yapıldı");
     } catch (error) {
       ErrorAlert(error?.data?.message);
+      console.log(error?.data?.errorDetails);
     }
   };
 
   const handleSignInWithGoogle = async () => {
     try {
       const result = await signInWithPopup(auth, googleProvider);
-      console.log("obje=", result);
-      const user = result.user;
-      const token = await user.getIdToken();
-      console.log(token);
-      await SignInGoogle(token).unwrap();
-
+      await SignInGoogle(result.user).unwrap();
     } catch (error) {
       ErrorAlert("Giriş Başarısız");
-      console.log(error)
+      console.log(error?.data?.errorDetails);
     }
   };
 
@@ -70,8 +66,9 @@ function SignIn() {
       await SignInFacebook(token).unwrap();
       SuccessAlert("Giriş Yapıldı");
 
-    } catch {
+    } catch (error) {
       ErrorAlert("Giriş Başarısız");
+      console.log(error?.data?.errorDetails);
     }
   };
 

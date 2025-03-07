@@ -30,13 +30,13 @@ export const authApi = createApi({
     }),
 
     SignInGoogle: builder.mutation({
-      query: (token) => ({
+      query: (body) => ({
         url: "Auth/SignInGoogle",
         method: "POST",
+        body: body,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(token),
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         await handleAuthResponse(queryFulfilled, dispatch);
@@ -117,7 +117,6 @@ const handleAuthResponse = async (queryFulfilled, dispatch) => {
 
       const userProfile = await dispatch(authApi.endpoints.getUserProfile.initiate()).unwrap();
       const updatedUserProfile = setUserProfileTheme(userProfile);
-      console.log("updatedUserProfile", updatedUserProfile);
       dispatch(setUser({ user: updatedUserProfile, token: data.token }));
     }
   } catch { }

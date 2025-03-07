@@ -54,14 +54,16 @@ const callSlice = createSlice({
         },
         setInitialCalls: (state, action) => {
             const initialCalls = action.payload;
+            if (initialCalls.lenght > 0) {
+                Object.entries(initialCalls).forEach(([callId, callData]) => {
+                    const isCallIdExists = state.calls.some(call => call.id === callId);
 
-            Object.entries(initialCalls).forEach(([callId, callData]) => {
-                const isCallIdExists = state.calls.some(call => call.id === callId);
+                    if (!isCallIdExists) {
+                        state.calls.push({ id: callId, ...callData });
+                    }
+                });
+            }
 
-                if (!isCallIdExists) {
-                    state.calls.push({ id: callId, ...callData });
-                }
-            });
             state.isInitialCallsReady = true;
         },
         setCallResult: (state, action) => {

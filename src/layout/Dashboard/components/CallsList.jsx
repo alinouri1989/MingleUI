@@ -22,6 +22,10 @@ function CallsList() {
 
   const [searchTerm, setSearchTerm] = useState("");
 
+  if (!calls) {
+    return null;
+  }
+
   const processedCalls = calls.map(call => {
     const otherParticipantId = call.participants.find(participant => participant !== userId);
     const recipientInfo = callRecipientList.find(recipient => recipient.id === otherParticipantId);
