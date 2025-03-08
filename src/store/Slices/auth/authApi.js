@@ -44,10 +44,13 @@ export const authApi = createApi({
     }),
 
     SignInFacebook: builder.mutation({
-      query: (token) => ({
+      query: (body) => ({
         url: "Auth/SignInFacebook",
         method: "POST",
-        body: token,
+        body: body,
+        headers: {
+          "Content-Type": "application/json",
+        },
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
         await handleAuthResponse(queryFulfilled, dispatch);
@@ -112,7 +115,7 @@ const handleAuthResponse = async (queryFulfilled, dispatch) => {
     const { data } = await queryFulfilled;
     if (data?.token) {
       const now = new Date();
-      const expireDate = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000); // 2 gün
+      const expireDate = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
       document.cookie = `jwt=${data.token}; expires=${expireDate.toUTCString()}; path=/; secure; samesite=strict`;
 
       const userProfile = await dispatch(authApi.endpoints.getUserProfile.initiate()).unwrap();

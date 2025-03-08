@@ -61,14 +61,13 @@ function SignIn() {
   const handleSignInWithFacebook = async () => {
     try {
       const result = await signInWithPopup(auth, facebookProvider);
-      const user = result.user;
-      const token = await user.getIdToken();
-      await SignInFacebook(token).unwrap();
+      await SignInFacebook(result.user).unwrap();
       SuccessAlert("Giriş Yapıldı");
 
     } catch (error) {
+      console.log(error);
       ErrorAlert("Giriş Başarısız");
-      console.log(error?.data?.errorDetails);
+
     }
   };
 

@@ -24,6 +24,7 @@ function NewChatModal() {
 
   const navigate = useNavigate();
   const { closeModal } = useModal();
+  const [isCreater, setIsCreater] = useState(false);
   const { notificationConnection, chatConnection, connectionStatus } = useSignalR();
 
   const [inputValue, setInputValue] = useState("");
@@ -75,6 +76,8 @@ function NewChatModal() {
   }, [debouncedSearchQuery, notificationConnection]);
 
   useEffect(() => {
+    if (!isCreater) return;
+
     const handleReceiveCreateChat = (response) => {
       const individualData = response?.Individual;
       if (individualData) {
@@ -103,15 +106,14 @@ function NewChatModal() {
         chatConnection.off("ReceiveCreateChat", handleReceiveCreateChat);
       }
     };
-  }, [chatConnection]);
-
+  }, [chatConnection, isCreater]);
   const handleGoToChat = async (userId) => {
     if (connectionStatus !== "connected") {
       ErrorAlert("Bir hata meydana geldi");
       return;
     }
-
     try {
+      setIsCreater(true);
       await chatConnection.invoke("CreateChat", "Individual", userId);
     } catch {
       ErrorAlert("Bir hata meydana geldi");

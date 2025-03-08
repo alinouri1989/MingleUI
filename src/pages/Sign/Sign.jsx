@@ -6,7 +6,6 @@ import SignIn from "./components/SignIn";
 import SignUp from "./components/SignUp";
 import ResetPassword from './components/ResetPassword';
 
-
 import { motion } from "framer-motion";
 
 import "./style.scss";
