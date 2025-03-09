@@ -81,6 +81,8 @@ function GroupMessageBar({ groupId }) {
                                 const formattedTimestamp = convertToLocalTime(
                                     msg.status.sent[userId]
                                 );
+                                const fileName = msg.fileName;
+                                const fileSize = msg.fileSize;
                                 const userColor = assignColorToUser(userId);
 
                                 return (
@@ -98,6 +100,8 @@ function GroupMessageBar({ groupId }) {
                                         senderProfile={senderProfile}
                                         userColor={userColor}
                                         isDeleted={isDeleted}
+                                        fileName={fileName}
+                                        fileSize={fileSize}
                                     />
                                 );
                             })}

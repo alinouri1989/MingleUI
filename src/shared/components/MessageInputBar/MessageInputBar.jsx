@@ -79,16 +79,21 @@ function MessageInputBar({ chatId }) {
 
     useEffect(() => {
         const handleKeyDown = (event) => {
+            if (isAIModalOpen) {
+                return;
+            }
+
             if (event.key === "Enter" && !event.shiftKey) {
                 event.preventDefault();
-                handleSendMessage();
+                handleSendTextMessage();
             }
         };
+
         document.addEventListener("keydown", handleKeyDown);
         return () => {
             document.removeEventListener("keydown", handleKeyDown);
         };
-    }, [message, selectedFile]);
+    }, [message, selectedFile, isAIModalOpen]);
 
     const handleEmojiClick = (emojiData) => {
         setMessage((prev) => prev + emojiData.emoji);
@@ -187,7 +192,7 @@ function MessageInputBar({ chatId }) {
 
     const handleSendTextMessage = async () => {
         if (isAIModalOpen) {
-            return
+            return;
         }
         setMessage("");
         if (!message && !selectedFile) {
@@ -270,6 +275,7 @@ function MessageInputBar({ chatId }) {
                     value={message}
                     onChange={handleInputChange}
                 />
+
 
                 <div className="ai-emoji-send-buttons">
                     <AIModal chatConnection={chatConnection} chatId={chatId} isOpen={isAIModalOpen} onClose={() => setIsAIModalOpen(false)} buttonRef={AIButtonRef} />

@@ -21,22 +21,30 @@ import { AiFillLike } from "react-icons/ai";
 import { MdContentCopy } from "react-icons/md";
 import { LuDownload } from "react-icons/lu";
 import { FaCheck } from "react-icons/fa6";
+import { TbSettingsBolt } from "react-icons/tb";
 
-import { useGeminiTextMutation, useFluxImageMutation } from "../../../store/Slices/mingleAi/MingleAiApi";
+
 
 import "./style.scss";
 import { encryptMessage } from "../../../helpers/messageCryptoHelper.js";
 import { useSignalR } from "../../../contexts/SignalRContext.jsx";
+import { useGenerateImageMutation, useGenerateTextMutation } from "../../../store/Slices/mingleAi/MingleAiApi.js";
+import { opacityAndTransformEffect } from "../../animations/animations.js";
 
 export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
 
-    const [geminiText, { }] = useGeminiTextMutation();
-    const [fluxImage, { }] = useFluxImageMutation();
+    const [generateText, { }] = useGenerateTextMutation();
+    const [generateImage, { }] = useGenerateImageMutation();
     const { chatConnection } = useSignalR();
 
     const [isTextGeneratorMode, setIsTextGeneratorMode] = useState(true);
+
     const [textPrompt, setTextPrompt] = useState("");
     const [imagePrompt, setImagePrompt] = useState("");
+
+    const [textAiModel, setTextAiModel] = useState("Gemini-2.0-Flash");
+    const [imageAiModel, setImageAiModel] = useState("Artples");
+    const [showImageModels, setShowImageModels] = useState(false);
 
     const [responseText, setResponseText] = useState("");
     const [responseImage, setResponseImage] = useState("");
@@ -51,7 +59,9 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
     const [position, setPosition] = useState({ top: 0, left: 0 });
     const [isContent, setIsContent] = useState(true);
     const [maxHeight, setMaxHeight] = useState("300px");
+
     const modalRef = useRef(null);
+    const modelSelectionBoxRef = useRef(null);
 
     const updatePosition = () => {
         if (buttonRef.current && modalRef.current) {
@@ -101,6 +111,21 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
         };
     }, []);
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (!event.target.closest(".change-ai-model-btn") && modelSelectionBoxRef.current &&
+                !modelSelectionBoxRef.current.contains(event.target)) {
+                setShowImageModels(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+
     const handleOutsideClick = (event) => {
         if (
             modalRef.current &&
@@ -111,7 +136,9 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
             !event.target.closest(".delete-response") &&
             !event.target.closest(".refresh-response") &&
             !event.target.closest(".copy-text") &&
-            !event.target.closest(".copy-icons")
+            !event.target.closest(".copy-icons") &&
+            !event.target.closest(".model-selection")
+
         ) {
             onClose();
         }
@@ -191,8 +218,18 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
 
     const handleSendPrompt = async () => {
 
-        if (isTextGeneratorMode && !textPrompt) { return; }
-        if (!isTextGeneratorMode && !imagePrompt) { return; }
+        if (!isTextGeneratorMode && !imagePrompt) {
+            console.error("Görsel için prompt boş olamaz.");
+            return;
+        }
+        if (!textAiModel && isTextGeneratorMode) {
+            console.error("AI modeli seçilmelidir.");
+            return;
+        }
+        if (!imageAiModel && !isTextGeneratorMode) {
+            console.error("Görsel AI modeli seçilmelidir.");
+            return;
+        }
 
         setIsTextLiked(false);
         setIsImageLiked(false);
@@ -200,31 +237,50 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
         setTextError(false);
         setImageError(false);
 
-        if (isTextGeneratorMode) {
-            try {
-                const data = await geminiText(textPrompt).unwrap();
+        const handleSuccess = (data) => {
+            setIsContent(true);
+            if (isTextGeneratorMode) {
                 const markdownToHtml = (markdown) => marked(data.responseText);
                 setResponseText(markdownToHtml);
-                setIsContent(true);
-            } catch (error) {
-                setTextError(true);
-                setIsContent(true);
-            }
-        } else {
-            try {
-                const data = await fluxImage(imagePrompt).unwrap();
+            } else {
                 setResponseImage(convertBase64ToImage(data.responseImage));
-                setIsContent(true);
-            } catch (error) {
-                setImageError(true);
-                setIsContent(true);
             }
+        };
+
+        const handleError = (error) => {
+            if (isTextGeneratorMode) {
+                setTextError(true);
+            } else {
+                setImageError(true);
+            }
+            setIsContent(true);
+            console.error(error);
+        };
+
+        try {
+            let data;
+            if (isTextGeneratorMode) {
+                data = await generateText({ prompt: textPrompt, aiModel: textAiModel }).unwrap();
+            } else {
+                data = await generateImage({ prompt: imagePrompt, aiModel: imageAiModel }).unwrap();
+            }
+
+            handleSuccess(data);
+        } catch (error) {
+            handleError(error);
+        } finally {
+            setIsContent(true);
         }
     };
 
     const handleDownloadImage = () => {
         const base64Image = responseImage;
         downloadImageFromBase64(base64Image, 'MingleImage.png');
+    };
+
+    const handleModelSelect = (model) => {
+        setImageAiModel(model);
+        setShowImageModels(false);
     };
 
     const handleKeyDown = (event) => {
@@ -356,18 +412,55 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
                                             </button>
                                         </div>
                                     ) : (
-                                        <div className="input-box">
-                                            <input
-                                                placeholder="Bir istemde bulunun"
-                                                type="text"
-                                                onKeyDown={handleKeyDown}
-                                                value={imagePrompt}
-                                                onChange={(e) => setImagePrompt(e.target.value)}
-                                            />
-                                            <button className="send-prompt-btn" onClick={handleSendPrompt}>
-                                                <HiArrowSmUp />
-                                            </button>
-                                        </div>
+                                        <>
+                                            <div className="model-selection-box">
+                                                <button onClick={() => setShowImageModels(!showImageModels)} className="change-ai-model-btn">
+                                                    <TbSettingsBolt />
+                                                </button>
+
+                                                {showImageModels && (
+                                                    <motion.div
+                                                        ref={modelSelectionBoxRef}
+                                                        className="model-selection"
+                                                        variants={opacityAndTransformEffect()}
+                                                        initial="initial"
+                                                        animate="animate"
+                                                        exit="exit"
+                                                    >
+                                                        <button
+                                                            className={`model-option ${imageAiModel === 'Flux' ? 'selected-model' : ''}`}
+                                                            onClick={() => handleModelSelect('Flux')}
+                                                        >
+                                                            Flux
+                                                        </button>
+                                                        <button
+                                                            className={`model-option ${imageAiModel === 'Artples' ? 'selected-model' : ''}`}
+                                                            onClick={() => handleModelSelect('Artples')}
+                                                        >
+                                                            Artples
+                                                        </button>
+                                                        <button
+                                                            className={`model-option ${imageAiModel === 'Compvis' ? 'selected-model' : ''}`}
+                                                            onClick={() => handleModelSelect('Compvis')}
+                                                        >
+                                                            Compvis
+                                                        </button>
+                                                    </motion.div>
+                                                )}
+                                            </div>
+                                            <div className="input-box">
+                                                <input
+                                                    placeholder="Bir istemde bulunun"
+                                                    type="text"
+                                                    onKeyDown={handleKeyDown}
+                                                    value={imagePrompt}
+                                                    onChange={(e) => setImagePrompt(e.target.value)}
+                                                />
+                                                <button className="send-prompt-btn" onClick={handleSendPrompt}>
+                                                    <HiArrowSmUp />
+                                                </button>
+                                            </div>
+                                        </>
                                     )
                                 )}
                             </div>

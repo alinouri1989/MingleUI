@@ -13,24 +13,30 @@ export const MingleAiApi = createApi({
         },
     }),
     endpoints: (builder) => ({
-        geminiText: builder.mutation({
-            query: (prompt) => ({
-                url: 'GenerativeAi/GeminiText',
+        generateText: builder.mutation({
+            query: ({ prompt, aiModel }) => ({
+                url: 'GenerativeAi/GenerateText',
                 method: 'POST',
-                body: { prompt: prompt },
+                body: {
+                    prompt: prompt,
+                    aiModel: aiModel
+                },
             }),
         }),
-        fluxImage: builder.mutation({
-            query: (prompt) => ({
-                url: 'GenerativeAi/FluxImage',
+        generateImage: builder.mutation({
+            query: ({ prompt, aiModel }) => ({
+                url: 'GenerativeAi/GenerateImage',
                 method: 'POST',
-                body: { prompt: prompt },
+                body: {
+                    prompt: prompt,
+                    aiModel: aiModel
+                },
             }),
         }),
     }),
 });
 
 export const {
-    useGeminiTextMutation,
-    useFluxImageMutation
+    useGenerateTextMutation,
+    useGenerateImageMutation
 } = MingleAiApi;

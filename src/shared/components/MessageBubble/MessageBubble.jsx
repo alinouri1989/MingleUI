@@ -22,6 +22,7 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 
 import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
+import { downloadFile } from '../../../helpers/downloadFile';
 import { AudioMessage } from './components/AudioMessage';
 
 import MessageInfo from '../MessageInfo/MessageInfo';
@@ -146,7 +147,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
 
     const TextMessage = ({ content }) => <p>{content}</p>;
 
-    const ImageMessage = ({ content, setIsShowImage }) => (
+    const ImageMessage = ({ content }) => (
         <div onClick={() => setIsShowImage(true)}>
             <img src={content} alt="" />
         </div>
@@ -164,61 +165,6 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
         </div>
     );
 
-    // Helper'e al
-    const downloadFile = () => {
-        const link = document.createElement('a');
-
-        // Dosya adı ve uzantısını kontrol et
-        let finalFileName = fileName;
-        const extension = fileName.split('.').pop().toLowerCase();
-
-        // MIME türünü dosya uzantısına göre belirleyin
-        let mimeType = 'application/octet-stream';  // Varsayılan MIME tipi
-        switch (extension) {
-            case 'pdf':
-                mimeType = 'application/pdf';
-                break;
-            case 'docx':
-                mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-                break;
-            case 'xlsx':
-                mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-                break;
-            case 'txt':
-                mimeType = 'text/plain';
-                break;
-            case 'zip':
-                mimeType = 'application/zip';
-                break;
-            case 'rar':
-                mimeType = 'application/x-rar-compressed';
-                break;
-            default:
-                console.log('Bilinmeyen dosya türü:', extension);
-                break;
-        }
-
-        // Eğer uzantı yoksa .pdf ekleyelim
-        if (!fileName.includes('.')) {
-            finalFileName = `${fileName}.pdf`;
-        }
-
-        // URL'den dosyayı fetch ile alalım
-        fetch(content) // content burada URL
-            .then(response => response.blob()) // Blob'a dönüştür
-            .then(blob => {
-                const blobURL = URL.createObjectURL(blob);
-                link.href = blobURL;
-                link.download = finalFileName; // Dosya adı ve uzantısını ayarla
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(blobURL); // URL'yi temizle
-            })
-            .catch(err => console.error('Dosya indirilemedi:', err));
-    };
-
-
     const FileMessage = () => {
         return (
             <div className="file-message-container">
@@ -233,7 +179,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
                         </p>
                     </div>
                 </div>
-                <button className='download-file-button' onClick={() => downloadFile()}>
+                <button className='download-file-button' onClick={() => downloadFile(fileName, content)}>
                     <FiDownload />
                 </button>
             </div>
@@ -254,9 +200,9 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
             case 0:
                 return <TextMessage content={content} />;
             case 1:
-                return <ImageMessage content={content} setIsShowImage={setIsShowImage} />;
+                return <ImageMessage content={content} />;
             case 2:
-                return <VideoMessage content={content} setIsShowImage={setIsShowImage} />;
+                return <VideoMessage content={content} />;
             case 3:
                 return <AudioMessage content={content} />;
             case 4:
