@@ -29,8 +29,9 @@ import useScreenWidth from '../../../hooks/useScreenWidth';
 
 import './style.scss';
 
-function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, content, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
+function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, content, fileName, fileSize, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
 
+    console.log("file name?", fileName)
     if (!content || isDeleted) {
         return;
     }
@@ -164,55 +165,32 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
         </div>
     );
 
-    const FileMessage = ({ content }) => {
-        const [fileInfo, setFileInfo] = useState({
-            fileName: '',
-            fileExtension: '',
-            fileSize: '',
-            contentType: '',
-        });
+    const downloadFile = () => {
+        const link = document.createElement('a');
+        link.href = content;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
-        useEffect(() => {
-            const fetchFileInfo = async (url) => {
-                try {
-                    const response = await fetch(url, { method: 'HEAD' });
-
-                    if (response.ok) {
-                        const contentType = response.headers.get('Content-Type');
-                        const fileSize = response.headers.get('Content-Length');
-                        const fileName = url.split('/').pop();
-                        const fileExtension = fileName.split('.').pop();
-
-                        setFileInfo({
-                            fileName,
-                            fileExtension,
-                            fileSize: fileSize ? `${(fileSize / 1024).toFixed(2)} KB` : 'N/A',
-                            contentType: contentType || 'N/A',
-                        });
-                    }
-                } catch {
-                    ErrorAlert("Bir hata meydana geldi");
-                }
-            };
-
-            if (content) {
-                fetchFileInfo(content);
-            }
-        }, [content]);
-
-
+    const FileMessage = () => {
         return (
             <div className="file-message-container">
                 <div className='file-info-box'>
                     <FaFileAlt />
                     <div className='file-info'>
-                        <span>Dosya</span>
-                        <p>{fileInfo.fileSize}</p>
+                        <span>{fileName || "Dosya"}</span>
+                        <p>
+                            {fileSize < 1024 * 1024
+                                ? `${(fileSize / 1024).toFixed(2)} KB`
+                                : `${(fileSize / (1024 * 1024)).toFixed(2)} MB`}
+                        </p>
                     </div>
                 </div>
-                <button className='download-file-button'><FiDownload /></button>
-                {/* <p><strong>Dosya Adı:</strong> {fileInfo.fileName}</p>
-                <p><strong>Uzantı:</strong> {fileInfo.fileExtension}</p> */}
+                <button className='download-file-button' onClick={downloadFile()}>
+                    <FiDownload />
+                </button>
             </div>
         );
     };
@@ -226,7 +204,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
         </div>
     );
 
-    const renderMessageContent = (messageType, content, setIsShowImage) => {
+    const renderMessageContent = (messageType, content, fileName, setIsShowImage) => {
         switch (messageType) {
             case 0:
                 return <TextMessage content={content} />;
@@ -237,7 +215,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
             case 3:
                 return <AudioMessage content={content} />;
             case 4:
-                return <FileMessage content={content} />;
+                return <FileMessage />;
             default:
                 return <p>Unsupported message type</p>;
         }
@@ -287,7 +265,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
                         />
                     )}
 
-                    {renderMessageContent(messageType, content, setIsShowImage)}
+                    {renderMessageContent(messageType, content, setIsShowImage, fileName)}
                 </div>
 
                 <div className='message-hour-and-option-box'>

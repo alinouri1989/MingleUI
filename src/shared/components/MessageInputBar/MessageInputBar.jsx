@@ -98,6 +98,15 @@ function MessageInputBar({ chatId }) {
         setShowEmojiPicker((prev) => !prev);
     };
 
+    const getActiveChatType = () => {
+        if (location.pathname.includes('sohbetler') || location.pathname.includes('arsivler')) {
+            return 'Individual';
+        } else if (location.pathname.includes('gruplar')) {
+            return 'Group';
+        }
+        return '';
+    };
+
     const handleInputChange = (e) => {
         setMessage(e.target.value);
     };
@@ -118,14 +127,9 @@ function MessageInputBar({ chatId }) {
         showModal(<SoundRecordModal closeModal={closeModal} chatId={chatId} />);
     }
 
-    const handleVideoFileChange = async (e) => {
+    const handleSendVideoFile = async (e) => {
         const file = e.target.files[0];
-        let chatType = '';
-        if (location.pathname.includes('sohbetler') || location.pathname.includes('arsivler')) {
-            chatType = 'Individual';
-        } else if (location.pathname.includes('gruplar')) {
-            chatType = 'Group';
-        }
+        const chatType = getActiveChatType();
 
         if (file) {
             try {
@@ -145,7 +149,7 @@ function MessageInputBar({ chatId }) {
         }
     };
 
-    const handleImageFileChange = (e) => {
+    const handleSendImageFile = (e) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             setSelectedFile(file);
@@ -154,15 +158,10 @@ function MessageInputBar({ chatId }) {
         }
     };
 
-    const handleFileChange = async (e) => {
+    const handleSendFile = async (e) => {
         const file = e.target.files[0];
-        let chatType = '';
+        const chatType = getActiveChatType();
 
-        if (location.pathname.includes('sohbetler') || location.pathname.includes('arsivler')) {
-            chatType = 'Individual';
-        } else if (location.pathname.includes('gruplar')) {
-            chatType = 'Group';
-        }
 
         if (file) {
             try {
@@ -170,6 +169,7 @@ function MessageInputBar({ chatId }) {
                 const base64String = await convertFileToBase64(file);
                 await chatConnection.invoke("SendMessage", chatType, chatId, {
                     ContentType: 4,
+                    FileName: file.name,
                     content: base64String,
                 });
 
@@ -184,7 +184,7 @@ function MessageInputBar({ chatId }) {
         }
     };
 
-    const handleSendMessage = async () => {
+    const handleSendTextMessage = async () => {
         if (isAIModalOpen) {
             return
         }
@@ -206,13 +206,8 @@ function MessageInputBar({ chatId }) {
             Content: message || null,
         };
 
-        let chatType = '';
+        const chatType = getActiveChatType();
 
-        if (location.pathname.includes('sohbetler') || location.pathname.includes('arsivler')) {
-            chatType = 'Individual';
-        } else if (location.pathname.includes('gruplar')) {
-            chatType = 'Group';
-        }
         try {
             const encryptedMessage = encryptMessage(message, chatId);
             await chatConnection.invoke("SendMessage", chatType, chatId, {
@@ -248,7 +243,7 @@ function MessageInputBar({ chatId }) {
                         accept="image/png"
                         ref={fileImageInputRef}
                         style={{ display: "none" }}
-                        onChange={handleImageFileChange}
+                        onChange={handleSendImageFile}
                     />
 
                     <input
@@ -256,14 +251,14 @@ function MessageInputBar({ chatId }) {
                         accept="video/*"
                         ref={fileVideoInputRef}
                         style={{ display: "none" }}
-                        onChange={handleVideoFileChange}
+                        onChange={handleSendVideoFile}
                     />
                     <input
                         type="file"
                         accept=".doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.zip,.rar,.7z,.txt,.mp3,.wav,.ogg"
                         ref={fileInputRef}
                         style={{ display: "none" }}
-                        onChange={handleFileChange}
+                        onChange={handleSendFile}
                     />
 
                 </div>
@@ -300,7 +295,7 @@ function MessageInputBar({ chatId }) {
                             />
                         </div>
                     )}
-                    <button onClick={handleSendMessage} className="send-message-button">
+                    <button onClick={handleSendTextMessage} className="send-message-button">
                         <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 27 27" fill="none">
                             <path
                                 fillRule="evenodd"

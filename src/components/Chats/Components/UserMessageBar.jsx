@@ -64,6 +64,8 @@ function UserMessageBar({ ChatId }) {
                 const isSender = senderId === userId;
                 const isDeleted = msg.deletedFor?.hasOwnProperty(userId) ? true : false;
                 const formattedTimestamp = convertToLocalTime(msg.status.sent[senderId]);
+                const fileName = msg.fileName;
+                const fileSize = msg.fileSize;
 
                 return (
                   <MessageBubble
@@ -77,6 +79,8 @@ function UserMessageBar({ ChatId }) {
                     messageType={msg.type}
                     userId={userId}
                     isDeleted={isDeleted}
+                    fileName={fileName}
+                    fileSize={fileSize}
                   />
                 );
               })}

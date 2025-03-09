@@ -182,8 +182,12 @@
                         span {
                             font-size: 15px;
                             color: rgb(8, 162, 131);
-                            ;
+                            max-width: 100px;
+                            white-space: nowrap;
+                            overflow: hidden;
+                            text-overflow: ellipsis;
                         }
+
 
                         p {
                             font-size: 12px;

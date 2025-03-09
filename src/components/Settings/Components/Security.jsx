@@ -4,13 +4,13 @@ import DifferentAuth from './DifferentAuth';
 
 function Security() {
     const { user } = useSelector(state => state.auth);
-
+    const providerId = user?.providerId;
     return (
-        <div className='change-password-box'>
-            {user?.providerId === "email" ? (
+        <div className='change-password'>
+            {providerId === "email" ? (
                 <ChangePassword />
             ) : (
-                <DifferentAuth providerId={user?.providerId} />
+                <DifferentAuth providerId={providerId} />
             )}
         </div>
     );

@@ -522,53 +522,86 @@
 
             }
 
-            .change-password-box {
-                width: 100%;
-
-                @include screen(768px) {
-                    width: 80%;
-                }
-
-                @include screen(600px) {
+            .change-password {
+                .change-password-box {
                     width: 100%;
-                    padding-right: 10px;
+
+                    @include screen(768px) {
+                        width: 80%;
+                    }
+
+                    @include screen(600px) {
+                        width: 100%;
+                        padding-right: 10px;
+                    }
+
+                    .inputs-box {
+                        margin-top: 20px;
+                        @include flex-center(column, flex-start, center);
+                        gap: 15px;
+
+                        .input-box {
+                            width: 100%;
+
+                            p {
+                                color: var(--text-dark-gray);
+                                margin-bottom: 7px;
+                                font-size: 15px;
+                            }
+
+                            input {
+                                background-color: var(--smooth-light-blue);
+                                border-radius: 7px;
+                                width: 100%;
+                                padding: 6px 12px;
+                                font-size: 15px;
+                                color: var(--blue);
+                            }
+                        }
+                    }
+
+                    .option-buttons {
+                        margin-top: 35px;
+                        @include flex-center(row, center, center);
+                        gap: 17px;
+
+                        button {
+                            width: 120px;
+                        }
+                    }
                 }
 
-                .inputs-box {
-                    margin-top: 20px;
-                    @include flex-center(column, flex-start, center);
-                    gap: 15px;
+                .different-auth-box {
+                    @include flex-center(column, center, center);
+                    gap: 5px;
+                    border: 3px solid var(--smooth-blue);
+                    border-radius: 10px;
+                    padding: 10px 12px;
+                    background-color: var(--smooth-light-blue);
 
-                    .input-box {
-                        width: 100%;
+                    svg {
+                        font-size: 45px;
 
-                        p {
-                            color: var(--text-dark-gray);
-                            margin-bottom: 7px;
-                            font-size: 15px;
-                        }
-
-                        input {
-                            background-color: var(--smooth-light-blue);
-                            border-radius: 7px;
-                            width: 100%;
-                            padding: 6px 12px;
-                            font-size: 15px;
+                        &.fb {
                             color: var(--blue);
                         }
                     }
-                }
 
-                .option-buttons {
-                    margin-top: 35px;
-                    @include flex-center(row, center, center);
-                    gap: 17px;
+                    p {
+                        margin-top: 5px;
+                        color: var(--blue);
+                    }
 
-                    button {
-                        width: 120px;
+                    span {
+                        width: 100%;
+                        font-size: 12px;
+                        text-align: center;
+                        color: var(--text-dark-gray);
                     }
                 }
             }
+
+
 
             .option-buttons {
                 width: 100%;

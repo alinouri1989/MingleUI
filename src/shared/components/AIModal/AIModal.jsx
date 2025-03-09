@@ -191,6 +191,9 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
 
     const handleSendPrompt = async () => {
 
+        if (isTextGeneratorMode && !textPrompt) { return; }
+        if (!isTextGeneratorMode && !imagePrompt) { return; }
+
         setIsTextLiked(false);
         setIsImageLiked(false);
         setIsContent(false);
