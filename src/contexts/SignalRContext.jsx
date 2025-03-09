@@ -170,7 +170,6 @@ export const SignalRProvider = ({ children }) => {
                 //! ===========  CHAT CONNECTION ===========
 
                 chatConnection.on("ReceiveInitialChats", (data) => {
-                    console.log("gelen chat var mı", data);
                     store.dispatch(initializeChats(data));
                 });
 
@@ -268,7 +267,7 @@ export const SignalRProvider = ({ children }) => {
                             console.error("Group ID alınamadı:", data);
                         }
                     } else {
-                        console.error("Bilinmeyen chat türü:", data);
+                        console.log("Bilinmeyen chat türü:", data);
                     }
                 });
 
@@ -339,7 +338,6 @@ export const SignalRProvider = ({ children }) => {
                 //! ===========  CALL CONNECTION ===========
 
                 callConnection.on('ReceiveInitialCalls', async (data) => {
-                    console.log("gelen call var mı", data);
                     dispatch(setInitialCalls(data));
                 });
                 callConnection.on('ReceiveInitialCallRecipientProfiles', async (data) => {

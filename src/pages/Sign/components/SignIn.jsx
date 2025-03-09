@@ -44,7 +44,6 @@ function SignIn() {
       SuccessAlert("Giriş Yapıldı");
     } catch (error) {
       ErrorAlert(error?.data?.message);
-      console.log(error?.data?.errorDetails);
     }
   };
 
@@ -54,7 +53,6 @@ function SignIn() {
       await SignInGoogle(result.user).unwrap();
     } catch (error) {
       ErrorAlert("Giriş Başarısız");
-      console.log(error?.data?.errorDetails);
     }
   };
 
@@ -65,7 +63,6 @@ function SignIn() {
       SuccessAlert("Giriş Yapıldı");
 
     } catch (error) {
-      console.log(error);
       ErrorAlert("Giriş Başarısız");
 
     }

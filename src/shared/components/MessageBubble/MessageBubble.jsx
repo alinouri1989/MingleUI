@@ -31,7 +31,6 @@ import './style.scss';
 
 function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, content, fileName, fileSize, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
 
-    console.log("file name?", fileName)
     if (!content || isDeleted) {
         return;
     }
@@ -165,14 +164,60 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
         </div>
     );
 
+    // Helper'e al
     const downloadFile = () => {
         const link = document.createElement('a');
-        link.href = content;
-        link.download = fileName;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+
+        // Dosya adı ve uzantısını kontrol et
+        let finalFileName = fileName;
+        const extension = fileName.split('.').pop().toLowerCase();
+
+        // MIME türünü dosya uzantısına göre belirleyin
+        let mimeType = 'application/octet-stream';  // Varsayılan MIME tipi
+        switch (extension) {
+            case 'pdf':
+                mimeType = 'application/pdf';
+                break;
+            case 'docx':
+                mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+                break;
+            case 'xlsx':
+                mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                break;
+            case 'txt':
+                mimeType = 'text/plain';
+                break;
+            case 'zip':
+                mimeType = 'application/zip';
+                break;
+            case 'rar':
+                mimeType = 'application/x-rar-compressed';
+                break;
+            default:
+                console.log('Bilinmeyen dosya türü:', extension);
+                break;
+        }
+
+        // Eğer uzantı yoksa .pdf ekleyelim
+        if (!fileName.includes('.')) {
+            finalFileName = `${fileName}.pdf`;
+        }
+
+        // URL'den dosyayı fetch ile alalım
+        fetch(content) // content burada URL
+            .then(response => response.blob()) // Blob'a dönüştür
+            .then(blob => {
+                const blobURL = URL.createObjectURL(blob);
+                link.href = blobURL;
+                link.download = finalFileName; // Dosya adı ve uzantısını ayarla
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(blobURL); // URL'yi temizle
+            })
+            .catch(err => console.error('Dosya indirilemedi:', err));
     };
+
 
     const FileMessage = () => {
         return (
@@ -188,7 +233,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
                         </p>
                     </div>
                 </div>
-                <button className='download-file-button' onClick={downloadFile()}>
+                <button className='download-file-button' onClick={() => downloadFile()}>
                     <FiDownload />
                 </button>
             </div>

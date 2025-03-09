@@ -18,7 +18,7 @@ import SoundRecordModal from "../SoundRecordModal/SoundRecordModal";
 import { AIModal } from "../AIModal/AIModal";
 
 import { encryptMessage } from "../../../helpers/messageCryptoHelper";
-import { convertFileToBase64 } from "../../../store/helpers/convertFileToBase64";
+import { convertFileToBase64WithAsArrayBuffer } from "../../../store/helpers/convertFileToBase64";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
 
 import PreLoader from "../PreLoader/PreLoader";
@@ -166,7 +166,7 @@ function MessageInputBar({ chatId }) {
         if (file) {
             try {
                 setIsLoading(true);
-                const base64String = await convertFileToBase64(file);
+                const base64String = await convertFileToBase64WithAsArrayBuffer(file);
                 await chatConnection.invoke("SendMessage", chatType, chatId, {
                     ContentType: 4,
                     FileName: file.name,
@@ -175,7 +175,8 @@ function MessageInputBar({ chatId }) {
 
                 setIsLoading(false);
                 SuccessAlert("Dosya gönderildi");
-            } catch {
+            } catch (err) {
+                console.log(err);
                 setIsLoading(false);
                 ErrorAlert("Dosya gönderilemedi");
             }
