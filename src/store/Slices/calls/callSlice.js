@@ -11,7 +11,8 @@ const initialState = {
     isCallStarted: false,
     callStartedDate: null,
     callRecipientList: [],
-    isInitialCallsReady: false
+    isInitialCallsReady: false,
+    isCallModalOpen: false,
 };
 
 const callSlice = createSlice({
@@ -42,6 +43,9 @@ const callSlice = createSlice({
         setCallStartedDate: (state, action) => {
             state.callStartedDate = action.payload;
         },
+        setCallModalOpen: (state, action) => {
+            state.isCallModalOpen = action.payload;
+        },
         resetCallState: (state) => {
             state.callId = null;
             state.callType = null;
@@ -51,21 +55,25 @@ const callSlice = createSlice({
             state.isCallStarted = false;
             state.isCallStarting = false;
             state.callStartedDate = null;
+            state.isCallModalOpen = false;
         },
         setInitialCalls: (state, action) => {
-            const initialCalls = action.payload;
-            if (initialCalls.lenght > 0) {
-                Object.entries(initialCalls).forEach(([callId, callData]) => {
-                    const isCallIdExists = state.calls.some(call => call.id === callId);
-
-                    if (!isCallIdExists) {
-                        state.calls.push({ id: callId, ...callData });
-                    }
-                });
+            const initialCallsData = action.payload?.Call;
+            if (initialCallsData && Object.keys(initialCallsData).length > 0) {
+                const newCalls = Object.entries(initialCallsData).map(([callId, callData]) => ({
+                    id: callId,
+                    ...callData
+                }));
+                state.calls = [
+                    ...state.calls,
+                    ...newCalls.filter(newCall =>
+                        !state.calls.some(existingCall => existingCall.id === newCall.id)
+                    )
+                ];
             }
-
             state.isInitialCallsReady = true;
         },
+
         setCallResult: (state, action) => {
             const callResult = action.payload;
             const callId = Object.keys(callResult)[0];
@@ -142,7 +150,8 @@ export const {
     setCallRecipientList,
     callStartedDate,
     updateCallRecipientList,
-    deleteCallHistory
+    deleteCallHistory,
+    setCallModalOpen
 } = callSlice.actions;
 
 export default callSlice.reducer;

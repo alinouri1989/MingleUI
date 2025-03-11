@@ -6,7 +6,7 @@ import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
 import { removeGroupList, setGroupList, updateGroupInformations, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
 import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats, addArchive, removeArchive, removeIndividualChat, removeGroupChat } from "../store/Slices/chats/chatSlice.js";
-import { deleteCallHistory, handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, updateCallRecipientList } from "../store/Slices/calls/callSlice.js";
+import { deleteCallHistory, handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, setIsRingingIncoming, updateCallRecipientList } from "../store/Slices/calls/callSlice.js";
 import { addNewUserToChatList, setInitialChatList, updateUserInfoToChatList } from "../store/Slices/chats/chatListSlice.js";
 import { createAndSendOffer, handleRemoteSDP, sendSdp } from "../services/webRtcService.js";
 
@@ -97,6 +97,8 @@ export const SignalRProvider = ({ children }) => {
             setRemoteStream(event.streams[0]);
             dispatch(setIsCallStarted(true));
             dispatch(setIsCallStarting(false));
+
+            callConnection.invoke("AcceptCall", callId);
 
             const currentDate = new Date().toISOString();
             dispatch(setCallStartedDate(currentDate));
@@ -338,6 +340,7 @@ export const SignalRProvider = ({ children }) => {
                 //! ===========  CALL CONNECTION ===========
 
                 callConnection.on('ReceiveInitialCalls', async (data) => {
+                    console.log("geldi mi initial calls", data);
                     dispatch(setInitialCalls(data));
                 });
                 callConnection.on('ReceiveInitialCallRecipientProfiles', async (data) => {
@@ -405,6 +408,13 @@ export const SignalRProvider = ({ children }) => {
                             await handleRemoteSDP(data.sdp, peerConnection.current);
                         }
                     } catch { }
+                });
+
+                callConnection.on('ReceiveAcceptCall', async (data) => {
+                    if (store.getState().call.isCallStarted) {
+                        return;
+                    }
+                    dispatch(setIsRingingIncoming(false));
                 });
 
                 //! ==== CONNECTION ERRORS =====
