@@ -340,7 +340,6 @@ export const SignalRProvider = ({ children }) => {
                 //! ===========  CALL CONNECTION ===========
 
                 callConnection.on('ReceiveInitialCalls', async (data) => {
-                    console.log("geldi mi initial calls", data);
                     dispatch(setInitialCalls(data));
                 });
                 callConnection.on('ReceiveInitialCallRecipientProfiles', async (data) => {
