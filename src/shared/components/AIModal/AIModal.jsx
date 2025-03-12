@@ -133,6 +133,7 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
             buttonRef.current &&
             !buttonRef.current.contains(event.target) &&
             !event.target.closest(".send-prompt-btn") &&
+            !event.target.closest(".inputs") &&
             !event.target.closest(".delete-response") &&
             !event.target.closest(".refresh-response") &&
             !event.target.closest(".copy-text") &&
@@ -387,6 +388,7 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
                                     ) : (
                                         <div className="input-box">
                                             <input
+                                                className="inputs"
                                                 placeholder="Bir istemde bulunun"
                                                 type="text"
                                                 onKeyDown={handleKeyDown}
@@ -450,6 +452,7 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
                                             </div>
                                             <div className="input-box">
                                                 <input
+                                                    className="inputs"
                                                     placeholder="Bir istemde bulunun"
                                                     type="text"
                                                     onKeyDown={handleKeyDown}

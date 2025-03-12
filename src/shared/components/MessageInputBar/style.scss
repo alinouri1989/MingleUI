@@ -17,6 +17,11 @@
         padding: 0px 4px;
         width: 95%;
         gap: 10px;
+        @include transition();
+
+        &:hover {
+            background-color: var(--cardHover);
+        }
 
         @include screen(900px) {
             height: 55px;
@@ -137,6 +142,7 @@
             font-size: 14px;
             color: var(--text-dark-gray);
         }
+
 
         .ai-emoji-send-buttons {
             @include flex-center(row, center, center);

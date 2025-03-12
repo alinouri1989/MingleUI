@@ -10,10 +10,12 @@ export const displayNameSchema = z.object({
 
 export const phoneNumberSchema = z.object({
     phoneNumber: z.string()
-        .min(11, { message: 'Telefon numaranız en az 11 karakter uzunluğunda olmalıdır.' })
-        .max(15, { message: 'Telefon numaranız en fazla 15 karakter uzunluğunda olmalıdır.' })
-        .regex(/^\+?\d+$/, { message: 'Geçerli bir telefon numarası giriniz.' })
-        .nonempty({ message: 'Lütfen bir telefon numarası giriniz.' })
+        .min(8, { message: "Telefon numarası en az 8 haneli olmalıdır." })
+        .max(15, { message: "Telefon numarası en fazla 15 haneli olmalıdır." })
+        .regex(/^(\+?[0-9]{1,3})?[0-9]{8,14}$/, { message: "Geçerli bir telefon numarası giriniz." })
+        .refine((value) => !/\s/.test(value), {
+            message: "Telefon numarası boşluk içeremez.",
+        }),
 });
 
 export const biographySchema = z.object({
