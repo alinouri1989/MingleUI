@@ -291,7 +291,6 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                 closeModal();
             }
         } catch (error) {
-            console.log(error);
             ErrorAlert("Bir hata meydana geldi");
         }
     };

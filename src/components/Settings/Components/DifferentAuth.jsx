@@ -2,7 +2,6 @@ import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 
 function DifferentAuth({ providerId }) {
-    console.log("gelen provider değeri", providerId);
     return (
         <div className="different-auth">
             <h3>Şifreni Değiştir</h3>

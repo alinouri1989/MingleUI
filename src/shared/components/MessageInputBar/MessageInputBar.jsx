@@ -181,7 +181,6 @@ function MessageInputBar({ chatId }) {
                 setIsLoading(false);
                 SuccessAlert("Dosya gönderildi");
             } catch (err) {
-                console.log(err);
                 setIsLoading(false);
                 ErrorAlert("Dosya gönderilemedi");
             }

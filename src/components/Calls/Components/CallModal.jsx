@@ -19,7 +19,6 @@ import { formatTime } from "../../../helpers/formatCallTime";
 import "./CallModal.scss";
 
 function CallModal({ closeModal, isCameraCall }) {
-    console.log("girdi mi");
     const { callConnection, localStream, remoteStream } = useSignalR();
 
     const { callerProfile, callId, isCallStarted, isRingingOutgoing, callStartedDate, isCallStarting } = useSelector((state) => state.call);
@@ -111,7 +110,6 @@ function CallModal({ closeModal, isCameraCall }) {
                             busyAudioRef.current.currentTime = 0;
                         }
                         callConnection.invoke("EndCall", callId, 4, callStartedDate);
-                        console.log("Kapatan yer 1");
                         closeModal();
                     }, 4000);
                 }
@@ -136,7 +134,6 @@ function CallModal({ closeModal, isCameraCall }) {
 
     useEffect(() => {
         if (!isCallStarted && !isRingingOutgoing) {
-            console.log("Kapatan yer 2");
             closeModal();
         }
     }, [isCallStarted, isRingingOutgoing]);
@@ -160,7 +157,6 @@ function CallModal({ closeModal, isCameraCall }) {
             clearInterval(timerInterval);
             setCallStatus("Aranıyor...");
             if (isCallStarted === false && isCallStarting === false) {
-                console.log("Kapatan yer 3");
                 closeModal();
             }
         }
@@ -219,7 +215,6 @@ function CallModal({ closeModal, isCameraCall }) {
                 callConnection.invoke("EndCall", callId, 3, callStartedDate);
             }
         }
-        console.log("Kapatan yer 4");
         closeModal();
     };
 
