@@ -25,7 +25,6 @@ export const downloadFile = (fileName, content) => {
             mimeType = 'application/x-rar-compressed';
             break;
         default:
-            console.log('Bilinmeyen dosya türü:', extension);
             break;
     }
 

@@ -112,18 +112,14 @@ export const authApi = createApi({
 });
 
 const handleAuthResponse = async (queryFulfilled, dispatch) => {
-
-
   try {
     const { data } = await queryFulfilled;
-    console.log("gelendata", data);
     if (data?.token) {
       const now = new Date();
       const expireDate = new Date(now.getTime() + 2 * 24 * 60 * 60 * 1000);
       document.cookie = `jwt=${data.token}; expires=${expireDate.toUTCString()}; path=/; secure; samesite=strict`;
 
       const userProfile = await dispatch(authApi.endpoints.getUserProfile.initiate()).unwrap();
-      console.log("userprofile", userProfile);
       const updatedUserProfile = setUserProfileTheme(userProfile);
       dispatch(setUser({ user: updatedUserProfile, token: data.token }));
     }

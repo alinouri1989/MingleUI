@@ -83,7 +83,7 @@ export const SignalRProvider = ({ children }) => {
             });
 
             peerConnection.current = pc;
-        } catch { ErrorAlert("Bir hata meydana geldi"); }
+        } catch { }
     };
 
     if (peerConnection.current) {
@@ -265,11 +265,7 @@ export const SignalRProvider = ({ children }) => {
                             }
 
                             dispatch(addNewGroupChat({ chatId: groupId, chatData: groupChatData }));
-                        } else {
-                            console.error("Group ID alınamadı:", data);
                         }
-                    } else {
-                        console.log("Bilinmeyen chat türü:", data);
                     }
                 });
 

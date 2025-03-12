@@ -46,14 +46,10 @@ export const userSettingsApi = createApi({
         try {
           const { data } = await queryFulfilled;
 
-          console.log("Data: ", data);
           const currentUser = getState().auth;
-          console.log("Data profil photo url: ", data.profilePhoto);
 
           updateUserField(dispatch, currentUser, 'profilePhoto', data.profilePhoto);
-        } catch (error) {
-          console.error('Error updating profile photo:', error);
-        }
+        } catch { }
       },
     }),
 
@@ -67,11 +63,8 @@ export const userSettingsApi = createApi({
         try {
           await queryFulfilled;
           const currentUser = getState().auth;
-          console.log("Current User: ", currentUser);
           updateUserField(dispatch, currentUser, 'displayName', arg);
-        } catch (error) {
-          console.error('Error updating display name:', error);
-        }
+        } catch { }
       },
     }),
 

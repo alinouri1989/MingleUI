@@ -7,11 +7,12 @@ export const signInSchema = z.object({
 
 export const signUpSchema = z.object({
     DisplayName: z.string()
-        .min(5, { message: "Adınız ve soyadınız en az 5 karakter uzunluğunda olmalıdır." })
-        .max(50, { message: "Adınız ve soyadınız en fazla 50 karakter uzunluğunda olmalıdır." })
-        .regex(/^[A-Za-zÇçĞğİıÖöŞşÜü]+(?: [A-Za-zÇçĞğİıÖöŞşÜü]+)*$/, {
-            message: "Kelimeler arasında en fazla bir boşluk olmalıdır.",
+        .min(5, { message: "Ad soyad en az 5, en fazla 50 karakter olmalıdır." })
+        .max(50, { message: "Ad soyad en az 5, en fazla 50 karakter olmalıdır." })
+        .regex(/^(?!.*\d)[A-Za-zÇçĞğİıÖöŞşÜü]+(?: [A-Za-zÇçĞğİıÖöŞşÜü]+)?$/, {
+            message: "Sadece harf içermeli ve en fazla bir boşluk olmalıdır.",
         }),
+
     Email: z.string()
         .email({ message: "Lütfen geçerli bir e-mail adresi giriniz." })
         .max(30, { message: "E-Mail adresiniz en fazla 30 karakter uzunluğunda olmalıdır." }),

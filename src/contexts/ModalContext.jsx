@@ -5,8 +5,8 @@ import IncomingCall from '../components/Calls/Components/IncomingCall/IncomingCa
 const ModalContext = createContext();
 
 export const ModalProvider = ({ children }) => {
-  const [modalContent, setModalContent] = useState(null);
 
+  const [modalContent, setModalContent] = useState(null);
   const { isRingingIncoming, callType, callerProfile, callId } = useSelector((state) => state.call);
 
   const showModal = (content) => {
