@@ -18,7 +18,7 @@ import SoundRecordModal from "../SoundRecordModal/SoundRecordModal";
 import { AIModal } from "../AIModal/AIModal";
 
 import { encryptMessage } from "../../../helpers/messageCryptoHelper";
-import { convertFileToBase64WithAsArrayBuffer } from "../../../store/helpers/convertFileToBase64";
+import { convertFileToBase64, convertFileToBase64WithAsArrayBuffer } from "../../../store/helpers/convertFileToBase64";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
 
 import PreLoader from "../PreLoader/PreLoader";
@@ -137,18 +137,19 @@ function MessageInputBar({ chatId }) {
         const chatType = getActiveChatType();
 
         if (file) {
+            setIsLoading(true);
             try {
-                setIsLoading(true);
-                const base64String = await convertFileToBase64(file);
+                const base64String = await convertFileToBase64WithAsArrayBuffer(file);
                 await chatConnection.invoke("SendMessage", chatType, chatId, {
                     ContentType: 2,
                     content: base64String,
                 });
-                setIsLoading(false);
                 SuccessAlert("Video gönderildi");
-            } catch {
+            } catch (error) {
                 ErrorAlert("Video gönderilemedi");
+                console.log("Error:", error);
             }
+            setIsLoading(false);
         } else {
             ErrorAlert("Dosya seçilmedi");
         }
@@ -179,8 +180,7 @@ function MessageInputBar({ chatId }) {
                 });
 
                 setIsLoading(false);
-                SuccessAlert("Dosya gönderildi");
-            } catch (err) {
+            } catch {
                 setIsLoading(false);
                 ErrorAlert("Dosya gönderilemedi");
             }

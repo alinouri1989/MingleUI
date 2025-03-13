@@ -18,6 +18,7 @@ import { opacityEffect } from "../../../../shared/animations/animations.js";
 
 import { motion } from "framer-motion";
 import "./style.scss";
+import { defaultProfilePhoto } from "../../../../constants/DefaultProfilePhoto.js";
 
 
 function NewChatModal() {
@@ -170,7 +171,10 @@ function NewChatModal() {
                 initial="initial"
                 animate="animate"
               >
-                <img src={user.profilePhoto} alt={user.displayName} />
+                <img src={user.profilePhoto}
+                  onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+                  alt={user.displayName}
+                />
                 <div className="user-info">
                   <p>{user.displayName}</p>
                   <span>{user.email}</span>

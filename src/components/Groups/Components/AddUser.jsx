@@ -15,6 +15,7 @@ import { opacityEffect } from '../../../shared/animations/animations.js';
 import { ErrorAlert, SuccessAlert } from '../../../helpers/customAlert';
 import { motion } from "framer-motion";
 import "../../Chats/Components/NewChat/style.scss";
+import { defaultProfilePhoto } from "../../../constants/DefaultProfilePhoto.js";
 
 function AddUser({ closeUserModal, setFormData, formData }) {
 
@@ -144,7 +145,9 @@ function AddUser({ closeUserModal, setFormData, formData }) {
                                     return (
                                         <div key={user.userId} className="user-box" onClick={() => handleAddSelectedUser(user.userId)}>
                                             <div className='image-box'>
-                                                <img src={user.profilePhoto} alt={user.displayName} />
+                                                <img src={user.profilePhoto}
+                                                    onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+                                                    alt={user.displayName} />
                                             </div>
                                             <div className="user-info">
                                                 <p>{user.displayName}</p>

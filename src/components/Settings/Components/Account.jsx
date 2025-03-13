@@ -172,8 +172,8 @@ function Account() {
       <div className="image-box">
         <img
           className="profile-image"
-          src={user?.profilePhoto || ""}
-          alt="User Profile Image"
+          src={user?.profilePhoto || defaultProfilePhoto}
+          onError={(e) => e.currentTarget.src = defaultProfilePhoto}
         />
         <IconButton
           className={"edit-btn"}
@@ -269,7 +269,9 @@ function Account() {
         </Menu>
         {isShowProfileImage &&
           <div className="full-size-profil-image-box">
-            <img src={user.profilePhoto} alt="UserImage" />
+            <img src={user.profilePhoto} alt="UserImage"
+              onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+            />
             <button onClick={() => setIsShowProfileImage(false)}>
               <MdClose />
             </button>

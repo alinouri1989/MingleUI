@@ -12,6 +12,7 @@ import CallModal from '../../Calls/Components/CallModal';
 import { formatDateForLastConnectionDate } from '../../../helpers/dateHelper';
 import BackToMenuButton from '../../../shared/components/BackToMenuButton/BackToMenuButton';
 import { startCall } from '../../../helpers/startCall';
+import { defaultProfilePhoto } from '../../../constants/DefaultProfilePhoto';
 
 function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientId }) {
 
@@ -52,7 +53,9 @@ function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientI
                     />
                 )}
                 <div onClick={toggleSidebar} className="image-box">
-                    <img src={recipientProfile.profilePhoto} alt={`${recipientProfile.displayName} profile`} />
+                    <img src={recipientProfile.profilePhoto}
+                        onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+                    />
                     <p className={`status ${status}`}></p>
                 </div>
                 <div onClick={toggleSidebar} className="name-and-status-box">

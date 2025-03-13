@@ -18,6 +18,7 @@ import { getChatId } from "../../../store/Slices/chats/chatSlice";
 import { getUserIdFromToken } from "../../../helpers/getUserIdFromToken";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
 import { toggleActiveContent } from "../../../store/Slices/activeContent/activeContentSlice";
+import { defaultProfilePhoto } from "../../../constants/DefaultProfilePhoto";
 
 function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageDate, lastMessageType, lastMessage, unReadMessage, isArchive }) {
 
@@ -102,7 +103,9 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
     <div className={`user-dashboard-card-box ${isActiveChat ? "active-chat" : ""}`} onClick={() => handleGoChat()}>
       <div className="card-info-box">
         <div className="image-box">
-          <img src={image} alt="" />
+          <img src={image}
+            onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+          />
           <p className={`status ${status ? "online" : "offline"}`}></p>
         </div>
 

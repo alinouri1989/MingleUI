@@ -16,6 +16,7 @@ import CloseModalButton from "../../../contexts/components/CloseModalButton.jsx"
 import { ErrorAlert } from "../../../helpers/customAlert.js";
 import { useLeaveGroupMutation } from "../../../store/Slices/Group/GroupApi.js";
 import "./style.scss";
+import { defaultProfilePhoto } from "../../../constants/DefaultProfilePhoto.js";
 
 
 function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMessage, lastMessageType, lastMessageDate, unReadMessage }) {
@@ -57,7 +58,9 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
         <div key={groupId} onClick={handleGoGroupChat} className={`group-dashboard-card-box ${isActiveChat ? "active-chat" : ""}`}>
             <div className="card-info-box">
                 <div className="image-box">
-                    <img src={groupPhotoUrl} alt="" />
+                    <img src={groupPhotoUrl}
+                        onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+                    />
                 </div>
 
                 <div className="grup-name-and-sub-title">

@@ -7,6 +7,8 @@ import CallsList from "./components/CallsList";
 import ArchivesList from "./components/ArchivesList";
 import GroupsList from "./components/GroupsList";
 
+import { defaultProfilePhoto } from "../../constants/DefaultProfilePhoto"
+
 import "./style.scss";
 
 function Dashboard() {
@@ -36,11 +38,16 @@ function Dashboard() {
         <>
             <div className="dashboard-container">
                 <div className="user-info-box">
-                    <img src={user.profilePhoto} alt="User" />
+                    <img
+                        src={user.profilePhoto || defaultProfilePhoto}
+                        alt=""
+                        onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+                    />
                     <p>{user.displayName}</p>
                 </div>
                 <div className="dynamic-list-box">{renderComponent()}</div>
             </div>
+
         </>
     )
 }

@@ -220,15 +220,15 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
     const handleSendPrompt = async () => {
 
         if (!isTextGeneratorMode && !imagePrompt) {
-            console.error("Görsel için prompt boş olamaz.");
+            return;
+        }
+        if (isTextGeneratorMode && !textPrompt) {
             return;
         }
         if (!textAiModel && isTextGeneratorMode) {
-            console.error("AI modeli seçilmelidir.");
             return;
         }
         if (!imageAiModel && !isTextGeneratorMode) {
-            console.error("Görsel AI modeli seçilmelidir.");
             return;
         }
 

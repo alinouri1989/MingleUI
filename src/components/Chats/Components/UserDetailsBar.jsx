@@ -70,7 +70,9 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
                     }
                     <div className='sidebar-content-box'>
                         <div className='user-info-box'>
-                            <img src={recipientProfile.profilePhoto} alt={`profile`} />
+                            <img src={recipientProfile.profilePhoto}
+                                onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+                            />
                             <p>{recipientProfile.displayName}</p>
                             <span>{recipientProfile.email}</span>
                         </div>
