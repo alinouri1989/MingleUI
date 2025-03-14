@@ -291,7 +291,11 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                 closeModal();
             }
         } catch (error) {
-            ErrorAlert("Bir hata meydana geldi");
+            if (error.data && error.data.message.includes("Grup kurucusu yöneticilikten")) {
+                ErrorAlert(error.data.message);
+            } else {
+                ErrorAlert("Bir hata meydana geldi");
+            }
         }
     };
 
@@ -456,6 +460,7 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                             placeholder="Bir grup adı belirle..."
                             value={formData.name}
                             onChange={handleGroupNameChange}
+                            maxLength={40}
                         />
                     </div>
                     <div className="input-box">
@@ -465,6 +470,7 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                             placeholder="Grup açıklaması belirle..."
                             value={formData.description}
                             onChange={handleGroupDescriptionChange}
+                            maxLength={50}
                         />
                     </div>
                 </div>

@@ -63,8 +63,8 @@ function SignIn() {
       SuccessAlert("Giriş Yapıldı");
 
     } catch (error) {
+      console.log("hata mesajı", error);
       ErrorAlert("Giriş Başarısız");
-
     }
   };
 

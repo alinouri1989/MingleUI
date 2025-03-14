@@ -46,7 +46,7 @@
         .message-content {
             display: flex;
             min-width: 50px;
-            max-width: 600px;
+            max-width: 60%;
             padding: 9px 18px;
             justify-content: center;
             align-items: center;
@@ -59,8 +59,20 @@
             box-shadow: rgba(42, 42, 42, 0.205) 0px 2px 8px 0px;
             cursor: pointer;
 
+            @include screen(1220px) {
+                max-width: 70%;
+            }
+
+            @include screen(1070px) {
+                max-width: 320px;
+            }
+
+            @include screen(950px) {
+                max-width: 290px;
+            }
+
             @include screen(900px) {
-                max-width: 300px;
+                max-width: 70%;
             }
 
             @include screen(360px) {

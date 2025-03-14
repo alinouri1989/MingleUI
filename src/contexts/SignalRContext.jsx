@@ -15,7 +15,6 @@ import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
 import { decryptMessage } from '../helpers/messageCryptoHelper.js';
 
 import store from '../store/index.js';
-import { ErrorAlert } from "../helpers/customAlert.js";
 
 
 const SignalRContext = createContext();
@@ -349,7 +348,6 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 callConnection.on('ReceiveOutgoingCall', async (data) => {
-                    console.log("gelen profil datası", data);
                     handleOutgoingCall(data, dispatch, userId);
                 });
 
