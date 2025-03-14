@@ -344,12 +344,13 @@ export const SignalRProvider = ({ children }) => {
 
                 callConnection.on('ReceiveIncomingCall', async (data) => {
                     const callType = data.callType;
-                    await handleIncomingCall(data, dispatch);
+                    handleIncomingCall(data, dispatch, userId);
                     initializePeerConnection(callType);
                 });
 
                 callConnection.on('ReceiveOutgoingCall', async (data) => {
-                    handleOutgoingCall(data, dispatch);
+                    console.log("gelen profil datası", data);
+                    handleOutgoingCall(data, dispatch, userId);
                 });
 
                 callConnection.on('ReceiveEndCall', (data) => {

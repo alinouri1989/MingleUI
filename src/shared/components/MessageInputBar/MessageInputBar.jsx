@@ -18,7 +18,7 @@ import SoundRecordModal from "../SoundRecordModal/SoundRecordModal";
 import { AIModal } from "../AIModal/AIModal";
 
 import { encryptMessage } from "../../../helpers/messageCryptoHelper";
-import { convertFileToBase64, convertFileToBase64WithAsArrayBuffer } from "../../../store/helpers/convertFileToBase64";
+import { convertFileToBase64WithAsArrayBuffer } from "../../../store/helpers/convertFileToBase64";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
 
 import PreLoader from "../PreLoader/PreLoader";
@@ -168,24 +168,29 @@ function MessageInputBar({ chatId }) {
         const file = e.target.files[0];
         const chatType = getActiveChatType();
 
+        if (!file) {
+            ErrorAlert("Dosya seçilmedi");
+            return;
+        }
 
-        if (file) {
-            try {
-                setIsLoading(true);
-                const base64String = await convertFileToBase64WithAsArrayBuffer(file);
-                await chatConnection.invoke("SendMessage", chatType, chatId, {
-                    ContentType: 4,
-                    FileName: file.name,
-                    content: base64String,
-                });
+        try {
+            setIsLoading(true);
+            const base64String = await convertFileToBase64WithAsArrayBuffer(file);
 
-                setIsLoading(false);
-            } catch {
-                setIsLoading(false);
+            await chatConnection.invoke("SendMessage", chatType, chatId, {
+                ContentType: 4,
+                FileName: file.name,
+                content: base64String,
+            });
+
+            setIsLoading(false);
+        } catch (error) {
+            setIsLoading(false);
+            if (error.message === "empty_file") {
+                ErrorAlert("İçeriği boş bir dosya gönderilemez");
+            } else {
                 ErrorAlert("Dosya gönderilemedi");
             }
-        } else {
-            ErrorAlert("Dosya seçilmedi");
         }
     };
 

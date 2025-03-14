@@ -156,27 +156,29 @@ export const {
 
 export default callSlice.reducer;
 
-export const handleIncomingCall = async (data, dispatch) => {
+const handleCall = (data, dispatch, userId, isIncoming) => {
     const { callId, callType, ...callerData } = data;
-    const callerProfileKey = Object.keys(callerData)[0];
-    const callerProfile = callerData[callerProfileKey];
+    const callerProfileKey = Object.keys(callerData).find(key => key !== userId);
+    const callerProfile = callerProfileKey ? callerData[callerProfileKey] : null;
 
     dispatch(setCallId(callId));
     dispatch(setCallType(callType));
     dispatch(setCallerProfile(callerProfile));
-    dispatch(setIsRingingIncoming(true));
+
+    if (isIncoming) {
+        dispatch(setIsRingingIncoming(true));
+    } else {
+        dispatch(setIsRingingOutgoing(true));
+        dispatch(setIsCallStarting(true));
+    }
 };
 
-export const handleOutgoingCall = (data, dispatch) => {
-    const { callId, callType, ...callerData } = data;
-    const callerProfileKey = Object.keys(callerData)[0];
-    const callerProfile = callerData[callerProfileKey];
+export const handleIncomingCall = (data, dispatch, userId) => {
+    handleCall(data, dispatch, userId, true);
+};
 
-    dispatch(setCallId(callId));
-    dispatch(setCallType(callType));
-    dispatch(setCallerProfile(callerProfile));
-    dispatch(setIsRingingOutgoing(true));
-    dispatch(setIsCallStarting(true));
+export const handleOutgoingCall = (data, dispatch, userId) => {
+    handleCall(data, dispatch, userId, false);
 };
 
 export const handleEndCall = (data, dispatch) => {

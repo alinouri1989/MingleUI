@@ -11,19 +11,34 @@ export const convertFileToBase64WithAsArrayBuffer = (file) => {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
 
-        reader.readAsArrayBuffer(file);
-        reader.onload = () => {
-            const arrayBuffer = reader.result;
-            const bytes = new Uint8Array(arrayBuffer);
-            let binary = "";
+        if (file.type.includes("text") || file.type.includes("wordprocessingml")) {
+            reader.readAsBinaryString(file);
+            reader.onload = () => {
+                if (!reader.result || reader.result.trim().length === 0) {
+                    reject(new Error("empty_file"));
+                } else {
+                    resolve(btoa(reader.result));
+                }
+            };
+        } else {
+            reader.readAsArrayBuffer(file);
+            reader.onload = () => {
+                const arrayBuffer = reader.result;
+                if (!arrayBuffer || arrayBuffer.byteLength === 0) {
+                    reject(new Error("empty_file"));
+                    return;
+                }
 
-            for (let i = 0; i < bytes.byteLength; i++) {
-                binary += String.fromCharCode(bytes[i]);
-            }
+                const bytes = new Uint8Array(arrayBuffer);
+                let binary = "";
 
-            const base64String = btoa(binary);
-            resolve(base64String);
-        };
+                for (let i = 0; i < bytes.byteLength; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+
+                resolve(btoa(binary));
+            };
+        }
 
         reader.onerror = (error) => reject(error);
     });
