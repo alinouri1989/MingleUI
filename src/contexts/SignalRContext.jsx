@@ -423,9 +423,8 @@ export const SignalRProvider = ({ children }) => {
                     //Added this code to prevent warning error in WebSocket.
                 });
 
-                callConnection.on('Error', () => {
-                    //This listining block can be used for error handling
-                    //Added this code to prevent warning error in WebSocket.
+                callConnection.on('Error', (data) => {
+                    ErrorAlert(data.message);
                 });
             })
             .catch((err) => {
