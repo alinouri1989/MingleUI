@@ -17,6 +17,8 @@ import { PiPhoneSlashFill } from "react-icons/pi";
 
 import { formatTime } from "../../../helpers/formatCallTime";
 import "./CallModal.scss";
+import { defaultProfilePhoto } from "../../../constants/DefaultProfilePhoto";
+import { ErrorAlert } from "../../../helpers/customAlert";
 
 function CallModal({ closeModal, isCameraCall }) {
     const { callConnection, localStream, remoteStream } = useSignalR();
@@ -58,7 +60,6 @@ function CallModal({ closeModal, isCameraCall }) {
         };
     }, [temporaryStream, isCameraCall]);
 
-
     useEffect(() => {
         if (localVideoRef.current) {
             localVideoRef.current.srcObject = localStream || temporaryStream;
@@ -81,6 +82,11 @@ function CallModal({ closeModal, isCameraCall }) {
             });
         }
     }, [localStream, isMicrophoneOn]);
+
+
+    callConnection.on('ValidationError', (data) => {
+        ErrorAlert(data.message);
+    });
 
 
     useEffect(() => {
@@ -237,7 +243,10 @@ function CallModal({ closeModal, isCameraCall }) {
                 <div
                     className={`user-and-call-time-box ${isCameraCall ? "cameraCall" : ""}`}
                 >
-                    <img src={callerProfile?.profilePhoto} alt="User" />
+                    <img src={callerProfile?.profilePhoto}
+                        onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+                        alt="Profile Image"
+                    />
                     <p>{callerProfile?.displayName}</p>
                     <span>{callStatus}</span>
                 </div>

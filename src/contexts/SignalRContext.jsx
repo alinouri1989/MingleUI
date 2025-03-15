@@ -15,6 +15,7 @@ import { getUserIdFromToken } from "../helpers/getUserIdFromToken.js";
 import { decryptMessage } from '../helpers/messageCryptoHelper.js';
 
 import store from '../store/index.js';
+import { ErrorAlert } from "../helpers/customAlert.js";
 
 
 const SignalRContext = createContext();
@@ -170,18 +171,23 @@ export const SignalRProvider = ({ children }) => {
 
                 //! ===========  CHAT CONNECTION ===========
 
+                chatConnection.off("ReceiveInitialChats");
                 chatConnection.on("ReceiveInitialChats", (data) => {
                     store.dispatch(initializeChats(data));
                 });
 
+                chatConnection.off("ReceiveInitialRecipientChatProfiles");
                 chatConnection.on("ReceiveInitialRecipientChatProfiles", (data) => {
                     dispatch(setInitialChatList(data));
                 });
 
+                chatConnection.off("ReceiveInitialGroupProfiles");
                 chatConnection.on("ReceiveInitialGroupProfiles", (data) => {
                     dispatch(setGroupList(data));
                 });
 
+
+                chatConnection.off("ReceiveGetMessages");
                 chatConnection.on("ReceiveGetMessages", (data) => {
                     if (data.Individual) {
                         Object.entries(data.Individual).forEach(([chatId, messages]) => {
@@ -225,10 +231,12 @@ export const SignalRProvider = ({ children }) => {
                     }
                 });
 
+                chatConnection.off("ReceiveRecipientProfiles");
                 chatConnection.on("ReceiveRecipientProfiles", (data) => {
                     dispatch(addNewUserToChatList(data));
                 });
 
+                chatConnection.off("ReceiveCreateChat");
                 chatConnection.on("ReceiveCreateChat", (data) => {
                     if (data.Individual) {
                         const individualData = data.Individual;
@@ -268,26 +276,31 @@ export const SignalRProvider = ({ children }) => {
                     }
                 });
 
+                chatConnection.off("ReceiveArchiveChat");
                 chatConnection.on("ReceiveArchiveChat", (data) => {
                     dispatch(addArchive(data));
                 });
 
+                chatConnection.off("ReceiveUnarchiveChat");
                 chatConnection.on("ReceiveUnarchiveChat", (data) => {
                     dispatch(removeArchive(data));
                 });
 
+                chatConnection.off("ReceiveClearChat");
                 chatConnection.on("ReceiveClearChat", (data) => {
                     dispatch(removeIndividualChat(data));
                 });
 
                 //! =========== NOTIFICATION CONNECTION ===========
 
+                notificationConnection.off("ReceiveRecipientProfiles");
                 notificationConnection.on("ReceiveRecipientProfiles", (data) => {
                     dispatch(updateUserInfoToChatList(data));
                     dispatch(updateUserInfoToGroupList(data));
                     dispatch(updateCallRecipientList(data));
                 });
 
+                notificationConnection.off("ReceiveNewGroupProfiles");
                 notificationConnection.on("ReceiveNewGroupProfiles", (data) => {
                     dispatch(setGroupList(data));
                     const groupId = Object.keys(data)[0];
@@ -302,14 +315,13 @@ export const SignalRProvider = ({ children }) => {
                                     .then(() => {
                                         chatConnection.invoke("CreateChat", "Group", groupId)
                                     })
-                                    .catch((err) => {
-                                        //If there is an error this block can execute
-                                    });
+                                    .catch(() => { });
                             });
                         }
                     }
                 });
 
+                notificationConnection.off("ReceiveGroupProfiles");
                 notificationConnection.on("ReceiveGroupProfiles", (data) => {
                     const groupId = Object.keys(data)[0];
                     const groupData = data[groupId];
@@ -334,23 +346,31 @@ export const SignalRProvider = ({ children }) => {
 
                 //! ===========  CALL CONNECTION ===========
 
+                callConnection.off("ReceiveInitialCalls");
                 callConnection.on('ReceiveInitialCalls', async (data) => {
                     dispatch(setInitialCalls(data));
                 });
+
+                callConnection.off("ReceiveInitialCallRecipientProfiles");
                 callConnection.on('ReceiveInitialCallRecipientProfiles', async (data) => {
                     dispatch(setCallRecipientList(data));
                 });
 
+
+                callConnection.off("ReceiveIncomingCall");
                 callConnection.on('ReceiveIncomingCall', async (data) => {
                     const callType = data.callType;
                     handleIncomingCall(data, dispatch, userId);
                     initializePeerConnection(callType);
                 });
 
+
+                callConnection.off("ReceiveOutgoingCall");
                 callConnection.on('ReceiveOutgoingCall', async (data) => {
                     handleOutgoingCall(data, dispatch, userId);
                 });
 
+                callConnection.off("ReceiveEndCall");
                 callConnection.on('ReceiveEndCall', (data) => {
                     handleEndCall(data.call, dispatch);
                     const otherDataKey = Object.keys(data).find(key => key !== 'call');
@@ -380,14 +400,18 @@ export const SignalRProvider = ({ children }) => {
                     setRemoteStream(null);
                 });
 
+                callConnection.off("ReceiveDeleteCall");
                 callConnection.on('ReceiveDeleteCall', (data) => {
                     dispatch(deleteCallHistory(data));
                 });
 
+                callConnection.off("ReceiveIceCandidate");
                 callConnection.on('ReceiveIceCandidate', async (data) => {
                     peerConnection.current.addIceCandidate(new RTCIceCandidate(data));
                 });
 
+
+                callConnection.off("ReceiveSdp");
                 callConnection.on('ReceiveSdp', async (data) => {
                     try {
                         if (data.sdp.type === "offer") {
@@ -404,6 +428,7 @@ export const SignalRProvider = ({ children }) => {
                     } catch { }
                 });
 
+                callConnection.off("ReceiveAcceptCall");
                 callConnection.on('ReceiveAcceptCall', async (data) => {
                     if (store.getState().call.isCallStarted) {
                         return;
@@ -414,18 +439,19 @@ export const SignalRProvider = ({ children }) => {
                 //! ==== CONNECTION ERRORS =====
 
                 chatConnection.on('Error', () => {
-                    //This listining block can be used for error handling
-                    //Added this code to prevent warning error in WebSocket.
+                    ErrorAlert(data.message);
                 });
 
                 notificationConnection.on('Error', () => {
-                    //This listining block can be used for error handling
-                    //Added this code to prevent warning error in WebSocket.
-                });
-
-                callConnection.on('Error', (data) => {
                     ErrorAlert(data.message);
                 });
+
+                callConnection.on('ValidationError', (data) => {
+                    if (data.message !== "Kullanıcı meşgul!") {
+                        ErrorAlert(data.message);
+                    }
+                });
+
             })
             .catch((err) => {
                 setConnectionStatus("failed");

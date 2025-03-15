@@ -12,6 +12,7 @@ import CallModal from '../CallModal';
 import IncomingCallSound from "../../../../assets/sounds/MingleCallSound.mp3";
 import { setIsRingingIncoming } from '../../../../store/Slices/calls/callSlice';
 import "./style.scss";
+import { defaultProfilePhoto } from '../../../../constants/DefaultProfilePhoto.js';
 
 function IncomingCall({ callType, callerProfile, callId }) {
 
@@ -62,7 +63,10 @@ function IncomingCall({ callType, callerProfile, callId }) {
     return (
         <div className='incoming-call-box'>
             <div className='user-and-options'>
-                <img src={callerProfile.profilePhoto} alt="User Image" />
+                <img src={callerProfile.profilePhoto}
+                    onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+                    alt="Profile Image"
+                />
                 <div className='user-info-and-call-status'>
                     <p>{callerProfile.displayName}</p>
                     <span>Seni Arıyor...</span>
