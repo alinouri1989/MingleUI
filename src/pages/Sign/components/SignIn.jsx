@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema } from '../../../schemas/SignSchemas.js';
 import { opacityEffect } from '../../../shared/animations/animations.js';
 import { motion } from "framer-motion";
+import { getFirebaseAuthErrorMessage } from '../../../helpers/getFirebaseAuthErrorMessage .js';
 
 function SignIn() {
 
@@ -52,7 +53,7 @@ function SignIn() {
       const result = await signInWithPopup(auth, googleProvider);
       await SignInGoogle(result.user).unwrap();
     } catch (error) {
-      ErrorAlert("Giriş Başarısız");
+      ErrorAlert(getFirebaseAuthErrorMessage(error));
     }
   };
 
@@ -61,12 +62,11 @@ function SignIn() {
       const result = await signInWithPopup(auth, facebookProvider);
       await SignInFacebook(result.user).unwrap();
       SuccessAlert("Giriş Yapıldı");
-
     } catch (error) {
-      console.log("hata mesajı", error);
-      ErrorAlert("Giriş Başarısız");
+      ErrorAlert(getFirebaseAuthErrorMessage(error));
     }
   };
+
 
   return (
     <motion.div
