@@ -20,7 +20,7 @@
         @include transition();
 
         &:hover {
-            background-color: var(--cardHover);
+            background-color: var(--smooth-white-color);
         }
 
         @include screen(900px) {

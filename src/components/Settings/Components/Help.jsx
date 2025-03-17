@@ -18,7 +18,7 @@ function Help() {
         <a>Koşullar ve Gizlilik İlkesi</a>
       </div>
       <div className="copyright-box">
-        <p>2024 © Mingle</p>
+        <p>2025 © Mingle</p>
       </div>
     </div>
   )
