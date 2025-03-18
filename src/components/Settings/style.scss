@@ -193,6 +193,11 @@
             }
 
             .help-box {
+                overflow: auto;
+                height: 440px;
+                width: 100%;
+                overflow-x: hidden;
+
                 @include screen(600px) {
                     padding-right: 10px;
                 }
@@ -239,6 +244,61 @@
                         font-size: 14px;
                         color: var(--blue);
 
+                    }
+                }
+
+                .developers-box {
+                    margin-top: 15px;
+                    @include flex-center(column, center, flex-start);
+                    gap: 15px;
+
+
+
+                    .developer-box {
+                        @include flex-center(row, center, center);
+                        gap: 10px;
+
+                        img {
+                            width: 45px;
+                            height: 45px;
+                            object-fit: cover;
+                            border-radius: 50%;
+                        }
+
+                        .developer-info {
+                            width: 150px;
+
+                            span {
+                                font-size: 15px;
+                                color: var(--text-black);
+                                font-weight: bold;
+                            }
+
+                            p {
+                                font-size: 14px;
+                                color: var(--text-dark-gray);
+                            }
+                        }
+
+                        .contact-informations-box {
+                            margin-left: 10px;
+                            @include flex-center(row, center, center);
+                            gap: 8px;
+                            border-radius: 7px;
+
+                            a {
+                                @include flex-center(row, center, center);
+                                padding: 6px;
+                                border-radius: 6px;
+                                background-color: var(--smooth-light-blue);
+                                color: var(--blue);
+
+
+                                &:hover {
+                                    scale: 1.12;
+                                }
+                            }
+                        }
                     }
                 }
 
