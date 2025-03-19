@@ -2,10 +2,12 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getJwtFromCookie } from '../../helpers/getJwtFromCookie';
 import { prepareGroupFormData } from '../../helpers/prepareGroupFormData';
 
+const BASE_URL = import.meta.env.VITE_APP_BASE_API_URL;
+
 export const GroupApi = createApi({
   reducerPath: 'newGroupApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://localhost:7042/api/Group',
+    baseUrl: `${BASE_URL}api/`,
     prepareHeaders: (headers) => {
       const token = getJwtFromCookie();
       if (token) {
@@ -17,22 +19,15 @@ export const GroupApi = createApi({
   endpoints: (builder) => ({
     createGroup: builder.mutation({
       query: (formData) => ({
-        url: '/CreateGroup',
+        url: '/Create',
         method: 'POST',
         body: prepareGroupFormData(formData, false),
       }),
     }),
 
-    getGroupProfile: builder.query({
-      query: (chatId) => ({
-        url: `/GetGroupProfile/${chatId}`,
-        method: 'GET',
-      }),
-    }),
-
     editGroup: builder.mutation({
       query: ({ groupId, formData }) => ({
-        url: `/EditGroup/${groupId}`,
+        url: `/Edit/${groupId}`,
         method: 'PUT',
         body: prepareGroupFormData(formData, true),
       }),
@@ -40,7 +35,7 @@ export const GroupApi = createApi({
 
     leaveGroup: builder.mutation({
       query: (groupId) => ({
-        url: `/LeaveGroup/${groupId}`,
+        url: `/Leave/${groupId}`,
         method: 'DELETE',
       }),
     }),
@@ -49,7 +44,6 @@ export const GroupApi = createApi({
 
 export const {
   useCreateGroupMutation,
-  useGetGroupProfileQuery,
   useEditGroupMutation,
   useLeaveGroupMutation
 } = GroupApi;

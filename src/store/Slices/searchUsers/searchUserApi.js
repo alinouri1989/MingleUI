@@ -1,10 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getJwtFromCookie } from '../../helpers/getJwtFromCookie';
 
+const BASE_URL = import.meta.env.VITE_APP_BASE_API_URL;
+
 export const searchUsersApi = createApi({
     reducerPath: 'searchUsersApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'https://localhost:7042/api/User',
+        baseUrl: `${BASE_URL}api/`,
         prepareHeaders: (headers) => {
             const token = getJwtFromCookie();
             if (token) {

@@ -4,10 +4,12 @@ import { getJwtFromCookie } from '../../helpers/getJwtFromCookie.js';
 import { updateUserField } from "../../helpers/updateUserField.js";
 import { ErrorAlert } from '../../../helpers/customAlert.js';
 
+const BASE_URL = import.meta.env.VITE_APP_BASE_API_URL;
+
 export const userSettingsApi = createApi({
   reducerPath: 'accountSettingsApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://localhost:7042/api/',
+    baseUrl: `${BASE_URL}api/`,
     prepareHeaders: (headers) => {
       const token = getJwtFromCookie();
       if (token) {

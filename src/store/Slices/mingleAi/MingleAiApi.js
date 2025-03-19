@@ -1,9 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { getJwtFromCookie } from '../../helpers/getJwtFromCookie';
 
+const BASE_URL = import.meta.env.VITE_APP_BASE_API_URL;
+
 export const MingleAiApi = createApi({
     baseQuery: fetchBaseQuery({
-        baseUrl: 'https://localhost:7042/api/',
+        baseUrl: `${BASE_URL}api/`,
         prepareHeaders: (headers) => {
             const token = getJwtFromCookie();
             if (token) {
@@ -15,7 +17,7 @@ export const MingleAiApi = createApi({
     endpoints: (builder) => ({
         generateText: builder.mutation({
             query: ({ prompt, aiModel }) => ({
-                url: 'GenerativeAi/GenerateText',
+                url: 'GenerativeAi/Text',
                 method: 'POST',
                 body: {
                     prompt: prompt,
@@ -25,7 +27,7 @@ export const MingleAiApi = createApi({
         }),
         generateImage: builder.mutation({
             query: ({ prompt, aiModel }) => ({
-                url: 'GenerativeAi/GenerateImage',
+                url: 'GenerativeAi/Image',
                 method: 'POST',
                 body: {
                     prompt: prompt,

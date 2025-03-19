@@ -36,6 +36,7 @@ export const SignalRProvider = ({ children }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
+    const BASE_URL = import.meta.env.VITE_APP_BASE_API_URL
 
     const [connectionStatus, setConnectionStatus] = useState("disconnected");
     const [notificationConnection, setNotificationConnection] = useState(null);
@@ -132,7 +133,7 @@ export const SignalRProvider = ({ children }) => {
         const token = getJwtFromCookie();
 
         const chatConnection = new HubConnectionBuilder()
-            .withUrl("https://localhost:7042/ChatHub", {
+            .withUrl(`${BASE_URL}hub/Chat`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -142,7 +143,7 @@ export const SignalRProvider = ({ children }) => {
             .build();
 
         const notificationConnection = new HubConnectionBuilder()
-            .withUrl("https://localhost:7042/NotificationHub", {
+            .withUrl(`${BASE_URL}hub/Notification`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -152,7 +153,7 @@ export const SignalRProvider = ({ children }) => {
             .build();
 
         const callConnection = new HubConnectionBuilder()
-            .withUrl("https://localhost:7042/CallHub", {
+            .withUrl(`${BASE_URL}hub/Call`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

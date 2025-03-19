@@ -4,10 +4,12 @@ import { getJwtFromCookie } from '../../helpers/getJwtFromCookie';
 import { removeJwtFromCookie } from '../../helpers/removeJwtFromCookie';
 import { setUserProfileTheme } from '../../../helpers/applyTheme';
 
+const BASE_URL = import.meta.env.VITE_APP_BASE_API_URL;
+
 export const authApi = createApi({
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://localhost:7042/api/',
+    baseUrl: `${BASE_URL}api/`,
   }),
   endpoints: (builder) => ({
     registerUser: builder.mutation({
@@ -31,7 +33,7 @@ export const authApi = createApi({
 
     SignInGoogle: builder.mutation({
       query: (body) => ({
-        url: "Auth/SignInProvider",
+        url: "Auth/SignInGoogle",
         method: "POST",
         body: body,
         headers: {
@@ -39,7 +41,6 @@ export const authApi = createApi({
         },
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {
-
         await handleAuthResponse(queryFulfilled, dispatch);
       },
     }),
@@ -73,7 +74,7 @@ export const authApi = createApi({
       query: () => {
         const token = getJwtFromCookie();
         return {
-          url: 'User/UserInfo',
+          url: 'User/Info',
           method: 'GET',
           headers: {
             Authorization: `Bearer ${token}`,
@@ -86,7 +87,7 @@ export const authApi = createApi({
       query: () => {
         const token = getJwtFromCookie();
         return {
-          url: '/Auth/SignOut',
+          url: 'Auth/SignOut',
           method: 'POST',
           headers: {
             Authorization: `Bearer ${token}`,
