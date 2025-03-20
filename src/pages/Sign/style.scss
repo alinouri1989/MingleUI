@@ -21,7 +21,7 @@
     height: auto;
 
     @include screen(920px) {
-        padding: 0px 10px 0px 10px;
+        padding: 20px 10px 20px 10px;
 
     }
 
@@ -38,21 +38,6 @@
 
     @include screen(920px) {
         width: 100%;
-    }
-
-    @include screenHeight(700px) {
-        scale: 0.7;
-    }
-
-    @include screen(768px) {
-        scale: 0.9;
-        height: max-content;
-        padding: 10px 0px;
-    }
-
-    @include screen(355px) {
-        width: 100%;
-        scale: 0.8;
     }
 
     @include screen(164px) {
@@ -297,7 +282,6 @@ form {
         p {
             font-size: 13px;
             margin: 10px 0px;
-            font-weight: 500;
             color: var(--text-dark-gray);
             text-align: justify;
 
@@ -315,6 +299,7 @@ form {
 .sign-in-general-container,
 .sign-up-general-container,
 .reset-password-general-container {
+
     @include flex-center(column, center, flex-start);
     gap: 22px;
     z-index: 2;
@@ -322,6 +307,7 @@ form {
     height: 100%;
 
     @include screen(768px) {
+        width: 100%;
         @include flex-center(column, center, center);
         padding: 15px;
     }
@@ -333,6 +319,11 @@ form {
     img {
         width: 200px;
         user-select: none;
+
+
+        @include screen(768px) {
+            width: 170px;
+        }
     }
 
     .title-container {
@@ -343,6 +334,7 @@ form {
 
             @include screen(768px) {
                 text-align: center;
+                font-size: 25px;
             }
         }
 
@@ -372,10 +364,14 @@ form {
         &:hover {
             background-color: var(--hoverBlue);
         }
+
+        @include screen(768px) {
+            padding: 10px 0px;
+        }
     }
 
     .change-sign-method-text {
-        font-family: Montserrat;
+        font-weight: 600;
         font-size: 13px;
         text-align: center;
         margin-top: 22px;
@@ -383,6 +379,7 @@ form {
 
         a {
             padding-left: 7px;
+            font-weight: 600;
             color: var(--blue);
         }
     }
@@ -399,6 +396,7 @@ form {
     .method-buttons {
         @include flex-center(row, center);
         gap: 20px;
+        width: 100%;
 
         button {
             @include flex-center(row, center);
@@ -472,7 +470,6 @@ form {
 
         p {
             font-size: 13px;
-            font-weight: 500;
             color: var(--text-dark-gray);
             padding-top: 4px;
 
