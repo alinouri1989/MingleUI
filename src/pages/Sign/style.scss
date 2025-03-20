@@ -280,12 +280,9 @@ form {
         overflow-x: hidden;
 
         @media (max-width:768px) {
+            overflow: hidden;
             height: auto;
 
-        }
-
-        @include screenHeight(600px) {
-            height: 300px;
         }
 
         h4 {
