@@ -6,8 +6,6 @@
     flex-direction: row;
     width: 100%;
     height: 100vh;
-    border: 2px solid blue;
-
 
     @include screen(920px) {
         height: auto
@@ -265,6 +263,7 @@ form {
 }
 
 .membership-agreement-box {
+    overflow: hidden;
 
     h1 {
         text-align: center;
@@ -274,18 +273,19 @@ form {
     }
 
     .membership-terms-box {
-        padding: 10px 20px 0px 15px;
+        padding: 10px 20px 20px 15px;
         height: 500px;
         margin-top: 15px;
         overflow: scroll;
-        @include CustomScroll();
+        overflow-x: hidden;
+
+        @media (max-width:768px) {
+            height: auto;
+
+        }
 
         @include screenHeight(600px) {
             height: 300px;
-        }
-
-        @media (max-width:768px) {
-            height: 100vh;
         }
 
         h4 {
@@ -323,8 +323,6 @@ form {
     z-index: 2;
     padding: 20px 40px;
     height: 100%;
-    border: 2px solid red;
-
 
     @include screen(768px) {
         @include flex-center(column, center, center);
@@ -470,7 +468,7 @@ form {
 }
 
 .sign-up-general-container {
-    .membership-agreement-box {
+    .membership-agreement-input {
         margin-top: 22px;
         display: flex;
         @include flex-center(row, center, center);

@@ -199,7 +199,7 @@ function SignUp() {
           {errors.BirthDate && <span className="error-message">{errors.BirthDate.message}</span>}
         </div>
 
-        <div className="membership-agreement-box">
+        <div className="membership-agreement-input">
           <div className="checkbox-wrapper-46">
             <input onClick={() => setIsMembershipAgreementAccepted(!isMembershipAgreementAccepted)} className="inp-cbx" id="cbx-46" type="checkbox" />
             <label className="cbx" htmlFor="cbx-46"><span>
