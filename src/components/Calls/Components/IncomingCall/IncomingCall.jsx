@@ -9,7 +9,7 @@ import { PiPhoneSlashFill } from "react-icons/pi";
 import { HiMiniVideoCamera } from "react-icons/hi2";
 
 import CallModal from '../CallModal';
-import IncomingCallSound from "../../../../assets/sounds/MingleCallSound.mp3";
+import IncomingCallSound from "src/assets/sounds/MingleCallSound.mp3";
 import { setIsRingingIncoming } from '../../../../store/Slices/calls/callSlice';
 import "./style.scss";
 import { defaultProfilePhoto } from '../../../../constants/DefaultProfilePhoto.js';
