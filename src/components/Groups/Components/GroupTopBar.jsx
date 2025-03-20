@@ -20,7 +20,7 @@ function GroupTopBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
                     <img src={groupProfile?.photoUrl} alt="Group" />
                 </div>
                 <div className="name-and-status-box">
-                    <p className="grup-name">{groupProfile?.name}</p>
+                    <p className="group-name">{groupProfile?.name}</p>
                     <span>{participantCount} kullanıcı bulunuyor</span>
                 </div>
             </div>
