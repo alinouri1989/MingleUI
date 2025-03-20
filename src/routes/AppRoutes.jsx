@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { Route, Routes, Navigate } from 'react-router-dom';
 
 import Sign from "../pages/Sign/Sign.jsx";
-import Layout from '../Layout/Layout.jsx';
+import Layout from '../layout/Layout.jsx';
 import Chats from '../components/Chats/Chats.jsx';
 import Archives from '../components/Archives/Archives.jsx';
 import Groups from '../components/Groups/Groups.jsx';
