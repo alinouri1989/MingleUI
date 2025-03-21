@@ -173,11 +173,10 @@ export const SignalRProvider = ({ children }) => {
                 //! ===========  CHAT CONNECTION ===========
 
 
-                // chatConnection.invoke("Initial")
+                chatConnection.invoke("Initial")
 
                 chatConnection.off("ReceiveInitialChats");
                 chatConnection.on("ReceiveInitialChats", (data) => {
-                    console.log("BURAYA GİRİYOR MU=");
                     store.dispatch(initializeChats(data));
                 });
 
@@ -298,6 +297,8 @@ export const SignalRProvider = ({ children }) => {
 
                 //! =========== NOTIFICATION CONNECTION ===========
 
+                notificationConnection.invoke("Initial");
+
                 notificationConnection.off("ReceiveRecipientProfiles");
                 notificationConnection.on("ReceiveRecipientProfiles", (data) => {
                     dispatch(updateUserInfoToChatList(data));
@@ -351,7 +352,7 @@ export const SignalRProvider = ({ children }) => {
 
                 //! ===========  CALL CONNECTION ===========
 
-                // callConnection.invoke("Initial")
+                callConnection.invoke("Initial");
 
                 callConnection.off("ReceiveInitialCalls");
                 callConnection.on('ReceiveInitialCalls', async (data) => {
