@@ -2,7 +2,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
-import * as signalR from "@microsoft/signalr";
 
 import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
 import { removeGroupList, setGroupList, updateGroupInformations, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
@@ -133,33 +132,33 @@ export const SignalRProvider = ({ children }) => {
     useEffect(() => {
         const token = getJwtFromCookie();
 
-        const chatConnection = new signalR.HubConnectionBuilder()
+        const chatConnection = new HubConnectionBuilder()
             .withUrl(`${BASE_URL}hub/Chat`, {
-                accessTokenFactory: async () => token,  // Dinamik olarak token ekleyin
-                skipNegotiation: true,  // Negotiasyon aşamasını geçin
-                transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,  // WebSocket ve LongPolling seçeneklerini kullanın
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             })
-            .configureLogging(signalR.LogLevel.Information)
+            .configureLogging(LogLevel.Information)
             .withAutomaticReconnect()
             .build();
 
-        const notificationConnection = new signalR.HubConnectionBuilder()
+        const notificationConnection = new HubConnectionBuilder()
             .withUrl(`${BASE_URL}hub/Notification`, {
-                accessTokenFactory: async () => token,
-                skipNegotiation: true,
-                transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             })
-            .configureLogging(signalR.LogLevel.Information)
+            .configureLogging(LogLevel.Information)
             .withAutomaticReconnect()
             .build();
 
-        const callConnection = new signalR.HubConnectionBuilder()
+        const callConnection = new HubConnectionBuilder()
             .withUrl(`${BASE_URL}hub/Call`, {
-                accessTokenFactory: async () => token,
-                skipNegotiation: true,
-                transport: signalR.HttpTransportType.WebSockets | signalR.HttpTransportType.LongPolling,
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
             })
-            .configureLogging(signalR.LogLevel.Information)
+            .configureLogging(LogLevel.Information)
             .withAutomaticReconnect()
             .build();
 
