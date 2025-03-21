@@ -1,4 +1,3 @@
-import * as signalR from "@microsoft/signalr";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createContext, useContext, useState, useEffect, useRef } from "react";
@@ -138,8 +137,6 @@ export const SignalRProvider = ({ children }) => {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
-                skipNegotiation: true,
-                transport: signalR.HttpTransportType.WebSockets
             })
             .configureLogging(LogLevel.Information)
             .withAutomaticReconnect()
@@ -150,8 +147,6 @@ export const SignalRProvider = ({ children }) => {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
-                skipNegotiation: true,
-                transport: signalR.HttpTransportType.WebSockets
             })
             .configureLogging(LogLevel.Information)
             .withAutomaticReconnect()
@@ -162,8 +157,6 @@ export const SignalRProvider = ({ children }) => {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
-                skipNegotiation: true,
-                transport: signalR.HttpTransportType.WebSockets
             })
             .configureLogging(LogLevel.Information)
             .withAutomaticReconnect()
