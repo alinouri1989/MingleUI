@@ -137,6 +137,8 @@ export const SignalRProvider = ({ children }) => {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
+                skipNegotiation: true,
+                transport: signalR.HttpTransportType.WebSockets
             })
             .configureLogging(LogLevel.Information)
             .withAutomaticReconnect()
@@ -147,6 +149,8 @@ export const SignalRProvider = ({ children }) => {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
+                skipNegotiation: true,
+                transport: signalR.HttpTransportType.WebSockets
             })
             .configureLogging(LogLevel.Information)
             .withAutomaticReconnect()
@@ -157,6 +161,8 @@ export const SignalRProvider = ({ children }) => {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
+                skipNegotiation: true,
+                transport: signalR.HttpTransportType.WebSockets
             })
             .configureLogging(LogLevel.Information)
             .withAutomaticReconnect()
