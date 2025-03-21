@@ -172,6 +172,8 @@ export const SignalRProvider = ({ children }) => {
 
                 //! ===========  CHAT CONNECTION ===========
 
+                chatConnection.invoke("Test")
+
                 chatConnection.off("ReceiveInitialChats");
                 chatConnection.on("ReceiveInitialChats", (data) => {
                     console.log("BURAYA GİRİYOR MU=");
@@ -347,6 +349,8 @@ export const SignalRProvider = ({ children }) => {
                 });
 
                 //! ===========  CALL CONNECTION ===========
+
+                callConnection.invoke("Test");
 
                 callConnection.off("ReceiveInitialCalls");
                 callConnection.on('ReceiveInitialCalls', async (data) => {
