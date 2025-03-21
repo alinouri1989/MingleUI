@@ -172,7 +172,7 @@ export const SignalRProvider = ({ children }) => {
 
                 //! ===========  CHAT CONNECTION ===========
 
-                chatConnection.invoke("OnConnectedAsync")
+                chatConnection.invoke("OnConnected")
 
                 chatConnection.off("ReceiveInitialChats");
                 chatConnection.on("ReceiveInitialChats", (data) => {
@@ -350,7 +350,7 @@ export const SignalRProvider = ({ children }) => {
 
                 //! ===========  CALL CONNECTION ===========
 
-                callConnection.invoke("OnConnectedAsync");
+                callConnection.invoke("OnConnected")
 
                 callConnection.off("ReceiveInitialCalls");
                 callConnection.on('ReceiveInitialCalls', async (data) => {
