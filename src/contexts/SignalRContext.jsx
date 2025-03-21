@@ -172,18 +172,17 @@ export const SignalRProvider = ({ children }) => {
 
                 //! ===========  CHAT CONNECTION ===========
 
-                chatConnection.off("ReceiveInitialChats");
                 chatConnection.on("ReceiveInitialChats", (data) => {
                     console.log("BURAYA GİRİYOR MU=");
                     store.dispatch(initializeChats(data));
                 });
 
-                chatConnection.off("ReceiveInitialRecipientChatProfiles");
+
                 chatConnection.on("ReceiveInitialRecipientChatProfiles", (data) => {
                     dispatch(setInitialChatList(data));
                 });
 
-                chatConnection.off("ReceiveInitialGroupProfiles");
+
                 chatConnection.on("ReceiveInitialGroupProfiles", (data) => {
                     dispatch(setGroupList(data));
                 });
