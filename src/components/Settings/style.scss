@@ -188,10 +188,6 @@
 
 
 
-            @include screen(768px) {
-                height: auto;
-            }
-
             @include screen(359px) {
                 width: 100%;
                 @include flex-center(column, flex-start, center);
@@ -213,6 +209,7 @@
 
 
                 @include screen(600px) {
+                    height: 100%;
                     padding-right: 10px;
                 }
 
