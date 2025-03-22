@@ -312,6 +312,19 @@
             @include screen(900px) {
                 padding-bottom: 55px;
             }
+
+            &::-webkit-scrollbar {
+                width: 0px;
+                height: 0px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background-color: transparent;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
         }
     }
 }

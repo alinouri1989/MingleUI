@@ -18,6 +18,7 @@ body {
   line-height: 1.5;
   color: #333;
   overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
 }
 
 h1,
@@ -78,17 +79,25 @@ button {
   margin: 0;
   padding: 0;
   border: none;
-  outline: none;
   background: transparent;
   box-shadow: none;
-
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 
-input:focus,
-textarea:focus,
-select:focus,
-button:focus {
+
+
+button:active {
   outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+a:focus,
+button:focus,
+input:focus,
+textarea:focus {
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 button {
