@@ -24,6 +24,7 @@ import "./style.scss";
 
 import { motion } from 'framer-motion';
 import { startCall } from '../../helpers/startCall.js';
+import { defaultProfilePhoto } from '../../constants/DefaultProfilePhoto.js';
 
 function Calls() {
 
@@ -99,7 +100,9 @@ function Calls() {
           <div className="details-box">
             <div className="user-and-call-box">
               <div className="user-info">
-                <img src={profilePhoto} alt="" />
+                <img src={profilePhoto}
+                  onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+                />
                 <p>{displayName}</p>
               </div>
               <div className="call-options">

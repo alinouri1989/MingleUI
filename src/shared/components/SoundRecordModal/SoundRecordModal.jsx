@@ -171,17 +171,19 @@ function SoundRecordModal({ closeModal, chatId }) {
                             {String(Math.floor(timer / 60)).padStart(2, '0')}:
                             {String(timer % 60).padStart(2, '0')}
                         </div>
+
+                        <div className="options-box">
+                            {recordStarted && !recordFinished && (
+                                <button className="record-button" onClick={finishRecording}>Kaydı Bitir</button>
+                            )}
+
+                            {!recordStarted && !recordFinished && (
+                                <button className="record-button" onClick={startRecording}>Kaydı Başlat</button>
+                            )}
+                        </div>
                     </div>
                 }
-                <div className="options-box">
-                    {recordStarted && !recordFinished && (
-                        <button className="record-button" onClick={finishRecording}>Kaydı Bitir</button>
-                    )}
 
-                    {!recordStarted && !recordFinished && (
-                        <button className="record-button" onClick={startRecording}>Kaydı Başlat</button>
-                    )}
-                </div>
 
                 {recordFinished && audioUrl && (
                     <motion.div

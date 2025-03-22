@@ -29,6 +29,7 @@ import MessageInfo from '../MessageInfo/MessageInfo';
 import useScreenWidth from '../../../hooks/useScreenWidth';
 
 import './style.scss';
+import { defaultProfilePhoto } from '../../../constants/DefaultProfilePhoto';
 
 function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, content, fileName, fileSize, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
 
@@ -238,7 +239,9 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
             <div className={`message-box ${isSender ? 'sender' : 'receiver'}`} >
                 {isGroupMessageBubble && !isSender && (!isSmallScreen || messageType !== 3) && (
                     <div className='image-box'>
-                        <img src={senderProfile?.profilePhoto} alt="" />
+                        <img src={senderProfile?.profilePhoto}
+                            onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+                            alt="" />
                     </div>
                 )}
                 <div

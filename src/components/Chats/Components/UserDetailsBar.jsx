@@ -12,6 +12,7 @@ import { IoMdArrowRoundBack } from "react-icons/io";
 import CallModal from '../../Calls/Components/CallModal';
 import { formatDateForLastConnectionDate } from '../../../helpers/dateHelper';
 import { startCall } from '../../../helpers/startCall';
+import { defaultProfilePhoto } from '../../../constants/DefaultProfilePhoto';
 
 function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientId }) {
 

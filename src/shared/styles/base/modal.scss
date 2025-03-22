@@ -43,6 +43,7 @@
     box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.104);
 
 
+
     @media (max-width:768px) {
         height: var(--app-height);
         max-height: 100%;
@@ -55,7 +56,6 @@
         padding: 15px 8px;
         padding-bottom: 30px;
         background-color: var(--generalBackgroundColor);
-
     }
 
 }

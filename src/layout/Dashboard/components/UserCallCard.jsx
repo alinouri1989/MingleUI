@@ -14,6 +14,7 @@ import ListItemText from "@mui/material/ListItemText";
 import { formatTimeHoursMinutes } from "../../../helpers/dateHelper";
 import { SuccessAlert, ErrorAlert } from "../../../helpers/customAlert";
 import CallCardCallStatus from "../../../shared/components/CallStatus/CallCardCallStatus";
+import { defaultProfilePhoto } from "../../../constants/DefaultProfilePhoto";
 
 function UserCallCard({ callId, image, status, name, callType, callStatus, createdDate, isOutgoingCall }) {
 
@@ -59,7 +60,9 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
       <div className="card-info-box">
 
         <div className="image-box">
-          <img src={image} alt={`${name} profile`} />
+          <img src={image}
+            onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+            alt={`${name} profile`} />
           <p className={`status ${userStatus}`}></p>
         </div>
 

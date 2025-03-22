@@ -307,7 +307,6 @@ form {
     height: 100%;
 
     @include screen(768px) {
-        width: 100%;
         @include flex-center(column, center, center);
         padding: 15px;
     }

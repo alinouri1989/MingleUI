@@ -3,6 +3,7 @@ import { LuCheckCheck } from "react-icons/lu";
 import { formatDateForMessageInfo } from "../../../helpers/dateHelper";
 import CloseModalButton from "../../../contexts/components/CloseModalButton";
 import "./style.scss";
+import { defaultProfilePhoto } from "../../../constants/DefaultProfilePhoto";
 
 function MessageInfo({ closeModal, chatId, messageId }) {
 
@@ -39,7 +40,9 @@ function MessageInfo({ closeModal, chatId, messageId }) {
                             return user ? (
                                 <div key={userId} className="user-info">
                                     <div className="image-and-name-box">
-                                        <img src={user.profilePhoto} alt={user.displayName} className="profile-photo" />
+                                        <img src={user.profilePhoto} alt={user.displayName} className="profile-photo"
+                                            onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+                                        />
                                         <span>{user.displayName}</span>
                                     </div>
                                     <p>{formatDateForMessageInfo(message.status.read[userId])}</p>
