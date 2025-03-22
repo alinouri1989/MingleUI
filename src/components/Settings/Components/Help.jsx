@@ -14,14 +14,14 @@ function Help() {
         <p>Bize Ulaşın</p>
         <span>Bu uygulama hakkındaki görüşlerinizi bizimle paylaşın</span>
         <div className="rate-box">
-          <a>Bize ulaşın</a>
+          <a href="mailto:mingle.destek@gmail.com">Bize ulaşın</a>
           <a>Uygulamaya puan ver</a>
         </div>
         <a>Yardım merkezi</a>
         <a>Lisanslar</a>
         <a>Koşullar ve Gizlilik İlkesi</a>
       </div>
-      <p style={{ marginTop: "10px" }}>Geliştirici Ekip</p>
+      <p className="developer-team-title">Geliştirici Ekip</p>
       <div className="developers-box">
         <div className="developer-box">
           <img src="https://media.licdn.com/dms/image/v2/D4D03AQFtUmvID7fG8w/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1711049966022?e=1747872000&v=beta&t=11Uockt7nWDYNuATjq9AnuV3I30XxTgy-TW0gAl7xk8" alt="Hamza" />

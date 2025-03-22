@@ -5,9 +5,14 @@
     width: 550px;
     height: 520px;
 
+
     @include screen(768px) {
         width: 100%;
+        flex: 1;
+        height: auto;
         height: 100%;
+
+
     }
 
     @include screen(359px) {
@@ -38,6 +43,11 @@
         flex: 1;
         width: 100%;
 
+        @include screen(768px) {
+            @include flex-center(row, center, flex-start);
+            height: 100%;
+        }
+
         @include screen(359px) {
             @include flex-center(column, center, center);
         }
@@ -51,10 +61,9 @@
             gap: 13px;
             border-right: 1px solid var(--smooth-light-blue);
 
-            @include screen(500px) {
+            @include screen(575px) {
                 width: 70px;
             }
-
 
             @include screen(359px) {
                 padding: 0px;
@@ -90,7 +99,7 @@
                 @include transition();
 
 
-                @include screen(500px) {
+                @include screen(575px) {
                     @include flex-center(row, center, center);
                     width: 55px;
                     height: 50px;
@@ -147,7 +156,7 @@
                     font-weight: 700;
 
 
-                    @include screen(500px) {
+                    @include screen(575px) {
                         display: none;
                     }
                 }
@@ -170,8 +179,6 @@
                 }
             }
         }
-
-
 
         .dynamic-content {
             flex: 1;
@@ -197,6 +204,11 @@
                 height: 440px;
                 width: 100%;
                 overflow-x: hidden;
+
+
+                @include screen(768px) {
+                    height: 100%;
+                }
 
                 @include screen(600px) {
                     padding-right: 10px;
@@ -245,6 +257,12 @@
                         color: var(--blue);
 
                     }
+                }
+
+
+                .developer-team-title {
+                    margin-top: 10px;
+                    color: var(--text-black);
                 }
 
                 .developers-box {
