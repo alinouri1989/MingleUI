@@ -5,6 +5,10 @@
     width: 350px;
     gap: 7px;
 
+    @include screen(768px) {
+        width: 100%;
+    }
+
     .message-info-section {
         width: 100%;
         margin-bottom: 10px;
