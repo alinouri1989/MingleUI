@@ -5,14 +5,15 @@ import { ModalProvider } from "./contexts/ModalContext.jsx";
 
 function App() {
   return (
-    <>
-      <DataLoader>
+    <DataLoader>
+      {/* Tam ekran yüksekliği için div */}
+      <div style={{ height: "calc(var(--vh, 1vh) * 100)" }}>
         <ModalProvider>
           <Toaster position="top-center" />
           <AppRoutes />
         </ModalProvider>
-      </DataLoader>
-    </>
+      </div>
+    </DataLoader>
   );
 }
 
