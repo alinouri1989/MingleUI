@@ -17,7 +17,7 @@ import { TbEdit } from "react-icons/tb";
 import { IoMdSettings } from "react-icons/io";
 
 import star from "../../../../assets/svg/star.svg";
-import { defaultGroupPhoto } from "../../../../constants/DefaultProfilePhoto.js";
+import { defaultGroupPhoto, defaultProfilePhoto } from "../../../../constants/DefaultProfilePhoto.js";
 import AddUser from "../AddUser.jsx";
 import CloseModalButton from "../../../../contexts/components/CloseModalButton.jsx";
 import { useDispatch, useSelector } from "react-redux";
@@ -259,6 +259,7 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                 closeModal();
             }
         } catch (error) {
+            console.log(error);
             const errorMessage = error?.data?.message || "Bir hata oluştu, lütfen tekrar deneyin.";
             ErrorAlert(errorMessage);
         }
@@ -514,7 +515,9 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                                     return (
                                         <div className="user-box" key={participantId}>
                                             <div className="user-info">
-                                                <img src={user.profilePhoto} alt={user.displayName} />
+                                                <img src={user.profilePhoto}
+                                                    onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+                                                    alt={user.displayName} />
                                                 <div className="username-and-role-box">
                                                     <p className="user-display-name">{user.displayName}</p>
                                                     {isCurrentUser ? (

@@ -9,6 +9,7 @@ import { IoIosArrowDroprightCircle } from "react-icons/io";
 
 import NewGroupModal from './NewAndSettingsGroup/NewAndSettingsGroupModal';
 import { formatDateToTR } from '../../../helpers/dateHelper';
+import { defaultProfilePhoto } from '../../../constants/DefaultProfilePhoto';
 
 function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }) {
 
@@ -63,7 +64,8 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }
                         {groupProfile ? (
                             <>
                                 <div className='group-info-box'>
-                                    <img src={groupProfile?.photoUrl} alt={`profile`} />
+                                    <img src={groupProfile?.photoUrl}
+                                        alt={`profile`} />
                                     <p>{groupProfile.name}</p>
                                 </div>
 
@@ -95,6 +97,7 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }
                                                         <div className="image-box">
                                                             <img
                                                                 src={member.profilePhoto}
+                                                                onError={(e) => e.currentTarget.src = defaultProfilePhoto}
                                                                 alt={member.displayName}
                                                             />
                                                             <p className={`user-status ${isOnline ? "online" : "offline"}`}></p>

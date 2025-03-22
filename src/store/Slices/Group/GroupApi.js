@@ -7,7 +7,7 @@ const BASE_URL = import.meta.env.VITE_APP_BASE_API_URL;
 export const GroupApi = createApi({
   reducerPath: 'newGroupApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${BASE_URL}api/`,
+    baseUrl: `${BASE_URL}api/Group`,
     prepareHeaders: (headers) => {
       const token = getJwtFromCookie();
       if (token) {
