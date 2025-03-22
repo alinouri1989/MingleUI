@@ -2,7 +2,7 @@
 
 .layout-container {
     background-color: var(--smooth-blue);
-    height: 100vh;
+    height: var(--app-height);
     @include flex-center(column, center);
 
     .main-content {
@@ -29,17 +29,14 @@
 
             @include screen(900px) {
                 margin: 0;
-
             }
 
             .outlet-mobile {
                 z-index: 99999;
             }
         }
-
     }
 }
-
 
 .e2e-info-box {
     margin-bottom: 50px;
