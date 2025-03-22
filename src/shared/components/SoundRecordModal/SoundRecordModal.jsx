@@ -176,7 +176,6 @@ function SoundRecordModal({ closeModal, chatId }) {
                             {recordStarted && !recordFinished && (
                                 <button className="record-button" onClick={finishRecording}>Kaydı Bitir</button>
                             )}
-
                             {!recordStarted && !recordFinished && (
                                 <button className="record-button" onClick={startRecording}>Kaydı Başlat</button>
                             )}
