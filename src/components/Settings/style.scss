@@ -186,6 +186,12 @@
             padding: 15px 0px 0px 15px;
             width: 20px;
 
+
+
+            @include screen(768px) {
+                height: auto;
+            }
+
             @include screen(359px) {
                 width: 100%;
                 @include flex-center(column, flex-start, center);
@@ -205,10 +211,6 @@
                 width: 100%;
                 overflow-x: hidden;
 
-
-                @include screen(768px) {
-                    height: 100%;
-                }
 
                 @include screen(600px) {
                     padding-right: 10px;

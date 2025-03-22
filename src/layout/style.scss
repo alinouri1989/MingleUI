@@ -15,7 +15,7 @@
         @include screen(900px) {
             @include flex-center(column, center, center);
             width: 100%;
-            height: 100%;
+            height: 100vh;
             background-color: var(--generalBackgroundColor);
         }
 

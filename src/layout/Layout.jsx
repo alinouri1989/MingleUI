@@ -13,14 +13,26 @@ const Layout = () => {
     const [isActiveContent, setIsActiveContent] = useState(false);
 
     useEffect(() => {
+        let timeoutId;
+
         const updateHeight = () => {
-            document.documentElement.style.setProperty("--app-height", `${window.innerHeight}px`);
-            setIsWideScreen(window.innerWidth >= 900);
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(() => {
+                if (window.innerWidth < 900) {
+                    document.documentElement.style.setProperty("--app-height", `${window.innerHeight}px`);
+                } else {
+                    document.documentElement.style.setProperty("--app-height", "100vh");
+                }
+                setIsWideScreen(window.innerWidth >= 900);
+            }, 100);
         };
 
         updateHeight();
         window.addEventListener("resize", updateHeight);
-        return () => window.removeEventListener("resize", updateHeight);
+        return () => {
+            clearTimeout(timeoutId);
+            window.removeEventListener("resize", updateHeight);
+        };
     }, []);
 
     useEffect(() => {

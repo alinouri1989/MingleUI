@@ -44,7 +44,7 @@
 
 
     @media (max-width:768px) {
-        height: 100vh;
+        height: var(--app-height);
         max-height: 100%;
         max-width: 100%;
         width: 100%;
