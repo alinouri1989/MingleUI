@@ -210,6 +210,10 @@
                     padding-right: 10px;
                 }
 
+                @include screen(360px) {
+                    height: 100%;
+                }
+
 
                 .version-info {
                     @include flex-center(column, center, flex-start);
@@ -255,7 +259,6 @@
                     }
                 }
 
-
                 .developer-team-title {
                     margin-top: 10px;
                     color: var(--text-black);
@@ -266,11 +269,19 @@
                     @include flex-center(column, center, flex-start);
                     gap: 15px;
 
-
-
                     .developer-box {
                         @include flex-center(row, center, center);
                         gap: 10px;
+
+                        @include screen(450px) {
+                            @include flex-center(column, center, flex-start);
+                            gap: 10px;
+                        }
+
+                        .developer-image-and-info {
+                            @include flex-center(row, center, center);
+                            gap: 10px;
+                        }
 
                         img {
                             width: 45px;
@@ -299,6 +310,11 @@
                             @include flex-center(row, center, center);
                             gap: 8px;
                             border-radius: 7px;
+
+                            @include screen(450px) {
+                                margin-top: 5px;
+                                margin-left: 3px;
+                            }
 
                             a {
                                 @include flex-center(row, center, center);
@@ -429,6 +445,11 @@
 
                 @include screen(768px) {
                     height: 0px;
+                    min-height: 100%;
+                }
+
+                @include screen(360px) {
+                    height: 100%;
                     min-height: 100%;
                 }
 
