@@ -30,8 +30,6 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
     const lastConnectionDate = recipientProfile.lastConnectionDate;
 
     useEffect(() => {
-        window.history.pushState({}, '', window.location.href);
-
         const handleBackButton = (e) => {
             e.preventDefault();
             toggleSidebar();
@@ -39,11 +37,13 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
 
         window.addEventListener('popstate', handleBackButton);
 
+        const initialState = window.history.state;
+        window.history.pushState(initialState, document.title);
+
         return () => {
             window.removeEventListener('popstate', handleBackButton);
         };
     }, [toggleSidebar]);
-
 
     const handleVoiceCall = () => {
         startCall(callConnection, recipientId, false, dispatch, () =>
