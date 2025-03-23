@@ -27,6 +27,7 @@ function AddUser({ closeUserModal, setFormData, formData }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
+
     useEffect(() => {
         if (!notificationConnection || !debouncedSearchQuery) return;
 

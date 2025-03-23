@@ -16,6 +16,8 @@ import { decryptMessage } from '../helpers/messageCryptoHelper.js';
 
 import store from '../store/index.js';
 import { ErrorAlert } from "../helpers/customAlert.js";
+import MinglePreLoader from "../shared/components/MinglePreLoader/MinglePreLoader.jsx";
+import PreLoader from "../shared/components/PreLoader/PreLoader.jsx";
 
 
 const SignalRContext = createContext();
@@ -49,7 +51,7 @@ export const SignalRProvider = ({ children }) => {
 
     const { callId } = useSelector(state => state.call);
     const { Individual, Group } = useSelector(state => state.chat);
-    const { token } = useSelector(state => state.auth);
+    const { token, user } = useSelector(state => state.auth);
     const userId = getUserIdFromToken(token);
 
     const [localStream, setLocalStream] = useState(null);
@@ -168,7 +170,6 @@ export const SignalRProvider = ({ children }) => {
 
         Promise.all([chatConnection.start(), notificationConnection.start(), callConnection.start()])
             .then(() => {
-
                 setConnectionStatus("connected");
                 setLoading(false);
 
@@ -611,7 +612,20 @@ export const SignalRProvider = ({ children }) => {
     };
 
     if (loading) {
-        return null;
+        return (
+            <div
+                style={{
+                    width: "100vw",
+                    height: "100vh",
+                    background: user.userSettings.theme === "Dark" ? "#141414" : "#ffffff",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                <PreLoader />
+            </div>
+        );
     }
 
     return (

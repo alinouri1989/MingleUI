@@ -146,7 +146,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
         }
     }
 
-    const TextMessage = ({ content }) => <p>{content}</p>;
+    const TextMessage = ({ content }) => <p className='text-content'>{content}</p>;
 
     const ImageMessage = ({ content }) => (
         <div onClick={() => setIsShowImage(true)}>

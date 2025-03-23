@@ -29,21 +29,6 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
     const status = recipientProfile.lastConnectionDate == "0001-01-01T00:00:00" ? 'online' : 'offline';
     const lastConnectionDate = recipientProfile.lastConnectionDate;
 
-    useEffect(() => {
-        const handleBackButton = (e) => {
-            e.preventDefault();
-            toggleSidebar();
-        };
-
-        window.addEventListener('popstate', handleBackButton);
-
-        const initialState = window.history.state;
-        window.history.pushState(initialState, document.title);
-
-        return () => {
-            window.removeEventListener('popstate', handleBackButton);
-        };
-    }, [toggleSidebar]);
 
     const handleVoiceCall = () => {
         startCall(callConnection, recipientId, false, dispatch, () =>
@@ -56,6 +41,8 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
             showModal(<CallModal closeModal={closeModal} isCameraCall={true} />)
         );
     };
+
+
 
     return (
         <div className={`user-details-sidebar ${isSidebarOpen ? "open" : ""}`}>

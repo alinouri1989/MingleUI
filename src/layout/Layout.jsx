@@ -13,27 +13,21 @@ const Layout = () => {
     const [isActiveContent, setIsActiveContent] = useState(false);
 
     useEffect(() => {
-        let timeoutId;
-
         const updateHeight = () => {
-            clearTimeout(timeoutId);
-            timeoutId = setTimeout(() => {
-                if (window.innerWidth < 900) {
-                    document.documentElement.style.setProperty("--app-height", `${window.innerHeight}px`);
-                } else {
-                    document.documentElement.style.setProperty("--app-height", "100vh");
-                }
-                setIsWideScreen(window.innerWidth >= 900);
-            }, 100);
+            if (window.innerWidth < 900) {
+                document.documentElement.style.setProperty("--app-height", `${window.innerHeight}px`);
+            } else {
+                document.documentElement.style.setProperty("--app-height", "100vh");
+            }
+            setIsWideScreen(window.innerWidth >= 900);
         };
 
         updateHeight();
         window.addEventListener("resize", updateHeight);
-        return () => {
-            clearTimeout(timeoutId);
-            window.removeEventListener("resize", updateHeight);
-        };
+
+        return () => window.removeEventListener("resize", updateHeight);
     }, []);
+
 
     useEffect(() => {
         const activeRoutes = ["/sohbetler", "/arsivler", "/aramalar", "/gruplar"];

@@ -63,6 +63,8 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
     const modalRef = useRef(null);
     const modelSelectionBoxRef = useRef(null);
 
+
+
     const updatePosition = () => {
         if (buttonRef.current && modalRef.current) {
             const rect = buttonRef.current.getBoundingClientRect();

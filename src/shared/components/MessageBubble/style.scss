@@ -83,6 +83,11 @@
                 max-width: 220px;
             }
 
+            .text-content {
+                word-break: break-word;
+                overflow-wrap: break-word;
+            }
+
             &.image {
                 padding: 3px 7px;
                 background-color: rgba(227, 227, 227, 0.067);
