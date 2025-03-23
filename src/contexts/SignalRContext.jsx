@@ -6,7 +6,7 @@ import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
 import { removeGroupList, setGroupList, updateGroupInformations, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
 import { addMessageToGroup, addMessageToIndividual, addNewGroupChat, addNewIndividualChat, initializeChats, addArchive, removeArchive, removeIndividualChat, removeGroupChat } from "../store/Slices/chats/chatSlice.js";
-import { deleteCallHistory, handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallStarted, setIsCallStarting, setIsRingingIncoming, updateCallRecipientList } from "../store/Slices/calls/callSlice.js";
+import { deleteCallHistory, handleEndCall, handleIncomingCall, handleOutgoingCall, resetCallState, setCallRecipientList, setCallStartedDate, setInitialCalls, setIsCallAcceptWaiting, setIsCallStarted, setIsCallStarting, setIsRingingIncoming, updateCallRecipientList } from "../store/Slices/calls/callSlice.js";
 import { addNewUserToChatList, setInitialChatList, updateUserInfoToChatList } from "../store/Slices/chats/chatListSlice.js";
 import { createAndSendOffer, handleRemoteSDP, sendSdp } from "../services/webRtcService.js";
 
@@ -456,11 +456,7 @@ export const SignalRProvider = ({ children }) => {
                     ErrorAlert(data.message);
                 });
 
-                callConnection.on('ValidationError', (data) => {
-                    if (data.message !== "Kullanıcı meşgul!") {
-                        ErrorAlert(data.message);
-                    }
-                });
+                callConnection.on('ValidationError', () => { });
 
             })
             .catch((err) => {
@@ -500,12 +496,10 @@ export const SignalRProvider = ({ children }) => {
     const handleAcceptCall = async () => {
         try {
             if (peerConnection)
-                createAndSendOffer(callIdRef.current, callConnection, peerConnection);
-
+                dispatch(setIsCallAcceptWaiting(true));
+            createAndSendOffer(callIdRef.current, callConnection, peerConnection);
         } catch { }
     };
-
-    // Messages Deliver and Read Set Methods
 
     const addPendingRequest = (messageId) => {
         setPendingRequests((prev) => new Set(prev).add(messageId));

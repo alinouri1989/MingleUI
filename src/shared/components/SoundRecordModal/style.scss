@@ -103,10 +103,14 @@
                 color: white;
                 font-size: 15px;
 
+
                 @include screen(768px) {
-                    padding: 12px 24px;
-                    border-radius: 30px;
+                    padding: 10px;
+                    height: auto;
+                    width: 60%;
+                    border-radius: 10px;
                 }
+
             }
         }
 

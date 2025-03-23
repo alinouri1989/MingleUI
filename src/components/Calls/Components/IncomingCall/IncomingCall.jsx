@@ -1,6 +1,6 @@
 import { useModal } from '../../../../contexts/ModalContext';
 import { useSignalR } from '../../../../contexts/SignalRContext';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ErrorAlert } from "../../../../helpers/customAlert.js";
 
@@ -12,12 +12,13 @@ import CallModal from '../CallModal';
 import { setIsRingingIncoming } from '../../../../store/Slices/calls/callSlice';
 import "./style.scss";
 import { defaultProfilePhoto } from '../../../../constants/DefaultProfilePhoto.js';
+import PreLoader from '../../../../shared/components/PreLoader/PreLoader.jsx';
 
 function IncomingCall({ callType, callerProfile, callId }) {
 
     const dispatch = useDispatch();
     const { callConnection, handleAcceptCall, localStream } = useSignalR();
-    const { isCallStarted } = useSelector(state => state.call);
+    const { isCallStarted, isCallAcceptWaiting } = useSelector(state => state.call);
 
     const { showModal, closeModal } = useModal();
     const localVideoRef = useRef(null);
@@ -83,6 +84,7 @@ function IncomingCall({ callType, callerProfile, callId }) {
             {callType === 1 && (
                 <video className='local-video' playsInline ref={localVideoRef} autoPlay muted></video>
             )}
+            {isCallAcceptWaiting && <PreLoader />}
         </div>
     );
 }

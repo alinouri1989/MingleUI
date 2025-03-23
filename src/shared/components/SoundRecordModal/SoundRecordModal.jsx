@@ -172,14 +172,6 @@ function SoundRecordModal({ closeModal, chatId }) {
                             {String(timer % 60).padStart(2, '0')}
                         </div>
 
-                        <div className="options-box">
-                            {recordStarted && !recordFinished && (
-                                <button className="record-button" onClick={finishRecording}>Kaydı Bitir</button>
-                            )}
-                            {!recordStarted && !recordFinished && (
-                                <button className="record-button" onClick={startRecording}>Kaydı Başlat</button>
-                            )}
-                        </div>
                     </div>
                 }
 
@@ -200,6 +192,16 @@ function SoundRecordModal({ closeModal, chatId }) {
                         </div>
                     </motion.div>
                 )}
+
+                <div className="options-box">
+                    {recordStarted && !recordFinished && (
+                        <button className="record-button" onClick={finishRecording}>Kaydı Bitir</button>
+                    )}
+                    {!recordStarted && !recordFinished && (
+                        <button className="record-button" onClick={startRecording}>Kaydı Başlat</button>
+                    )}
+                </div>
+
                 {recordFinished && audioUrl &&
                     <div className='send-and-cancel-buttons-box'>
                         <button onClick={handleDeleteAudio}>Sil</button>

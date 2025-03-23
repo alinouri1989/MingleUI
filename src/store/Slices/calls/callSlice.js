@@ -13,6 +13,7 @@ const initialState = {
     callRecipientList: [],
     isInitialCallsReady: false,
     isCallModalOpen: false,
+    isCallAcceptWaiting: false,
 };
 
 const callSlice = createSlice({
@@ -34,8 +35,12 @@ const callSlice = createSlice({
         setIsRingingOutgoing: (state, action) => {
             state.isRingingOutgoing = action.payload;
         },
+        setIsCallAcceptWaiting: (state, action) => {
+            state.isCallAcceptWaiting = action.payload;
+        },
         setIsCallStarted: (state, action) => {
             state.isCallStarted = action.payload;
+            state.isCallAcceptWaiting = false;
         },
         setIsCallStarting: (state, action) => {
             state.isCallStarting = action.payload;
@@ -56,6 +61,7 @@ const callSlice = createSlice({
             state.isCallStarting = false;
             state.callStartedDate = null;
             state.isCallModalOpen = false;
+            state.isCallAcceptClicked = false;
         },
         setInitialCalls: (state, action) => {
             const initialCallsData = action.payload?.Call;
@@ -144,6 +150,7 @@ export const {
     setCallerProfile,
     setIsRingingIncoming,
     setIsRingingOutgoing,
+    setIsCallAcceptWaiting,
     resetCallState,
     setCallResult,
     setInitialCalls,
