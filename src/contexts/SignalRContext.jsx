@@ -33,10 +33,11 @@ export const useSignalR = () => {
 
 export const SignalRProvider = ({ children }) => {
 
+    const BASE_URL = import.meta.env.VITE_APP_BASE_API_URL;
+
+    const location = useLocation();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const location = useLocation();
-    const BASE_URL = import.meta.env.VITE_APP_BASE_API_URL;
 
     const [connectionStatus, setConnectionStatus] = useState("disconnected");
     const [notificationConnection, setNotificationConnection] = useState(null);
@@ -71,6 +72,7 @@ export const SignalRProvider = ({ children }) => {
                     sampleRate: 48000,
                 },
                 video: callType === 1 ? {
+                    facingMode: "user",
                     width: { ideal: 1920, max: 1920 },
                     height: { ideal: 1080, max: 1080 },
                     frameRate: { ideal: 45, max: 60 },

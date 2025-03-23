@@ -14,20 +14,25 @@ import { HiMiniSpeakerXMark } from "react-icons/hi2";
 import { TbMicrophoneFilled } from "react-icons/tb";
 import { TbMicrophoneOff } from "react-icons/tb";
 import { PiPhoneSlashFill } from "react-icons/pi";
+import { MdFlipCameraIos } from "react-icons/md";
 
 import { formatTime } from "../../../helpers/formatCallTime";
 import "./CallModal.scss";
 import { defaultProfilePhoto } from "../../../constants/DefaultProfilePhoto";
 import { ErrorAlert } from "../../../helpers/customAlert";
+import useScreenWidth from "../../../hooks/useScreenWidth";
 
 function CallModal({ closeModal, isCameraCall }) {
-    const { callConnection, localStream, remoteStream } = useSignalR();
+    const { callConnection, localStream, remoteStream, setLocalStream } = useSignalR();
 
     const { callerProfile, callId, isCallStarted, isRingingOutgoing, callStartedDate, isCallStarting } = useSelector((state) => state.call);
 
     const [isMicrophoneOn, setMicrophoneMode] = useState(true);
     const [isSpeakerOn, setSpeakerMode] = useState(true);
+    const [isFrontCamera, setIsFrontCamera] = useState(true);
     const [callStatus, setCallStatus] = useState("Aranıyor...");
+
+    const isSmallScreen = useScreenWidth(1000);
 
     const callAudioRef = useRef(null);
     const busyAudioRef = useRef(null);
@@ -82,6 +87,14 @@ function CallModal({ closeModal, isCameraCall }) {
             });
         }
     }, [localStream, isMicrophoneOn]);
+
+    useEffect(() => {
+        return () => {
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+            }
+        };
+    }, [localStream]);
 
 
     callConnection.on('ValidationError', (data) => {
@@ -224,6 +237,39 @@ function CallModal({ closeModal, isCameraCall }) {
         closeModal();
     };
 
+
+    const handleCameraFlip = async () => {
+        if (localStream) {
+            // Eski video track'ini durdur
+            localStream.getVideoTracks().forEach((track) => track.stop());
+        }
+
+        // Kamera türünü tersine çevir
+        const newCameraType = isFrontCamera ? "environment" : "user"; // "environment" arka kamera, "user" ön kamera
+
+        try {
+            // Yeni bir stream al
+            const newStream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: newCameraType },
+                audio: false, // Ses almak istemiyoruz, sadece video
+            });
+
+            // Yeni stream'i video track'e ekle
+            newStream.getTracks().forEach((track) => {
+                peerConnection.current.addTrack(track, newStream);
+            });
+
+            // Local stream'i güncelle
+            setLocalStream(newStream);
+
+            // Kameranın türünü değiştir
+            setIsFrontCamera(!isFrontCamera); // Ön kamera ise arka, arka kamera ise ön yap
+        } catch (error) {
+            console.error('Kamera değiştirilemedi:', error);
+        }
+    };
+
+
     return (
         <div className={`call-modal ${isCallStarted ? 'video-call-Mode' : ''}`}>
             <div className="logo-and-e2e-box">
@@ -283,8 +329,11 @@ function CallModal({ closeModal, isCameraCall }) {
                     <MdScreenShare />
                 </button>
 
-                <button className="disabled">
-                    <PersonAddAlt1Icon />
+                <button
+                    onClick={isSmallScreen ? (isCameraCall ? handleCameraFlip : handleAddPerson) : handleDisabled}
+                    className={isSmallScreen ? (isCameraCall ? "" : "disabled") : "disabled"}
+                >
+                    {isCameraCall ? <MdFlipCameraIos /> : <PersonAddAlt1Icon />}
                 </button>
 
                 <button onClick={handleSpeakerMode}>
