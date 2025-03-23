@@ -329,12 +329,21 @@ function CallModal({ closeModal, isCameraCall }) {
                     <MdScreenShare />
                 </button>
 
-                <button
-                    onClick={isSmallScreen ? (isCameraCall ? handleCameraFlip : handleAddPerson) : handleDisabled}
-                    className={isSmallScreen ? (isCameraCall ? "" : "disabled") : "disabled"}
-                >
-                    {isCameraCall ? <MdFlipCameraIos /> : <PersonAddAlt1Icon />}
-                </button>
+                {isSmallScreen
+                    ?
+                    isCameraCall ?
+                        <button onClick={() => handleCameraFlip()}>
+                            <MdFlipCameraIos />
+                        </button>
+
+                        : <button className="disabled">
+                            <PersonAddAlt1Icon />
+                        </button>
+
+                    : <button className="disabled">
+                        <PersonAddAlt1Icon />
+                    </button>
+                }
 
                 <button onClick={handleSpeakerMode}>
                     {isSpeakerOn ? <HiMiniSpeakerWave /> : <HiMiniSpeakerXMark />}
