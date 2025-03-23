@@ -17,6 +17,22 @@ const DataLoader = ({ children }) => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        const updateHeight = () => {
+            if (window.innerWidth < 900) {
+                document.documentElement.style.setProperty("--app-height", `${window.innerHeight}px`);
+            } else {
+                document.documentElement.style.setProperty("--app-height", "100vh");
+            }
+        };
+
+        updateHeight();
+        window.addEventListener("resize", updateHeight);
+
+        return () => window.removeEventListener("resize", updateHeight);
+    }, []);
+
+
+    useEffect(() => {
         const initializeAuth = async () => {
             const jwt = getJwtFromCookie();
 

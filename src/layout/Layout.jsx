@@ -14,11 +14,6 @@ const Layout = () => {
 
     useEffect(() => {
         const updateHeight = () => {
-            if (window.innerWidth < 900) {
-                document.documentElement.style.setProperty("--app-height", `${window.innerHeight}px`);
-            } else {
-                document.documentElement.style.setProperty("--app-height", "100vh");
-            }
             setIsWideScreen(window.innerWidth >= 900);
         };
 

@@ -615,8 +615,8 @@ export const SignalRProvider = ({ children }) => {
         return (
             <div
                 style={{
-                    width: "100vw",
-                    height: "100vh",
+                    width: "100%",
+                    height: "var(--app-height)",
                     background: user.userSettings.theme === "Dark" ? "#141414" : "#ffffff",
                     display: "flex",
                     justifyContent: "center",

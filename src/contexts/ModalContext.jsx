@@ -10,7 +10,7 @@ export const ModalProvider = ({ children }) => {
 
   const showModal = (content) => {
     setModalContent(content);
-    window.history.pushState({ modalOpen: true }, ""); // URL değiştirmeden state ekle
+    window.history.pushState({ modalOpen: true }, "");
   };
 
   const closeModal = () => {
