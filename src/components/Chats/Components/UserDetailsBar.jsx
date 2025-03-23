@@ -30,20 +30,19 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
     const lastConnectionDate = recipientProfile.lastConnectionDate;
 
     useEffect(() => {
-        const handleBackButton = (e) => {
-            e.preventDefault(); // Sayfa geçmişinin değişmesini engelliyoruz
-            toggleSidebar(); // Geri butonuna basıldığında sidebar'ı kapatıyoruz
-        };
+        window.history.pushState({}, '', window.location.href);
 
-        // Sayfa geçmişine sahte bir durum ekliyoruz
-        window.history.pushState(null, "", window.location.pathname);
+        const handleBackButton = (e) => {
+            e.preventDefault();
+            toggleSidebar();
+        };
 
         window.addEventListener('popstate', handleBackButton);
 
         return () => {
             window.removeEventListener('popstate', handleBackButton);
         };
-    }, []);
+    }, [toggleSidebar]);
 
 
     const handleVoiceCall = () => {
