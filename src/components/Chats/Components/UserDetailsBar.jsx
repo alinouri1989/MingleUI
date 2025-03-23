@@ -31,11 +31,15 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
 
     useEffect(() => {
         const handleBackButton = (e) => {
-            e.preventDefault();
-            toggleSidebar();
+            e.preventDefault(); // Sayfa geçmişinin değişmesini engelliyoruz
+            toggleSidebar(); // Geri butonuna basıldığında sidebar'ı kapatıyoruz
         };
 
+        // Sayfa geçmişine sahte bir durum ekliyoruz
+        window.history.pushState(null, "", window.location.pathname);
+
         window.addEventListener('popstate', handleBackButton);
+
         return () => {
             window.removeEventListener('popstate', handleBackButton);
         };
@@ -117,4 +121,4 @@ function UserDetailsBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipi
     )
 }
 
-export default UserDetailsBar
+export default UserDetailsBar;
