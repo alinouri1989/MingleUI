@@ -18,3 +18,104 @@ This project is designed for **software developers, students, employers, and web
 - **Web users** can experience a **fast, user-friendly, and responsive** real-time chat application designed for seamless communication, including text, voice, and video chat.  
 
 This project serves as an example of how **real-time messaging, group chats, multimedia sharing**, and **voice/video calling** can be efficiently implemented in a web-based environment.  
+
+![ProjectFeatures](https://github.com/user-attachments/assets/2be0bc9a-aa47-49d6-bb78-bd8234286059)
+
+
+### 🚀 **User Authentication (Auth)**
+- Account creation with email and password.
+- Quick login using Google and Facebook.
+- Password reset via email.
+
+![Frame 195 (2)](https://github.com/user-attachments/assets/ecaa3a9e-3eca-4bf9-9a28-e52a22bf8e70)
+
+### ⚙️ **Settings**
+
+#### 👤 **User Account Management**
+- **Profile Information:** Edit and update account details.
+- **Profile Picture:** Upload, change, and view profile photo.
+
+#### 🎨 **Theme Customization**
+- Choose from 8 different chat background themes for a personalized experience.
+
+#### 🔒 **Security Settings**
+- Change your password to enhance security.
+- Manage and secure your account with a new password.
+
+#### 🛠️ **Help & Support**
+- Access FAQs and troubleshooting guides.
+- Contact support for assistance with account or technical issues.
+- **Project Version:** v1.0.0
+- **Contact Information:** For inquiries, reach out via email.
+
+#### 👨‍💻 **Developer Team**
+- For project-related inquiries, you can reach out to the development team via Email, LinkedIn and GitHub.
+- Developer team details:
+  - LinkedIn profiles
+  - GitHub repositories
+  - Email contact
+ 
+![Frame 198](https://github.com/user-attachments/assets/e0046268-7226-41fa-a825-ac307f423d08)
+
+
+### 💬 **Real-Time Messaging**
+- Instant text messaging in private and group chats.
+- Emoji, GIF, and media sharing support.
+- Message notifications and read receipts.
+
+### 📞 **Voice and Video Calls**
+- One-on-one voice and video calling.
+- Group video calls with up to 10 participants.
+- Mute/unmute and camera toggle options during calls.
+
+### 🔒 **Message Encryption**
+- End-to-end encryption for secure communication.
+- Encrypted voice and video calls for privacy.
+
+### 🔍 **Search & Filter**
+- Search for specific messages, users, and groups.
+- Filter chats by date, name, and content type.
+- Highlight unread messages and notifications.
+
+### 📁 **File Sharing**
+- Share images, documents, and other files in chats.
+- File previews before downloading.
+- Multiple file uploads in a single message.
+
+### 🛠️ **User Settings**
+- Notification preferences (mute chats, customize alerts).
+- Privacy settings (block/unblock users).
+- Theme customization (light/dark mode).
+
+### 📱 **Device Compatibility**
+- Fully responsive design, optimized for both desktop and mobile devices.
+- Cross-platform support (iOS, Android, Web).
+
+### 🎨 **Modern and Intuitive UX/UI**
+- Clean, minimal, and user-friendly interface.
+- Smooth transitions and animations for an engaging experience.
+- Real-time status updates (typing indicators, seen status, etc.).
+
+### 🌐 **Group Chats and Management**
+- Create and manage group chats with multiple participants.
+- Add/remove users and assign admin roles.
+- Group chat settings (name, photo, description).
+
+### 💬 **Push Notifications**
+- Real-time notifications for incoming messages, calls, and group updates.
+- Customize notification preferences for different chats and groups.
+
+### ⚙️ **Performance Optimization**
+- Efficient handling of large groups and media files.
+- Scalable architecture for seamless real-time performance.
+
+---
+
+## 🛠️ **Used Technologies**
+- **React.js** for front-end development.
+- **Node.js** and **Express.js** for back-end.
+- **WebSocket** / **WebRTC** for real-time communication.
+- **MongoDB** for database management.
+- **JWT** for user authentication.
+- **Firebase** for notifications and real-time updates.
+- **TailwindCSS** for styling.
