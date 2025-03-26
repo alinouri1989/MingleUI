@@ -59,7 +59,7 @@ This project serves as an example of how **real-time messaging, group chats, mul
 - Track message statuses: Sent, Delivered, and Read.
 - Options to delete messages for everyone or just for yourself, and copy messages.
 
-# ---4 resim ---group sohbet ve bireysel sohbet resimleri, mesaj teslim edildi okundu ve gönderildi için figmadan bubbleleri alt alta koy göster
+![Frame 200 (1)](https://github.com/user-attachments/assets/bc67b94a-786e-41b6-b3cc-a34a906d6116)
 
 ### 📞 **Voice and Video Calls** 📱🎥
 - Make one-on-one voice and video calls with users registered on Mingle.
@@ -106,13 +106,33 @@ This project serves as an example of how **real-time messaging, group chats, mul
 - Efficient handling of large groups and media files.
 - Scalable architecture for seamless real-time performance.
 
----
+![369714386-693d2a0b-b493-4e18-befa-da1365294af0](https://github.com/user-attachments/assets/03ca933f-35ce-420b-9412-9e56917543e0)
 
-## 🛠️ **Used Technologies**
-- **React.js** for front-end development.
-- **Node.js** and **Express.js** for back-end.
-- **WebSocket** / **WebRTC** for real-time communication.
-- **MongoDB** for database management.
-- **JWT** for user authentication.
-- **Firebase** for notifications and real-time updates.
-- **TailwindCSS** for styling.
+### ⚛️ **React**
+React is a JavaScript library for building user interfaces. It helps create dynamic and reusable components, enhancing the user experience and making the application more maintainable.
+
+### 🖥️ **ASP.NET API**
+ASP.NET is a robust framework for building backend APIs. It serves as the backbone of this project, handling data processing, user authentication, and real-time communication with the frontend.
+
+### 🎨 **Sass/SCSS**
+Sass/SCSS is a powerful and organized version of CSS. It provides advanced features like variables, nesting, and mixins, helping to structure and maintain large-scale CSS more effectively.
+
+### 🔑 **Firebase Authentication**
+Firebase Authentication is used to handle user authentication securely. It allows users to sign up and log in using email/password or third-party services like Google and Facebook.
+
+### 🔥 **Firebase Realtime Database**
+Firebase Realtime Database enables real-time synchronization of data across all clients. This provides a seamless experience for features such as real-time messaging, updates, and notifications.
+
+### 🌐 **WebSocket (ASP.NET & React)**
+WebSocket provides full-duplex communication channels over a single TCP connection, enabling real-time, bidirectional communication between the frontend and backend, crucial for live messaging and updates.
+
+### 🎥 **WebRTC**
+WebRTC enables real-time peer-to-peer communication, including voice and video calls. It allows users to connect with each other seamlessly for interactive communication.
+
+### ⚡ **Vite**
+Vite is a fast and efficient build tool for modern web projects. It enables quick reload and builds, improving the development workflow and integrating smoothly with React.
+
+### 🌐 **Netlify**
+Netlify is a platform for deploying and hosting the project. It automates the deployment process, ensuring the app is live and served securely on the web.
+
+
