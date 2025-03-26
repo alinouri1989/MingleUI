@@ -1,3 +1,6 @@
+![MingleAllDevicesBanner 1 (2)](https://github.com/user-attachments/assets/ac66ba94-dad3-450a-b085-5011af846bab)
+
+
 # 🎯 Project Purpose  
 
 This project was initiated as part of the **Computer Networks** course in the **Computer Technologies and Information Systems (CTIS)** department. The goal was to develop a real-time chat application as part of the course.  
@@ -111,7 +114,7 @@ This project serves as an example of how **real-time messaging, group chats, mul
 ### ⚛️ **React**
 React is a JavaScript library for building user interfaces. It helps create dynamic and reusable components, enhancing the user experience and making the application more maintainable.
 
-### 🖥️ **ASP.NET API**
+### 🖥️ **ASP.NET Core Web API**
 ASP.NET is a robust framework for building backend APIs. It serves as the backbone of this project, handling data processing, user authentication, and real-time communication with the frontend.
 
 ### 🔑 **Firebase Authentication**
@@ -120,7 +123,7 @@ Firebase Authentication is used to handle user authentication securely. It allow
 ### 🔥 **Firebase Realtime Database**
 Firebase Realtime Database enables real-time synchronization of data across all clients. It is used to store and manage user data, chat history, call logs, and group records efficiently.
 
-### 🌐 **WebSocket (ASP.NET & React)**
+### 🌐 **WebSocket (SignalR)**
 WebSocket provides full-duplex communication channels over a single TCP connection, enabling real-time, bidirectional communication between the frontend and backend, crucial for live messaging and updates.
 
 ### 🎥 **WebRTC**
@@ -128,6 +131,9 @@ WebRTC enables real-time peer-to-peer communication, including voice and video c
 
 ### 🎨 **Sass/SCSS**
 Sass/SCSS is a powerful and organized version of CSS. It provides advanced features like variables, nesting, and mixins, helping to structure and maintain large-scale CSS more effectively.
+
+### ☁️ **Cloudinary**
+Cloudinary is a powerful cloud-based media management service used for storing, optimizing, and delivering images and files. In this project, it handles media uploads, transformations, and fast content delivery, ensuring efficient and scalable asset management.
 
 ### ⚡ **Vite**
 Vite is a fast and efficient build tool for modern web projects. It enables quick reload and builds, improving the development workflow and integrating smoothly with React.
