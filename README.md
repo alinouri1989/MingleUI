@@ -47,8 +47,8 @@ This project serves as an example of how **real-time messaging, group chats, mul
 - Contact Information: For inquiries, reach out via email.
 - For project-related inquiries, you can reach out to the development team via Email, LinkedIn and GitHub.
 - Developer team details:
-  - LinkedIn profiles
-  - GitHub repositories
+  - LinkedIn Account
+  - GitHub Account
   - Email contact
  
 ![Frame 198](https://github.com/user-attachments/assets/e0046268-7226-41fa-a825-ac307f423d08)
