@@ -2,7 +2,7 @@
 
 This project was initiated as part of the **Computer Networks** course in the **Computer Technologies and Information Systems (CTIS)** department. The goal was to develop a real-time chat application as part of the course.  
 
-Over time, the project was further developed by **Hamza Doğan** and **Nazmi Koçak**, evolving into a more comprehensive application. After an extensive development process, the project was successfully completed on **March 26, 2025**.  
+Over time, the project was further developed by **Hamza Doğan** and **Nazmi Koçak**, evolving into a more comprehensive application. After an extensive development process, the project was successfully completed on **March 25, 2025**.  
 
 The primary purpose of this project was to help the development team successfully complete the **course** while gaining hands-on experience with a large-scale software implementation.  
 
@@ -43,12 +43,8 @@ This project serves as an example of how **real-time messaging, group chats, mul
 - Manage and secure your account with a new password.
 
 #### 🛠️ **Help & Support**
-- Access FAQs and troubleshooting guides.
 - Contact support for assistance with account or technical issues.
-- **Project Version:** v1.0.0
-- **Contact Information:** For inquiries, reach out via email.
-
-#### 👨‍💻 **Developer Team**
+- Contact Information: For inquiries, reach out via email.
 - For project-related inquiries, you can reach out to the development team via Email, LinkedIn and GitHub.
 - Developer team details:
   - LinkedIn profiles
@@ -57,25 +53,26 @@ This project serves as an example of how **real-time messaging, group chats, mul
  
 ![Frame 198](https://github.com/user-attachments/assets/e0046268-7226-41fa-a825-ac307f423d08)
 
-
 ### 💬 **Real-Time Messaging**
-- Instant text messaging in private and group chats.
-- Emoji, GIF, and media sharing support.
-- Message notifications and read receipts.
+- Experience real-time individual and group chats.
+- Send messages with emojis, files, images, audio files, and AI-generated results.
+- Track message statuses: Sent, Delivered, and Read.
+- Options to delete messages for everyone or just for yourself, and copy messages.
 
-### 📞 **Voice and Video Calls**
-- One-on-one voice and video calling.
-- Group video calls with up to 10 participants.
-- Mute/unmute and camera toggle options during calls.
+# ---4 resim ---group sohbet ve bireysel sohbet resimleri, mesaj teslim edildi okundu ve gönderildi için figmadan bubbleleri alt alta koy göster
+
+### 📞 **Voice and Video Calls** 📱🎥
+- Make one-on-one voice and video calls with users registered on Mingle.
+- Mute microphone and toggle speaker on/off.
 
 ### 🔒 **Message Encryption**
 - End-to-end encryption for secure communication.
-- Encrypted voice and video calls for privacy.
+- All chat messages are encrypted for enhanced privacy.
 
-### 🔍 **Search & Filter**
-- Search for specific messages, users, and groups.
-- Filter chats by date, name, and content type.
-- Highlight unread messages and notifications.
+### 🔍 **Search**
+- Search for specific users, groups, calls, and archives.
+
+------------------------IMPLEMENT EDİLECEK------------------------
 
 ### 📁 **File Sharing**
 - Share images, documents, and other files in chats.
