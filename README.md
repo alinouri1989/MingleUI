@@ -114,14 +114,11 @@ React is a JavaScript library for building user interfaces. It helps create dyna
 ### 🖥️ **ASP.NET API**
 ASP.NET is a robust framework for building backend APIs. It serves as the backbone of this project, handling data processing, user authentication, and real-time communication with the frontend.
 
-### 🎨 **Sass/SCSS**
-Sass/SCSS is a powerful and organized version of CSS. It provides advanced features like variables, nesting, and mixins, helping to structure and maintain large-scale CSS more effectively.
-
 ### 🔑 **Firebase Authentication**
 Firebase Authentication is used to handle user authentication securely. It allows users to sign up and log in using email/password or third-party services like Google and Facebook.
 
 ### 🔥 **Firebase Realtime Database**
-Firebase Realtime Database enables real-time synchronization of data across all clients. This provides a seamless experience for features such as real-time messaging, updates, and notifications.
+Firebase Realtime Database enables real-time synchronization of data across all clients. It is used to store and manage user data, chat history, call logs, and group records efficiently.
 
 ### 🌐 **WebSocket (ASP.NET & React)**
 WebSocket provides full-duplex communication channels over a single TCP connection, enabling real-time, bidirectional communication between the frontend and backend, crucial for live messaging and updates.
@@ -129,10 +126,61 @@ WebSocket provides full-duplex communication channels over a single TCP connecti
 ### 🎥 **WebRTC**
 WebRTC enables real-time peer-to-peer communication, including voice and video calls. It allows users to connect with each other seamlessly for interactive communication.
 
+### 🎨 **Sass/SCSS**
+Sass/SCSS is a powerful and organized version of CSS. It provides advanced features like variables, nesting, and mixins, helping to structure and maintain large-scale CSS more effectively.
+
 ### ⚡ **Vite**
 Vite is a fast and efficient build tool for modern web projects. It enables quick reload and builds, improving the development workflow and integrating smoothly with React.
 
 ### 🌐 **Netlify**
 Netlify is a platform for deploying and hosting the project. It automates the deployment process, ensuring the app is live and served securely on the web.
+
+![projectdependencies](https://github.com/user-attachments/assets/6448ea9b-da46-40e1-b4a5-b039ac4ec629)
+
+### ⚛️ Core React Dependencies
+- **react** – The core library for building user interfaces.
+- **react-dom** – Renders React components into the DOM.
+
+### 🔄 State Management
+- **@reduxjs/toolkit** – A powerful toolset for managing global state in Redux.
+- **react-redux** – Connects React components to Redux state management.
+
+### 🔗 Networking & Realtime Communication
+- **@microsoft/signalr** – Enables real-time communication between the client and the server.
+- **firebase** – Handles authentication and real-time database operations.
+
+### 🛠️ Utilities & Helpers
+- **crypto-js** – Provides cryptographic functions for data security.
+- **date-fns** – Simplifies date manipulation and formatting.
+- **jwt-decode** – Decodes JSON Web Tokens (JWT) for authentication.
+- **marked** – Converts Markdown to HTML for rendering formatted text.
+
+### 🖌️ Styling & UI
+- **@emotion/react** – Enables styling using a CSS-in-JS approach.
+- **@emotion/styled** – Allows for creating styled components with dynamic styles.
+- **@mui/material** – Provides modern and accessible UI components.
+- **@mui/icons-material** – Offers a collection of Material-UI icons.
+- **sass** – Enhances CSS with features like variables, nesting, and mixins.
+
+### 🎨 Animations & UI Enhancements
+- **framer-motion** – Adds smooth animations and transition effects.
+- **react-hot-toast** – Displays stylish toast notifications.
+
+### 🎤 Media & File Handling
+- **react-h5-audio-player** – A customizable audio player for React applications.
+- **emoji-picker-react** – Enables users to select and insert emojis.
+
+### 🔍 Forms & Validation
+- **@hookform/resolvers** – Integrates schema validation with React Hook Form.
+- **react-hook-form** – A lightweight library for handling form state and validation.
+- **zod** – Provides type-safe form validation.
+
+### 🔀 Routing & Navigation
+- **react-router-dom** – Manages routing and navigation in single-page applications.
+
+### 📅 Date & Time Management
+- **react-datepicker** – Provides an interactive and customizable date picker.
+
+![ProjectProcess](https://github.com/user-attachments/assets/ddf11844-0b92-40fb-b065-0062a101ceac)
 
 
