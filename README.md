@@ -32,31 +32,6 @@ This project serves as an example of how **real-time messaging, group chats, mul
 
 ![Frame 195 (2)](https://github.com/user-attachments/assets/ecaa3a9e-3eca-4bf9-9a28-e52a22bf8e70)
 
-### ⚙️ **Settings**
-
-#### 👤 **User Account Management**
-- **Profile Information:** Edit and update account details.
-- **Profile Picture:** Upload, change, and view profile photo.
-
-#### 🎨 **Theme Customization**  
-- Choose from **Dark Mode, Light Mode, or System Default** for a customizable experience.  
-- Select from **8 different chat background themes** to personalize your chat.
-
-#### 🔒 **Security Settings**
-- Change your password to enhance security.
-- Manage and secure your account with a new password.
-
-#### 🛠️ **Help & Support**
-- Contact support for assistance with account or technical issues.
-- Contact Information: For inquiries, reach out via email.
-- For project-related inquiries, you can reach out to the development team via Email, LinkedIn and GitHub.
-- Developer team details:
-  - LinkedIn account
-  - GitHub account
-  - Email contact
- 
-![Frame 198](https://github.com/user-attachments/assets/e0046268-7226-41fa-a825-ac307f423d08)
-
 ### 💬 **Real-Time Messaging**
 - Experience real-time individual and group chats.
 - Send messages with emojis, files, images, audio files, and AI-generated results.
@@ -88,6 +63,31 @@ This project serves as an example of how **real-time messaging, group chats, mul
 - File previews available before downloading.
 
 ![Frame 208 (1)](https://github.com/user-attachments/assets/62cb9be3-9c03-4536-8090-2fe435cc2ccb)
+
+### ⚙️ **Settings**
+
+#### 👤 **User Account Management**
+- **Profile Information:** Edit and update account details.
+- **Profile Picture:** Upload, change, and view profile photo.
+
+#### 🎨 **Theme Customization**  
+- Choose from **Dark Mode, Light Mode, or System Default** for a customizable experience.  
+- Select from **8 different chat background themes** to personalize your chat.
+
+#### 🔒 **Security Settings**
+- Change your password to enhance security.
+- Manage and secure your account with a new password.
+
+#### 🛠️ **Help & Support**
+- Contact support for assistance with account or technical issues.
+- Contact Information: For inquiries, reach out via email.
+- For project-related inquiries, you can reach out to the development team via Email, LinkedIn and GitHub.
+- Developer team details:
+  - LinkedIn account
+  - GitHub account
+  - Email contact
+ 
+![Frame 198](https://github.com/user-attachments/assets/e0046268-7226-41fa-a825-ac307f423d08)
 
 ### 🔒 **Message Encryption**
 - End-to-end encryption for secure communication.
