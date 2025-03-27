@@ -1,4 +1,4 @@
-![MingleAllDevicesBanner 1 (2)](https://github.com/user-attachments/assets/ac66ba94-dad3-450a-b085-5011af846bab)
+![Frame 210](https://github.com/user-attachments/assets/63e35dd6-3b17-4eae-95b6-06c3a0138c01)![MingleAllDevicesBanner 1 (2)](https://github.com/user-attachments/assets/ac66ba94-dad3-450a-b085-5011af846bab)
 
 
 # 🎯 Project Purpose  
@@ -52,6 +52,8 @@ This project serves as an example of how **real-time messaging, group chats, mul
 - Users with the **"admin" role** can view, edit, and update group settings.  
 - Both admins and members can leave the group at any time.  
 - When a user leaves, their past messages remain visible without any inconsistencies.
+
+![Frame 210](https://github.com/user-attachments/assets/49fcdb0a-92b3-4bdc-8faf-8f7db01eccbf)
 
 ### 📁 **AI-Generator**  
 
