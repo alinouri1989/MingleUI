@@ -38,8 +38,9 @@ This project serves as an example of how **real-time messaging, group chats, mul
 - **Profile Information:** Edit and update account details.
 - **Profile Picture:** Upload, change, and view profile photo.
 
-#### 🎨 **Theme Customization**
-- Choose from 8 different chat background themes for a personalized experience.
+#### 🎨 **Theme Customization**  
+- Choose from **Dark Mode, Light Mode, or System Default** for a customizable experience.  
+- Select from **8 different chat background themes** to personalize your chat.
 
 #### 🔒 **Security Settings**
 - Change your password to enhance security.
@@ -68,6 +69,8 @@ This project serves as an example of how **real-time messaging, group chats, mul
 - Make one-on-one voice and video calls with users registered on Mingle.
 - Mute microphone and toggle speaker on/off.
 
+![Frame 206](https://github.com/user-attachments/assets/8466de44-1141-4c16-afcd-8d342f13c75f)
+
 ### 🔒 **Message Encryption**
 - End-to-end encryption for secure communication.
 - All chat messages are encrypted for enhanced privacy.
@@ -75,17 +78,13 @@ This project serves as an example of how **real-time messaging, group chats, mul
 ### 🔍 **Search**
 - Search for specific users, groups, calls, and archives.
 
-------------------------IMPLEMENT EDİLECEK------------------------
+### 📁 **File Sharing**  
+- Send images, files, sound, and videos in both individual and group chats.  
+- Supported file formats: **DOC, DOCX, XLSX, TXT, RAR, ZIP, PPT**.  
+- Sent audio and files can be downloaded.  
+- File previews available before downloading.
 
-### 📁 **File Sharing**
-- Share images, documents, and other files in chats.
-- File previews before downloading.
-- Multiple file uploads in a single message.
-
-### 🛠️ **User Settings**
-- Notification preferences (mute chats, customize alerts).
-- Privacy settings (block/unblock users).
-- Theme customization (light/dark mode).
+![Frame 208 (1)](https://github.com/user-attachments/assets/62cb9be3-9c03-4536-8090-2fe435cc2ccb)
 
 ### 📱 **Device Compatibility**
 - Fully responsive design, optimized for both desktop and mobile devices.
@@ -95,15 +94,6 @@ This project serves as an example of how **real-time messaging, group chats, mul
 - Clean, minimal, and user-friendly interface.
 - Smooth transitions and animations for an engaging experience.
 - Real-time status updates (typing indicators, seen status, etc.).
-
-### 🌐 **Group Chats and Management**
-- Create and manage group chats with multiple participants.
-- Add/remove users and assign admin roles.
-- Group chat settings (name, photo, description).
-
-### 💬 **Push Notifications**
-- Real-time notifications for incoming messages, calls, and group updates.
-- Customize notification preferences for different chats and groups.
 
 ### ⚙️ **Performance Optimization**
 - Efficient handling of large groups and media files.
