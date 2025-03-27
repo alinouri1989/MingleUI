@@ -71,12 +71,15 @@ This project serves as an example of how **real-time messaging, group chats, mul
 
 ![Frame 206](https://github.com/user-attachments/assets/8466de44-1141-4c16-afcd-8d342f13c75f)
 
-### 🔒 **Message Encryption**
-- End-to-end encryption for secure communication.
-- All chat messages are encrypted for enhanced privacy.
+### 👥 **Group Chat**  
+- Create a group by setting a **group image, name, and description**, and adding users.  
+- **Add, remove, and modify user roles** within the group.  
+- Users with the **"admin" role** can view, edit, and update group settings.  
+- Both admins and members can leave the group at any time.  
+- When a user leaves, their past messages remain visible without any inconsistencies.
 
-### 🔍 **Search**
-- Search for specific users, groups, calls, and archives.
+### 📁 **AI-Generator**  
+
 
 ### 📁 **File Sharing**  
 - Send images, files, sound, and videos in both individual and group chats.  
@@ -85,6 +88,13 @@ This project serves as an example of how **real-time messaging, group chats, mul
 - File previews available before downloading.
 
 ![Frame 208 (1)](https://github.com/user-attachments/assets/62cb9be3-9c03-4536-8090-2fe435cc2ccb)
+
+### 🔒 **Message Encryption**
+- End-to-end encryption for secure communication.
+- All chat messages are encrypted for enhanced privacy.
+
+### 🔍 **Search**
+- Search for specific users, groups, calls, and archives.
 
 ### 📱 **Device Compatibility**
 - Fully responsive design, optimized for both desktop and mobile devices.
