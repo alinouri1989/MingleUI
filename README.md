@@ -112,7 +112,8 @@ This project serves as an example of how **real-time messaging, group chats, mul
 ### 🎨 **Modern Design & Real-Time Data Updates**  
 - Clean, minimal, and user-friendly interface.  
 - Smooth transitions and animations for an engaging experience.  
-- Real-time updates for message seen status, user profile changes, and chat modifications in both individual and group conversations.  
+- Real-time updates for **message seen status, user profile changes, chat modifications, and call logs** in both individual and group conversations.  
+
 
 ![369714386-693d2a0b-b493-4e18-befa-da1365294af0](https://github.com/user-attachments/assets/03ca933f-35ce-420b-9412-9e56917543e0)
 
