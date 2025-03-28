@@ -48,8 +48,7 @@ ___
 - Make one-on-one voice and video calls with users registered on Mingle.
 - Mute microphone and toggle speaker on/off.
 
-
-![Frame 206](https://github.com/user-attachments/assets/8466de44-1141-4c16-afcd-8d342f13c75f)
+![Frame 206 (1)](https://github.com/user-attachments/assets/989efab7-7c2a-4466-9d36-a90c9dff6fbb)
 
 ___
 
