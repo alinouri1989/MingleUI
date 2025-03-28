@@ -241,7 +241,7 @@ We focused on:
 - Making sure the idea is **realistic, useful, and can grow** in the future.  
 
 This phase helped us create a clear vision for the project.  
-
+___
 
 ### **2. Research Process**  
 In this phase, we analyzed **existing real-time chat applications** to learn from them.  
@@ -251,7 +251,7 @@ We focused on:
 - Finding useful features that we could **adapt and improve**.  
 
 This research helped us design a more **efficient and competitive** chat application.  
-
+___
 
 ###  **3. Project Features**  
 In this phase, we focused on defining the **core features** of the application and aimed to create a **unique and superior user experience** compared to existing chat applications. After analyzing the current market and competitors, we identified several key features that would set our project apart.  
@@ -261,7 +261,7 @@ The application will offer **real-time messaging** with **sent, delivered, and r
 Additionally, users will have access to **AI-powered chat**, allowing them to generate text and images directly from the chat interface, offering a modern and interactive experience. **File sharing** will also be a priority, enabling a wide range of file types to be sent and received in both personal and group chats. To help users better organize their conversations, we will include options for **archiving** and **unarchiving** chats, as well as maintaining **call logs**, which will display details such as call time, duration, and type.  
 
 By combining all of these features, we aim to create an **innovative and user-centered** messaging application that not only meets users' basic needs but also offers advanced functionalities that competitors often lack.  
-
+___
 
 ### **4. Designs and Storyboarding**  
 In this phase, we created detailed wireframes and storyboards for the application's user interface and experience. Using **Figma**, we designed an intuitive and visually appealing chat application. The designs were optimized to ensure user-friendly navigation and smooth interactions.
@@ -270,7 +270,28 @@ In this phase, we created detailed wireframes and storyboards for the applicatio
 
 Once the designs were finalized in Figma, preparations were made for their integration into the project, and the visual designs will be adapted accordingly.
 
-![image 12](https://github.com/user-attachments/assets/dba78450-ed7b-4c05-bdce-f913a540ebd6)
+![Frame 223 (3)](https://github.com/user-attachments/assets/ba0f52eb-8409-4942-99b4-880a9745e304)
+___
+
+### **5. Choosing Technologies to Meet Project Requirements**
+In this phase, we focused on selecting the best technologies to help the project reach its goals. Our main aim was to make sure the app is scalable and efficient, and can handle real-time communication, security, and smooth performance.
+
+We looked at different technologies to see if they could meet needs like **real-time messaging**, **user authentication**, and **performance optimization**. After reviewing the options, we chose the best technologies that would allow us to develop a secure, scalable, and smooth-working app.
+
+This phase was an important step for the whole project. By choosing the right tools and frameworks, we made sure the app could be developed effectively and meet both user and technical needs.
+___
+
+### **6. Starting the Project**
+In this phase, after finalizing all the ideas, resources, and technologies to be used, as well as completing the initial planned designs, we began the project. This stage involved setting up the project environment, installing necessary dependencies, and configuring the project structure to ensure everything was ready for development.
+
+By making sure all configurations and setups were in place, we ensured a smooth start to the coding process and the overall development of the project.
+___
+
+### 7️⃣ **Project Folder Structure**
+In this phase, we focused on creating a clear and organized folder structure for the project. The goal was to make it easy to manage and navigate through the project’s files. We carefully decided how to organize the codebase, making sure that the folders were logically named and categorized.
+
+By setting up the folder structure in an efficient way, we ensured that the project would be scalable and maintainable in the long run. This organization helped both the development team and future contributors easily find and update the necessary files without confusion.
+
 
 
 
