@@ -287,11 +287,14 @@ In this phase, after finalizing all the ideas, resources, and technologies to be
 By making sure all configurations and setups were in place, we ensured a smooth start to the coding process and the overall development of the project.
 ___
 
-### 7️⃣ **Project Folder Structure**
+### **7. Project Folder Structure**
 In this phase, we focused on creating a clear and organized folder structure for the project. The goal was to make it easy to manage and navigate through the project’s files. We carefully decided how to organize the codebase, making sure that the folders were logically named and categorized.
 
 By setting up the folder structure in an efficient way, we ensured that the project would be scalable and maintainable in the long run. This organization helped both the development team and future contributors easily find and update the necessary files without confusion.
 
+![Frame 225](https://github.com/user-attachments/assets/d2207dec-c0ab-47ea-a54c-3b80530283e1)
+
+___
 
 
 
