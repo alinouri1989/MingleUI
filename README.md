@@ -32,6 +32,8 @@ This project serves as an example of how **real-time messaging, group chats, mul
 
 ![Frame 195 (2)](https://github.com/user-attachments/assets/ecaa3a9e-3eca-4bf9-9a28-e52a22bf8e70)
 
+___
+
 ### 💬 **Real-Time Messaging**
 - Experience real-time individual and group chats.
 - Send messages with emojis, files, images, audio files, and AI-generated results.
@@ -40,11 +42,34 @@ This project serves as an example of how **real-time messaging, group chats, mul
 
 ![Frame 200 (1)](https://github.com/user-attachments/assets/bc67b94a-786e-41b6-b3cc-a34a906d6116)
 
+___
+
 ### 📞 **Voice and Video Calls** 📱🎥
 - Make one-on-one voice and video calls with users registered on Mingle.
 - Mute microphone and toggle speaker on/off.
 
+
 ![Frame 206](https://github.com/user-attachments/assets/8466de44-1141-4c16-afcd-8d342f13c75f)
+
+___
+
+### 📔 **Call Logs**
+- View records of **voice and video calls** in the Calls menu.  
+- Access details such as **call time, duration, and call type**.  
+- Delete call logs if needed.  
+- The **mobile interface** is optimized for an enhanced user experience.  
+
+![Frame 219](https://github.com/user-attachments/assets/f40206e6-6d63-4890-8246-6fb27fa171e7)  
+
+___
+
+### 🗂️ **Archives**  
+- Users can **archive** their individual chats.  
+- Archived chats can be **deleted** or **unarchived** at any time.
+
+![Frame 222](https://github.com/user-attachments/assets/d59365c1-0e9b-4a44-9d69-d9ea980a9b88)
+
+___
 
 ### 👥 **Group Chat**  
 - Create a group by setting a **group image, name, and description**, and adding users.  
@@ -55,6 +80,8 @@ This project serves as an example of how **real-time messaging, group chats, mul
 
 ![Frame 210](https://github.com/user-attachments/assets/63e35dd6-3b17-4eae-95b6-06c3a0138c01)
 
+___
+
 ### ✦ **AI-Generator**  
 - Discover **Mingle AI** by clicking the **star icon** in the message input bar.  
 - **Text Generation:** Enter a prompt in the input field to generate AI-powered text.  
@@ -64,6 +91,8 @@ This project serves as an example of how **real-time messaging, group chats, mul
 
 ![Frame 218](https://github.com/user-attachments/assets/0dcab5f5-6912-4ea9-bd19-ae403363a434)
 
+___
+
 ### 📁 **File Sharing**  
 - Send images, files, sound, and videos in both individual and group chats.  
 - Supported file formats: **DOC, DOCX, XLSX, TXT, RAR, ZIP, PPT**.  
@@ -71,6 +100,8 @@ This project serves as an example of how **real-time messaging, group chats, mul
 - File previews available before downloading.
 
 ![Frame 208 (1)](https://github.com/user-attachments/assets/62cb9be3-9c03-4536-8090-2fe435cc2ccb)
+
+___
 
 ### ⚙️ **Settings**
 
@@ -97,23 +128,30 @@ This project serves as an example of how **real-time messaging, group chats, mul
  
 ![Frame 198](https://github.com/user-attachments/assets/e0046268-7226-41fa-a825-ac307f423d08)
 
+___
+
 ### 🔒 **Message Encryption**
 - End-to-end encryption for secure communication.
 - All chat messages are encrypted for enhanced privacy.
 
+___
+
 ### 🔍 **Search**
 - Search for specific users, groups, calls, and archives.
+
+___
 
 ### 📱 **Device Compatibility**  
 - Works well on both desktop and mobile devices.  
 - Adjusts to different screen sizes for a smooth experience.  
 - Special design changes for better use on all devices.  
 
+___
+
 ### 🎨 **Modern Design & Real-Time Data Updates**  
 - Clean, minimal, and user-friendly interface.  
 - Smooth transitions and animations for an engaging experience.  
 - Real-time updates for **message seen status, user profile changes, chat modifications, and call logs** in both individual and group conversations.  
-
 
 ![369714386-693d2a0b-b493-4e18-befa-da1365294af0](https://github.com/user-attachments/assets/03ca933f-35ce-420b-9412-9e56917543e0)
 
