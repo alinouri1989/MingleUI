@@ -55,10 +55,14 @@ This project serves as an example of how **real-time messaging, group chats, mul
 
 ![Frame 210](https://github.com/user-attachments/assets/63e35dd6-3b17-4eae-95b6-06c3a0138c01)
 
-### 📁 **AI-Generator**  
+### ✦ **AI-Generator**  
+- Discover **Mingle AI** by clicking the **star icon** in the message input bar.  
+- **Text Generation:** Enter a prompt in the input field to generate AI-powered text.  
+- **Image Generation:** Choose from **Flux, Artples, or Compvis** models in the image menu to create custom images.  
+- If unsatisfied with the result, use the **refresh button** to regenerate content with the same prompt or clear the input to start over.  
+- Generated content can be **copied, liked, or reattempted** for refinement.  
 
-![Frame 211](https://github.com/user-attachments/assets/dc8ef0e6-b0d2-495d-89e7-30bd83adba88)
-
+![Frame 218](https://github.com/user-attachments/assets/0dcab5f5-6912-4ea9-bd19-ae403363a434)
 
 ### 📁 **File Sharing**  
 - Send images, files, sound, and videos in both individual and group chats.  
