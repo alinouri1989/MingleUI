@@ -29,6 +29,7 @@ This project serves as an example of how **real-time messaging, group chats, mul
 - Account creation with email and password.
 - Quick login using Google and Facebook.
 - Password reset via email.
+- JWT Implementation
 
 ![Frame 195 (2)](https://github.com/user-attachments/assets/ecaa3a9e-3eca-4bf9-9a28-e52a22bf8e70)
 
@@ -232,9 +233,45 @@ Netlify is a platform for deploying and hosting the project. It automates the de
 
 ![ProjectProcess](https://github.com/user-attachments/assets/ddf11844-0b92-40fb-b065-0062a101ceac)
 
-1.Idea
+###  **1. Idea**  
+The first step was to think about the **main purpose** of the project and what makes it unique.  
+We focused on:  
+- Understanding **what problem it solves** for users.  
+- Finding ways to make it **different** from other chat applications.  
+- Making sure the idea is **realistic, useful, and can grow** in the future.  
 
-2. Resources and Research Process
+This phase helped us create a clear vision for the project.  
 
-3. Project Features
+
+### **2. Research Process**  
+In this phase, we analyzed **existing real-time chat applications** to learn from them.  
+We focused on:  
+- Examining how other chat applications **work**.  
+- Identifying **their weaknesses** and missing features.  
+- Finding useful features that we could **adapt and improve**.  
+
+This research helped us design a more **efficient and competitive** chat application.  
+
+
+###  **3. Project Features**  
+In this phase, we focused on defining the **core features** of the application and aimed to create a **unique and superior user experience** compared to existing chat applications. After analyzing the current market and competitors, we identified several key features that would set our project apart.  
+
+The application will offer **real-time messaging** with **sent, delivered, and read** message statuses, allowing users to always know the status of their messages. Both **individual and group chats** will be supported, with additional features for **group member management**, **message history**, and **real-time updates**. **Voice and video calls** will be integrated, with features like muting and toggling the speaker to improve the communication experience.  
+
+Additionally, users will have access to **AI-powered chat**, allowing them to generate text and images directly from the chat interface, offering a modern and interactive experience. **File sharing** will also be a priority, enabling a wide range of file types to be sent and received in both personal and group chats. To help users better organize their conversations, we will include options for **archiving** and **unarchiving** chats, as well as maintaining **call logs**, which will display details such as call time, duration, and type.  
+
+By combining all of these features, we aim to create an **innovative and user-centered** messaging application that not only meets users' basic needs but also offers advanced functionalities that competitors often lack.  
+
+
+### **4. Designs and Storyboarding**  
+In this phase, we created detailed wireframes and storyboards for the application's user interface and experience. Using **Figma**, we designed an intuitive and visually appealing chat application. The designs were optimized to ensure user-friendly navigation and smooth interactions.
+
+**Storyboards** helped us plan the user flow, ensuring that each feature would be accessible and easy to use. The designs were shaped according to the project's requirements and goals.
+
+Once the designs were finalized in Figma, preparations were made for their integration into the project, and the visual designs will be adapted accordingly.
+
+![image 12](https://github.com/user-attachments/assets/dba78450-ed7b-4c05-bdce-f913a540ebd6)
+
+
+
 
