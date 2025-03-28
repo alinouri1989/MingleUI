@@ -104,18 +104,15 @@ This project serves as an example of how **real-time messaging, group chats, mul
 ### 🔍 **Search**
 - Search for specific users, groups, calls, and archives.
 
-### 📱 **Device Compatibility**
-- Fully responsive design, optimized for both desktop and mobile devices.
-- Cross-platform support (iOS, Android, Web).
+### 📱 **Device Compatibility**  
+- Works well on both desktop and mobile devices.  
+- Adjusts to different screen sizes for a smooth experience.  
+- Special design changes for better use on all devices.  
 
-### 🎨 **Modern and Intuitive UX/UI**
-- Clean, minimal, and user-friendly interface.
-- Smooth transitions and animations for an engaging experience.
-- Real-time status updates (typing indicators, seen status, etc.).
-
-### ⚙️ **Performance Optimization**
-- Efficient handling of large groups and media files.
-- Scalable architecture for seamless real-time performance.
+### 🎨 **Modern Design & Real-Time Data Updates**  
+- Clean, minimal, and user-friendly interface.  
+- Smooth transitions and animations for an engaging experience.  
+- Real-time updates for message seen status, user profile changes, and chat modifications in both individual and group conversations.  
 
 ![369714386-693d2a0b-b493-4e18-befa-da1365294af0](https://github.com/user-attachments/assets/03ca933f-35ce-420b-9412-9e56917543e0)
 
