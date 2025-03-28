@@ -232,4 +232,9 @@ Netlify is a platform for deploying and hosting the project. It automates the de
 
 ![ProjectProcess](https://github.com/user-attachments/assets/ddf11844-0b92-40fb-b065-0062a101ceac)
 
+1.Idea
+
+2. Resources and Research Process
+
+3. Project Features
 
