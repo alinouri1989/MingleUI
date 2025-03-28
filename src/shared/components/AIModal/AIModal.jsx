@@ -203,7 +203,6 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
             onClose();
         } catch (error) {
             ErrorAlert("Mesaj gönderilirken bir hata oluştu");
-            console.error(error);
         }
     };
 
@@ -257,7 +256,6 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
                 setImageError(true);
             }
             setIsContent(true);
-            console.error(error);
         };
 
         try {

@@ -258,8 +258,7 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                 SuccessAlert("Grup Oluşturuldu");
                 closeModal();
             }
-        } catch (error) {
-            console.log(error);
+        } catch {
             const errorMessage = error?.data?.message || "Bir hata oluştu, lütfen tekrar deneyin.";
             ErrorAlert(errorMessage);
         }

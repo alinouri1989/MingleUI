@@ -104,9 +104,7 @@ export const authApi = createApi({
             token: null,
           }));
 
-        } catch (error) {
-          console.error('Logout failed:', error);
-        }
+        } catch { }
       }
     }),
   }),

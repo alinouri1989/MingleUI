@@ -147,7 +147,6 @@ function MessageInputBar({ chatId }) {
                 SuccessAlert("Video gönderildi");
             } catch (error) {
                 ErrorAlert("Video gönderilemedi");
-                console.log("Error:", error);
             }
             setIsLoading(false);
         } else {
@@ -200,7 +199,6 @@ function MessageInputBar({ chatId }) {
         }
         setMessage("");
         if (!message && !selectedFile) {
-            console.error("Boş bir mesaj gönderilemez.");
             return;
         }
 
@@ -226,9 +224,7 @@ function MessageInputBar({ chatId }) {
             });
 
             setSelectedFile(null);
-        } catch (error) {
-            console.error("Mesaj gönderme hatası:", error);
-        }
+        } catch { }
     };
 
     return (

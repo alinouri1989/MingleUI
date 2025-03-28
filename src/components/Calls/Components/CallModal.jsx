@@ -43,11 +43,8 @@ function CallModal({ closeModal, isCameraCall }) {
                 if (isCameraCall && !localStream && !temporaryStream) {
                     const tempStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
                     setTemporaryStream(tempStream);
-
                 }
-            } catch (error) {
-                console.error('Geçici stream alınırken hata:', error);
-            }
+            } catch { }
         };
 
         getTemporaryStream();
@@ -179,9 +176,7 @@ function CallModal({ closeModal, isCameraCall }) {
                 localStream.getAudioTracks().forEach(track => {
                     track.enabled = !prev;
                 });
-            } else {
-                console.warn("Local stream mevcut değil!");
-            }
+            } else { }
             return !prev;
         });
     };
