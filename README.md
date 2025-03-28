@@ -57,6 +57,8 @@ This project serves as an example of how **real-time messaging, group chats, mul
 
 ### 📁 **AI-Generator**  
 
+![Frame 211](https://github.com/user-attachments/assets/dc8ef0e6-b0d2-495d-89e7-30bd83adba88)
+
 
 ### 📁 **File Sharing**  
 - Send images, files, sound, and videos in both individual and group chats.  
