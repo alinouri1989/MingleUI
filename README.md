@@ -40,6 +40,7 @@ ___
 - Send messages with emojis, files, images, audio files, and AI-generated results.
 - Track message statuses: Sent, Delivered, and Read.
 - Options to delete messages for everyone or just for yourself, and copy messages.
+- See who has received and read the messages in group chats.
 
 ![Frame 200 (1)](https://github.com/user-attachments/assets/bc67b94a-786e-41b6-b3cc-a34a906d6116)
 
@@ -209,6 +210,7 @@ Netlify is a platform for deploying and hosting the project. It automates the de
 - **@emotion/styled** – Allows for creating styled components with dynamic styles.
 - **@mui/material** – Provides modern and accessible UI components.
 - **@mui/icons-material** – Offers a collection of Material-UI icons.
+- **react-icons** – Offers a collection of icons.
 - **sass** – Enhances CSS with features like variables, nesting, and mixins.
 
 ### 🎨 Animations & UI Enhancements
@@ -257,7 +259,7 @@ In this phase, we focused on defining the **core features** of the application a
 
 The application will offer **real-time messaging** with **sent, delivered, and read** message statuses, allowing users to always know the status of their messages. Both **individual and group chats** will be supported, with additional features for **group member management**, **message history**, and **real-time updates**. **Voice and video calls** will be integrated, with features like muting and toggling the speaker to improve the communication experience.  
 
-Additionally, users will have access to **AI-powered chat**, allowing them to generate text and images directly from the chat interface, offering a modern and interactive experience. **File sharing** will also be a priority, enabling a wide range of file types to be sent and received in both personal and group chats. To help users better organize their conversations, we will include options for **archiving** and **unarchiving** chats, as well as maintaining **call logs**, which will display details such as call time, duration, and type.  
+Additionally, users will have access to **AI-powered chat**, allowing them to generate text and images directly from the chat interface, offering a modern and interactive experience. **File sharing** will also be a priority, enabling a wide range of file types to be sent and received in both individual and group chats. To help users better organize their conversations, we will include options for **archiving** and **unarchiving** chats, as well as maintaining **call logs**, which will display details such as call time, duration, and type.  
 
 By combining all of these features, we aim to create an **innovative and user-centered** messaging application that not only meets users' basic needs but also offers advanced functionalities that competitors often lack.  
 ___
@@ -401,7 +403,7 @@ With the deployment complete, we moved on to the final phase:
 **User Feedback and Maintenance Phase**, where we monitor user interactions and improve the application further.  
 ___
 
-### **14. User Feedback and Improvements**  
+### **14. User Feedback and Maintenance Phase**  
 This phase focuses on gathering real user feedback, suggestions, and addressing any bugs or issues that arise after the deployment of the application. It's an ongoing process where we continuously monitor the application's performance in real-world conditions.  
 
 After launching the app, we encouraged users to provide feedback on their experience, which helped us identify areas for improvement. Based on this feedback, we worked on fixing bugs, improving user interface elements, and optimizing the overall experience.  
