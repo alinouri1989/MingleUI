@@ -185,6 +185,9 @@ Vite is a fast and efficient build tool for modern web projects. It enables quic
 ### 🌐 **Netlify**
 Netlify is a platform for deploying and hosting the project. It automates the deployment process, ensuring the app is live and served securely on the web.
 
+### 🗄 **Monster ASP.NET**
+It is a platform focused on hosting ASP.NET and .NET Core applications. It automates the deployment process, ensuring the app is live and served securely on the web.
+
 ![projectdependencies](https://github.com/user-attachments/assets/6448ea9b-da46-40e1-b4a5-b039ac4ec629)
 
 ### ⚛️ Core React Dependencies
@@ -430,7 +433,7 @@ This phase is crucial because it ensures the application keeps evolving to meet 
 
 - **Developers**:  
   The **frontend** of the project was developed by **Hamza Doğan**. For more information about the developer, please visit the [LinkedIn Profile](https://www.linkedin.com/in/hamzadogann/).  
-  The **backend** of the project was developed by **Nazmi Koçak**. For more details, you can visit the [backend repository](#link-to-backend-repository).  
+  The **backend** of the project was developed by **Nazmi Koçak**. For more details, you can visit the [backend repository](https://github.com/nazmikocak/Mingle).  
 
 - **Feedback and Support**:  
   If you have any feedback or need support, feel free to contact me at [hamzaalidogantr@gmail.com].  
