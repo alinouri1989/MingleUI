@@ -347,7 +347,7 @@ ___
 
 During this phase, we focused on making the application more **sustainable** and efficient by implementing various **performance optimization** techniques. Our goal was to ensure the application runs smoothly and efficiently, providing a seamless user experience. Here are some of the methods we applied to improve performance:
 
-- **Image Optimization**: We converted PNG and JPG images to **WEBP** format, which reduces file sizes by up to **83.5%**. This made the images load faster, improving overall page speed and reducing bandwidth usage.
+- **Image Optimization**: We converted PNG and JPG images to **WEBP** format, which reduces file sizes by up to **84.5%**. This made the images load faster, improving overall page speed and reducing bandwidth usage.
 
 - **Preventing Unnecessary Re-renders**: We worked on reducing unnecessary re-renders caused by **useEffect** by optimizing dependencies. This helps in avoiding excessive rendering of components, making the app more responsive and faster.
 
