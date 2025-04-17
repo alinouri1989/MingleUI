@@ -167,7 +167,7 @@ Firebase Authentication is used to handle user authentication securely. It allow
 ### 🔥 **Firebase Realtime Database**
 Firebase Realtime Database enables real-time synchronization of data across all clients. It is used to store and manage user data, chat history, call logs, and group records efficiently.
 
-### 🌐 **WebSocket (SignalR)**
+### 🌐 **WebSocket**
 WebSocket provides full-duplex communication channels over a single TCP connection, enabling real-time, bidirectional communication between the frontend and backend, crucial for live messaging and updates.
 
 ### 🎥 **WebRTC**
