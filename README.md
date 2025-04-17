@@ -361,7 +361,7 @@ These optimizations helped improve the overall speed, performance, and **user ex
 
 ___
 
-### **12. Security and Testing Process**  
+### **13. Security and Testing Process**  
 
 At this stage, we focused on ensuring the **security, stability, and reliability** of our application before making it available to real users.  
 
@@ -384,7 +384,7 @@ With security and stability confirmed, we were ready for the next step:
 
 ___
 
-### **13. Deployment Phase**  
+### **14. Deployment Phase**  
 
 The deployment phase is the final step before making the project publicly available. During this stage, we focused on deploying the **frontend** of our application to a reliable hosting platform, ensuring that everything was fully functional and ready for real-world use.
 
