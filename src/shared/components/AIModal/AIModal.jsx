@@ -43,7 +43,7 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
     const [imagePrompt, setImagePrompt] = useState("");
 
     const [textAiModel, setTextAiModel] = useState("Gemini-2.0-Flash");
-    const [imageAiModel, setImageAiModel] = useState("Artples");
+    const [imageAiModel, setImageAiModel] = useState("Flux");
     const [showImageModels, setShowImageModels] = useState(false);
 
     const [responseText, setResponseText] = useState("");
