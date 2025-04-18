@@ -10,29 +10,12 @@ export const ModalProvider = ({ children }) => {
 
   const showModal = (content) => {
     setModalContent(content);
-    window.history.pushState({ modalOpen: true }, "");
   };
 
   const closeModal = () => {
     setModalContent(null);
-    if (window.history.state && window.history.state.modalOpen) {
-      window.history.back();
-    }
   };
 
-  useEffect(() => {
-    const handlePopState = () => {
-      if (modalContent) {
-        closeModal();
-      }
-    };
-
-    window.addEventListener("popstate", handlePopState);
-
-    return () => {
-      window.removeEventListener("popstate", handlePopState);
-    };
-  }, [modalContent]);
 
   return (
     <ModalContext.Provider value={{ modalContent, showModal, closeModal }}>
