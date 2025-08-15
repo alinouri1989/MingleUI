@@ -1,8 +1,6 @@
-import { useState } from "react";
-
 import { ChatBackgroundColorsThemes } from "../../../constants/ChatBackgroundColors";
 import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { useChangeChatBackgroundMutation, useChangeThemeMutation } from "../../../store/Slices/userSettings/userSettingsApi";
 import PreLoader from "../../../shared/components/PreLoader/PreLoader";
 import { applyTheme } from "../../../helpers/applyTheme";
@@ -14,7 +12,6 @@ const Theme = () => {
   const [changeTheme, { isLoading: themeLoading }] = useChangeThemeMutation();
 
   const isLoading = chatBackgroundLoading || themeLoading;
-
 
   const handleThemeChange = async (newTheme) => {
     const themeReverseMapping = {
@@ -41,12 +38,10 @@ const Theme = () => {
       }
 
       SuccessAlert("Tema değiştirildi");
-    } catch (error) {
+    } catch {
       ErrorAlert("Tema değiştirilemedi");
     }
   };
-
-
 
   const handleSelectedChatBackgroundColor = async (colorId) => {
     try {
@@ -55,10 +50,17 @@ const Theme = () => {
       }
       await changeChatBackground(colorId);
       SuccessAlert("Duvar kağıdı değiştirildi");
-    } catch (error) {
+    } catch {
       ErrorAlert("Duvar kağıdı değiştirilemedi")
     }
-  }
+  };
+
+  const handleKeyDown = (event, colorId) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleSelectedChatBackgroundColor(colorId);
+    }
+  };
 
   return (
     <div className="theme-box">
@@ -75,19 +77,22 @@ const Theme = () => {
       </div>
 
       <div className="wallpaper">
-        <label>Sohbet Duvar Kağıdı</label>
+        <h4>Sohbet Duvar Kağıdı</h4>
         <div className="grid">
           {user?.userSettings?.theme === "Dark" ? (
             <div
-              className={`gradient-box selected`}
+              className="gradient-box selected"
               style={{ backgroundColor: "#161616" }}
             ></div>
           ) : (
             ChatBackgroundColorsThemes.map((gradient) => (
               <div
                 key={gradient.id}
+                role="button"
+                tabIndex={0}
                 className={`gradient-box ${user?.userSettings?.chatBackground === gradient.id ? "selected" : ""}`}
                 onClick={() => handleSelectedChatBackgroundColor(gradient.id)}
+                onKeyDown={(event) => handleKeyDown(event, gradient.id)}
                 style={{
                   background: gradient.backgroundImage,
                 }}

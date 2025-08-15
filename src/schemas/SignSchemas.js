@@ -1,40 +1,40 @@
 import { z } from "zod";
 
 export const signInSchema = z.object({
-    Email: z.string().email("Geçerli bir email adresi giriniz"),
-    Password: z.string().nonempty("Şifrenizi giriniz"),
+    Email: z.string().email("لطفاً آدرس ایمیل معتبری وارد کنید"),
+    Password: z.string().nonempty("رمز عبور خود را وارد کنید"),
 });
 
 export const signUpSchema = z.object({
     DisplayName: z.string()
-        .min(5, { message: "Ad soyad en az 5, en fazla 50 karakter olmalıdır." })
-        .max(50, { message: "Ad soyad en az 5, en fazla 50 karakter olmalıdır." })
-        .regex(/^(?!.*\d)[A-Za-zÇçĞğİıÖöŞşÜü]+(?: [A-Za-zÇçĞğİıÖöŞşÜü]+)?$/, {
-            message: "Sadece harf içermeli ve en fazla bir boşluk olmalıdır.",
+        .min(5, { message: "نام و نام خانوادگی باید حداقل ۵ و حداکثر ۵۰ کاراکتر باشد." })
+        .max(50, { message: "نام و نام خانوادگی باید حداقل ۵ و حداکثر ۵۰ کاراکتر باشد." })
+        .regex(/^(?!.*\d)[\u0600-\u06FFA-Za-z]+(?: [\u0600-\u06FFA-Za-z]+)?$/, {
+            message: "فقط باید شامل حروف باشد و حداکثر یک فاصله داشته باشد.",
         }),
 
     Email: z.string()
-        .email({ message: "Lütfen geçerli bir e-mail adresi giriniz." })
-        .max(30, { message: "E-Mail adresiniz en fazla 30 karakter uzunluğunda olmalıdır." }),
+        .email({ message: "لطفاً آدرس ایمیل معتبری وارد کنید." })
+        .max(30, { message: "آدرس ایمیل شما باید حداکثر ۳۰ کاراکتر باشد." }),
     Password: z.string()
-        .min(8, { message: "Şifreniz en az 8 karakter uzunluğunda olmalıdır." })
-        .max(16, { message: "Şifreniz en fazla 16 karakter uzunluğunda olmalıdır." })
-        .regex(/^(?=.*[A-Z])(?=.*\d)[A-Za-z\dÇçĞğİıÖöŞşÜü]*$/, {
-            message: "Şifreniz en az bir büyük harf ve bir sayı içermelidir.",
+        .min(8, { message: "رمز عبور شما باید حداقل ۸ کاراکتر باشد." })
+        .max(16, { message: "رمز عبور شما باید حداکثر ۱۶ کاراکتر باشد." })
+        .regex(/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]*$/, {
+            message: "رمز عبور شما باید حداقل یک حرف بزرگ و یک عدد داشته باشد.",
         }),
     PasswordAgain: z.string(),
     BirthDate: z.date({
-        invalid_type_error: "Geçerli bir tarih giriniz.",
+        invalid_type_error: "لطفاً تاریخ معتبری وارد کنید.",
     }).refine(date => date <= new Date(), {
-        message: "Doğum tarihi gelecekte olamaz.",
+        message: "تاریخ تولد نمی‌تواند در آینده باشد.",
     }),
 }).refine(data => data.Password === data.PasswordAgain, {
-    message: "Şifreler eşleşmiyor.",
+    message: "رمز عبورها مطابقت ندارند.",
     path: ["PasswordAgain"],
 });
 
 export const resetPasswordSchema = z.object({
     Email: z.string()
-        .email({ message: "Lütfen geçerli bir e-mail adresi giriniz." })
-        .nonempty({ message: "E-Mail adresi boş bırakılamaz." })
+        .email({ message: "لطفاً آدرس ایمیل معتبری وارد کنید." })
+        .nonempty({ message: "آدرس ایمیل نمی‌تواند خالی باشد." })
 });

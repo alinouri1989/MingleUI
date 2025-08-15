@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import PropTypes from 'prop-types';
 import { useSignalR } from "../../contexts/SignalRContext.jsx";
 import { motion } from "framer-motion";
 
@@ -56,6 +57,20 @@ function SettingsModal({ closeModal }) {
     }
   };
 
+  const handleMenuKeyDown = (event, menuId) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      setActiveMenu(menuId);
+    }
+  };
+
+  const handleLogoutKeyDown = (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleLogout();
+    }
+  };
+
   return (
     <div className="setting-general-box">
       <CloseButton closeModal={closeModal} />
@@ -69,8 +84,11 @@ function SettingsModal({ closeModal }) {
             {menuItems.map((item) => (
               <div
                 key={item.id}
+                role="button"
+                tabIndex={0}
                 className={`menu-item ${activeMenu === item.id ? "active" : ""}`}
                 onClick={() => setActiveMenu(item.id)}
+                onKeyDown={(event) => handleMenuKeyDown(event, item.id)}
               >
                 <div className={`active-item-line ${activeMenu === item.id ? "visible" : ""}`}></div>
                 {item.icon}
@@ -78,8 +96,13 @@ function SettingsModal({ closeModal }) {
               </div>
             ))}
           </div>
-          <div className="menu-item logout"
-            onClick={handleLogout}>
+          <div 
+            className="menu-item logout"
+            role="button"
+            tabIndex={0}
+            onClick={handleLogout}
+            onKeyDown={handleLogoutKeyDown}
+          >
             <LuLogOut className="icon" />
             <p>Çıkış</p>
           </div>
@@ -98,5 +121,10 @@ function SettingsModal({ closeModal }) {
     </div>
   );
 }
+
+// PropTypes validation
+SettingsModal.propTypes = {
+  closeModal: PropTypes.func.isRequired,
+};
 
 export default SettingsModal;

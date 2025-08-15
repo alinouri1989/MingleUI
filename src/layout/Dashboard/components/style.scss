@@ -1,355 +1,349 @@
 @use "../../../shared/styles/main.scss" as *;
 
-
 //! ----- Dynamic Reusable Styles -----
 
 .mobil-menu-title {
-    width: 100%;
-    padding: 15px 10px;
-    margin-top: -12px;
-    font-size: 24px;
-    color: var(--text-dark-gray);
+  width: 100%;
+  padding: 15px 10px;
+  margin-top: -12px;
+  font-size: 24px;
+  color: var(--text-dark-gray);
 }
 
 .search-input-box {
-    @include flex-center(row, flex-start, center);
-    gap: 6px;
+  @include flex-center(row, flex-start, center);
+  gap: 6px;
+  width: 100%;
+  height: 45px;
+  padding: 0px 14px 0px 14px;
+  background-color: var(--cardHover);
+  border-radius: 10px;
+
+  @include screen(900px) {
+    margin-bottom: 16px;
+  }
+
+  .icon-box {
+    width: 32px;
+    font-size: 32px;
+    color: #787878;
+  }
+
+  .search-input {
     width: 100%;
-    height: 45px;
-    padding: 0px 14px 0px 14px;
-    background-color: var(--cardHover);
-    border-radius: 10px;
-
-    @include screen(900px) {
-        margin-bottom: 16px;
-    }
-
-    .icon-box {
-        width: 32px;
-        font-size: 32px;
-        color: #787878;
-    }
-
-    .search-input {
-        width: 100%;
-        color: var(--text-dark-gray);
-        font-size: 13px;
-        font-weight: 700;
-        height: 100%;
-    }
+    color: var(--text-dark-gray);
+    font-size: 13px;
+    font-weight: 700;
+    height: 100%;
+  }
 }
 
 .create-buttons {
-    width: 100%;
-    padding: 8px;
-    border-radius: 10px;
-    background-color: var(--blue);
-    color: white;
-    font-size: 13px;
-    font-weight: 700;
-    margin: 16px 0px;
-    @include transition();
+  width: 100%;
+  padding: 8px;
+  border-radius: 10px;
+  background-color: var(--blue);
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 16px 0px;
+  @include transition();
 
-    &:hover {
-        background-color: var(--hoverBlue);
-    }
+  &:hover {
+    background-color: var(--hoverBlue);
+  }
 
-    @include screen(900px) {
-        @include flex-center(row, center, center);
-        width: 57px;
-        height: 57px;
-        position: absolute;
-        bottom: 15px;
-        right: 20px;
-        font-size: 29px;
-        border-radius: 18px;
-        z-index: 2;
-    }
+  @include screen(900px) {
+    @include flex-center(row, center, center);
+    width: 57px;
+    height: 57px;
+    position: absolute;
+    bottom: 15px;
+    right: 20px;
+    font-size: 29px;
+    border-radius: 18px;
+    z-index: 2;
+  }
 }
 
 //! ----- Main Styles -----
 
 .user-dashboard-card-box,
 .group-dashboard-card-box {
-    margin-top: 15px;
-    @include flex-center(row, center, center);
-    width: 100%;
-    height: 75px;
+  margin-top: 15px;
+  @include flex-center(row, center, center);
+  width: 100%;
+  height: 75px;
+  gap: 5px;
+  cursor: pointer;
+  @include transition();
+  border-radius: 17px;
+
+  @include screen(900px) {
+    margin-top: 0px;
+  }
+
+  .card-info-box,
+  .date-and-options-box {
     gap: 5px;
-    cursor: pointer;
-    @include transition();
-    border-radius: 17px;
+    @include flex-center(row, center, center);
+  }
 
-    @include screen(900px) {
-        margin-top: 0px;
+  .date-and-options-box {
+    @include screen(350px) {
+      gap: 0px;
+      @include flex-center(column, center, center);
+
+      div:first-child {
+        order: 2;
+      }
+
+      div:nth-child(2) {
+        order: 1;
+      }
+    }
+  }
+
+  @include screen(900px) {
+    padding: 0px 10px;
+    @include flex-center(row, space-between, center);
+    width: 100%;
+  }
+
+  &:first-child {
+    margin-top: 0px;
+  }
+
+  &:hover {
+    background-color: var(--cardHover);
+  }
+
+  &.active-chat {
+    background-color: var(--cardHover);
+  }
+
+  &.active-call {
+    background-color: var(--cardHover);
+  }
+
+  .image-box {
+    width: max-content;
+    position: relative;
+
+    img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 50%;
     }
 
-    .card-info-box,
-    .date-and-options-box {
-        gap: 5px;
-        @include flex-center(row, center, center);
+    .status {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--smooth-white-color);
+      position: absolute;
+      right: 2px;
+      bottom: 2px;
+      @include transition();
+
+      &.online {
+        background-color: #26d97a;
+      }
+
+      &.offline {
+        background-color: #b2b2b2;
+      }
+    }
+  }
+
+  .user-name-and-sub-title,
+  .grup-name-and-sub-title {
+    @include flex-center(column, center);
+    padding: 0px 5px;
+    width: 125px;
+    gap: 2px;
+
+    .last-message-image {
+      @include flex-center(row, center);
+      gap: 5px;
+      color: var(--blue);
+
+      svg {
+        font-size: 24px;
+      }
+
+      span {
+        color: var(--blue);
+      }
     }
 
-    .date-and-options-box {
-        @include screen(350px) {
-            gap: 0px;
-            @include flex-center(column, center, center);
+    .last-message-video {
+      @include flex-center(row, center);
+      gap: 5px;
+      color: rgb(245, 164, 44);
 
-            div:first-child {
-                order: 2;
-            }
+      svg {
+        font-size: 24px;
+      }
 
-            div:nth-child(2) {
-                order: 1;
-            }
-        }
+      span {
+        color: rgb(245, 164, 44);
+      }
     }
 
-    @include screen(900px) {
-        padding: 0px 10px;
-        @include flex-center(row, space-between, center);
-        width: 100%;
+    .last-message-audio {
+      @include flex-center(row, center);
+      gap: 5px;
+      color: var(--smooth-red);
+
+      svg {
+        font-size: 24px;
+      }
+
+      span {
+        color: var(--smooth-red);
+      }
     }
 
+    .last-message-file {
+      @include flex-center(row, center);
+      gap: 5px;
+      color: rgb(8, 162, 131);
 
-    &:first-child {
-        margin-top: 0px;
+      svg {
+        font-size: 24px;
+      }
+
+      span {
+        color: rgb(8, 162, 131);
+      }
     }
 
-    &:hover {
-        background-color: var(--cardHover);
+    p {
+      font-weight: 700;
+      font-size: 14px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      display: block;
+      color: var(--text-black);
     }
 
-    &.active-chat {
-        background-color: var(--cardHover);
+    span {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--user-message-text-color);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      display: block;
+    }
+  }
+
+  .status-informations-box {
+    @include flex-center(column, center, center);
+    gap: 4px;
+
+    span {
+      color: #828a96;
+      font-family: Montserrat;
+      font-size: 12px;
+      width: 75px;
+      text-align: center;
+
+      @include screen(360px) {
+        width: auto;
+      }
     }
 
-    &.active-call {
-        background-color: var(--cardHover);
+    p {
+      @include flex-center(row, center, center);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: var(--blue);
+      color: var(--text-white);
+      font-size: 11px;
     }
+  }
 
+  .call-status-span {
+    margin-top: 2px;
 
-
-    .image-box {
-        width: max-content;
-        position: relative;
-
-        img {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-
-        .status {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            border: 2px solid var(--smooth-white-color);
-            position: absolute;
-            right: 2px;
-            bottom: 2px;
-            @include transition();
-
-            &.online {
-                background-color: #26D97A;
-            }
-
-            &.offline {
-                background-color: #B2B2B2;
-            }
-        }
+    .icon {
+      font-size: 16px;
     }
-
-    .user-name-and-sub-title,
-    .grup-name-and-sub-title {
-        @include flex-center(column, center);
-        padding: 0px 5px;
-        width: 125px;
-        gap: 2px;
-
-        .last-message-image {
-            @include flex-center(row, center);
-            gap: 5px;
-            color: var(--blue);
-
-            svg {
-                font-size: 24px;
-            }
-
-            span {
-                color: var(--blue);
-            }
-        }
-
-        .last-message-video {
-            @include flex-center(row, center);
-            gap: 5px;
-            color: rgb(245, 164, 44);
-
-            svg {
-                font-size: 24px;
-            }
-
-            span {
-                color: rgb(245, 164, 44);
-            }
-        }
-
-        .last-message-audio {
-            @include flex-center(row, center);
-            gap: 5px;
-            color: var(--smooth-red);
-
-            svg {
-                font-size: 24px;
-            }
-
-            span {
-                color: var(--smooth-red);
-            }
-        }
-
-        .last-message-file {
-            @include flex-center(row, center);
-            gap: 5px;
-            color: rgb(8, 162, 131);
-
-            svg {
-                font-size: 24px;
-            }
-
-            span {
-                color: rgb(8, 162, 131);
-            }
-        }
-
-        p {
-            font-weight: 700;
-            font-size: 14px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
-            display: block;
-            color: var(--text-black);
-        }
-
-        span {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--user-message-text-color);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            width: 100%;
-            display: block;
-        }
-    }
-
-    .status-informations-box {
-        @include flex-center(column, center, center);
-        gap: 4px;
-
-        span {
-            color: #828A96;
-            font-family: Montserrat;
-            font-size: 12px;
-            width: 75px;
-            text-align: center;
-
-            @include screen(360px) {
-                width: auto;
-            }
-        }
-
-        p {
-            @include flex-center(row, center, center);
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background-color: var(--blue);
-            color: var(--text-white);
-            font-size: 11px;
-        }
-    }
-
-    .call-status-span {
-        margin-top: 2px;
-
-
-        .icon {
-            font-size: 16px;
-        }
-
-    }
+  }
 }
 
 .chat-list-box,
 .call-list-box,
 .archive-list-box,
 .group-list-box {
-    @include flex-center(column, center, center);
+  @include flex-center(column, center, center);
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+
+  .list-flex {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     height: 100%;
-    overflow: hidden;
     width: 100%;
+    overflow: hidden;
 
-    .list-flex {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-        width: 100%;
-        overflow: hidden;
+    .user-list {
+      flex: 1;
+      min-height: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-right: 5px;
 
-        .user-list {
-            flex: 1;
-            min-height: 0;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding-right: 5px;
+      @include screen(900px) {
+        padding-bottom: 55px;
+      }
 
-            @include screen(900px) {
-                padding-bottom: 55px;
-            }
+      &::-webkit-scrollbar {
+        width: 0px;
+        height: 0px;
+      }
 
-            &::-webkit-scrollbar {
-                width: 0px;
-                height: 0px;
-            }
+      &::-webkit-scrollbar-thumb {
+        background-color: transparent;
+      }
 
-            &::-webkit-scrollbar-thumb {
-                background-color: transparent;
-            }
-
-            &::-webkit-scrollbar-track {
-                background: transparent;
-            }
-        }
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
     }
+  }
 }
 
 .call-list-box,
 .archive-list-box {
-    .list-flex {
-        margin-top: 16px;
+  .list-flex {
+    margin-top: 16px;
 
-        @include screen(900px) {
-            margin-top: 0px;
-        }
+    @include screen(900px) {
+      margin-top: 0px;
     }
+  }
 }
 
 @keyframes buttonPress {
-    0% {
-        transform: scale(1);
-    }
+  0% {
+    transform: scale(1);
+  }
 
-    50% {
-        transform: scale(0.93);
-    }
+  50% {
+    transform: scale(0.93);
+  }
 
-    100% {
-        transform: scale(1);
-    }
+  100% {
+    transform: scale(1);
+  }
 }

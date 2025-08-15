@@ -1,5 +1,6 @@
 import Logo from "../../assets/logos/Logo.webp";
 import "./style.scss";
+import PropTypes from 'prop-types';
 
 function WelcomeScreen({ text }) {
     return (
@@ -12,5 +13,7 @@ function WelcomeScreen({ text }) {
         </div>
     )
 }
-
+WelcomeScreen.propTypes = {
+    text: PropTypes.string.isRequired,
+}
 export default WelcomeScreen

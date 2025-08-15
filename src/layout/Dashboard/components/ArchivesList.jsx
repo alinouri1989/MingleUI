@@ -43,14 +43,13 @@ function ArchivesList() {
 
                 const chatId = getChatId(chatState, UserId, receiverId);
 
-
                 if (!chatData || !chatData.messages || chatData.messages.length === 0) {
                     return null;
                 }
 
                 const lastMessage = chatData?.messages[chatData?.messages.length - 1].content
                 const lastMessageForDeleted = chatData?.messages[chatData?.messages.length - 1].content
-                const isDeleted = lastMessageForDeleted?.deletedFor?.hasOwnProperty(UserId) ?? false;
+                const isDeleted = lastMessageForDeleted?.deletedFor && Object.prototype.hasOwnProperty.call(lastMessageForDeleted.deletedFor, UserId);
 
                 const lastMessageType = chatData?.messages[chatData?.messages.length - 1].type;
 
@@ -68,7 +67,7 @@ function ArchivesList() {
                         ).getTime()
                         : "";
 
-                const isArchive = chatData.archivedFor?.hasOwnProperty(UserId);
+                const isArchive = chatData.archivedFor && Object.prototype.hasOwnProperty.call(chatData.archivedFor, UserId);
 
                 const isActiveChat = location.pathname.includes(chatId);
 
@@ -78,7 +77,6 @@ function ArchivesList() {
                         !message.status.read?.[UserId]
                     );
                 }).length;
-
 
                 return {
                     receiverId,
@@ -98,7 +96,7 @@ function ArchivesList() {
             .sort((a, b) => b.lastMessageDateForSort - a.lastMessageDateForSort);
 
         setEnhancedChatList(updatedChatList);
-    }, [chatList, Individual, UserId]);
+    }, [chatList, Individual, UserId, chatState, location.pathname]);
 
     const archivedChats = enhancedChatList.filter((chat) => chat.isArchive);
     const filteredChats = archivedChats.filter(chat =>
@@ -143,7 +141,6 @@ function ArchivesList() {
                             : <PreLoader />
                     )}
                 </motion.div>
-
             </div>
         </div>
     )

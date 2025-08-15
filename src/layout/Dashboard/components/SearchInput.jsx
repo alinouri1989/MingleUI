@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { BiSearchAlt } from "react-icons/bi";
 import "./style.scss";
 
@@ -16,6 +17,13 @@ const SearchInput = ({ placeholder, value, onChange }) => {
             />
         </div>
     );
+};
+
+// PropTypes validation
+SearchInput.propTypes = {
+    placeholder: PropTypes.string,
+    value: PropTypes.string.isRequired,
+    onChange: PropTypes.func.isRequired,
 };
 
 export default SearchInput;

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
 import { useSignalR } from "../../../contexts/SignalRContext";
 
 import Menu from "@mui/material/Menu";
@@ -24,7 +25,7 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
   const open = Boolean(anchorEl);
   const { user } = useSelector(state => state.auth);
 
-  const isDarkMode = user?.userSettings?.theme == "Dark";
+  const isDarkMode = user?.userSettings?.theme === "Dark";
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -47,11 +48,11 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
     }
   };
 
-  const userStatus = status == "0001-01-01T00:00:00" ? 'online' : 'offline';
+  const userStatus = status === "0001-01-01T00:00:00" ? 'online' : 'offline';
 
   const handleGoToCall = () => {
     navigate(`/aramalar/${callId}`);
-  }
+  };
 
   const isActiveCall = location.pathname.includes(callId);
 
@@ -100,7 +101,7 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
             open={open}
             onClose={(event) => {
               event.stopPropagation();
-              handleClose(event);
+              handleClose();
             }}
             MenuListProps={{
               "aria-labelledby": "long-button",
@@ -145,5 +146,17 @@ function UserCallCard({ callId, image, status, name, callType, callStatus, creat
     </div>
   );
 }
+
+// PropTypes validation
+UserCallCard.propTypes = {
+  callId: PropTypes.string.isRequired,
+  image: PropTypes.string,
+  status: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  callType: PropTypes.string.isRequired,
+  callStatus: PropTypes.string.isRequired,
+  createdDate: PropTypes.string.isRequired,
+  isOutgoingCall: PropTypes.bool.isRequired,
+};
 
 export default UserCallCard;

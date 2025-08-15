@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState } from "react";
 import IncomingCall from "../components/Calls/Components/IncomingCall/IncomingCall";
+import PropTypes from 'prop-types';
 
 const ModalContext = createContext();
 
@@ -29,5 +30,7 @@ export const ModalProvider = ({ children }) => {
     </ModalContext.Provider>
   );
 };
-
+ModalProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+};
 export const useModal = () => useContext(ModalContext);

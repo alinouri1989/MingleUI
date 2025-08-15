@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import PropTypes from 'prop-types';
 
 import IconButton from "@mui/material/IconButton";
 import Menu from "@mui/material/Menu";
@@ -11,9 +12,8 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 
 import LastMessage from "../../../shared/components/LastMessage/LastMessage.jsx";
-import CloseModalButton from "../../../contexts/components/CloseModalButton.jsx";
 
-import { ErrorAlert } from "../../../helpers/customAlert.js";
+import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert.js";
 import { useLeaveGroupMutation } from "../../../store/Slices/Group/GroupApi.js";
 import "./style.scss";
 import { defaultProfilePhoto } from "../../../constants/DefaultProfilePhoto.js";
@@ -22,10 +22,11 @@ import { defaultProfilePhoto } from "../../../constants/DefaultProfilePhoto.js";
 function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMessage, lastMessageType, lastMessageDate, unReadMessage }) {
 
     const navigate = useNavigate();
+    const location = useLocation();
     const { user } = useSelector(state => state.auth);
 
     const [leaveGroup] = useLeaveGroupMutation();
-    const isDarkMode = user?.userSettings?.theme == "Dark";
+    const isDarkMode = user?.userSettings?.theme === "Dark";
 
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
@@ -41,16 +42,16 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
     const handleLeaveGroup = async () => {
         try {
             await leaveGroup(groupListId).unwrap();
-            SuccessAlert("Gruptan Çıktın")
-            CloseModalButton();
-        } catch (error) {
-            ErrorAlert("Bir hata meydana geldi", error);
+            SuccessAlert("Gruptan Çıktın");
+            handleClose();
+        } catch {
+            ErrorAlert("Bir hata meydana geldi");
         }
     };
 
     const handleGoGroupChat = () => {
         navigate(`/gruplar/${groupId}`);
-    }
+    };
 
     const isActiveChat = location.pathname.includes(groupId);
 
@@ -58,7 +59,9 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
         <div key={groupId} onClick={handleGoGroupChat} className={`group-dashboard-card-box ${isActiveChat ? "active-chat" : ""}`}>
             <div className="card-info-box">
                 <div className="image-box">
-                    <img src={groupPhotoUrl}
+                    <img 
+                        src={groupPhotoUrl}
+                        alt={`${groupName} profile`}
                         onError={(e) => e.currentTarget.src = defaultProfilePhoto}
                     />
                 </div>
@@ -99,7 +102,7 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
                         open={open}
                         onClose={(event) => {
                             event.stopPropagation();
-                            handleClose(event);
+                            handleClose();
                         }}
                         MenuListProps={{
                             "aria-labelledby": "long-button",
@@ -120,7 +123,6 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
                             },
                         }}
                     >
-
                         <MenuItem
                             onClick={(event) => {
                                 event.stopPropagation();
@@ -146,5 +148,17 @@ function GroupChatCard({ groupId, groupListId, groupName, groupPhotoUrl, lastMes
         </div>
     );
 }
+
+// PropTypes validation
+GroupChatCard.propTypes = {
+    groupId: PropTypes.string.isRequired,
+    groupListId: PropTypes.string.isRequired,
+    groupName: PropTypes.string.isRequired,
+    groupPhotoUrl: PropTypes.string,
+    lastMessage: PropTypes.string,
+    lastMessageType: PropTypes.string,
+    lastMessageDate: PropTypes.string,
+    unReadMessage: PropTypes.number,
+};
 
 export default GroupChatCard;

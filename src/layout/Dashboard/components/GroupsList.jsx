@@ -14,12 +14,11 @@ import PreLoader from "../../../shared/components/PreLoader/PreLoader";
 import NoActiveData from "../../../shared/components/NoActiveData/NoActiveData";
 import NewGroupModal from "../../../components/Groups/Components/NewAndSettingsGroup/NewAndSettingsGroupModal";
 
-import { TbMessagePlus } from "react-icons/tb"
-import { motion } from 'framer-motion';
+import { TbMessagePlus } from "react-icons/tb";
+import { motion } from "framer-motion";
 import "./style.scss";
 
 function GroupsList() {
-
   const { token } = useSelector((state) => state.auth);
   const userId = getUserIdFromToken(token);
 
@@ -37,9 +36,9 @@ function GroupsList() {
   };
 
   const filteredGroupList = groupList
-    ? Object.entries(groupList).filter(([groupId, group]) =>
-      group.name.toLowerCase().includes(searchGroup.toLowerCase())
-    )
+    ? Object.entries(groupList).filter((group) =>
+        group.name.toLowerCase().includes(searchGroup.toLowerCase())
+      )
     : [];
 
   return (
@@ -58,7 +57,7 @@ function GroupsList() {
       <div className="list-flex">
         <motion.div
           className="user-list"
-          variants={opacityEffect(0.8)}  // Opacity animasyonunu container için uyguladık
+          variants={opacityEffect(0.8)} // Opacity animasyonunu container için uyguladık
           initial="initial"
           animate="animate"
         >
@@ -77,13 +76,15 @@ function GroupsList() {
                   lastMessage = chatGroup.messages[lastMessageIndex].content;
                   lastMessageType = chatGroup.messages[lastMessageIndex].type;
 
-                  lastMessageDateForSort =
-                    new Date(
-                      Object.values(chatGroup.messages[lastMessageIndex].status.sent)[0]
-                    ).getTime();
+                  lastMessageDateForSort = new Date(
+                    Object.values(
+                      chatGroup.messages[lastMessageIndex].status.sent
+                    )[0]
+                  ).getTime();
                 }
 
-                const currentGroupIdInPath = location.pathname.includes(groupId);
+                const currentGroupIdInPath =
+                  location.pathname.includes(groupId);
 
                 const unReadMessage =
                   !currentGroupIdInPath &&
@@ -102,36 +103,56 @@ function GroupsList() {
                   lastMessageType,
                   lastMessageDateForSort,
                   unReadMessage,
-                  chatGroup
+                  chatGroup,
                 };
               })
-              .sort((a, b) => b.lastMessageDateForSort - a.lastMessageDateForSort)
-              .map(({ groupId, groupName, groupPhotoUrl, lastMessage, lastMessageType, lastMessageDateForSort, unReadMessage, chatGroup }) => (
-                <motion.div
-                  key={groupId}
-                  variants={opacityEffect(0.8)}
-                  style={{ marginBottom: "10px" }}
-                >
-                  <GroupChatCard
+              .sort(
+                (a, b) => b.lastMessageDateForSort - a.lastMessageDateForSort
+              )
+              .map(
+                ({
+                  groupId,
+                  groupName,
+                  groupPhotoUrl,
+                  lastMessage,
+                  lastMessageType,
+                  lastMessageDateForSort,
+                  unReadMessage,
+                  chatGroup,
+                }) => (
+                  <motion.div
                     key={groupId}
-                    groupId={chatGroup?.id}
-                    groupName={groupName}
-                    groupPhotoUrl={groupPhotoUrl}
-                    lastMessage={lastMessage}
-                    lastMessageType={lastMessageType}
-                    lastMessageDate={lastMessageDateHelper(lastMessageDateForSort)}
-                    unReadMessage={unReadMessage}
-                    groupListId={groupId}
-                  />
-                </motion.div>
-              ))
+                    variants={opacityEffect(0.8)}
+                    style={{ marginBottom: "10px" }}
+                  >
+                    <GroupChatCard
+                      key={groupId}
+                      groupId={chatGroup?.id}
+                      groupName={groupName}
+                      groupPhotoUrl={groupPhotoUrl}
+                      lastMessage={lastMessage}
+                      lastMessageType={lastMessageType}
+                      lastMessageDate={lastMessageDateHelper(
+                        lastMessageDateForSort
+                      )}
+                      unReadMessage={unReadMessage}
+                      groupListId={groupId}
+                    />
+                  </motion.div>
+                )
+              )
+          ) : isChatsInitialized ? (
+            <NoActiveData
+              text={
+                searchGroup
+                  ? "Eşleşen grup bulunamadı"
+                  : "Aktif grup bulunmamaktadır."
+              }
+            />
           ) : (
-            isChatsInitialized
-              ? <NoActiveData text={searchGroup ? "Eşleşen grup bulunamadı" : "Aktif grup bulunmamaktadır."} />
-              : <PreLoader />
+            <PreLoader />
           )}
         </motion.div>
-
       </div>
     </div>
   );

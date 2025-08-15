@@ -2,6 +2,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { createContext, useContext, useState, useEffect, useRef } from "react";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import PropTypes from 'prop-types';
 
 import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie.js";
 import { removeGroupList, setGroupList, updateGroupInformations, updateUserInfoToGroupList } from "../store/Slices/Group/groupListSlice.js";
@@ -16,7 +17,6 @@ import { decryptMessage } from '../helpers/messageCryptoHelper.js';
 
 import store from '../store/index.js';
 import { ErrorAlert } from "../helpers/customAlert.js";
-import ChatNestPreLoader from "../shared/components/ChatNestPreLoader/ChatNestPreLoader.jsx";
 import PreLoader from "../shared/components/PreLoader/PreLoader.jsx";
 
 
@@ -644,4 +644,7 @@ export const SignalRProvider = ({ children }) => {
             {children}
         </SignalRContext.Provider>
     );
+};
+SignalRProvider.propTypes = {
+    children: PropTypes.node.isRequired,
 };

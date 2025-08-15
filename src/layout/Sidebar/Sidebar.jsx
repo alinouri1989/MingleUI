@@ -3,7 +3,6 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useModal } from "../../contexts/ModalContext.jsx";
 import { useOutsideClick } from "../../hooks/useOutsideClick";
 
-
 import { IoChatbubbleEllipses } from "react-icons/io5";
 import { PiPhoneFill } from "react-icons/pi";
 import { HiArchiveBox } from "react-icons/hi2";
@@ -12,13 +11,11 @@ import { AiFillHome } from "react-icons/ai";
 import { IoMdSettings } from "react-icons/io";
 import { HiMenu } from "react-icons/hi";
 
-
 import useScreenWidth from "../../hooks/useScreenWidth.js";
 import "./style.scss";
 import SettingsModal from "../../components/Settings/SettingsModal.jsx";
 
 function Sidebar() {
-
   const navigate = useNavigate();
   const location = useLocation();
   const { showModal, closeModal } = useModal();
@@ -27,21 +24,45 @@ function Sidebar() {
   const isSmallScreen = useScreenWidth(900);
   const sidebarRef = useRef(null);
 
-  const restrictedPaths = ['sohbetler/', 'aramalar/', 'arsivler/', 'gruplar/'];
+  const restrictedPaths = ["sohbetler/", "aramalar/", "arsivler/", "gruplar/"];
 
-  const shouldHideSidebar = isSmallScreen && restrictedPaths.some(path =>
-    location.pathname.startsWith(`/${path}`) && location.pathname.length > path.length + 1
-  );
+  const shouldHideSidebar =
+    isSmallScreen &&
+    restrictedPaths.some(
+      (path) =>
+        location.pathname.startsWith(`/${path}`) &&
+        location.pathname.length > path.length + 1
+    );
 
   const navItems = [
-    { icon: <IoChatbubbleEllipses className="icon" />, label: "Sohbetler", path: "/sohbetler" },
-    { icon: <PiPhoneFill className="icon" />, label: "Aramalar", path: "/aramalar" },
-    { icon: <HiArchiveBox className="icon" />, label: "Arşivler", path: "/arsivler" },
-    { icon: <HiUserGroup className="icon" />, label: "Gruplar", path: "/gruplar" },
+    {
+      icon: <IoChatbubbleEllipses className="icon" />,
+      label: "Sohbetler",
+      path: "/sohbetler",
+    },
+    {
+      icon: <PiPhoneFill className="icon" />,
+      label: "Aramalar",
+      path: "/aramalar",
+    },
+    {
+      icon: <HiArchiveBox className="icon" />,
+      label: "Arşivler",
+      path: "/arsivler",
+    },
+    {
+      icon: <HiUserGroup className="icon" />,
+      label: "Gruplar",
+      path: "/gruplar",
+    },
   ];
 
   if (!isSmallScreen) {
-    navItems.push({ icon: <AiFillHome className="icon home" />, label: "Anasayfa", path: "/anasayfa" });
+    navItems.push({
+      icon: <AiFillHome className="icon home" />,
+      label: "Anasayfa",
+      path: "/anasayfa",
+    });
   }
 
   useOutsideClick(sidebarRef, () => {
@@ -54,22 +75,24 @@ function Sidebar() {
   };
 
   const handleSettings = () => {
-    showModal(<SettingsModal closeModal={closeModal} />
-    );
+    showModal(<SettingsModal closeModal={closeModal} />);
   };
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
 
-  const isActive = (path) => location.pathname.includes(path) ? "active" : "";
+  const isActive = (path) => (location.pathname.includes(path) ? "active" : "");
 
   if (shouldHideSidebar) {
     return null;
   }
 
   return (
-    <div ref={sidebarRef} className={`sidebar-container ${isOpen ? "open" : ""}`}>
+    <div
+      ref={sidebarRef}
+      className={`sidebar-container ${isOpen ? "open" : ""}`}
+    >
       <div className="top-box">
         <button
           className={`nav-buttons ${isOpen ? "open" : ""}`}
@@ -83,7 +106,9 @@ function Sidebar() {
           {navItems.map((item, index) => (
             <button
               key={index}
-              className={`nav-buttons ${isOpen ? "open" : ""} ${isActive(item.path)}`}
+              className={`nav-buttons ${isOpen ? "open" : ""} ${isActive(
+                item.path
+              )}`}
               onClick={() => handleNavigation(item.path)}
             >
               {item.icon}
@@ -95,7 +120,9 @@ function Sidebar() {
 
       <div className="bottom-box" style={{ width: isOpen ? "100%" : "" }}>
         <button
-          className={`nav-buttons ${isOpen ? "open" : ""} ${location.pathname === "/ayarlar" ? "active" : ""}`}
+          className={`nav-buttons ${isOpen ? "open" : ""} ${
+            location.pathname === "/ayarlar" ? "active" : ""
+          }`}
           onClick={handleSettings}
         >
           <IoMdSettings className="icon" />

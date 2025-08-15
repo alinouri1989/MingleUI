@@ -1,70 +1,74 @@
 @use "../../shared/styles/main.scss" as *;
 
 .dashboard-container {
-    @include flex-center(column, flex-start, center);
-    width: 390px;
-    height: 100%;
-    padding: 16px 14px 0px 14px;
-    border-right: 2px solid var(--smooth-border-color);
+  @include flex-center(column, flex-start, center);
+  width: 390px;
+  height: 100%;
+  padding: 16px 14px 0px 14px;
+  border-right: 2px solid var(--smooth-border-color);
+
+  @include screen(900px) {
+    padding: 0;
+    width: 100%;
+    border: 0;
+  }
+
+  .user-info-box {
+    @include flex-center(row, flex-start, center);
+    gap: 12px;
+    width: 100%;
+    padding-left: 15px;
+    padding-top: 5px;
 
     @include screen(900px) {
-        padding: 0;
-        width: 100%;
-        border: 0;
+      display: none;
     }
 
-    .user-info-box {
-        @include flex-center(row, flex-start, center);
-        gap: 12px;
-        width: 100%;
-        padding-left: 15px;
-        padding-top: 5px;
-
-        @include screen(900px) {
-            display: none;
-        }
-
-        img {
-            width: 62px;
-            height: 62px;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        p {
-            color: var(--text-black);
-            font-size: 16px;
-            font-weight: 700;
-        }
+    img {
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      object-fit: cover;
     }
 
-    .dynamic-list-box {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        background-color: var(--smooth-white-color);
-        margin-top: 15px;
-        border-radius: 28px 28px 0px 0px;
-        padding: 16px 12px 0px 12px;
-
-        @include screen(900px) {
-            margin-top: 0px;
-            border-radius: 0;
-            margin-bottom: 70px;
-            padding-bottom: 0;
-            background-color: var(--generalBackgroundColor);
-        }
-
-        &::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 50px;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, var(--generalBackgroundColor) 100%);
-            pointer-events: none;
-        }
+    p {
+      color: var(--text-black);
+      font-size: 16px;
+      font-weight: 700;
     }
+  }
+
+  .dynamic-list-box {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: var(--smooth-white-color);
+    margin-top: 15px;
+    border-radius: 28px 28px 0px 0px;
+    padding: 16px 12px 0px 12px;
+
+    @include screen(900px) {
+      margin-top: 0px;
+      border-radius: 0;
+      margin-bottom: 70px;
+      padding-bottom: 0;
+      background-color: var(--generalBackgroundColor);
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 50px;
+      background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0) 0%,
+        var(--generalBackgroundColor) 100%
+      );
+      pointer-events: none;
+    }
+  }
 }

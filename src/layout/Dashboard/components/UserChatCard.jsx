@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
+import PropTypes from 'prop-types';
 import { useSignalR } from "../../../contexts/SignalRContext";
 
 import IconButton from "@mui/material/IconButton";
@@ -32,7 +33,7 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
-  const isDarkMode = user.userSettings.theme == "Dark";
+  const isDarkMode = user.userSettings.theme === "Dark";
 
   const { token } = useSelector(state => state.auth);
   const chatState = useSelector(state => state.chat);
@@ -90,7 +91,7 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
       ErrorAlert("Sohbet Silinemedi");
     }
     handleClose();
-  }
+  };
 
   const handleGoChat = () => {
     isArchive ? navigate(`/arsivler/${chatId}`) : navigate(`/sohbetler/${chatId}`);
@@ -105,6 +106,7 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
         <div className="image-box">
           <img src={image}
             onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+            alt={`${name} profile`}
           />
           <p className={`status ${status ? "online" : "offline"}`}></p>
         </div>
@@ -144,7 +146,7 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
             open={open}
             onClose={(event) => {
               event.stopPropagation();
-              handleClose(event);
+              handleClose();
             }}
             MenuListProps={{
               "aria-labelledby": "long-button",
@@ -230,5 +232,19 @@ function UserChatCard({ isDeleted, receiverId, image, status, name, lastMessageD
     </div>
   );
 }
+
+// PropTypes validation
+UserChatCard.propTypes = {
+  isDeleted: PropTypes.bool.isRequired,
+  receiverId: PropTypes.string.isRequired,
+  image: PropTypes.string,
+  status: PropTypes.bool.isRequired,
+  name: PropTypes.string.isRequired,
+  lastMessageDate: PropTypes.string,
+  lastMessageType: PropTypes.string,
+  lastMessage: PropTypes.string,
+  unReadMessage: PropTypes.number,
+  isArchive: PropTypes.bool.isRequired,
+};
 
 export default UserChatCard;

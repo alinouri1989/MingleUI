@@ -1,4 +1,3 @@
-
 import { useLocation } from 'react-router-dom';
 import SignVector from "../../assets/images/Sign/SignVector.webp";
 
@@ -33,8 +32,8 @@ function Sign() {
                 <motion.div
                     {...opacityEffect()}
                     className='banner-bar-container'>
-                    <h1>Doyasıya Sohbetin Keyfini Çıkar</h1>
-                    <img src={SignVector} alt="" />
+                    <h1>کاملاً از گپ زدن لذت ببرید</h1>
+                    <img src={SignVector} alt="ChatNest vector illustration" />
                     <p>ChatNest</p>
                 </motion.div>
             </div>

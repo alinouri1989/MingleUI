@@ -36,7 +36,7 @@ import { biographySchema, displayNameSchema, phoneNumberSchema } from "../../../
 function Account() {
 
   const { user } = useSelector(state => state.auth);
-  const isDarkMode = user?.userSettings?.theme == "Dark";
+  const isDarkMode = user?.userSettings?.theme === "Dark";
 
   const [selectedImage, setSelectedImage] = useState(user?.profilePhoto || "");
   const [isEditingUsername, setIsEditingUsername] = useState(false);
@@ -75,7 +75,6 @@ function Account() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
-
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -84,7 +83,6 @@ function Account() {
     setAnchorEl(null);
   };
 
-
   const onSubmitForDisplayName = async (data) => {
     setIsEditingUsername(!isEditingUsername);
 
@@ -92,21 +90,20 @@ function Account() {
       try {
         await updateDisplayName(data.displayName);
         SuccessAlert("Ad Soyad Değiştirildi");
-      } catch (error) {
+      } catch {
         ErrorAlert("İsim Değiştirilemedi");
       }
     }
-    else { }
   };
 
   const onSubmitForPhoneNumber = async (data) => {
     setIsEditingPhone(!isEditingPhone);
 
-    if (user.phoneNumber != data.phoneNumber) {
+    if (user.phoneNumber !== data.phoneNumber) {
       try {
         await updatePhoneNumber(data.phoneNumber);
         SuccessAlert("Telefon Numarası Güncellendi")
-      } catch (error) {
+      } catch {
         ErrorAlert("Telefon Numarası Güncellenemedi");
       }
     }
@@ -115,16 +112,15 @@ function Account() {
   const onSubmitForBio = async (data) => {
     setIsEditingBiography(!isEditingBiography);
 
-    if (user.biography != data.bio) {
+    if (user.biography !== data.bio) {
       try {
         await updateBiography(data.bio);
         SuccessAlert("Biyografi Güncellendi")
-      } catch (error) {
+      } catch {
         ErrorAlert("Biyografi Güncellenemedi");
       }
     }
   };
-
 
   const handleChangeProfileImage = () => {
     handleClose();
@@ -161,7 +157,7 @@ function Account() {
       const base64String = await convertFileToBase64(file);
       await updateProfilePhoto(base64String);
       SuccessAlert("Fotoğraf Güncellendi");
-    } catch (error) {
+    } catch {
       ErrorAlert("Fotoğraf Güncellenemedi");
     }
   };
@@ -174,6 +170,7 @@ function Account() {
           className="profile-image"
           src={user?.profilePhoto || defaultProfilePhoto}
           onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+          alt="Profile"
         />
         <IconButton
           className={"edit-btn"}
@@ -212,12 +209,10 @@ function Account() {
             },
           }}
         >
-
           <MenuItem
             onClick={handleShowProfileImage}
             sx={{ color: "#585CE1" }}
           >
-
             <ListItemIcon sx={{ color: "inherit" }}>
               <ImageSearchRoundedIcon />
             </ListItemIcon>
@@ -269,7 +264,7 @@ function Account() {
         </Menu>
         {isShowProfileImage &&
           <div className="full-size-profil-image-box">
-            <img src={user.profilePhoto} alt="UserImage"
+            <img src={user.profilePhoto} alt="User Profile"
               onError={(e) => e.currentTarget.src = defaultProfilePhoto}
             />
             <button onClick={() => setIsShowProfileImage(false)}>
@@ -402,7 +397,6 @@ function Account() {
                 autoFocus
               />
             )}
-
           </div>
           {bioErrors.bio && (
             <span className="error-messages">{bioErrors.bio.message}</span>

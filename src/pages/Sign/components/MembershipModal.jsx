@@ -8,34 +8,34 @@ function MembershipModal() {
     return (
         <div className='membership-agreement-box'>
             <CloseModalButton closeModal={closeModal} />
-            <h1>Üyelik Sözleşmesi</h1>
+            <h1>قرارداد عضویت</h1>
             <div className='membership-terms-box'>
-                <h4>1. Sözleşmenin Amacı</h4>
-                <p><strong>1.1.</strong> Bu Sözleşme, ChatNest adlı gerçek zamanlı sohbet uygulamasının kullanım şartlarını ve Üye'nin hak ve yükümlülüklerini belirlemek amacıyla düzenlenmiştir.</p>
-                <p><strong>1.2.</strong> ChatNest, herhangi bir ticari amaç gütmemekte olup, yalnızca Bilgisayar Ağları dersi kapsamında hazırlanmış bir eğitim ve ders projesidir. Uygulama, gerçek bir sohbet platformunu simüle etmek amacıyla tasarlanmıştır.</p>
+                <h4>۱. هدف قرارداد</h4>
+                <p><strong>۱.۱.</strong> این قرارداد به منظور تعیین شرایط استفاده از برنامه چت بلادرنگ ChatNest و حقوق و تعهدات عضو تنظیم شده است.</p>
+                <p><strong>۱.۲.</strong> ChatNest هیچ هدف تجاری ندارد و تنها یک پروژه آموزشی و درسی تهیه شده در چارچوب درس شبکه های کامپیوتری است. این برنامه به منظور شبیه سازی یک پلتفرم چت واقعی طراحی شده است.</p>
 
-                <h4>2. Üyelik Koşulları</h4>
-                <p><strong>2.1.</strong> Üyelik başvurusunda bulunarak, Üye bu Sözleşme'yi okuduğunu, anladığını ve tüm şartlarını kabul ettiğini beyan eder.</p>
-                <p><strong>2.2.</strong> Üyelik başvurusu, Üye'nin gerekli bilgileri eksiksiz ve doğru bir şekilde doldurması ve Proje Sahibi'nin onayı ile tamamlanır. Proje Sahibi, üyelik başvurularını kabul etmeme hakkını saklı tutar.</p>
+                <h4>۲. شرایط عضویت</h4>
+                <p><strong>۲.۱.</strong> با درخواست عضویت، عضو اعلام می‌کند که این قرارداد را خوانده، درک کرده و تمام شرایط آن را پذیرفته است.</p>
+                <p><strong>۲.۲.</strong> درخواست عضویت با تکمیل کامل و صحیح اطلاعات لازم توسط عضو و تایید صاحب پروژه انجام می‌شود. صاحب پروژه حق رد درخواست های عضویت را محفوظ می‌دارد.</p>
 
-                <h4>4. Kullanım Şartları ve Sınırlamaları</h4>
-                <p><strong>4.1.</strong> Üye, ChatNest uygulamasını yalnızca kişisel kullanım amacıyla kullanacağını kabul eder. Uygulama üzerindeki tüm işlemler (mesaj gönderme, sohbet odası oluşturma vb.) tamamen simülasyon amaçlı olup, gerçek bir ticari işlem niteliği taşımamaktadır.</p>
-                <p><strong>4.2.</strong> Üye, uygulama üzerindeki tüm içeriklerin ve işlemlerin gerçek olmadığını, sadece eğitim ve proje geliştirme amacıyla sunulduğunu kabul eder.</p>
+                <h4>۳. شرایط و محدودیت های استفاده</h4>
+                <p><strong>۳.۱.</strong> عضو می‌پذیرد که برنامه ChatNest را تنها برای استفاده شخصی استفاده کند. تمام عملیات در برنامه (ارسال پیام، ایجاد اتاق چت و غیره) کاملاً برای اهداف شبیه سازی است و ماهیت تجاری واقعی ندارد.</p>
+                <p><strong>۳.۲.</strong> عضو می‌پذیرد که تمام محتوا و عملیات در برنامه واقعی نیست و تنها برای اهداف آموزشی و توسعه پروژه ارائه می‌شود.</p>
 
-                <h4>4. Gizlilik</h4>
-                <p><strong>4.1.</strong> Proje Sahibi, Üye'nin kişisel verilerini hiçbir üçüncü taraf ile paylaşmayacağını taahhüt eder.</p>
-                <p><strong>4.2.</strong> Üye, uygulamaya erişim için kullandığı şifre ve kullanıcı adı gibi bilgilerin güvenliğinden sorumludur. Üye, bu bilgilerin yetkisiz kişilerce kullanılmasından dolayı doğabilecek zararlardan kendisi sorumludur.</p>
+                <h4>۴. حریم خصوصی</h4>
+                <p><strong>۴.۱.</strong> صاحب پروژه متعهد می‌شود که اطلاعات شخصی عضو را با هیچ شخص ثالثی به اشتراک نگذارد.</p>
+                <p><strong>۴.۲.</strong> عضو مسئول امنیت اطلاعاتی مانند رمز عبور و نام کاربری که برای دسترسی به برنامه استفاده می‌کند، می‌باشد. عضو مسئول خسارات ناشی از استفاده غیرمجاز این اطلاعات توسط اشخاص غیرمجاز است.</p>
 
-                <h4>5. Verilerin Kullanımı ve Güvenliği</h4>
-                <p><strong>5.1.</strong> Üye tarafından sağlanan tüm bilgiler, sadece simülasyon amacıyla kullanılacak ve hiçbir ticari veya üçüncü taraf amaçla işlenmeyecektir.</p>
-                <p><strong>5.2.</strong> Üye'nin uygulama üzerindeki tüm işlemleri (mesaj gönderme, sohbet odası oluşturma vb.) gerçek bir ticari işlem gibi işlemeyecek, sadece simülasyon kapsamında değerlendirilecektir.</p>
+                <h4>۵. استفاده و امنیت داده ها</h4>
+                <p><strong>۵.۱.</strong> تمام اطلاعات ارائه شده توسط عضو تنها برای اهداف شبیه سازی استفاده خواهد شد و هیچ گاه برای اهداف تجاری یا شخص ثالث پردازش نخواهد شد.</p>
+                <p><strong>۵.۲.</strong> تمام عملیات عضو در برنامه (ارسال پیام، ایجاد اتاق چت و غیره) مانند یک تراکنش تجاری واقعی پردازش نخواهد شد، بلکه تنها در چارچوب شبیه سازی ارزیابی خواهد شد.</p>
 
-                <h4>6. Sorumluluk Reddi</h4>
-                <p><strong>6.1.</strong> Proje Sahibi, uygulama üzerindeki içeriklerin ve işlemlerin gerçeklik taşımadığını, sadece eğitim ve geliştirme amaçlı olduğunu beyan eder. Üye, bu durumu kabul eder ve uygulamayı bu bilinçle kullanır.</p>
-                <p><strong>6.2.</strong> Üye, uygulama kullanımı sırasında doğabilecek herhangi bir zarardan Proje Sahibi'ni sorumlu tutmayacağını kabul eder.</p>
+                <h4>۶. سلب مسئولیت</h4>
+                <p><strong>۶.۱.</strong> صاحب پروژه اعلام می‌کند که محتوا و عملیات در برنامه واقعیت ندارند و تنها برای اهداف آموزشی و توسعه هستند. عضو این وضعیت را می‌پذیرد و برنامه را با این آگاهی استفاده می‌کند.</p>
+                <p><strong>۶.۲.</strong> عضو می‌پذیرد که صاحب پروژه را مسئول هیچ گونه خساراتی که ممکن است در طول استفاده از برنامه رخ دهد، نمی‌داند.</p>
             </div>
         </div>
     );
 }
 
-export default MembershipModal
+export default MembershipModal;

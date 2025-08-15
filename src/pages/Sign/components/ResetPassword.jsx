@@ -30,9 +30,9 @@ function ResetPassword() {
     try {
       await resetPassword(data.Email).unwrap();
       navigate('/giris-yap');
-      SuccessAlert("Şifre yenileme bağlantısı gönderildi.")
+      SuccessAlert("لینک بازنشانی رمز عبور ارسال شد.");
     } catch (error) {
-      ErrorAlert(error.data.message);
+      ErrorAlert(error?.data?.message || "خطایی رخ داده است");
     }
   };
 
@@ -40,11 +40,11 @@ function ResetPassword() {
     <motion.div
       {...opacityEffect()}
       className='reset-password-general-container'>
-      <img src={Logo} alt="" />
+      <img src={Logo} alt="ChatNest لوگو" />
 
       <div className='title-container'>
-        <h1>Şifre Yenile</h1>
-        <p style={{ maxWidth: "360px" }}>Şifre yenileme bağlantısını gönderebilmemiz için e-posta adresinize ihtiyacımız var.</p>
+        <h1>بازنشانی رمز عبور</h1>
+        <p style={{ maxWidth: "360px" }}>برای ارسال لینک بازنشانی رمز عبور، به آدرس ایمیل شما نیاز داریم.</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -57,16 +57,16 @@ function ResetPassword() {
             <input
               {...register("Email")}
               type="text"
-              placeholder="E-Posta"
+              placeholder="ایمیل"
             />
           </div>
           {errors.Email && <span className="error-message">{errors.Email.message}</span>}
         </div>
 
         <button className='sign-buttons' type="submit" disabled={isLoading}>
-          Gönder
+          ارسال
         </button>
-        <button className='cancel-btn' type="button" onClick={handleCancel}>Vazgeç</button>
+        <button className='cancel-btn' type="button" onClick={handleCancel}>انصراف</button>
       </form>
 
       {isLoading && <PreLoader />}

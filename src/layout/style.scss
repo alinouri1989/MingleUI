@@ -1,49 +1,49 @@
-@use './../shared/styles/main.scss' as *;
+@use "./../shared/styles/main.scss" as *;
 
 .layout-container {
-    background-color: var(--smooth-blue);
-    height: var(--app-height);
-    @include flex-center(column, center);
+  background-color: var(--smooth-blue);
+  height: var(--app-height);
+  @include flex-center(column, center);
 
-    .main-content {
-        @include flex-center(row, flex-start);
-        flex: 1;
-        width: 100%;
-        overflow: hidden;
-        position: relative;
+  .main-content {
+    @include flex-center(row, flex-start);
+    flex: 1;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
 
-        @include screen(900px) {
-            @include flex-center(column, center, center);
-            width: 100%;
-            height: 100vh;
-            background-color: var(--generalBackgroundColor);
-        }
-
-        .outlet-content {
-            margin-left: 65px;
-            @include flex-center(row, flex-start, flex-start);
-            height: 100%;
-            width: 100%;
-            border-radius: 30px 0px 0px 0px;
-            background-color: var(--generalBackgroundColor);
-
-            @include screen(900px) {
-                margin: 0;
-            }
-
-            .outlet-mobile {
-                z-index: 99999;
-            }
-        }
+    @include screen(900px) {
+      @include flex-center(column, center, center);
+      width: 100%;
+      height: 100vh;
+      background-color: var(--generalBackgroundColor);
     }
+
+    .outlet-content {
+      margin-left: 65px;
+      @include flex-center(row, flex-start, flex-start);
+      height: 100%;
+      width: 100%;
+      border-radius: 30px 0px 0px 0px;
+      background-color: var(--generalBackgroundColor);
+
+      @include screen(900px) {
+        margin: 0;
+      }
+
+      .outlet-mobile {
+        z-index: 99999;
+      }
+    }
+  }
 }
 
 .e2e-info-box {
-    margin-bottom: 50px;
-    @include flex-center(row, center, center);
-    gap: 5px;
-    color: #818181;
-    position: absolute;
-    bottom: 0;
-    font-size: 14px;
+  margin-bottom: 50px;
+  @include flex-center(row, center, center);
+  gap: 5px;
+  color: #818181;
+  position: absolute;
+  bottom: 0;
+  font-size: 14px;
 }

@@ -55,14 +55,14 @@ function ChatsList() {
                     (message) =>
                         message.deletedFor &&
                         Object.keys(message.deletedFor).length > 0 &&
-                        message.deletedFor.hasOwnProperty(UserId)
+                        Object.prototype.hasOwnProperty.call(message.deletedFor, UserId)
                 );
                 if (allMessagesDeleted) {
                     return null;
                 }
 
                 let lastMessageObj = [...chatData.messages].reverse().find(
-                    (message) => !message.deletedFor?.hasOwnProperty(UserId)
+                    (message) => !message.deletedFor || !Object.prototype.hasOwnProperty.call(message.deletedFor, UserId)
                 );
 
                 const lastMessage = lastMessageObj?.content;
@@ -75,7 +75,7 @@ function ChatsList() {
                     ? new Date(Object.values(lastMessageObj.status.sent)[0]).getTime()
                     : "";
 
-                const isArchive = chatData.archivedFor?.hasOwnProperty(UserId);
+                const isArchive = chatData.archivedFor && Object.prototype.hasOwnProperty.call(chatData.archivedFor, UserId);
                 const isActiveChat = location.pathname.includes(chatId);
 
                 const unReadMessage =
@@ -84,7 +84,7 @@ function ChatsList() {
                         (message) =>
                             !Object.keys(message.status.sent).includes(UserId) &&
                             !message.status.read?.[UserId] &&
-                            !message.deletedFor?.hasOwnProperty(UserId)
+                            (!message.deletedFor || !Object.prototype.hasOwnProperty.call(message.deletedFor, UserId))
                     ).length;
 
                 return {
@@ -97,7 +97,7 @@ function ChatsList() {
                     lastMessageDate,
                     lastMessageDateForSort,
                     isArchive,
-                    isDeleted: lastMessageObj?.deletedFor?.hasOwnProperty(UserId) ?? false,
+                    isDeleted: lastMessageObj?.deletedFor && Object.prototype.hasOwnProperty.call(lastMessageObj.deletedFor, UserId),
                     unReadMessage,
                 };
             })
@@ -105,7 +105,7 @@ function ChatsList() {
             .sort((a, b) => b.lastMessageDateForSort - a.lastMessageDateForSort);
 
         setEnhancedChatList(updatedChatList);
-    }, [chatList, Individual, UserId, chatState]);
+    }, [chatList, Individual, UserId, chatState, location.pathname]);
 
     const handleNewChat = () => {
         showModal(<NewChatModal closeModal={closeModal} />);

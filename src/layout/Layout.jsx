@@ -8,52 +8,55 @@ import Dashboard from "./Dashboard/Dashboard";
 import "./style.scss";
 
 const Layout = () => {
-    const location = useLocation();
-    const [isWideScreen, setIsWideScreen] = useState(window.innerWidth >= 900);
-    const [isActiveContent, setIsActiveContent] = useState(false);
+  const location = useLocation();
+  const [isWideScreen, setIsWideScreen] = useState(window.innerWidth >= 900);
+  const [isActiveContent, setIsActiveContent] = useState(false);
 
-    useEffect(() => {
-        const updateHeight = () => {
-            setIsWideScreen(window.innerWidth >= 900);
-        };
+  useEffect(() => {
+    const updateHeight = () => {
+      setIsWideScreen(window.innerWidth >= 900);
+    };
 
-        updateHeight();
-        window.addEventListener("resize", updateHeight);
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
 
-        return () => window.removeEventListener("resize", updateHeight);
-    }, []);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
 
+  useEffect(() => {
+    const activeRoutes = ["/sohbetler", "/arsivler", "/aramalar", "/gruplar"];
+    const isMatchingRoute = activeRoutes.some((route) => {
+      return (
+        location.pathname.startsWith(route) &&
+        location.pathname !== route &&
+        location.pathname !== `${route}/`
+      );
+    });
 
-    useEffect(() => {
-        const activeRoutes = ["/sohbetler", "/arsivler", "/aramalar", "/gruplar"];
-        const isMatchingRoute = activeRoutes.some(route => {
-            return location.pathname.startsWith(route) && location.pathname !== route && location.pathname !== `${route}/`;
-        });
+    setIsActiveContent(isMatchingRoute);
+  }, [location.pathname]);
 
-        setIsActiveContent(isMatchingRoute);
-    }, [location.pathname]);
+  return (
+    <div className="layout-container">
+      {isWideScreen || !isActiveContent ? <Header /> : null}
 
-    return (
-        <div className="layout-container">
-            {isWideScreen || !isActiveContent ? <Header /> : null}
-
-            <div className="main-content">
-                <div className="outlet-content">
-                    {isWideScreen ? (
-                        <>
-                            <Dashboard />
-                            <Outlet />
-                        </>
-                    ) : (
-                        isActiveContent
-                            ? <Outlet />
-                            : <Dashboard />
-                    )}
-                </div>
-                <Sidebar />
-            </div>
+      <div className="main-content">
+        <div className="outlet-content">
+          {isWideScreen ? (
+            <>
+              <Dashboard />
+              <Outlet />
+            </>
+          ) : isActiveContent ? (
+            <Outlet />
+          ) : (
+            <Dashboard />
+          )}
         </div>
-    );
+        <Sidebar />
+      </div>
+    </div>
+  );
 };
 
 export default Layout;

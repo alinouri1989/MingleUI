@@ -2,25 +2,25 @@ import { z } from "zod";
 
 export const displayNameSchema = z.object({
     displayName: z.string()
-        .min(5, { message: 'Adınız ve soyadınız en az 5 karakter uzunluğunda olmalıdır.' })
-        .max(50, { message: 'Adınız ve soyadınız en fazla 50 karakter uzunluğunda olmalıdır.' })
-        .regex(/^[A-Za-zÇçĞğİıÖöŞşÜü]+(?: [A-Za-zÇçĞğİıÖöŞşÜü]+)*$/, { message: 'Adınız ve soyadınız yalnızca harflerden oluşmalı ve kelimeler arasında en fazla bir boşluk olmalıdır.' })
-        .nonempty({ message: 'Lütfen adınızı ve soyadınızı giriniz.' })
+        .min(5, { message: 'نام و نام خانوادگی شما باید حداقل ۵ کاراکتر باشد.' })
+        .max(50, { message: 'نام و نام خانوادگی شما باید حداکثر ۵۰ کاراکتر باشد.' })
+        .regex(/^[\u0600-\u06FFa-zA-Z]+(?: [\u0600-\u06FFa-zA-Z]+)*$/, { message: 'نام و نام خانوادگی شما باید فقط از حروف تشکیل شده باشد و بین کلمات حداکثر یک فاصله باشد.' })
+        .nonempty({ message: 'لطفاً نام و نام خانوادگی خود را وارد کنید.' })
 });
 
 export const phoneNumberSchema = z.object({
     phoneNumber: z.string()
-        .min(8, { message: "Telefon numarası en az 8 haneli olmalıdır." })
-        .max(15, { message: "Telefon numarası en fazla 15 haneli olmalıdır." })
-        .regex(/^(\+?[0-9]{1,3})?[0-9]{8,14}$/, { message: "Geçerli bir telefon numarası giriniz." })
+        .min(8, { message: "شماره تلفن باید حداقل ۸ رقم باشد." })
+        .max(15, { message: "شماره تلفن باید حداکثر ۱۵ رقم باشد." })
+        .regex(/^(\+?[0-9]{1,3})?[0-9]{8,14}$/, { message: "لطفاً شماره تلفن معتبری وارد کنید." })
         .refine((value) => !/\s/.test(value), {
-            message: "Telefon numarası boşluk içeremez.",
+            message: "شماره تلفن نمی‌تواند فاصله داشته باشد.",
         }),
 });
 
 export const biographySchema = z.object({
     bio: z.string()
-        .min(1, { message: 'Biyografiniz en az 1 karakter uzunluğunda olmalıdır.' })
-        .max(100, { message: 'Biyografiniz en fazla 100 karakter uzunluğunda olmalıdır.' })
-        .nonempty({ message: 'Lütfen biyografinizi giriniz.' })
+        .min(1, { message: 'بیوگرافی شما باید حداقل ۱ کاراکتر باشد.' })
+        .max(100, { message: 'بیوگرافی شما باید حداکثر ۱۰۰ کاراکتر باشد.' })
+        .nonempty({ message: 'لطفاً بیوگرافی خود را وارد کنید.' })
 });

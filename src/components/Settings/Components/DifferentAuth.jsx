@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 
@@ -6,13 +7,17 @@ function DifferentAuth({ providerId }) {
         <div className="different-auth">
             <h3>Şifreni Değiştir</h3>
             <div className="different-auth-box">
-                {providerId == "google.com" ? <FcGoogle /> : <FaFacebook className="fb" />}
-                <p>{providerId == "google.com" ? "Google" : "Facebook"} ile giriş yaptınız</p>
+                {providerId === "google.com" ? <FcGoogle /> : <FaFacebook className="fb" />}
+                <p>{providerId === "google.com" ? "Google" : "Facebook"} ile giriş yaptınız</p>
                 <span>Şifrenizi hesabınızdan değiştirebilirsiniz.</span>
             </div>
         </div>
-
     )
 }
+
+// PropTypes validation
+DifferentAuth.propTypes = {
+    providerId: PropTypes.string.isRequired,
+};
 
 export default DifferentAuth

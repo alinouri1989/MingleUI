@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Logo from "../../../assets/logos/ChatNestLogoWithText.webp";
@@ -14,19 +13,19 @@ import { Controller } from "react-hook-form";
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { registerLocale } from 'react-datepicker';
-import tr from 'date-fns/locale/tr';
+import fa from 'date-fns/locale/fa-IR';
 
 import { IoEye } from "react-icons/io5";
 import { IoEyeOff } from "react-icons/io5";
 
-import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert.js"
+import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert.js";
 import MembershipModal from "./MembershipModal";
 import PreLoader from "../../../shared/components/PreLoader/PreLoader.jsx";
 
 import { opacityEffect } from '../../../shared/animations/animations.js';
 import { motion } from "framer-motion";
 
-registerLocale('tr', tr);
+registerLocale('fa', fa);
 
 function SignUp() {
 
@@ -58,19 +57,31 @@ function SignUp() {
     }
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleAgainPasswordVisibility = () => {
+    setShowAgainPassword(!showAgainPassword);
+  };
+
+  const toggleMembershipAgreement = () => {
+    setIsMembershipAgreementAccepted(!isMembershipAgreementAccepted);
+  };
+
   const onSubmit = async (data) => {
     if (isFormValid) {
       try {
         await registerUser(data).unwrap();
-        SuccessAlert("Hesap Oluşturuldu");
+        SuccessAlert("حساب ایجاد شد");
         navigate('/giris-yap');
 
       } catch (error) {
-        ErrorAlert(error.data.message);
+        ErrorAlert(error?.data?.message || "خطایی رخ داده است");
       }
     }
     else {
-      ErrorAlert("Tüm alanlar dolmalıdır");
+      ErrorAlert("تمام فیلدها باید پر شوند");
     }
   };
 
@@ -82,11 +93,11 @@ function SignUp() {
     <motion.div
       {...opacityEffect()}
       className='sign-up-general-container'>
-      <img src={Logo} alt="" />
+      <img src={Logo} alt="ChatNest لوگو" />
 
       <div className='title-container'>
-        <h1>Hesap Oluştur</h1>
-        <p>Kolayca hesap oluştur, sohbete hemen başla</p>
+        <h1>ایجاد حساب</h1>
+        <p>به راحتی حساب ایجاد کنید، فوراً شروع به گپ کنید</p>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -98,7 +109,7 @@ function SignUp() {
             <input
               {...register("DisplayName")}
               type="text"
-              placeholder='Ad Soyad' />
+              placeholder='نام و نام خانوادگی' />
           </div>
           {errors.DisplayName && <span className="error-message">{errors.DisplayName.message}</span>}
 
@@ -110,10 +121,9 @@ function SignUp() {
             <input
               {...register("Email")}
               type="email"
-              placeholder='E-mail' />
+              placeholder='ایمیل' />
           </div>
           {errors.Email && <span className="error-message">{errors.Email.message}</span>}
-
 
           <div className='input-box password'>
             <div>
@@ -123,11 +133,11 @@ function SignUp() {
               <input
                 {...register("Password")}
                 type={showPassword ? "text" : "password"}
-                placeholder='Şifre' />
+                placeholder='رمز عبور' />
             </div>
             {showPassword
-              ? <IoEyeOff className='icon' onClick={() => setShowPassword(!showPassword)} />
-              : <IoEye className='icon' onClick={() => setShowPassword(!showPassword)} />
+              ? <IoEyeOff className='icon' onClick={togglePasswordVisibility} />
+              : <IoEye className='icon' onClick={togglePasswordVisibility} />
             }
           </div>
           {errors.Password && <span className="error-message">{errors.Password.message}</span>}
@@ -140,12 +150,12 @@ function SignUp() {
               <input
                 {...register("PasswordAgain")}
                 type={showAgainPassword ? "text" : "password"}
-                placeholder='Şifre Tekrar' />
+                placeholder='تکرار رمز عبور' />
             </div>
 
             {showAgainPassword
-              ? <IoEyeOff className='icon' onClick={() => setShowAgainPassword(!showAgainPassword)} />
-              : <IoEye className='icon' onClick={() => setShowAgainPassword(!showAgainPassword)} />
+              ? <IoEyeOff className='icon' onClick={toggleAgainPasswordVisibility} />
+              : <IoEye className='icon' onClick={toggleAgainPasswordVisibility} />
             }
           </div>
           {errors.PasswordAgain && <span className="error-message">{errors.PasswordAgain.message}</span>}
@@ -179,16 +189,16 @@ function SignUp() {
             <Controller
               name="BirthDate"
               control={control}
-              rules={{ required: "Doğum tarihi zorunludur" }}
+              rules={{ required: "تاریخ تولد الزامی است" }}
               render={({ field }) => (
                 <DatePicker
                   {...field}
                   selected={field.value ? new Date(field.value) : null}
                   onChange={(date) => field.onChange(date)}
                   dateFormat="dd-MM-yyyy"
-                  placeholderText="Doğum Tarihi"
+                  placeholderText="تاریخ تولد"
                   required
-                  locale={tr}
+                  locale={fa}
                   className="datepicker-input"
                   onKeyDown={handleKeyPressForBirthDate}
                   maxDate={today}
@@ -201,14 +211,14 @@ function SignUp() {
 
         <div className="membership-agreement-input">
           <div className="checkbox-wrapper-46">
-            <input onClick={() => setIsMembershipAgreementAccepted(!isMembershipAgreementAccepted)} className="inp-cbx" id="cbx-46" type="checkbox" />
+            <input onClick={toggleMembershipAgreement} className="inp-cbx" id="cbx-46" type="checkbox" />
             <label className="cbx" htmlFor="cbx-46"><span>
               <svg width="12px" height="10px" viewBox="0 0 12 10">
                 <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
               </svg></span><span></span>
             </label>
           </div>
-          <p><strong onClick={handleMembershipAgreementModal}>Üyelik sözleşmesi</strong> şartlarını okudum ve kabul ediyorum.
+          <p><strong onClick={handleMembershipAgreementModal}>قرارداد عضویت</strong> شرایط را خوانده و قبول دارم.
           </p>
         </div>
 
@@ -217,18 +227,18 @@ function SignUp() {
           className="sign-buttons"
           disabled={!isFormValid}
           style={{ opacity: isFormValid ? 1 : 0.7 }}>
-          Oluştur
+          ایجاد
         </button>
 
         <p className='change-sign-method-text'>
-          Zaten bir hesabın var mı?
-          <Link to="/giris-yap">Giris yap</Link>
+          قبلاً حساب دارید؟
+          <Link to="/giris-yap">وارد شوید</Link>
         </p>
 
-      </form >
+      </form>
       {isLoading && <PreLoader />}
     </motion.div>
-  )
+  );
 }
 
-export default SignUp
+export default SignUp;

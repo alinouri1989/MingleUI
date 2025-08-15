@@ -2,17 +2,17 @@ import { z } from "zod";
 
 export const changePasswordSchema = z.object({
     currentPassword: z.string()
-        .nonempty({ message: "Mevcut şifrenizi giriniz." }),
+        .nonempty({ message: "رمز عبور فعلی خود را وارد کنید." }),
 
     newPassword: z.string()
-        .min(8, { message: "Şifreniz en az 8 karakter uzunluğunda olmalıdır." })
-        .max(16, { message: "Şifreniz en fazla 16 karakter uzunluğunda olmalıdır." })
-        .regex(/^(?=.*[A-Z])(?=.*\d)[A-Za-z\dÇçĞğİıÖöŞşÜü]*$/,
-            { message: "Şifreniz en az bir büyük harf ve bir sayı içermelidir." }),
+        .min(8, { message: "رمز عبور شما باید حداقل ۸ کاراکتر باشد." })
+        .max(16, { message: "رمز عبور شما باید حداکثر ۱۶ کاراکتر باشد." })
+        .regex(/^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]*$/,
+            { message: "رمز عبور شما باید حداقل یک حرف بزرگ و یک عدد داشته باشد." }),
 
     newPasswordAgain: z.string()
-        .nonempty({ message: "Lütfen yeni şifrenizi tekrar giriniz." })
+        .nonempty({ message: "لطفاً رمز عبور جدید خود را مجدداً وارد کنید." })
 }).refine((data) => data.newPassword === data.newPasswordAgain, {
-    message: "Şifreler eşleşmiyor.",
+    message: "رمز عبورها مطابقت ندارند.",
     path: ["newPasswordAgain"],
 });
