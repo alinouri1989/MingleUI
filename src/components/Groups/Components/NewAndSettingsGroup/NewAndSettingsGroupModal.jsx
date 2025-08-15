@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import PropTypes from 'prop-types';
 
 import AddPhotoAlternateRoundedIcon from '@mui/icons-material/AddPhotoAlternateRounded';
 import ImageSearchRoundedIcon from '@mui/icons-material/ImageSearchRounded';
@@ -8,7 +9,6 @@ import MenuItem from "@mui/material/MenuItem";
 import DeleteOutlineRoundedIcon from '@mui/icons-material/DeleteOutlineRounded';
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-
 
 import { MdPersonRemoveAlt1 } from "react-icons/md";
 import { HiUserAdd } from "react-icons/hi"
@@ -39,7 +39,7 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
 
     const { chatConnection } = useSignalR();
     const { user } = useSelector(state => state.auth);
-    const isDarkMode = user?.userSettings?.theme == "Dark";
+    const isDarkMode = user?.userSettings?.theme === "Dark";
 
     const [createGroup, { isLoading: createLoading }] = useCreateGroupMutation();
     const [editGroup, { isLoading: editLoading }] = useEditGroupMutation();
@@ -54,26 +54,31 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
     const [isSaveDisabled, setSaveDisabled] = useState(true);
     const isSmallScreen = useScreenWidth(768);
 
-    const initialData = {
-        name: isGroupSettings ? groupProfile?.name : "",
-        description: isGroupSettings ? groupProfile?.description : "",
-        photoUrl: isGroupSettings ? groupProfile?.photoUrl : null,
-        photo: isGroupSettings ? groupProfile?.photo : "",
-        participants: isGroupSettings ? groupProfile?.participants : null
-    };
+    const initialData = useCallback(() => ({
+        name: isGroupSettings ? groupProfile?.name || "" : "",
+        description: isGroupSettings ? groupProfile?.description || "" : "",
+        photoUrl: isGroupSettings ? groupProfile?.photoUrl || null : null,
+        photo: isGroupSettings ? groupProfile?.photo || "" : "",
+        participants: isGroupSettings ? groupProfile?.participants || null : null
+    }), [isGroupSettings, groupProfile]);
 
     const [formData, setFormData] = useState(initialData);
     const [isSubmitReady, setIsSubmitReady] = useState(false);
 
-
     // --------------------------------------------------------------
 
     useEffect(() => {
-        const isSameData = JSON.stringify(formData) === JSON.stringify(initialData);
+        const currentInitialData = initialData();
+        const isSameData = JSON.stringify(formData) === JSON.stringify(currentInitialData);
         const isNameTooShort = formData.name.length < 2;
         setSaveDisabled(isSameData || isNameTooShort);
-        checkIfReadyToSubmit();
-    }, [formData]);
+        
+        const { name, participants } = formData;
+        const isNameTooShortForSubmit = name.length < 2;
+        const filteredParticipants = participants && Object.values(participants).filter(participant => participant.role !== 2);
+        const hasValidParticipants = filteredParticipants && filteredParticipants.length > 0;
+        setIsSubmitReady(!(isNameTooShortForSubmit || !hasValidParticipants));
+    }, [formData, initialData]);
 
     useEffect(() => {
         if (formData.photo instanceof File) {
@@ -81,7 +86,6 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
             return () => URL.revokeObjectURL(objectURL);
         }
     }, [formData.photo]);
-
 
     useEffect(() => {
         const handleReceiveCreateChat = (response) => {
@@ -105,7 +109,7 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                 chatConnection.off("ReceiveCreateChat", handleReceiveCreateChat);
             }
         };
-    }, [chatConnection, dispatch, navigate]);
+    }, [chatConnection, dispatch, closeModal]);
 
     // --------------------------------------------------------------
 
@@ -128,14 +132,6 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
         }
 
         return photo || groupImageDefault;
-    };
-
-    const checkIfReadyToSubmit = () => {
-        const { name, participants } = formData;
-        const isNameTooShort = name.length < 2;
-        const filteredParticipants = participants && Object.values(participants).filter(participant => participant.role !== 2);
-        const hasValidParticipants = filteredParticipants && filteredParticipants.length > 0;
-        setIsSubmitReady(!(isNameTooShort || !hasValidParticipants));
     };
 
     // ----------------------------MANIPULATE FORM STATES----------------------------------
@@ -229,7 +225,7 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
             if (formDataCopy.participants) {
                 formDataCopy.participants = Object.fromEntries(
                     Object.entries(formDataCopy.participants).filter(
-                        ([_, participant]) => participant.role !== 2
+                        ([, participant]) => participant.role !== 2
                     )
                 );
             }
@@ -258,7 +254,7 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                 SuccessAlert("Grup Oluşturuldu");
                 closeModal();
             }
-        } catch {
+        } catch (error) {
             const errorMessage = error?.data?.message || "Bir hata oluştu, lütfen tekrar deneyin.";
             ErrorAlert(errorMessage);
         }
@@ -333,8 +329,6 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                     <div className="group-image-box">
                         {isGroupSettings
                             ? <img src={getPhotoURL(formData.photoUrl)} alt="Group" />
-
-
                             : <img src={getPhotoURL(formData.photo)} alt="Group" />
                         }
 
@@ -380,13 +374,10 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
                                     },
                                 }}
                             >
-
-
                                 <MenuItem
                                     onClick={handleShowGroupImage}
                                     sx={{ color: "#585CE1" }}
                                 >
-
                                     <ListItemIcon sx={{ color: "inherit" }}>
                                         <ImageSearchRoundedIcon />
                                     </ListItemIcon>
@@ -587,5 +578,20 @@ function NewAndSettingsGroupModal({ closeModal, isGroupSettings, groupProfile, g
         </div>
     );
 }
+
+// PropTypes validation
+NewAndSettingsGroupModal.propTypes = {
+    closeModal: PropTypes.func.isRequired,
+    isGroupSettings: PropTypes.bool,
+    groupProfile: PropTypes.shape({
+        name: PropTypes.string,
+        description: PropTypes.string,
+        photoUrl: PropTypes.string,
+        photo: PropTypes.string,
+        participants: PropTypes.object,
+    }),
+    groupId: PropTypes.string,
+    userId: PropTypes.string.isRequired,
+};
 
 export default NewAndSettingsGroupModal;

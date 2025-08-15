@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import PropTypes from 'prop-types';
 import { useDebounce } from '../../../hooks/useDebounce';
 import { useSignalR } from '../../../contexts/SignalRContext';
 
@@ -26,7 +27,6 @@ function AddUser({ closeUserModal, setFormData, formData }) {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
 
     useEffect(() => {
         if (!notificationConnection || !debouncedSearchQuery) return;
@@ -105,7 +105,7 @@ function AddUser({ closeUserModal, setFormData, formData }) {
                     <button onClick={closeUserModal} className='modal-close'><MdClose /></button>
                     <div className="title-and-input-bar">
                         <div className="title-box">
-                            <img src={star} alt="" />
+                            <img src={star} alt="Star icon" />
                             <p>Üye Ekle</p>
                         </div>
                         <div className="search-user-input-box">
@@ -180,5 +180,14 @@ function AddUser({ closeUserModal, setFormData, formData }) {
         </div>
     );
 }
+
+// PropTypes validation
+AddUser.propTypes = {
+    closeUserModal: PropTypes.func.isRequired,
+    setFormData: PropTypes.func.isRequired,
+    formData: PropTypes.shape({
+        participants: PropTypes.object,
+    }).isRequired,
+};
 
 export default AddUser;

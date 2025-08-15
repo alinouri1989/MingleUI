@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 import useScreenWidth from "../../../hooks/useScreenWidth";
 import { jwtDecode } from 'jwt-decode';
 import { useModal } from '../../../contexts/ModalContext';
@@ -7,7 +8,7 @@ import { IoMdSettings } from "react-icons/io";
 import { IoMdArrowRoundBack } from "react-icons/io";
 import { IoIosArrowDroprightCircle } from "react-icons/io";
 
-import NewGroupModal from './NewAndSettingsGroup/NewAndSettingsGroupModal';
+import NewAndSettingsGroupModal from './NewAndSettingsGroup/NewAndSettingsGroupModal';
 import { formatDateToTR } from '../../../helpers/dateHelper';
 import { defaultProfilePhoto } from '../../../constants/DefaultProfilePhoto';
 
@@ -32,9 +33,8 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }
         groupProfile?.participants?.[userId] &&
         groupProfile?.participants[userId].role === 0;
 
-
     const handleGroupSettings = () => {
-        showModal(<NewGroupModal closeModal={closeModal} isGroupSettings={true} groupProfile={groupProfile} groupId={editGroupId} userId={userId} />);
+        showModal(<NewAndSettingsGroupModal closeModal={closeModal} isGroupSettings={true} groupProfile={groupProfile} groupId={editGroupId} userId={userId} />);
     };
 
     return (
@@ -65,10 +65,9 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }
                             <>
                                 <div className='group-info-box'>
                                     <img src={groupProfile?.photoUrl}
-                                        alt={`profile`} />
+                                        alt={`${groupProfile.name} profile`} />
                                     <p>{groupProfile.name}</p>
                                 </div>
-
 
                                 <div className='date-box'>
                                     <p>{formatDateToTR(groupProfile.createdDate)} tarihinde oluşturuldu</p>
@@ -90,7 +89,7 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }
                                             .map(([id, member]) => {
                                                 if (member.role === 2) return null;
 
-                                                const isOnline = member.lastConnectionDate == "0001-01-01T00:00:00";
+                                                const isOnline = member.lastConnectionDate === "0001-01-01T00:00:00";
 
                                                 return (
                                                     <div key={id} className="member-box">
@@ -112,7 +111,6 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }
                                                 );
                                             })}
                                     </div>
-
                                 </div>
                             </>
                         ) : (
@@ -124,5 +122,19 @@ function GroupDetailsBar({ isSidebarOpen, toggleSidebar, groupProfile, groupId }
         </div>
     );
 }
+
+// PropTypes validation
+GroupDetailsBar.propTypes = {
+    isSidebarOpen: PropTypes.bool.isRequired,
+    toggleSidebar: PropTypes.func.isRequired,
+    groupProfile: PropTypes.shape({
+        photoUrl: PropTypes.string,
+        name: PropTypes.string,
+        createdDate: PropTypes.string,
+        description: PropTypes.string,
+        participants: PropTypes.object,
+    }),
+    groupId: PropTypes.string.isRequired,
+};
 
 export default GroupDetailsBar;

@@ -1,5 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { useModal } from '../../../contexts/ModalContext';
 import { useSignalR } from '../../../contexts/SignalRContext';
 import useScreenWidth from '../../../hooks/useScreenWidth';
@@ -15,22 +16,20 @@ import { startCall } from '../../../helpers/startCall';
 import { defaultProfilePhoto } from '../../../constants/DefaultProfilePhoto';
 
 function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientId }) {
-
-    if (!recipientProfile) {
-        return null;
-    }
-
     const dispatch = useDispatch();
     const location = useLocation();
-
     const { callConnection } = useSignalR();
     const { isRingingIncoming } = useSelector((state) => state.call);
     const { showModal, closeModal } = useModal();
     const isSmallScreen = useScreenWidth(900);
 
-    const status = recipientProfile.lastConnectionDate == "0001-01-01T00:00:00" ? 'online' : 'offline';
-    const lastConnectionDate = recipientProfile.lastConnectionDate;
+    // Early return after all hooks are called
+    if (!recipientProfile) {
+        return null;
+    }
 
+    const status = recipientProfile.lastConnectionDate === "0001-01-01T00:00:00" ? 'online' : 'offline';
+    const lastConnectionDate = recipientProfile.lastConnectionDate;
 
     const handleVoiceCall = () => {
         startCall(callConnection, recipientId, false, dispatch, () =>
@@ -53,15 +52,17 @@ function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientI
                     />
                 )}
                 <div onClick={toggleSidebar} className="image-box">
-                    <img src={recipientProfile.profilePhoto}
+                    <img 
+                        src={recipientProfile.profilePhoto}
                         onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+                        alt="Profile"
                     />
                     <p className={`status ${status}`}></p>
                 </div>
                 <div onClick={toggleSidebar} className="name-and-status-box">
                     <p className="user-name">{recipientProfile.displayName}</p>
 
-                    {status == "online" ?
+                    {status === "online" ?
                         <span>Çevrimiçi</span>
                         :
                         <span>{formatDateForLastConnectionDate(lastConnectionDate)}</span>
@@ -93,5 +94,17 @@ function UserTopBar({ isSidebarOpen, toggleSidebar, recipientProfile, recipientI
         </div>
     )
 }
+
+// PropTypes validation
+UserTopBar.propTypes = {
+    isSidebarOpen: PropTypes.bool.isRequired,
+    toggleSidebar: PropTypes.func.isRequired,
+    recipientProfile: PropTypes.shape({
+        lastConnectionDate: PropTypes.string,
+        profilePhoto: PropTypes.string,
+        displayName: PropTypes.string,
+    }),
+    recipientId: PropTypes.string.isRequired,
+};
 
 export default UserTopBar

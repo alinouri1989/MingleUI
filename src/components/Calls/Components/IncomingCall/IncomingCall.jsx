@@ -1,7 +1,8 @@
 import { useModal } from '../../../../contexts/ModalContext';
 import { useSignalR } from '../../../../contexts/SignalRContext';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 import { ErrorAlert } from "../../../../helpers/customAlert.js";
 
 import { PiPhoneFill } from "react-icons/pi";
@@ -55,10 +56,10 @@ function IncomingCall({ callType, callerProfile, callId }) {
             showModal(<CallModal
                 callId={callId}
                 closeModal={closeModal}
-                isCameraCall={callType == 1 ? true : false}
+                isCameraCall={callType === 1 ? true : false}
             />);
         }
-    }, [isCallStarted]);
+    }, [isCallStarted, dispatch, showModal, closeModal, callId, callType]);
 
     return (
         <div className='incoming-call-box'>
@@ -88,5 +89,15 @@ function IncomingCall({ callType, callerProfile, callId }) {
         </div>
     );
 }
+
+// PropTypes validation
+IncomingCall.propTypes = {
+    callType: PropTypes.number.isRequired,
+    callerProfile: PropTypes.shape({
+        profilePhoto: PropTypes.string,
+        displayName: PropTypes.string,
+    }).isRequired,
+    callId: PropTypes.string.isRequired,
+};
 
 export default IncomingCall;

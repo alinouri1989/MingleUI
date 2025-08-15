@@ -1,5 +1,6 @@
 import { useRef, useEffect } from 'react'
 import { useSelector } from 'react-redux';
+import PropTypes from 'prop-types';
 import { motion } from "framer-motion";
 import useScreenWidth from '../../../hooks/useScreenWidth.js';
 
@@ -12,6 +13,7 @@ import { opacityAndTransformEffect, opacityEffect } from '../../../shared/animat
 import MessageBubble from "../../../shared/components/MessageBubble/MessageBubble.jsx";
 
 import FirstChatBanner from "../../../assets/images/Home/FirstChatBanner.webp";
+
 function GroupMessageBar({ groupId }) {
 
     const { user, token } = useSelector((state) => state.auth);
@@ -77,7 +79,7 @@ function GroupMessageBar({ groupId }) {
                                 const group = groupList[groupListId];
                                 const senderProfile = group?.participants?.[userId];
                                 const isSender = currentUserId === userId;
-                                const isDeleted = msg.deletedFor?.hasOwnProperty(currentUserId) ? true : false;
+                                const isDeleted = msg.deletedFor && Object.prototype.hasOwnProperty.call(msg.deletedFor, currentUserId);
                                 const formattedTimestamp = convertToLocalTime(
                                     msg.status.sent[userId]
                                 );
@@ -112,5 +114,10 @@ function GroupMessageBar({ groupId }) {
         </motion.div>
     );
 }
+
+// PropTypes validation
+GroupMessageBar.propTypes = {
+    groupId: PropTypes.string.isRequired,
+};
 
 export default GroupMessageBar

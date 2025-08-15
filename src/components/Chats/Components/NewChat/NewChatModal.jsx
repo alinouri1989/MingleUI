@@ -85,7 +85,7 @@ function NewChatModal() {
         const chatId = Object.keys(individualData)[0];
         if (chatId) {
           const chatData = individualData[chatId];
-          const isArchived = chatData.archivedFor?.hasOwnProperty(userId);
+          const isArchived = chatData.archivedFor && Object.prototype.hasOwnProperty.call(chatData.archivedFor, userId);
 
           const destination = isArchived ? `/arsivler/${chatId}` : `/sohbetler/${chatId}`;
           navigate(destination);
@@ -107,7 +107,8 @@ function NewChatModal() {
         chatConnection.off("ReceiveCreateChat", handleReceiveCreateChat);
       }
     };
-  }, [chatConnection, isCreater]);
+  }, [chatConnection, isCreater, navigate, closeModal, userId]);
+  
   const handleGoToChat = async (userId) => {
     if (connectionStatus !== "connected") {
       ErrorAlert("Bir hata meydana geldi");

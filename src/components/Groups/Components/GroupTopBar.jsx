@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types';
 import { IoIosArrowDropleftCircle } from "react-icons/io";
 import useScreenWidth from '../../../hooks/useScreenWidth';
 import BackToMenuButton from '../../../shared/components/BackToMenuButton/BackToMenuButton';
@@ -39,5 +40,16 @@ function GroupTopBar({ isSidebarOpen, toggleSidebar, groupProfile }) {
         </div>
     );
 }
+
+// PropTypes validation
+GroupTopBar.propTypes = {
+    isSidebarOpen: PropTypes.bool.isRequired,
+    toggleSidebar: PropTypes.func.isRequired,
+    groupProfile: PropTypes.shape({
+        photoUrl: PropTypes.string,
+        name: PropTypes.string,
+        participants: PropTypes.object,
+    }),
+};
 
 export default GroupTopBar;
