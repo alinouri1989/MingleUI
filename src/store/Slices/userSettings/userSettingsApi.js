@@ -51,7 +51,7 @@ export const userSettingsApi = createApi({
           const currentUser = getState().auth;
 
           updateUserField(dispatch, currentUser, 'profilePhoto', data.profilePhoto);
-        } catch { }
+        } catch { /* empty */ }
       },
     }),
 
@@ -66,7 +66,7 @@ export const userSettingsApi = createApi({
           await queryFulfilled;
           const currentUser = getState().auth;
           updateUserField(dispatch, currentUser, 'displayName', arg);
-        } catch { }
+        } catch { /* empty */ }
       },
     }),
 

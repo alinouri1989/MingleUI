@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import Logo from "../../../assets/logos/MingleLogoWithText.webp";
+import Logo from "../../../assets/logos/ChatNestLogoWithText.webp";
 
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";

@@ -7,14 +7,14 @@ function Help() {
     <div className="help-box">
       <h3>Yardım</h3>
       <div className="version-info">
-        <p>Web için Mingle</p>
+        <p>Web için ChatNest</p>
         <span>Sürüm 1.000.0.0</span>
       </div>
       <div className="contact-us">
         <p>Bize Ulaşın</p>
         <span>Bu uygulama hakkındaki görüşlerinizi bizimle paylaşın</span>
         <div className="rate-box">
-          <a href="mailto:mingle.destek@gmail.com" target="_blank">Bize ulaşın</a>
+          <a href="mailto:ChatNest.destek@gmail.com" target="_blank">Bize ulaşın</a>
           <a>Uygulamaya puan ver</a>
         </div>
         <a>Yardım merkezi</a>
@@ -54,7 +54,7 @@ function Help() {
         <div className="developer-box"></div>
       </div>
       <div className="copyright-box">
-        <p>2025 © Mingle</p>
+        <p>2025 © ChatNest</p>
       </div>
     </div>
   )

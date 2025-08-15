@@ -104,7 +104,7 @@ export const authApi = createApi({
             token: null,
           }));
 
-        } catch { }
+        } catch { /* empty */ }
       }
     }),
   }),
@@ -122,7 +122,7 @@ const handleAuthResponse = async (queryFulfilled, dispatch) => {
       const updatedUserProfile = setUserProfileTheme(userProfile);
       dispatch(setUser({ user: updatedUserProfile, token: data.token }));
     }
-  } catch { }
+  } catch { /* empty */ }
 };
 
 export const {

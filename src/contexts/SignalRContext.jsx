@@ -16,7 +16,7 @@ import { decryptMessage } from '../helpers/messageCryptoHelper.js';
 
 import store from '../store/index.js';
 import { ErrorAlert } from "../helpers/customAlert.js";
-import MinglePreLoader from "../shared/components/MinglePreLoader/MinglePreLoader.jsx";
+import ChatNestPreLoader from "../shared/components/ChatNestPreLoader/ChatNestPreLoader.jsx";
 import PreLoader from "../shared/components/PreLoader/PreLoader.jsx";
 
 
@@ -88,7 +88,7 @@ export const SignalRProvider = ({ children }) => {
             });
 
             peerConnection.current = pc;
-        } catch { }
+        } catch { /* empty */ }
     };
 
     if (peerConnection.current) {
@@ -275,7 +275,7 @@ export const SignalRProvider = ({ children }) => {
                                         };
                                     })
                                     .sort((a, b) => a.sentDate - b.sentDate)
-                                    .map(({ sentDate, ...msg }) => msg);
+                                    .map(({  ...msg }) => msg);
                             }
 
                             dispatch(addNewGroupChat({ chatId: groupId, chatData: groupChatData }));
@@ -436,11 +436,11 @@ export const SignalRProvider = ({ children }) => {
                         } else if (data.sdp.type === "answer") {
                             await handleRemoteSDP(data.sdp, peerConnection.current);
                         }
-                    } catch { }
+                    } catch { /* empty */ }
                 });
 
                 callConnection.off("ReceiveAcceptCall");
-                callConnection.on('ReceiveAcceptCall', async (data) => {
+                callConnection.on('ReceiveAcceptCall', async () => {
                     if (store.getState().call.isCallStarted) {
                         return;
                     }
@@ -449,11 +449,11 @@ export const SignalRProvider = ({ children }) => {
 
                 //! ==== CONNECTION ERRORS =====
 
-                chatConnection.on('Error', () => {
+                chatConnection.on('Error', (data) => {
                     ErrorAlert(data.message);
                 });
 
-                notificationConnection.on('Error', () => {
+                notificationConnection.on('Error', (data) => {
                     ErrorAlert(data.message);
                 });
 
@@ -499,7 +499,7 @@ export const SignalRProvider = ({ children }) => {
             if (peerConnection)
                 dispatch(setIsCallAcceptWaiting(true));
             createAndSendOffer(callIdRef.current, callConnection, peerConnection);
-        } catch { }
+        } catch { /* empty */ }
     };
 
     const addPendingRequest = (messageId) => {
@@ -608,7 +608,7 @@ export const SignalRProvider = ({ children }) => {
 
             await Promise.all([...individualPromises, ...individualReadPromises, ...groupPromises, ...groupReadPromises]);
 
-        } catch { }
+        } catch { /* empty */ }
     };
 
     if (loading) {

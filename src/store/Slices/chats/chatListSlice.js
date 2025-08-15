@@ -19,7 +19,7 @@ const chatListSlice = createSlice({
             const newUserData = action.payload[newUserId];
             if (!state.chatList[newUserId]) {
                 state.chatList[newUserId] = {
-                    displayName: newUserData.displayName || "Mingle",
+                    displayName: newUserData.displayName || "ChatNest",
                     email: newUserData.email || "",
                     biography: newUserData.biography || "",
                     profilePhoto: newUserData.profilePhoto || defaultProfilePhoto,

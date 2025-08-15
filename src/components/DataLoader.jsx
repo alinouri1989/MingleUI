@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import PropTypes from "prop-types";
 
 import { getJwtFromCookie } from "../store/helpers/getJwtFromCookie";
 import { authApi } from "../store/Slices/auth/authApi";
@@ -7,67 +8,74 @@ import { setUser } from "../store/Slices/auth/authSlice";
 
 import { setUserProfileTheme } from "../helpers/applyTheme";
 import { SignalRProvider } from "../contexts/SignalRContext";
-import MinglePreLoader from "../shared/components/MinglePreLoader/MinglePreLoader";
+import ChatNestPreLoader from "../shared/components/ChatNestPreLoader/ChatNestPreLoader";
 import { ErrorAlert } from "../helpers/customAlert";
 
 const DataLoader = ({ children }) => {
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+  const [isLoading, setIsLoading] = useState(true);
 
-    const dispatch = useDispatch();
-    const user = useSelector((state) => state.auth.user);
-    const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const updateHeight = () => {
+      if (window.innerWidth < 900) {
+        document.documentElement.style.setProperty("--app-height", `${window.innerHeight}px`);
+      } else {
+        document.documentElement.style.setProperty("--app-height", "100vh");
+      }
+    };
 
-    useEffect(() => {
-        const updateHeight = () => {
-            if (window.innerWidth < 900) {
-                document.documentElement.style.setProperty("--app-height", `${window.innerHeight}px`);
-            } else {
-                document.documentElement.style.setProperty("--app-height", "100vh");
-            }
-        };
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
 
-        updateHeight();
-        window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, []);
 
-        return () => window.removeEventListener("resize", updateHeight);
-    }, []);
+  useEffect(() => {
+    const initializeAuth = async () => {
+      const jwt = getJwtFromCookie();
 
+      if (jwt) {
+        try {
+          const userProfile = await dispatch(
+            authApi.endpoints.getUserProfile.initiate()
+          ).unwrap();
 
-    useEffect(() => {
-        const initializeAuth = async () => {
-            const jwt = getJwtFromCookie();
+          const updatedUserProfile = setUserProfileTheme(userProfile);
 
-            if (jwt) {
-                try {
-                    const userProfile = await dispatch(
-                        authApi.endpoints.getUserProfile.initiate()
-                    ).unwrap();
+          dispatch(
+            setUser({
+              user: updatedUserProfile,
+              token: jwt,
+            })
+          );
+        } catch {
+          // If you want to inspect errors, replace with: `catch (error) { console.error(error); ... }`
+          ErrorAlert("Bir hata meydana geldi");
+        }
+      }
 
-                    const updatedUserProfile = setUserProfileTheme(userProfile);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 900);
+    };
 
-                    dispatch(
-                        setUser({
-                            user: updatedUserProfile,
-                            token: jwt,
-                        })
-                    );
-                } catch (error) {
-                    ErrorAlert("Bir hata meydana geldi");
-                }
-            }
+    initializeAuth();
+  }, [dispatch]);
 
-            setTimeout(() => {
-                setIsLoading(false);
-            }, 900);
-        };
+  if (isLoading) {
+    return <ChatNestPreLoader />;
+  }
 
-        initializeAuth();
-    }, [dispatch]);
+  return user ? <SignalRProvider>{children}</SignalRProvider> : <>{children}</>;
+};
 
-    if (isLoading) {
-        return <MinglePreLoader />;
-    }
+DataLoader.propTypes = {
+  children: PropTypes.node,
+};
 
-    return user ? <SignalRProvider>{children}</SignalRProvider> : <>{children}</>;
+DataLoader.defaultProps = {
+  children: null,
 };
 
 export default DataLoader;

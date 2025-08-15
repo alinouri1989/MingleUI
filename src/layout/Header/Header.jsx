@@ -1,6 +1,6 @@
 import { useModal } from "../../contexts/ModalContext";
 import { IoMdSettings } from "react-icons/io";
-import Logo from "../../assets/logos/MingleLogoWithText.webp";
+import Logo from "../../assets/logos/ChatNestLogoWithText.webp";
 import SettingsModal from "../../components/Settings/SettingsModal";
 import "./style.scss";
 

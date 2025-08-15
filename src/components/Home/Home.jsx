@@ -1,8 +1,8 @@
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 
-import LaptopImage from "../../assets/images/Home/MingleLaptop.webp";
-import LaptopImageDark from "../../assets/images/Home/MingleLaptopDark.webp";
+import LaptopImage from "../../assets/images/Home/ChatNestLaptop.webp";
+import LaptopImageDark from "../../assets/images/Home/ChatNestLaptopDark.webp";
 import { opacityEffect } from "../../shared/animations/animations";
 import "./style.scss";
 
@@ -17,7 +17,7 @@ function Home() {
         initial="initial"
         animate="animate"
       >
-        <img src={user?.userSettings?.theme === "Dark" ? LaptopImageDark : LaptopImage} alt="Mingle" />
+        <img src={user?.userSettings?.theme === "Dark" ? LaptopImageDark : LaptopImage} alt="ChatNest" />
       </motion.div>
 
       <motion.div
@@ -26,9 +26,9 @@ function Home() {
         initial="initial"
         animate="animate"
       >
-        <h2>Windows için Mingle’ı indirin</h2>
+        <h2>Windows için ChatNest’ı indirin</h2>
         <p>
-          Mingle ile anında bağlanın; sohbet edin, gruplara katılın
+          ChatNest ile anında bağlanın; sohbet edin, gruplara katılın
           mesafeleri sesli aramalarla kaldırın!
         </p>
         <button>Microsoft Store’dan indir</button>

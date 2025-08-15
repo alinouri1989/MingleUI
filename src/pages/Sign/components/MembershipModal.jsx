@@ -11,15 +11,15 @@ function MembershipModal() {
             <h1>Üyelik Sözleşmesi</h1>
             <div className='membership-terms-box'>
                 <h4>1. Sözleşmenin Amacı</h4>
-                <p><strong>1.1.</strong> Bu Sözleşme, Mingle adlı gerçek zamanlı sohbet uygulamasının kullanım şartlarını ve Üye'nin hak ve yükümlülüklerini belirlemek amacıyla düzenlenmiştir.</p>
-                <p><strong>1.2.</strong> Mingle, herhangi bir ticari amaç gütmemekte olup, yalnızca Bilgisayar Ağları dersi kapsamında hazırlanmış bir eğitim ve ders projesidir. Uygulama, gerçek bir sohbet platformunu simüle etmek amacıyla tasarlanmıştır.</p>
+                <p><strong>1.1.</strong> Bu Sözleşme, ChatNest adlı gerçek zamanlı sohbet uygulamasının kullanım şartlarını ve Üye'nin hak ve yükümlülüklerini belirlemek amacıyla düzenlenmiştir.</p>
+                <p><strong>1.2.</strong> ChatNest, herhangi bir ticari amaç gütmemekte olup, yalnızca Bilgisayar Ağları dersi kapsamında hazırlanmış bir eğitim ve ders projesidir. Uygulama, gerçek bir sohbet platformunu simüle etmek amacıyla tasarlanmıştır.</p>
 
                 <h4>2. Üyelik Koşulları</h4>
                 <p><strong>2.1.</strong> Üyelik başvurusunda bulunarak, Üye bu Sözleşme'yi okuduğunu, anladığını ve tüm şartlarını kabul ettiğini beyan eder.</p>
                 <p><strong>2.2.</strong> Üyelik başvurusu, Üye'nin gerekli bilgileri eksiksiz ve doğru bir şekilde doldurması ve Proje Sahibi'nin onayı ile tamamlanır. Proje Sahibi, üyelik başvurularını kabul etmeme hakkını saklı tutar.</p>
 
                 <h4>4. Kullanım Şartları ve Sınırlamaları</h4>
-                <p><strong>4.1.</strong> Üye, Mingle uygulamasını yalnızca kişisel kullanım amacıyla kullanacağını kabul eder. Uygulama üzerindeki tüm işlemler (mesaj gönderme, sohbet odası oluşturma vb.) tamamen simülasyon amaçlı olup, gerçek bir ticari işlem niteliği taşımamaktadır.</p>
+                <p><strong>4.1.</strong> Üye, ChatNest uygulamasını yalnızca kişisel kullanım amacıyla kullanacağını kabul eder. Uygulama üzerindeki tüm işlemler (mesaj gönderme, sohbet odası oluşturma vb.) tamamen simülasyon amaçlı olup, gerçek bir ticari işlem niteliği taşımamaktadır.</p>
                 <p><strong>4.2.</strong> Üye, uygulama üzerindeki tüm içeriklerin ve işlemlerin gerçek olmadığını, sadece eğitim ve proje geliştirme amacıyla sunulduğunu kabul eder.</p>
 
                 <h4>4. Gizlilik</h4>

@@ -3,7 +3,7 @@ import { getJwtFromCookie } from '../../helpers/getJwtFromCookie';
 
 const BASE_URL = import.meta.env.VITE_APP_BASE_API_URL;
 
-export const MingleAiApi = createApi({
+export const ChatNestAiApi = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: `${BASE_URL}api/`,
         prepareHeaders: (headers) => {
@@ -41,4 +41,4 @@ export const MingleAiApi = createApi({
 export const {
     useGenerateTextMutation,
     useGenerateImageMutation
-} = MingleAiApi;
+} = ChatNestAiApi;

@@ -1,4 +1,4 @@
-![MingleAllDevicesBanner 1 (2)](https://github.com/user-attachments/assets/ac66ba94-dad3-450a-b085-5011af846bab)
+![ChatNestAllDevicesBanner 1 (2)](https://github.com/user-attachments/assets/ac66ba94-dad3-450a-b085-5011af846bab)
 
 
 # 🎯 Project Purpose  
@@ -47,7 +47,7 @@ ___
 ___
 
 ### 📞 **Voice and Video Calls** 📱🎥
-- Make one-on-one voice and video calls with users registered on Mingle.
+- Make one-on-one voice and video calls with users registered on ChatNest.
 - Mute microphone and toggle speaker on/off.
 
 ![Frame 206 (1)](https://github.com/user-attachments/assets/989efab7-7c2a-4466-9d36-a90c9dff6fbb)
@@ -84,7 +84,7 @@ ___
 ___
 
 ### ✦ **AI-Generator**  
-- Discover **Mingle AI** by clicking the **star icon** in the message input bar.  
+- Discover **ChatNest AI** by clicking the **star icon** in the message input bar.  
 - **Text Generation:** Enter a prompt in the input field to generate AI-powered text.  
 - **Image Generation:** Choose from **Flux, Artples, or Compvis** models in the image menu to create custom images.  
 - If unsatisfied with the result, use the **refresh button** to regenerate content with the same prompt or clear the input to start over.  
@@ -429,11 +429,11 @@ This phase is crucial because it ensures the application keeps evolving to meet 
   The project is compatible with popular web browsers like Chrome, Firefox, Safari, and Edge in their latest versions.  
 
 - **Project Link**:  
-  Access the project by clicking [Here](https://mingleweb.netlify.app/).  
+  Access the project by clicking [Here](https://ChatNestweb.netlify.app/).  
 
 - **Developers**:  
   The **frontend** of the project was developed by **Hamza Doğan**. For more information about the developer, please visit the [LinkedIn Profile](https://www.linkedin.com/in/hamzadogann/).  
-  The **backend** of the project was developed by **Nazmi Koçak**. For more details, you can visit the [backend repository](https://github.com/nazmikocak/Mingle).  
+  The **backend** of the project was developed by **Nazmi Koçak**. For more details, you can visit the [backend repository](https://github.com/nazmikocak/ChatNest).  
 
 - **Feedback and Support**:  
   If you have any feedback or need support, feel free to contact me at [hamzaalidogantr@gmail.com].  

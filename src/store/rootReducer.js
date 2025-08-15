@@ -11,7 +11,7 @@ import { authApi } from "./Slices/auth/authApi.js";
 import { userSettingsApi } from './Slices/userSettings/userSettingsApi.js';
 import { searchUsersApi } from './Slices/searchUsers/searchUserApi.js';
 import { GroupApi } from './Slices/Group/GroupApi.js';
-import { MingleAiApi } from './Slices/mingleAi/MingleAiApi.js';
+import { ChatNestAiApi } from './Slices/ChatNestAi/ChatNestAiApi.js';
 
 const appReducer = combineReducers({
     auth: authReducer,
@@ -24,7 +24,7 @@ const appReducer = combineReducers({
     [userSettingsApi.reducerPath]: userSettingsApi.reducer,
     [searchUsersApi.reducerPath]: searchUsersApi.reducer,
     [GroupApi.reducerPath]: GroupApi.reducer,
-    [MingleAiApi.reducerPath]: GroupApi.reducer,
+    [ChatNestAiApi.reducerPath]: GroupApi.reducer,
 });
 
 const rootReducer = (state, action) => {

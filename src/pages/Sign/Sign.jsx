@@ -35,7 +35,7 @@ function Sign() {
                     className='banner-bar-container'>
                     <h1>Doyasıya Sohbetin Keyfini Çıkar</h1>
                     <img src={SignVector} alt="" />
-                    <p>Mingle</p>
+                    <p>ChatNest</p>
                 </motion.div>
             </div>
         </div>

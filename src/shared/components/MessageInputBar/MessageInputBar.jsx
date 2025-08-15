@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+
+import PropTypes from "prop-types";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useSignalR } from "../../../contexts/SignalRContext";
 import { useModal } from "../../../contexts/ModalContext";
@@ -25,298 +27,322 @@ import PreLoader from "../PreLoader/PreLoader";
 import "./style.scss";
 
 function MessageInputBar({ chatId }) {
+  const location = useLocation();
+  const { showModal, closeModal } = useModal();
+  const { chatConnection } = useSignalR();
+  const { user } = useSelector((state) => state.auth);
 
-    const location = useLocation();
-    const { showModal, closeModal } = useModal();
-    const { chatConnection } = useSignalR();
-    const { user } = useSelector(state => state.auth);
+  const [message, setMessage] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
 
-    const [message, setMessage] = useState("");
-    const [selectedFile, setSelectedFile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [isShowFileMenu, setShowFileMenu] = useState(false);
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
 
-    const [isLoading, setIsLoading] = useState(false);
-    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    const [isShowFileMenu, setShowFileMenu] = useState(false);
-    const [isAIModalOpen, setIsAIModalOpen] = useState(false);
+  const emojiPickerRef = useRef(null);
+  const AIButtonRef = useRef(null);
+  const fileImageInputRef = useRef(null);
+  const fileVideoInputRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const fileMenuRef = useRef(null);
+  const addFileButtonRef = useRef(null);
 
-    const emojiPickerRef = useRef(null);
-    const AIButtonRef = useRef(null);
-    const fileImageInputRef = useRef(null);
-    const fileVideoInputRef = useRef(null);
-    const fileInputRef = useRef(null);
-    const fileMenuRef = useRef(null);
-    const addFileButtonRef = useRef(null);
-
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (
-                fileMenuRef.current &&
-                !fileMenuRef.current.contains(event.target) &&
-                addFileButtonRef.current &&
-                !addFileButtonRef.current.contains(event.target)
-            ) {
-                setShowFileMenu(false);
-            }
-        }
-
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
-                setShowEmojiPicker(false);
-            }
-        };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
-    useEffect(() => {
-        const handleKeyDown = (event) => {
-            if (isAIModalOpen) {
-                return;
-            }
-
-            if (event.key === "Enter" && !event.shiftKey) {
-                event.preventDefault();
-                handleSendTextMessage();
-            }
-        };
-
-        document.addEventListener("keydown", handleKeyDown);
-        return () => {
-            document.removeEventListener("keydown", handleKeyDown);
-        };
-    }, [message, selectedFile, isAIModalOpen]);
-
-    const handleEmojiClick = (emojiData) => {
-        setMessage((prev) => prev + emojiData.emoji);
-    };
-
-    const toggleEmojiPicker = () => {
-        setShowEmojiPicker((prev) => !prev);
-    };
-
-    const getActiveChatType = () => {
-        if (location.pathname.includes('sohbetler') || location.pathname.includes('arsivler')) {
-            return 'Individual';
-        } else if (location.pathname.includes('gruplar')) {
-            return 'Group';
-        }
-        return '';
-    };
-
-    const handleInputChange = (e) => {
-        setMessage(e.target.value);
-    };
-
-    const handleFileSelect = () => {
-        fileInputRef.current.click();
-    };
-
-    const handleImageSelect = () => {
-        fileImageInputRef.current.click();
-    };
-
-    const handleVideoSelect = () => {
-        fileVideoInputRef.current.click();
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        fileMenuRef.current &&
+        !fileMenuRef.current.contains(event.target) &&
+        addFileButtonRef.current &&
+        !addFileButtonRef.current.contains(event.target)
+      ) {
+        setShowFileMenu(false);
+      }
     }
 
-    const handleSoundRecord = () => {
-        showModal(<SoundRecordModal closeModal={closeModal} chatId={chatId} />);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+        setShowEmojiPicker(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const getActiveChatType = useCallback(() => {
+    if (location.pathname.includes("sohbetler") || location.pathname.includes("arsivler")) {
+      return "Individual";
+    } else if (location.pathname.includes("gruplar")) {
+      return "Group";
+    }
+    return "";
+  }, [location.pathname]);
+
+  const handleEmojiClick = (emojiData) => {
+    setMessage((prev) => prev + emojiData.emoji);
+  };
+
+  const toggleEmojiPicker = () => {
+    setShowEmojiPicker((prev) => !prev);
+  };
+
+  const handleInputChange = (e) => {
+    setMessage(e.target.value);
+  };
+
+  const handleFileSelect = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageSelect = () => {
+    fileImageInputRef.current?.click();
+  };
+
+  const handleVideoSelect = () => {
+    fileVideoInputRef.current?.click();
+  };
+
+  const handleSoundRecord = () => {
+    showModal(<SoundRecordModal closeModal={closeModal} chatId={chatId} />);
+  };
+
+  const handleSendVideoFile = async (e) => {
+    const file = e.target.files?.[0];
+    const chatType = getActiveChatType();
+
+    if (file) {
+      setIsLoading(true);
+      try {
+        const base64String = await convertFileToBase64WithAsArrayBuffer(file);
+        await chatConnection.invoke("SendMessage", chatType, chatId, {
+          ContentType: 2,
+          content: base64String,
+        });
+        SuccessAlert("Video gönderildi");
+      } catch {
+        ErrorAlert("Video gönderilemedi");
+      }
+      setIsLoading(false);
+    } else {
+      ErrorAlert("Dosya seçilmedi");
+    }
+  };
+
+  const handleSendImageFile = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedFile(file);
+
+      showModal(<ImageModal closeModal={closeModal} image={file} chatId={chatId} />);
+    }
+  };
+
+  const handleSendFile = async (e) => {
+    const file = e.target.files?.[0];
+    const chatType = getActiveChatType();
+
+    if (!file) {
+      ErrorAlert("Dosya seçilmedi");
+      return;
     }
 
-    const handleSendVideoFile = async (e) => {
-        const file = e.target.files[0];
-        const chatType = getActiveChatType();
+    try {
+      setIsLoading(true);
+      const base64String = await convertFileToBase64WithAsArrayBuffer(file);
 
-        if (file) {
-            setIsLoading(true);
-            try {
-                const base64String = await convertFileToBase64WithAsArrayBuffer(file);
-                await chatConnection.invoke("SendMessage", chatType, chatId, {
-                    ContentType: 2,
-                    content: base64String,
-                });
-                SuccessAlert("Video gönderildi");
-            } catch (error) {
-                ErrorAlert("Video gönderilemedi");
-            }
-            setIsLoading(false);
-        } else {
-            ErrorAlert("Dosya seçilmedi");
-        }
+      await chatConnection.invoke("SendMessage", chatType, chatId, {
+        ContentType: 4,
+        FileName: file.name,
+        content: base64String,
+      });
+
+      setIsLoading(false);
+    } catch (error) {
+      setIsLoading(false);
+      if (error?.message === "empty_file") {
+        ErrorAlert("İçeriği boş bir dosya gönderilemez");
+      } else {
+        ErrorAlert("Dosya gönderilemedi");
+      }
+    }
+  };
+
+  const handleSendTextMessage = useCallback(async () => {
+    if (isAIModalOpen) {
+      return;
+    }
+    setMessage("");
+    if (!message && !selectedFile) {
+      return;
+    }
+
+    let contentType;
+    if (message) {
+      contentType = 0;
+    } else if (selectedFile) {
+      contentType = 1;
+    }
+
+    const sendMessageDto = {
+      ContentType: contentType,
+      Content: message || null,
     };
 
-    const handleSendImageFile = (e) => {
-        if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
-            setSelectedFile(file);
+    const chatType = getActiveChatType();
 
-            showModal(<ImageModal closeModal={closeModal} image={file} chatId={chatId} />);
-        }
+    try {
+      const encryptedMessage = encryptMessage(message, chatId);
+      await chatConnection.invoke("SendMessage", chatType, chatId, {
+        ...sendMessageDto,
+        content: encryptedMessage,
+      });
+
+      setSelectedFile(null);
+    } catch (err) {
+      // Avoid empty catch: log and optionally inform user
+      console.error("Mesaj gönderilemedi:", err);
+      ErrorAlert("Mesaj gönderilemedi");
+    }
+  }, [isAIModalOpen, message, selectedFile, getActiveChatType, chatId, chatConnection]);
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (isAIModalOpen) return;
+
+      if (event.key === "Enter" && !event.shiftKey) {
+        event.preventDefault();
+        handleSendTextMessage();
+      }
     };
 
-    const handleSendFile = async (e) => {
-        const file = e.target.files[0];
-        const chatType = getActiveChatType();
-
-        if (!file) {
-            ErrorAlert("Dosya seçilmedi");
-            return;
-        }
-
-        try {
-            setIsLoading(true);
-            const base64String = await convertFileToBase64WithAsArrayBuffer(file);
-
-            await chatConnection.invoke("SendMessage", chatType, chatId, {
-                ContentType: 4,
-                FileName: file.name,
-                content: base64String,
-            });
-
-            setIsLoading(false);
-        } catch (error) {
-            setIsLoading(false);
-            if (error.message === "empty_file") {
-                ErrorAlert("İçeriği boş bir dosya gönderilemez");
-            } else {
-                ErrorAlert("Dosya gönderilemedi");
-            }
-        }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
     };
+  }, [isAIModalOpen, handleSendTextMessage]);
 
-    const handleSendTextMessage = async () => {
-        if (isAIModalOpen) {
-            return;
-        }
-        setMessage("");
-        if (!message && !selectedFile) {
-            return;
-        }
+  return (
+    <div className="message-input-bar">
+      <div className="input-box">
+        <div className="add-file-box">
+          <button
+            ref={addFileButtonRef}
+            className="add-file-button"
+            onClick={() => setShowFileMenu(!isShowFileMenu)}
+          >
+            <HiPlus />
+          </button>
 
-        let contentType;
-        if (message) {
-            contentType = 0;
-        } else if (selectedFile) {
-            contentType = 1;
-        }
-
-        const sendMessageDto = {
-            ContentType: contentType,
-            Content: message || null,
-        };
-
-        const chatType = getActiveChatType();
-
-        try {
-            const encryptedMessage = encryptMessage(message, chatId);
-            await chatConnection.invoke("SendMessage", chatType, chatId, {
-                ...sendMessageDto,
-                content: encryptedMessage,
-            });
-
-            setSelectedFile(null);
-        } catch { }
-    };
-
-    return (
-        <div className="message-input-bar">
-            <div className="input-box">
-                <div className="add-file-box" >
-                    <button ref={addFileButtonRef} className="add-file-button" onClick={() => setShowFileMenu(!isShowFileMenu)}>
-                        <HiPlus />
-                    </button>
-
-                    {isShowFileMenu &&
-                        <div className="file-menu" ref={fileMenuRef}>
-                            <button onClick={handleFileSelect}><LuFileUp /></button>
-                            <button onClick={handleImageSelect}><LuImage /></button>
-                            <button onClick={handleSoundRecord}><BiSolidMicrophone /></button>
-                            <button onClick={handleVideoSelect}><LuFileVideo /></button>
-                        </div>
-                    }
-
-                    <input
-                        type="file"
-                        accept="image/png"
-                        ref={fileImageInputRef}
-                        style={{ display: "none" }}
-                        onChange={handleSendImageFile}
-                    />
-
-                    <input
-                        type="file"
-                        accept="video/*"
-                        ref={fileVideoInputRef}
-                        style={{ display: "none" }}
-                        onChange={handleSendVideoFile}
-                    />
-                    <input
-                        type="file"
-                        accept=".doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.zip,.rar,.7z,.txt,.mp3,.wav,.ogg"
-                        ref={fileInputRef}
-                        style={{ display: "none" }}
-                        onChange={handleSendFile}
-                    />
-
-                </div>
-
-                <input
-                    type="text"
-                    placeholder="Bir mesaj yazın"
-                    value={message}
-                    onChange={handleInputChange}
-                />
-
-
-                <div className="ai-emoji-send-buttons">
-                    <AIModal chatConnection={chatConnection} chatId={chatId} isOpen={isAIModalOpen} onClose={() => setIsAIModalOpen(false)} buttonRef={AIButtonRef} />
-
-                    <button ref={AIButtonRef} onClick={() => setIsAIModalOpen(!isAIModalOpen)} className="ai-button">
-                        <SiGooglegemini />
-                    </button>
-
-                    <button className="add-emoji-button" onClick={toggleEmojiPicker}>
-                        <MdOutlineEmojiEmotions />
-                    </button>
-
-                    {showEmojiPicker && (
-                        <div ref={emojiPickerRef} className="emoji-picker">
-                            <EmojiPicker
-                                theme={user?.userSettings?.theme === "Dark" ? "dark" : "light"}
-                                onEmojiClick={handleEmojiClick}
-                                style={{
-                                    backgroundColor: user?.userSettings?.theme === "Dark" ? "#141414" : "#ffffff",
-                                    borderRadius: "23px",
-                                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-
-                                }}
-                            />
-                        </div>
-                    )}
-                    <button onClick={handleSendTextMessage} className="send-message-button">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 27 27" fill="none">
-                            <path
-                                fillRule="evenodd"
-                                clipRule="evenodd"
-                                d="M3.82724 7.50691C3.53474 4.88116 6.23812 2.95291 8.62649 4.08466L22.0635 10.4499C24.6375 11.6683 24.6375 15.3313 22.0635 16.5497L8.62649 22.916C6.23812 24.0478 3.53587 22.1195 3.82724 19.4938L4.36724 14.6248H13.5C13.7984 14.6248 14.0845 14.5063 14.2955 14.2953C14.5065 14.0843 14.625 13.7982 14.625 13.4998C14.625 13.2014 14.5065 12.9153 14.2955 12.7043C14.0845 12.4933 13.7984 12.3748 13.5 12.3748H4.36837L3.82724 7.50691Z"
-                                fill="white"
-                            />
-                        </svg>
-                    </button>
-                </div>
+          {isShowFileMenu && (
+            <div className="file-menu" ref={fileMenuRef}>
+              <button onClick={handleFileSelect}>
+                <LuFileUp />
+              </button>
+              <button onClick={handleImageSelect}>
+                <LuImage />
+              </button>
+              <button onClick={handleSoundRecord}>
+                <BiSolidMicrophone />
+              </button>
+              <button onClick={handleVideoSelect}>
+                <LuFileVideo />
+              </button>
             </div>
-            {isLoading && <PreLoader />}
+          )}
+
+          <input
+            type="file"
+            accept="image/png"
+            ref={fileImageInputRef}
+            style={{ display: "none" }}
+            onChange={handleSendImageFile}
+          />
+
+          <input
+            type="file"
+            accept="video/*"
+            ref={fileVideoInputRef}
+            style={{ display: "none" }}
+            onChange={handleSendVideoFile}
+          />
+          <input
+            type="file"
+            accept=".doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.zip,.rar,.7z,.txt,.mp3,.wav,.ogg"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleSendFile}
+          />
         </div>
-    );
+
+        <input
+          type="text"
+          placeholder="Bir mesaj yazın"
+          value={message}
+          onChange={handleInputChange}
+        />
+
+        <div className="ai-emoji-send-buttons">
+          <AIModal
+            chatConnection={chatConnection}
+            chatId={chatId}
+            isOpen={isAIModalOpen}
+            onClose={() => setIsAIModalOpen(false)}
+            buttonRef={AIButtonRef}
+          />
+
+          <button
+            ref={AIButtonRef}
+            onClick={() => setIsAIModalOpen(!isAIModalOpen)}
+            className="ai-button"
+          >
+            <SiGooglegemini />
+          </button>
+
+          <button className="add-emoji-button" onClick={toggleEmojiPicker}>
+            <MdOutlineEmojiEmotions />
+          </button>
+
+          {showEmojiPicker && (
+            <div ref={emojiPickerRef} className="emoji-picker">
+              <EmojiPicker
+                theme={user?.userSettings?.theme === "Dark" ? "dark" : "light"}
+                onEmojiClick={handleEmojiClick}
+                style={{
+                  backgroundColor: user?.userSettings?.theme === "Dark" ? "#141414" : "#ffffff",
+                  borderRadius: "23px",
+                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                }}
+              />
+            </div>
+          )}
+          <button onClick={handleSendTextMessage} className="send-message-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 27 27" fill="none">
+              <path
+                fillRule="evenodd"
+                clipRule="evenodd"
+                d="M3.82724 7.50691C3.53474 4.88116 6.23812 2.95291 8.62649 4.08466L22.0635 10.4499C24.6375 11.6683 24.6375 15.3313 22.0635 16.5497L8.62649 22.916C6.23812 24.0478 3.53587 22.1195 3.82724 19.4938L4.36724 14.6248H13.5C13.7984 14.6248 14.0845 14.5063 14.2955 14.2953C14.5065 14.0843 14.625 13.7982 14.625 13.4998C14.625 13.2014 14.5065 12.9153 14.2955 12.7043C14.0845 12.4933 13.7984 12.3748 13.5 12.3748H4.36837L3.82724 7.50691Z"
+                fill="white"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+      {isLoading && <PreLoader />}
+    </div>
+  );
 }
+
+MessageInputBar.propTypes = {
+  chatId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+};
 
 export default MessageInputBar;

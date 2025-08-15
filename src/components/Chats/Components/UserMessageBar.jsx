@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import useScreenWidth from '../../../hooks/useScreenWidth.js';
+import PropTypes from "prop-types";
 
 import { getChatBackgroundColor } from '../../../helpers/getChatBackgroundColor.js';
 import { getUserIdFromToken } from '../../../helpers/getUserIdFromToken.js';
@@ -62,7 +63,7 @@ function UserMessageBar({ ChatId }) {
               {messages.map((msg) => {
                 const senderId = Object.keys(msg.status.sent)[0];
                 const isSender = senderId === userId;
-                const isDeleted = msg.deletedFor?.hasOwnProperty(userId) ? true : false;
+                const isDeleted = msg.deletedFor && Object.prototype.hasOwnProperty.call(msg.deletedFor, userId);
                 const formattedTimestamp = convertToLocalTime(msg.status.sent[senderId]);
                 const fileName = msg.fileName;
                 const fileSize = msg.fileSize;
@@ -92,5 +93,8 @@ function UserMessageBar({ ChatId }) {
     </motion.div>
   );
 }
+UserMessageBar.propTypes = {
+  ChatId: PropTypes.string.isRequired,
+};
 
 export default UserMessageBar;

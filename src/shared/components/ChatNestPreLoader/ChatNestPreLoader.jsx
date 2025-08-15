@@ -1,8 +1,8 @@
-import MingleLogo from "../../../assets/logos/MingleLogoWithText.webp";
+import ChatNestLogo from "../../../assets/logos/ChatNestLogoWithText.webp";
 import { motion } from "framer-motion";
 import "./style.scss";
 
-function MinglePreLoader() {
+function ChatNestPreLoader() {
     return (
         <motion.div
             className="loading-container"
@@ -11,7 +11,7 @@ function MinglePreLoader() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8 }}
         >
-            <img src={MingleLogo} alt="" />
+            <img src={ChatNestLogo} alt="" />
             <div className="progress-bar">
                 <div className="progress"></div>
             </div>
@@ -19,7 +19,7 @@ function MinglePreLoader() {
     );
 }
 
-export default MinglePreLoader;
+export default ChatNestPreLoader;
 
 export const opacityEffect = (duration = 0.8) => ({
     initial: { opacity: 0 },

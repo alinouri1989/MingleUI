@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { marked } from "marked";
 
-import MingleAI from "../../../assets/logos/MingleAI.webp";
+import ChatNestAI from "../../../assets/logos/ChatNestAI.webp";
 import ImageGeneratorBanner from "../../../assets/images/AIModal/ImageGeneratorBanner.webp";
 import TextGeneratorBanner from "../../../assets/images/AIModal/TextGeneratorBanner.webp";
 
@@ -28,7 +28,7 @@ import { TbSettingsBolt } from "react-icons/tb";
 import "./style.scss";
 import { encryptMessage } from "../../../helpers/messageCryptoHelper.js";
 import { useSignalR } from "../../../contexts/SignalRContext.jsx";
-import { useGenerateImageMutation, useGenerateTextMutation } from "../../../store/Slices/mingleAi/MingleAiApi.js";
+import { useGenerateImageMutation, useGenerateTextMutation } from "../../../store/Slices/ChatNestAi/ChatNestAiApi.js";
 import { opacityAndTransformEffect } from "../../animations/animations.js";
 
 export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
@@ -276,7 +276,7 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
 
     const handleDownloadImage = () => {
         const base64Image = responseImage;
-        downloadImageFromBase64(base64Image, 'MingleImage.png');
+        downloadImageFromBase64(base64Image, 'ChatNestImage.png');
     };
 
     const handleModelSelect = (model) => {
@@ -325,7 +325,7 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
                             transition={{ duration: 1.2 }}
                         >
                             <div className="navigation-box">
-                                <img src={MingleAI} alt="" />
+                                <img src={ChatNestAI} alt="" />
                                 <button onClick={() => setIsTextGeneratorMode(true)} className={`text-generate-btn ${isTextGeneratorMode ? "active" : ""}`}>
                                     <TbFileText />
                                     <span>Metin</span>
@@ -471,7 +471,7 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
                     )
                         :
                         <div className="intro-box">
-                            <img src={MingleAI} alt="mingle" />
+                            <img src={ChatNestAI} alt="ChatNest" />
                         </div>
 
                     }

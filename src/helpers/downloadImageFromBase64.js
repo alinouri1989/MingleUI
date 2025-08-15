@@ -1,4 +1,4 @@
-export const downloadImageFromBase64 = (base64Data, fileName = 'MingleImage.png') => {
+export const downloadImageFromBase64 = (base64Data, fileName = 'ChatNestImage.png') => {
     if (base64Data.startsWith('data:image')) {
         base64Data = base64Data.split(',')[1];
     }
