@@ -3,7 +3,8 @@ import { IoPlay } from "react-icons/io5";
 import { IoPause } from "react-icons/io5";
 import { FiDownload } from "react-icons/fi";
 import { Slider, Stack } from '@mui/material';
-import useScreenWidth from "../../../../hooks/useScreenWidth"
+import PropTypes from 'prop-types';
+import useScreenWidth from "../../../../hooks/useScreenWidth";
 
 export function AudioMessage({ content }) {
 
@@ -14,27 +15,53 @@ export function AudioMessage({ content }) {
     const isScreenSmall = useScreenWidth(540);
 
     useEffect(() => {
-        if (audioRef.current) {
-            setDuration(audioRef.current.duration);
+        const audioElement = audioRef.current;
+        if (audioElement) {
+            const handleLoadedMetadata = () => {
+                setDuration(audioElement.duration);
+            };
+
+            audioElement.addEventListener('loadedmetadata', handleLoadedMetadata);
+            
+            // If metadata is already loaded
+            if (audioElement.readyState >= 1) {
+                setDuration(audioElement.duration);
+            }
+
+            return () => {
+                audioElement.removeEventListener('loadedmetadata', handleLoadedMetadata);
+            };
         }
-    }, [audioRef.current]);
+    }, [content]);
 
     const togglePlayPause = () => {
-        if (isPlaying) {
-            audioRef.current.pause();
-        } else {
-            audioRef.current.play();
+        if (audioRef.current) {
+            if (isPlaying) {
+                audioRef.current.pause();
+            } else {
+                audioRef.current.play();
+            }
+            setIsPlaying(!isPlaying);
         }
-        setIsPlaying(!isPlaying);
     };
 
     const handleTimeUpdate = () => {
-        setCurrentTime(audioRef.current.currentTime);
+        if (audioRef.current) {
+            setCurrentTime(audioRef.current.currentTime);
+        }
     };
 
     const handleSeek = (event, newValue) => {
-        audioRef.current.currentTime = newValue;
-        setCurrentTime(newValue);
+        if (audioRef.current) {
+            audioRef.current.currentTime = newValue;
+            setCurrentTime(newValue);
+        }
+    };
+
+    const handleLoadedMetadata = () => {
+        if (audioRef.current) {
+            setDuration(audioRef.current.duration);
+        }
     };
 
     const handleDownload = () => {
@@ -46,6 +73,7 @@ export function AudioMessage({ content }) {
     };
 
     const formatTime = (time) => {
+        if (isNaN(time)) return '0:00';
         const minutes = Math.floor(time / 60);
         const seconds = Math.floor(time % 60);
         return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
@@ -57,10 +85,11 @@ export function AudioMessage({ content }) {
                 ref={audioRef}
                 src={content}
                 onTimeUpdate={handleTimeUpdate}
-                onLoadedMetadata={() => setDuration(audioRef.current.duration)}
+                onLoadedMetadata={handleLoadedMetadata}
+                preload="metadata"
             />
             <div className="audio-controls">
-                <button onClick={togglePlayPause} className="play-pause-btn">
+                <button onClick={togglePlayPause} className="play-pause-btn" type="button">
                     {isPlaying ? <IoPause /> : <IoPlay />}
                 </button>
                 <div className="progress-container">
@@ -73,7 +102,7 @@ export function AudioMessage({ content }) {
                             value={currentTime}
                             onChange={handleSeek}
                             min={0}
-                            max={duration}
+                            max={duration || 0}
                             step={0.1}
                             className="custom-slider"
                             sx={{ width: isScreenSmall ? '50px' : '120px' }}
@@ -83,10 +112,14 @@ export function AudioMessage({ content }) {
                         {formatTime(duration)}
                     </div>
                 </div>
-                <button onClick={handleDownload} className="download-btn">
+                <button onClick={handleDownload} className="download-btn" type="button">
                     <FiDownload />
                 </button>
             </div>
         </div>
     );
 }
+
+AudioMessage.propTypes = {
+    content: PropTypes.string.isRequired,
+};

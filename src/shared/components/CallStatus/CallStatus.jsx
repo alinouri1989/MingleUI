@@ -1,5 +1,6 @@
 import { PiPhoneFill } from "react-icons/pi";
 import { HiMiniVideoCamera } from "react-icons/hi2";
+import PropTypes from 'prop-types';
 import { formatCallDuration, formatTimeHoursMinutes } from "../../../helpers/dateHelper";
 
 const CallStatus = ({ status, type, userId, participants, callDuration, createdDate }) => {
@@ -12,36 +13,36 @@ const CallStatus = ({ status, type, userId, participants, callDuration, createdD
     switch (status) {
         case 1:
             if (isOutgoingCall) {
-                callStatusText = type === 1 ? "Giden video arama" : "Giden sesli arama";
+                callStatusText = type === 1 ? "تماس تصویری خروجی" : "تماس صوتی خروجی";
             } else {
-                callStatusText = type === 1 ? "Gelen video arama" : "Gelen sesli arama";
+                callStatusText = type === 1 ? "تماس تصویری ورودی" : "تماس صوتی ورودی";
             }
             icon = type === 0 ? <PiPhoneFill className="icon" /> : <HiMiniVideoCamera className="icon" />;
             break;
         case 2:
-            callStatusText = "Meşgul";
+            callStatusText = "مشغول";
             callStatusColor = "#EB6262";
             break;
         case 3:
-            callStatusText = "İptal Edildi";
+            callStatusText = "لغو شده";
             icon = type === 0 ? <PiPhoneFill className="icon" /> : <HiMiniVideoCamera className="icon" />;
             callStatusColor = "#EB6262";
             break;
         case 4:
             if (isOutgoingCall) {
-                callStatusText = "Giden cevapsız arama";
+                callStatusText = "تماس بی‌پاسخ خروجی";
             } else {
-                callStatusText = "Gelen cevapsız arama";
+                callStatusText = "تماس بی‌پاسخ ورودی";
             }
             callStatusColor = "#EB6262";
             icon = type === 0 ? <PiPhoneFill className="icon" /> : <HiMiniVideoCamera className="icon" />;
             break;
         default:
-            callStatusText = "Bilinmiyor";
+            callStatusText = "نامشخص";
             break;
     }
 
-    const formattedDuration = callDuration ? `Arama Süresi: ${formatCallDuration(callDuration)}` : "Cevaplanmadı";
+    const formattedDuration = callDuration ? `مدت تماس: ${formatCallDuration(callDuration)}` : "پاسخ داده نشد";
 
     return (
         <div className="status-box">
@@ -52,6 +53,20 @@ const CallStatus = ({ status, type, userId, participants, callDuration, createdD
             <p>{formattedDuration}</p>
         </div>
     );
+};
+
+CallStatus.propTypes = {
+    status: PropTypes.number.isRequired,
+    type: PropTypes.number.isRequired,
+    userId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    participants: PropTypes.array,
+    callDuration: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    createdDate: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]).isRequired,
+};
+
+CallStatus.defaultProps = {
+    participants: [],
+    callDuration: null,
 };
 
 export default CallStatus;

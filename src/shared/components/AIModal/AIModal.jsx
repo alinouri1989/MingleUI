@@ -7,9 +7,9 @@ import ChatNestAI from "../../../assets/logos/ChatNestAI.webp";
 import ImageGeneratorBanner from "../../../assets/images/AIModal/ImageGeneratorBanner.webp";
 import TextGeneratorBanner from "../../../assets/images/AIModal/TextGeneratorBanner.webp";
 
-import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert"
+import { ErrorAlert, SuccessAlert } from "../../../helpers/customAlert";
 import { downloadImageFromBase64 } from "../../../helpers/downloadImageFromBase64.js";
-import { convertBase64ToImage } from "../../../store/helpers/convertBase64ToImage.js"
+import { convertBase64ToImage } from "../../../store/helpers/convertBase64ToImage.js";
 
 import { IoClose } from "react-icons/io5";
 import { TbFileText } from "react-icons/tb";
@@ -23,8 +23,6 @@ import { LuDownload } from "react-icons/lu";
 import { FaCheck } from "react-icons/fa6";
 import { TbSettingsBolt } from "react-icons/tb";
 
-
-
 import "./style.scss";
 import { encryptMessage } from "../../../helpers/messageCryptoHelper.js";
 import { useSignalR } from "../../../contexts/SignalRContext.jsx";
@@ -33,8 +31,8 @@ import { opacityAndTransformEffect } from "../../animations/animations.js";
 
 export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
 
-    const [generateText, { }] = useGenerateTextMutation();
-    const [generateImage, { }] = useGenerateImageMutation();
+    const [generateText] = useGenerateTextMutation();
+    const [generateImage] = useGenerateImageMutation();
     const { chatConnection } = useSignalR();
 
     const [isTextGeneratorMode, setIsTextGeneratorMode] = useState(true);
@@ -42,7 +40,7 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
     const [textPrompt, setTextPrompt] = useState("");
     const [imagePrompt, setImagePrompt] = useState("");
 
-    const [textAiModel, setTextAiModel] = useState("Gemini-2.0-Flash");
+    const [textAiModel] = useState("Gemini-2.0-Flash");
     const [imageAiModel, setImageAiModel] = useState("Flux");
     const [showImageModels, setShowImageModels] = useState(false);
 
@@ -62,8 +60,6 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
 
     const modalRef = useRef(null);
     const modelSelectionBoxRef = useRef(null);
-
-
 
     const updatePosition = () => {
         if (buttonRef.current && modalRef.current) {
@@ -88,6 +84,24 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
         }
     };
 
+    const handleOutsideClick = (event) => {
+        if (
+            modalRef.current &&
+            !modalRef.current.contains(event.target) &&
+            buttonRef.current &&
+            !buttonRef.current.contains(event.target) &&
+            !event.target.closest(".send-prompt-btn") &&
+            !event.target.closest(".inputs") &&
+            !event.target.closest(".delete-response") &&
+            !event.target.closest(".refresh-response") &&
+            !event.target.closest(".copy-text") &&
+            !event.target.closest(".copy-icons") &&
+            !event.target.closest(".model-selection")
+        ) {
+            onClose();
+        }
+    };
+
     useEffect(() => {
         if (isOpen) {
             updatePosition();
@@ -105,6 +119,14 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
     }, [isOpen]);
 
     useEffect(() => {
+        const updateHeight = () => {
+            if (window.innerWidth <= 430) {
+                setMaxHeight(`${window.innerHeight * 0.75}px`);
+            } else {
+                setMaxHeight("300px");
+            }
+        };
+
         updateHeight();
         window.addEventListener("resize", updateHeight);
 
@@ -128,25 +150,6 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
         };
     }, []);
 
-    const handleOutsideClick = (event) => {
-        if (
-            modalRef.current &&
-            !modalRef.current.contains(event.target) &&
-            buttonRef.current &&
-            !buttonRef.current.contains(event.target) &&
-            !event.target.closest(".send-prompt-btn") &&
-            !event.target.closest(".inputs") &&
-            !event.target.closest(".delete-response") &&
-            !event.target.closest(".refresh-response") &&
-            !event.target.closest(".copy-text") &&
-            !event.target.closest(".copy-icons") &&
-            !event.target.closest(".model-selection")
-
-        ) {
-            onClose();
-        }
-    };
-
     const handleDeleteResponse = () => {
         if (isTextGeneratorMode) {
             if (textPrompt) {
@@ -162,7 +165,7 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
                 setIsImageLiked(false);
             }
         }
-    }
+    };
 
     const handleCopyText = () => {
         if (!responseText) return;
@@ -172,15 +175,14 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
 
         const plainText = tempElement.innerText || tempElement.textContent;
 
-        // Panoya kopyala
         navigator.clipboard.writeText(plainText)
             .then(() => {
                 setIsTextCopied(true);
-                SuccessAlert("Metin panoya kopyalandı");
+                SuccessAlert("متن در کلیپ‌بورد کپی شد");
                 setTimeout(() => setIsTextCopied(false), 2000);
             })
-            .catch(err => {
-                ErrorAlert("Metin kopyalanırken bir hata oluştu");
+            .catch(() => {
+                ErrorAlert("خطا در کپی کردن متن");
             });
     };
 
@@ -201,8 +203,8 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
         try {
             await chatConnection.invoke("SendMessage", getChatType(location.pathname), chatId, { ContentType: contentType, Content: content });
             onClose();
-        } catch (error) {
-            ErrorAlert("Mesaj gönderilirken bir hata oluştu");
+        } catch {
+            ErrorAlert("خطا در ارسال پیام");
         }
     };
 
@@ -219,7 +221,6 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
     };
 
     const handleSendPrompt = async () => {
-
         if (!isTextGeneratorMode && !imagePrompt) {
             return;
         }
@@ -242,14 +243,14 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
         const handleSuccess = (data) => {
             setIsContent(true);
             if (isTextGeneratorMode) {
-                const markdownToHtml = (markdown) => marked(data.responseText);
+                const markdownToHtml = () => marked(data.responseText);
                 setResponseText(markdownToHtml);
             } else {
                 setResponseImage(convertBase64ToImage(data.responseImage));
             }
         };
 
-        const handleError = (error) => {
+        const handleError = () => {
             if (isTextGeneratorMode) {
                 setTextError(true);
             } else {
@@ -267,8 +268,8 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
             }
 
             handleSuccess(data);
-        } catch (error) {
-            handleError(error);
+        } catch {
+            handleError();
         } finally {
             setIsContent(true);
         }
@@ -290,12 +291,24 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
         }
     };
 
-    const updateHeight = () => {
-        if (window.innerWidth <= 430) {
-            setMaxHeight(`${window.innerHeight * 0.75}px`);
-        } else {
-            setMaxHeight("300px");
-        }
+    const toggleTextGeneratorMode = () => {
+        setIsTextGeneratorMode(true);
+    };
+
+    const toggleImageGeneratorMode = () => {
+        setIsTextGeneratorMode(false);
+    };
+
+    const toggleImageModels = () => {
+        setShowImageModels(!showImageModels);
+    };
+
+    const toggleTextLike = () => {
+        setIsTextLiked(!isTextLiked);
+    };
+
+    const toggleImageLike = () => {
+        setIsImageLiked(!isImageLiked);
     };
 
     return createPortal(
@@ -325,20 +338,20 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
                             transition={{ duration: 1.2 }}
                         >
                             <div className="navigation-box">
-                                <img src={ChatNestAI} alt="" />
-                                <button onClick={() => setIsTextGeneratorMode(true)} className={`text-generate-btn ${isTextGeneratorMode ? "active" : ""}`}>
+                                <img src={ChatNestAI} alt="ChatNest AI لوگو" />
+                                <button onClick={toggleTextGeneratorMode} className={`text-generate-btn ${isTextGeneratorMode ? "active" : ""}`}>
                                     <TbFileText />
-                                    <span>Metin</span>
+                                    <span>متن</span>
                                 </button>
 
                                 <button
-                                    onClick={() => setIsTextGeneratorMode(false)}
+                                    onClick={toggleImageGeneratorMode}
                                     className={`image-generate-btn ${!isTextGeneratorMode ? "active" : ""}`}>
                                     <BiImage />
-                                    <span>Resim</span>
+                                    <span>تصویر</span>
                                 </button>
 
-                                <button onClick={() => onClose()} className="close-btn"><IoClose /></button>
+                                <button onClick={onClose} className="close-btn"><IoClose /></button>
                             </div>
 
                             <div className="result-box">
@@ -351,20 +364,20 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
                                         </div>
                                         :
                                         <div className="banner">
-                                            <img src={TextGeneratorBanner} alt="text-generator-banner" />
-                                            {textError && <span>Bir hata meydana geldi. Tekrar Deneyin.</span>}
+                                            <img src={TextGeneratorBanner} alt="text generator banner" />
+                                            {textError && <span>خطایی رخ داده است. دوباره تلاش کنید.</span>}
                                         </div>
 
                                     :
                                     responseImage ?
                                         <div className="image-generator-result">
-                                            <img src={responseImage} alt="" />
+                                            <img src={responseImage} alt="generated image" />
                                         </div>
 
                                         :
                                         <div className="banner">
-                                            <img src={ImageGeneratorBanner} alt="text-generator-banner" />
-                                            {imageError && <span>Bir hata meydana geldi. Tekrar Deneyin.</span>}
+                                            <img src={ImageGeneratorBanner} alt="image generator banner" />
+                                            {imageError && <span>خطایی رخ داده است. دوباره تلاش کنید.</span>}
                                         </div>
                                 }
                             </div>
@@ -376,20 +389,20 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
                                             <div className="buttons">
                                                 <button className="delete-response" onClick={handleDeleteResponse}><MdDelete /></button>
                                                 <button className="refresh-response" onClick={handleSendPrompt}><MdRefresh /></button>
-                                                <button className={`like-response ${isTextLiked ? "liked" : ""}`} onClick={() => setIsTextLiked(!isTextLiked)}><AiFillLike /></button>
+                                                <button className={`like-response ${isTextLiked ? "liked" : ""}`} onClick={toggleTextLike}><AiFillLike /></button>
                                                 <button className="copy-text" onClick={handleCopyText}>
                                                     {isTextCopied ? <FaCheck className="copy-icons" /> : <MdContentCopy className="copy-icons" />}
                                                 </button>
                                             </div>
                                             <button onClick={handleSendMessage} className="send-message-btn">
-                                                Gönder
+                                                ارسال
                                             </button>
                                         </div>
                                     ) : (
                                         <div className="input-box">
                                             <input
                                                 className="inputs"
-                                                placeholder="Bir istemde bulunun"
+                                                placeholder="درخواست خود را بنویسید"
                                                 type="text"
                                                 onKeyDown={handleKeyDown}
                                                 value={textPrompt}
@@ -406,17 +419,17 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
                                             <div className="buttons">
                                                 <button className="delete-response" onClick={handleDeleteResponse}><MdDelete /></button>
                                                 <button className="refresh-response" onClick={handleSendPrompt}><MdRefresh /></button>
-                                                <button className={`like-response ${isImageLiked ? "liked" : ""}`} onClick={() => setIsImageLiked(!isImageLiked)}><AiFillLike /></button>
+                                                <button className={`like-response ${isImageLiked ? "liked" : ""}`} onClick={toggleImageLike}><AiFillLike /></button>
                                                 <button className="download-image" onClick={handleDownloadImage}><LuDownload /></button>
                                             </div>
                                             <button onClick={handleSendMessage} className="send-message-btn">
-                                                Gönder
+                                                ارسال
                                             </button>
                                         </div>
                                     ) : (
                                         <>
                                             <div className="model-selection-box">
-                                                <button onClick={() => setShowImageModels(!showImageModels)} className="change-ai-model-btn">
+                                                <button onClick={toggleImageModels} className="change-ai-model-btn">
                                                     <TbSettingsBolt />
                                                 </button>
 
@@ -453,7 +466,7 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
                                             <div className="input-box">
                                                 <input
                                                     className="inputs"
-                                                    placeholder="Bir istemde bulunun"
+                                                    placeholder="درخواست خود را بنویسید"
                                                     type="text"
                                                     onKeyDown={handleKeyDown}
                                                     value={imagePrompt}
@@ -471,14 +484,12 @@ export const AIModal = ({ chatId, isOpen, onClose, buttonRef }) => {
                     )
                         :
                         <div className="intro-box">
-                            <img src={ChatNestAI} alt="ChatNest" />
+                            <img src={ChatNestAI} alt="ChatNest AI" />
                         </div>
-
                     }
                 </motion.div>
-            )
-            }
-        </AnimatePresence >,
+            )}
+        </AnimatePresence>,
         document.body
     );
 };

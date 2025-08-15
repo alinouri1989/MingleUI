@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import { LuCheckCheck } from "react-icons/lu";
+import PropTypes from 'prop-types';
 import { formatDateForMessageInfo } from "../../../helpers/dateHelper";
 import CloseModalButton from "../../../contexts/components/CloseModalButton";
 import "./style.scss";
@@ -11,14 +12,14 @@ function MessageInfo({ closeModal, chatId, messageId }) {
     const { groupList } = useSelector(state => state.groupList);
 
     const chat = Group.find(group => group.id === chatId);
-    if (!chat) return <div>Chat not found</div>;
+    if (!chat) return <div>گفتگو یافت نشد</div>;
 
     const message = chat.messages.find(msg => msg.id === messageId);
-    if (!message) return <div>Message not found</div>;
+    if (!message) return <div>پیام یافت نشد</div>;
 
     const participants = chat.participants;
     const group = groupList[participants[0]];
-    if (!group) return <div>Group not found</div>;
+    if (!group) return <div>گروه یافت نشد</div>;
 
     const deliveredUsers = Object.keys(message.status.delivered || {}).filter(userId => !message.status.read[userId]);
     const readUsers = Object.keys(message.status.read || {});
@@ -32,7 +33,7 @@ function MessageInfo({ closeModal, chatId, messageId }) {
                 <div className="message-info-section">
                     <div className="title-box">
                         <LuCheckCheck className="read" />
-                        <p className="read">Okuyanlar</p>
+                        <p className="read">خوانندگان</p>
                     </div>
                     <div className={`user-list ${deliveredUsers.length > 0 ? "first" : ""}`}>
                         {readUsers.map(userId => {
@@ -40,8 +41,13 @@ function MessageInfo({ closeModal, chatId, messageId }) {
                             return user ? (
                                 <div key={userId} className="user-info">
                                     <div className="image-and-name-box">
-                                        <img src={user.profilePhoto} alt={user.displayName} className="profile-photo"
-                                            onError={(e) => e.currentTarget.src = defaultProfilePhoto}
+                                        <img 
+                                            src={user.profilePhoto} 
+                                            alt={`پروفایل ${user.displayName}`} 
+                                            className="profile-photo"
+                                            onError={(e) => {
+                                                e.currentTarget.src = defaultProfilePhoto;
+                                            }}
                                         />
                                         <span>{user.displayName}</span>
                                     </div>
@@ -57,29 +63,45 @@ function MessageInfo({ closeModal, chatId, messageId }) {
                 <div className="message-info-section">
                     <div className="title-box">
                         <LuCheckCheck />
-                        <p>Teslim edilenler</p>
+                        <p>تحویل شده‌ها</p>
                     </div>
-                    <div className={`user-list`}>
+                    <div className="user-list">
                         {deliveredUsers.map(userId => {
                             const user = getUserInfo(userId);
                             return user ? (
                                 <div key={userId} className="user-info">
                                     <div className="image-and-name-box">
-                                        <img src={user.profilePhoto} alt={user.displayName} className="profile-photo" />
+                                        <img 
+                                            src={user.profilePhoto} 
+                                            alt={`پروفایل ${user.displayName}`} 
+                                            className="profile-photo"
+                                            onError={(e) => {
+                                                e.currentTarget.src = defaultProfilePhoto;
+                                            }}
+                                        />
                                         <span>{user.displayName}</span>
                                     </div>
                                     <p>{formatDateForMessageInfo(message.status.delivered[userId])}</p>
                                 </div>
-                            ) : <p>Teslim Edilmedi</p>;
+                            ) : (
+                                <p key={userId}>تحویل داده نشده</p>
+                            );
                         })}
                     </div>
                 </div>
-            ) : readUsers.length == 0 && <div className="no-user">
-                <p>Mesaj gönderildi, okuyan veya teslim alan kullanıcı bulunmuyor.</p>
-            </div>
-            }
-        </div >
+            ) : readUsers.length === 0 && (
+                <div className="no-user">
+                    <p>پیام ارسال شد، هیچ کاربری آن را نخوانده یا دریافت نکرده است.</p>
+                </div>
+            )}
+        </div>
     );
 }
+
+MessageInfo.propTypes = {
+    closeModal: PropTypes.func.isRequired,
+    chatId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    messageId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+};
 
 export default MessageInfo;

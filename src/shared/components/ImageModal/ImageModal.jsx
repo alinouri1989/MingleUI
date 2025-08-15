@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useSignalR } from "../../../contexts/SignalRContext";
 import { useLocation } from "react-router-dom";
+import PropTypes from 'prop-types';
 
 import { FaImages } from "react-icons/fa6";
 import CloseModalButton from "../../../contexts/components/CloseModalButton";
@@ -40,8 +41,8 @@ function ImageModal({ image, closeModal, chatId }) {
                 setIsLoading(false);
                 closeModal();
             };
-        } catch (error) {
-            ErrorAlert("Bir hata meydana geldi");
+        } catch {
+            ErrorAlert("خطایی رخ داده است");
             setIsLoading(false);
         }
     };
@@ -51,14 +52,20 @@ function ImageModal({ image, closeModal, chatId }) {
             <CloseModalButton closeModal={closeModal} />
             <div className="title-box">
                 <FaImages />
-                <p>Seçilen Resim</p>
+                <p>تصویر انتخاب شده</p>
             </div>
-            <img src={URL.createObjectURL(image)} alt="Uploaded preview" />
-            <button onClick={handleSendImage} className="send-image-btn">Gönder</button>
+            <img src={URL.createObjectURL(image)} alt="پیش‌نمایش تصویر آپلود شده" />
+            <button onClick={handleSendImage} className="send-image-btn">ارسال</button>
 
             {isLoading && <PreLoader />}
         </div>
     );
 }
+
+ImageModal.propTypes = {
+    image: PropTypes.instanceOf(File).isRequired,
+    closeModal: PropTypes.func.isRequired,
+    chatId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+};
 
 export default ImageModal;

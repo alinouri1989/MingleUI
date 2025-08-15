@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSignalR } from '../../../contexts/SignalRContext';
 import { useSelector } from 'react-redux';
 import { useModal } from '../../../contexts/ModalContext';
+import PropTypes from 'prop-types';
 
 import { FaFileAlt } from "react-icons/fa";
 import { FiDownload } from "react-icons/fi";
@@ -31,11 +32,23 @@ import useScreenWidth from '../../../hooks/useScreenWidth';
 import './style.scss';
 import { defaultProfilePhoto } from '../../../constants/DefaultProfilePhoto';
 
-function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, content, fileName, fileSize, timestamp, isSender, status, messageType, isGroupMessageBubble, senderProfile }) {
+function MessageBubble({ 
+    isDeleted, 
+    chatId, 
+    userId, 
+    messageId, 
+    userColor, 
+    content, 
+    fileName, 
+    fileSize, 
+    timestamp, 
+    isSender, 
+    status, 
+    messageType, 
+    isGroupMessageBubble, 
+    senderProfile 
+}) {
 
-    if (!content || isDeleted) {
-        return;
-    }
 
     const { chatConnection } = useSignalR();
 
@@ -48,8 +61,11 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
 
     const { showModal, closeModal } = useModal();
     const isSmallScreen = useScreenWidth(400);
+    if (!content || isDeleted) {
+        return null;
+    }
 
-    const isDarkMode = user?.userSettings?.theme == "Dark";
+    const isDarkMode = user?.userSettings?.theme === "Dark";
 
     const open = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -70,23 +86,23 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
         }
         try {
             chatConnection.invoke("DeleteMessage", chatType, chatId, messageId, deletionType);
-            SuccessAlert("Mesaj Silindi")
+            SuccessAlert("پیام حذف شد");
         } catch {
-            ErrorAlert("Bir hata meydana geldi");
+            ErrorAlert("خطایی رخ داده است");
         }
         handleClose();
     };
 
     const handleCopy = () => {
         navigator.clipboard.writeText(content);
-        SuccessAlert("Mesaj Kopyalandı");
+        SuccessAlert("پیام کپی شد");
         handleClose();
     };
 
     const handleMessageInfo = () => {
-        showModal(<MessageInfo chatId={chatId} messageId={messageId} closeModal={closeModal} />)
+        showModal(<MessageInfo chatId={chatId} messageId={messageId} closeModal={closeModal} />);
         handleClose();
-    }
+    };
 
     let statusIcon;
     let statusColor;
@@ -100,11 +116,9 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
             statusIcon = <LuCheckCheck />;
             statusColor = "#585CE1";
         } else if (status.delivered && Object.keys(status.delivered).length > 0) {
-
             statusIcon = <LuCheckCheck />;
             statusColor = "#828A96";
         } else if (status.sent && status.sent[userId]) {
-
             statusIcon = <LuCheck />;
             statusColor = "#828A96";
         } else {
@@ -150,7 +164,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
 
     const ImageMessage = ({ content }) => (
         <div onClick={() => setIsShowImage(true)}>
-            <img src={content} alt="" />
+            <img src={content} alt="پیام تصویری" />
         </div>
     );
 
@@ -161,7 +175,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
                 controls
                 style={{ maxWidth: "100%", borderRadius: "8px" }}
             >
-                Tarayıcınız video elementini desteklemiyor.
+                مرورگر شما از عنصر ویدیو پشتیبانی نمی‌کند.
             </video>
         </div>
     );
@@ -172,7 +186,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
                 <div className='file-info-box'>
                     <FaFileAlt />
                     <div className='file-info'>
-                        <span>{fileName || "Dosya"}</span>
+                        <span>{fileName || "فایل"}</span>
                         <p>
                             {fileSize < 1024 * 1024
                                 ? `${(fileSize / 1024).toFixed(2)} KB`
@@ -180,7 +194,11 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
                         </p>
                     </div>
                 </div>
-                <button className='download-file-button' onClick={() => downloadFile(fileName, content)}>
+                <button 
+                    className='download-file-button' 
+                    onClick={() => downloadFile(fileName, content)}
+                    type="button"
+                >
                     <FiDownload />
                 </button>
             </div>
@@ -189,14 +207,14 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
 
     const UserInfo = ({ displayName, userColor, messageType }) => (
         <div className='user-info' style={{ color: userColor }}>
-            {messageType === 3 && isGroupMessageBubble && < img src={senderProfile?.profilePhoto} alt="" />}
+            {messageType === 3 && isGroupMessageBubble && <img src={senderProfile?.profilePhoto} alt="پروفایل فرستنده" />}
             <p className={`sender-profile-name ${messageType === 0 ? 'text' : messageType === 1 ? 'image' : 'other'}`}>
                 {displayName}
             </p>
         </div>
     );
 
-    const renderMessageContent = (messageType, content, fileName, setIsShowImage) => {
+    const renderMessageContent = (messageType, content) => {
         switch (messageType) {
             case 0:
                 return <TextMessage content={content} />;
@@ -209,7 +227,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
             case 4:
                 return <FileMessage />;
             default:
-                return <p>Unsupported message type</p>;
+                return <p>نوع پیام پشتیبانی نشده</p>;
         }
     };
 
@@ -241,7 +259,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
                     <div className='image-box'>
                         <img src={senderProfile?.profilePhoto}
                             onError={(e) => e.currentTarget.src = defaultProfilePhoto}
-                            alt="" />
+                            alt="پروفایل فرستنده" />
                     </div>
                 )}
                 <div
@@ -259,7 +277,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
                         />
                     )}
 
-                    {renderMessageContent(messageType, content, setIsShowImage, fileName)}
+                    {renderMessageContent(messageType, content)}
                 </div>
 
                 <div className='message-hour-and-option-box'>
@@ -312,7 +330,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
                                         <DeleteOutlineRoundedIcon />
                                     </ListItemIcon>
                                     <ListItemText
-                                        primary="Benden sil"
+                                        primary="از من حذف کن"
                                         primaryTypographyProps={{
                                             fontFamily: "Montserrat",
                                             fontWeight: "700",
@@ -329,7 +347,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
                                         <DeleteIcon />
                                     </ListItemIcon>
                                     <ListItemText
-                                        primary="Herkesten sil"
+                                        primary="از همه حذف کن"
                                         primaryTypographyProps={{
                                             fontFamily: "Montserrat",
                                             fontWeight: "700",
@@ -347,7 +365,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
                                             <ContentCopyIcon />
                                         </ListItemIcon>
                                         <ListItemText
-                                            primary="Kopyala"
+                                            primary="کپی"
                                             primaryTypographyProps={{
                                                 fontFamily: "Montserrat",
                                                 fontWeight: "700",
@@ -356,7 +374,6 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
                                         />
                                     </MenuItem>
                                 }
-
 
                                 {isGroupMessageBubble &&
                                     <MenuItem
@@ -367,7 +384,7 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
                                             <InfoIcon />
                                         </ListItemIcon>
                                         <ListItemText
-                                            primary="Bilgi"
+                                            primary="اطلاعات"
                                             primaryTypographyProps={{
                                                 fontFamily: "Montserrat",
                                                 fontWeight: "700",
@@ -391,8 +408,8 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
             {
                 isShowImage &&
                 <div className="full-size-image-box">
-                    <img src={content} alt="selected-image" />
-                    <button onClick={() => setIsShowImage(false)}>
+                    <img src={content} alt="تصویر انتخاب شده" />
+                    <button onClick={() => setIsShowImage(false)} type="button">
                         <MdClose />
                     </button>
                 </div>
@@ -400,5 +417,42 @@ function MessageBubble({ isDeleted, chatId, userId, messageId, userColor, conten
         </div>
     );
 }
+
+MessageBubble.propTypes = {
+    isDeleted: PropTypes.bool,
+    chatId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    userId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    messageId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    userColor: PropTypes.string,
+    content: PropTypes.string,
+    fileName: PropTypes.string,
+    fileSize: PropTypes.number,
+    timestamp: PropTypes.string.isRequired,
+    isSender: PropTypes.bool.isRequired,
+    status: PropTypes.shape({
+        sent: PropTypes.object,
+        delivered: PropTypes.object,
+        read: PropTypes.object,
+    }).isRequired,
+    messageType: PropTypes.number.isRequired,
+    isGroupMessageBubble: PropTypes.bool,
+    senderProfile: PropTypes.shape({
+        displayName: PropTypes.string,
+        profilePhoto: PropTypes.string,
+    }),
+};
+
+MessageBubble.defaultProps = {
+    isDeleted: false,
+    userColor: '#000000',
+    content: '',
+    fileName: '',
+    fileSize: 0,
+    isGroupMessageBubble: false,
+    senderProfile: {
+        displayName: '',
+        profilePhoto: defaultProfilePhoto,
+    },
+};
 
 export default MessageBubble;

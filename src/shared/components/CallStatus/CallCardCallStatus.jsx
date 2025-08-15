@@ -4,6 +4,7 @@ import { TbVideoMinus } from "react-icons/tb";
 import { RiVideoDownloadFill } from "react-icons/ri";
 import { RiVideoUploadFill } from "react-icons/ri";
 import { PiPhoneFill } from "react-icons/pi";
+import PropTypes from 'prop-types';
 
 const CallCardCallStatus = ({ callStatus, callType, isOutgoingCall }) => {
     let icon = null;
@@ -15,24 +16,24 @@ const CallCardCallStatus = ({ callStatus, callType, isOutgoingCall }) => {
             if (callType === 0) {
                 if (isOutgoingCall) {
                     icon = <VscCallOutgoing className="icon" />;
-                    text = "Giden Arama";
+                    text = "تماس خروجی";
                 } else {
                     icon = <VscCallIncoming className="icon" />;
-                    text = "Gelen Arama";
+                    text = "تماس ورودی";
                 }
             } else if (callType === 1) {
                 if (isOutgoingCall) {
                     icon = <RiVideoUploadFill className="icon" />;
-                    text = "Giden Arama";
+                    text = "تماس خروجی";
                 } else {
                     icon = <RiVideoDownloadFill className="icon" />;
-                    text = "Gelen Arama";
+                    text = "تماس ورودی";
                 }
             }
             break;
 
         case 2:
-            text = "Meşgul";
+            text = "مشغول";
             color = "#EB6262";
             if (callType === 0) {
                 icon = isOutgoingCall ? <VscCallOutgoing className="icon" /> : <VscCallIncoming className="icon" />;
@@ -42,13 +43,13 @@ const CallCardCallStatus = ({ callStatus, callType, isOutgoingCall }) => {
             break;
 
         case 3:
-            text = "İptal Edildi";
+            text = "لغو شده";
             color = "#EB6262";
-            icon = callType === 1 ? <TbVideoMinus className="icon" /> : <PiPhoneFill />;
+            icon = callType === 1 ? <TbVideoMinus className="icon" /> : <PiPhoneFill className="icon" />;
             break;
 
         case 4:
-            text = "Cevapsız";
+            text = "بی‌پاسخ";
             color = "#EB6262";
             if (callType === 0) {
                 icon = isOutgoingCall ? <VscCallOutgoing className="icon" /> : <VscCallIncoming className="icon" />;
@@ -58,7 +59,7 @@ const CallCardCallStatus = ({ callStatus, callType, isOutgoingCall }) => {
             break;
 
         default:
-            text = "Bilinmeyen";
+            text = "نامشخص";
             break;
     }
 
@@ -71,6 +72,12 @@ const CallCardCallStatus = ({ callStatus, callType, isOutgoingCall }) => {
             {text}
         </span>
     );
+};
+
+CallCardCallStatus.propTypes = {
+    callStatus: PropTypes.number.isRequired,
+    callType: PropTypes.number.isRequired,
+    isOutgoingCall: PropTypes.bool.isRequired,
 };
 
 export default CallCardCallStatus;

@@ -2,6 +2,7 @@ import { LuImage } from 'react-icons/lu';
 import { BiSolidMicrophone } from 'react-icons/bi';
 import { LuFileVideo } from "react-icons/lu";
 import { FaFileAlt } from "react-icons/fa";
+import PropTypes from 'prop-types';
 
 const LastMessage = ({ lastMessageType, content }) => {
     const renderContent = () => {
@@ -12,28 +13,28 @@ const LastMessage = ({ lastMessageType, content }) => {
                 return (
                     <div className="last-message-image">
                         <LuImage />
-                        <span>Fotoğraf</span>
+                        <span>عکس</span>
                     </div>
                 );
             case 2:
                 return (
                     <div className="last-message-video">
                         <LuFileVideo />
-                        <span>Video</span>
+                        <span>ویدیو</span>
                     </div>
                 );
             case 3:
                 return (
                     <div className="last-message-audio">
                         <BiSolidMicrophone />
-                        <span>Ses</span>
+                        <span>صدا</span>
                     </div>
                 );
             case 4:
                 return (
                     <div className="last-message-file">
                         <FaFileAlt />
-                        <span>Dosya</span>
+                        <span>فایل</span>
                     </div>
                 );
             default:
@@ -42,6 +43,15 @@ const LastMessage = ({ lastMessageType, content }) => {
     };
 
     return <>{renderContent()}</>;
+};
+
+LastMessage.propTypes = {
+    lastMessageType: PropTypes.number.isRequired,
+    content: PropTypes.string,
+};
+
+LastMessage.defaultProps = {
+    content: '',
 };
 
 export default LastMessage;

@@ -1,4 +1,3 @@
-
 import PropTypes from "prop-types";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
@@ -127,13 +126,13 @@ function MessageInputBar({ chatId }) {
           ContentType: 2,
           content: base64String,
         });
-        SuccessAlert("Video gönderildi");
+        SuccessAlert("ویدیو ارسال شد");
       } catch {
-        ErrorAlert("Video gönderilemedi");
+        ErrorAlert("ویدیو ارسال نشد");
       }
       setIsLoading(false);
     } else {
-      ErrorAlert("Dosya seçilmedi");
+      ErrorAlert("هیچ فایلی انتخاب نشده");
     }
   };
 
@@ -151,7 +150,7 @@ function MessageInputBar({ chatId }) {
     const chatType = getActiveChatType();
 
     if (!file) {
-      ErrorAlert("Dosya seçilmedi");
+      ErrorAlert("هیچ فایلی انتخاب نشده");
       return;
     }
 
@@ -169,9 +168,9 @@ function MessageInputBar({ chatId }) {
     } catch (error) {
       setIsLoading(false);
       if (error?.message === "empty_file") {
-        ErrorAlert("İçeriği boş bir dosya gönderilemez");
+        ErrorAlert("فایل با محتوای خالی قابل ارسال نیست");
       } else {
-        ErrorAlert("Dosya gönderilemedi");
+        ErrorAlert("فایل ارسال نشد");
       }
     }
   };
@@ -208,9 +207,8 @@ function MessageInputBar({ chatId }) {
 
       setSelectedFile(null);
     } catch (err) {
-      // Avoid empty catch: log and optionally inform user
-      console.error("Mesaj gönderilemedi:", err);
-      ErrorAlert("Mesaj gönderilemedi");
+      console.error("پیام ارسال نشد:", err);
+      ErrorAlert("پیام ارسال نشد");
     }
   }, [isAIModalOpen, message, selectedFile, getActiveChatType, chatId, chatConnection]);
 
@@ -238,22 +236,23 @@ function MessageInputBar({ chatId }) {
             ref={addFileButtonRef}
             className="add-file-button"
             onClick={() => setShowFileMenu(!isShowFileMenu)}
+            type="button"
           >
             <HiPlus />
           </button>
 
           {isShowFileMenu && (
             <div className="file-menu" ref={fileMenuRef}>
-              <button onClick={handleFileSelect}>
+              <button onClick={handleFileSelect} type="button">
                 <LuFileUp />
               </button>
-              <button onClick={handleImageSelect}>
+              <button onClick={handleImageSelect} type="button">
                 <LuImage />
               </button>
-              <button onClick={handleSoundRecord}>
+              <button onClick={handleSoundRecord} type="button">
                 <BiSolidMicrophone />
               </button>
-              <button onClick={handleVideoSelect}>
+              <button onClick={handleVideoSelect} type="button">
                 <LuFileVideo />
               </button>
             </div>
@@ -261,7 +260,7 @@ function MessageInputBar({ chatId }) {
 
           <input
             type="file"
-            accept="image/png"
+            accept="image/*"
             ref={fileImageInputRef}
             style={{ display: "none" }}
             onChange={handleSendImageFile}
@@ -285,7 +284,7 @@ function MessageInputBar({ chatId }) {
 
         <input
           type="text"
-          placeholder="Bir mesaj yazın"
+          placeholder="پیامی بنویسید"
           value={message}
           onChange={handleInputChange}
         />
@@ -303,11 +302,16 @@ function MessageInputBar({ chatId }) {
             ref={AIButtonRef}
             onClick={() => setIsAIModalOpen(!isAIModalOpen)}
             className="ai-button"
+            type="button"
           >
             <SiGooglegemini />
           </button>
 
-          <button className="add-emoji-button" onClick={toggleEmojiPicker}>
+          <button 
+            className="add-emoji-button" 
+            onClick={toggleEmojiPicker}
+            type="button"
+          >
             <MdOutlineEmojiEmotions />
           </button>
 
@@ -324,7 +328,11 @@ function MessageInputBar({ chatId }) {
               />
             </div>
           )}
-          <button onClick={handleSendTextMessage} className="send-message-button">
+          <button 
+            onClick={handleSendTextMessage} 
+            className="send-message-button"
+            type="button"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 27 27" fill="none">
               <path
                 fillRule="evenodd"

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useSignalR } from "../../../contexts/SignalRContext";
+import PropTypes from 'prop-types';
 
 import CloseModalButton from "../../../contexts/components/CloseModalButton";
 import { BiSolidMicrophone } from "react-icons/bi";
@@ -42,8 +43,12 @@ function SoundRecordModal({ closeModal, chatId }) {
             clearInterval(timerInterval);
         }
 
-        return () => clearInterval(timerInterval);
-    }, [isRecording]);
+        return () => {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+            }
+        };
+    }, [isRecording, timer]);
 
     const startRecording = async () => {
         try {
@@ -68,8 +73,9 @@ function SoundRecordModal({ closeModal, chatId }) {
             setIsRecording(true);
             setRecordStarted(true);
             setWavesAnimation(true);
-        } catch {
-            ErrorAlert("Bir hata meydana geldi");
+        } catch (error) {
+            console.error("Recording error:", error);
+            ErrorAlert("خطایی رخ داده است");
         }
     };
 
@@ -140,6 +146,7 @@ function SoundRecordModal({ closeModal, chatId }) {
             reader.readAsDataURL(audioBlob);
         } catch (error) {
             console.error("Audio send error:", error);
+            ErrorAlert("خطایی رخ داده است");
             setIsLoading(false);
         }
     };
@@ -149,15 +156,17 @@ function SoundRecordModal({ closeModal, chatId }) {
             const tracks = audioStream.getTracks();
             tracks.forEach(track => track.stop());
         }
-    }
+    };
 
     return (
         <div className='sound-record-box'>
-            <div onClick={handleRemoveAudioTrack}><CloseModalButton closeModal={closeModal} /></div>
+            <div onClick={handleRemoveAudioTrack}>
+                <CloseModalButton closeModal={closeModal} />
+            </div>
             <div className="sound-record-content">
                 <div className="title-box">
                     <BiSolidMicrophone />
-                    <p>Sesini Kaydet</p>
+                    <p>صدای خود را ضبط کنید</p>
                 </div>
                 {!recordFinished &&
                     <div className='content-box'>
@@ -171,10 +180,8 @@ function SoundRecordModal({ closeModal, chatId }) {
                             {String(Math.floor(timer / 60)).padStart(2, '0')}:
                             {String(timer % 60).padStart(2, '0')}
                         </div>
-
                     </div>
                 }
-
 
                 {recordFinished && audioUrl && (
                     <motion.div
@@ -182,7 +189,8 @@ function SoundRecordModal({ closeModal, chatId }) {
                         variants={opacityEffect(0.8)}
                         initial="initial"
                         animate="animate"
-                        style={{ width: "100%" }}>
+                        style={{ width: "100%" }}
+                    >
                         <div className="audio-player-wrapper">
                             <ReactAudioPlayer
                                 src={combineAudioChunks()}
@@ -195,17 +203,29 @@ function SoundRecordModal({ closeModal, chatId }) {
 
                 <div className="options-box">
                     {recordStarted && !recordFinished && (
-                        <button className="record-button" onClick={finishRecording}>Kaydı Bitir</button>
+                        <button 
+                            className="record-button" 
+                            onClick={finishRecording}
+                            type="button"
+                        >
+                            پایان ضبط
+                        </button>
                     )}
                     {!recordStarted && !recordFinished && (
-                        <button className="record-button" onClick={startRecording}>Kaydı Başlat</button>
+                        <button 
+                            className="record-button" 
+                            onClick={startRecording}
+                            type="button"
+                        >
+                            شروع ضبط
+                        </button>
                     )}
                 </div>
 
                 {recordFinished && audioUrl &&
                     <div className='send-and-cancel-buttons-box'>
-                        <button onClick={handleDeleteAudio}>Sil</button>
-                        <button onClick={handleSendAudio}>Gönder</button>
+                        <button onClick={handleDeleteAudio} type="button">حذف</button>
+                        <button onClick={handleSendAudio} type="button">ارسال</button>
                     </div>
                 }
             </div>
@@ -213,5 +233,10 @@ function SoundRecordModal({ closeModal, chatId }) {
         </div>
     );
 }
+
+SoundRecordModal.propTypes = {
+    closeModal: PropTypes.func.isRequired,
+    chatId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+};
 
 export default SoundRecordModal;
